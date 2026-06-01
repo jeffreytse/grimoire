@@ -1,33 +1,110 @@
-# grimoire
+<div align="center">
+  <a href="https://github.com/jeffreytse/grimoire">
+    <img alt="grimoire" src="./docs/banner.svg" width="700">
+  </a>
 
-> The world's professional best practices of every field — your expert consultant, anywhere, anytime.
+  <p>📖 The world's professional best practices — your expert consultant, anywhere, anytime.</p>
 
-[![GitHub Stars](https://img.shields.io/github/stars/jeffreytse/grimoire?style=social)](https://github.com/jeffreytse/grimoire)
-[![Contributors](https://img.shields.io/github/contributors/jeffreytse/grimoire)](https://github.com/jeffreytse/grimoire/graphs/contributors)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
-[![Works with](https://img.shields.io/badge/works%20with-Claude%20·%20Codex%20·%20Cursor%20·%20Gemini%20·%20OpenCode-blue)](#agent-support)
-[![Skill Validation](https://github.com/jeffreytse/grimoire/actions/workflows/validate.yml/badge.svg)](https://github.com/jeffreytse/grimoire/actions/workflows/validate.yml)
+  <br><h1>📖 Grimoire 📖</h1>
 
-A lawyer charges $500/hr. A doctor charges $300 per visit. A financial advisor, a software architect, a structural engineer — each expert is expensive, scarce, and unavailable at 2am when you need them.
+</div>
 
-grimoire encodes what they know: the professional best practices of every field, adopted by top-tier institutions, with cited evidence. Install once. Your expert consultant in every discipline — available anywhere, anytime, for life.
+<h4 align="center">
+  Multi-domain skill collection for <a href="#-agent-support">AI assistants</a>.
+</h4>
 
-## Philosophy
+<p align="center">
+  <a href="https://github.com/jeffreytse/grimoire/actions/workflows/validate.yml">
+    <img src="https://github.com/jeffreytse/grimoire/actions/workflows/validate.yml/badge.svg"
+      alt="Skill Validation" />
+  </a>
 
-Grimoire encodes the world's best practitioners' actual methods — proven at scale, cited, and actionable. Every skill is a verb you can use right now. Built by anyone who has mastered their craft. Free, open source, for every field, forever.
+  <a href="https://github.com/sponsors/jeffreytse">
+    <img src="https://img.shields.io/static/v1?label=sponsor&message=%E2%9D%A4&logo=GitHub&link=&color=greygreen"
+      alt="Donate (GitHub Sponsor)" />
+  </a>
 
-- **The world's best practices belong to everyone.**
-- **Skills are verbs.**
-- **Every claim must be proven.**
-- **Consensus is the floor.**
-- **Anyone who has mastered their craft can contribute.**
-- **The skill outlasts the AI.**
+  <a href="https://github.com/jeffreytse/zsh-vi-mode/releases">
+    <img src="https://img.shields.io/github/v/release/jeffreytse/grimoire?color=brightgreen"
+      alt="Release Version" />
+  </a>
+
+  <a href="https://github.com/jeffreytse/grimoire/graphs/contributors">
+    <img src="https://img.shields.io/github/contributors/jeffreytse/grimoire"
+      alt="Contributors" />
+  </a>
+
+  <a href="./LICENSE">
+    <img src="https://img.shields.io/badge/License-MIT-yellow.svg"
+      alt="License: MIT" />
+  </a>
+
+  <a href="https://liberapay.com/jeffreytse">
+    <img src="http://img.shields.io/liberapay/goal/jeffreytse.svg?logo=liberapay"
+      alt="Donate (Liberapay)" />
+  </a>
+
+  <a href="https://patreon.com/jeffreytse">
+    <img src="https://img.shields.io/badge/support-patreon-F96854.svg?style=flat-square"
+      alt="Donate (Patreon)" />
+  </a>
+
+  <a href="https://ko-fi.com/jeffreytse">
+    <img height="20" src="https://www.ko-fi.com/img/githubbutton_sm.svg"
+      alt="Donate (Ko-fi)" />
+  </a>
+
+  <a href="#-agent-support">
+    <img src="https://img.shields.io/badge/works%20with-Claude%20%C2%B7%20Codex%20%C2%B7%20Cursor%20%C2%B7%20Gemini%20%C2%B7%20OpenCode-blue"
+      alt="Works with" />
+  </a>
+</p>
+
+<div align="center">
+  <h4>
+    <a href="#-why-grimoire">Why</a> |
+    <a href="#-what-a-skill-looks-like">Features</a> |
+    <a href="#%EF%B8%8F-install">Install</a> |
+    <a href="#%EF%B8%8F-domains">Domains</a> |
+    <a href="#-contributing">Contributing</a> |
+    <a href="#-license">License</a>
+  </h4>
+</div>
+
+<div align="center">
+  <sub>Built with ❤︎ by
+  <a href="https://jeffreytse.net">jeffreytse</a> and
+  <a href="https://github.com/jeffreytse/grimoire/graphs/contributors">contributors</a>
+  </sub>
+</div>
+<br>
+
+## 🤔 Why Grimoire?
+
+> The world's knowledge is in your AI. The world's practice is not.
+
+AI assistants have ingested every textbook, every paper, every article ever written. They
+understand fields. They do not practice them. Practice is what happens after 10,000 hours.
+Practice is what a senior surgeon does without thinking. Practice is what a staff engineer
+knows not to do. Practice is what grimoire encodes.
+
+- 🌍 **The world's best practices belong to everyone.** A McKinsey engagement costs $1M. A senior lawyer bills $800/hr. A structural engineer isn't available at 2am. The practices they follow — proven at the highest levels — are not proprietary. They belong to the world. Grimoire makes them free.
+
+- ⚡ **Skills are verbs.** Not descriptions of what experts know — the exact steps they take, in the exact situation they face, proven at scale. If you can't act on it in the next five minutes, it isn't a skill.
+
+- 🔬 **Every claim must be proven.** One skill. One concept. Adopted by most top-tier institutions in the field, with measurable impact and a named source. If you can't prove it, you can't ship it.
+
+- 🏔️ **Consensus is the floor.** If the world's best professionals are split, grimoire acknowledges the debate — and encodes the majority position. When there is no consensus, there is no best practice to ship.
+
+- 🤝 **Anyone who has mastered their craft can contribute.** A nurse. A jazz musician. A securities lawyer. A structural engineer. Grimoire is not a developer project. It is a project for everyone who has spent 10,000 hours in a field and has something to say about how it's really done.
+
+- ♾️ **The skill outlasts the AI.** Plain Markdown. No lock-in. No proprietary format. These skills will outlive every AI assistant currently running.
 
 → [Read the full philosophy](./PHILOSOPHY.md)
 
 ---
 
-## What a skill looks like
+## ✨ What a Skill Looks Like
 
 ```
 User: /propose-conventional-commit
@@ -48,7 +125,7 @@ Skill source: `skills/engineering/development/skills/propose-conventional-commit
 
 ---
 
-## Or describe your situation
+## 🎯 Or Describe Your Situation
 
 You don't need to know which skill applies. Describe the problem:
 
@@ -78,7 +155,7 @@ or tells you exactly what to install if the skill isn't in your library yet.
 
 ---
 
-## Install
+## ⚒️ Install
 
 **All skills (Claude Code):**
 
@@ -116,7 +193,7 @@ curl -fsSL https://raw.githubusercontent.com/jeffreytse/grimoire/main/scripts/in
 
 ---
 
-## Featured skills
+## 🌟 Featured Skills
 
 | Skill | Domain | Source methodology | Verified |
 |-------|--------|--------------------|----------|
@@ -128,7 +205,7 @@ curl -fsSL https://raw.githubusercontent.com/jeffreytse/grimoire/main/scripts/in
 
 ---
 
-## The Grimoire Skill Standard
+## 📐 The Grimoire Skill Standard
 
 grimoire maintains an open standard for AI agent skill quality — freely adoptable by any skill library.
 
@@ -148,7 +225,7 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) to submit a skill.
 
 ---
 
-## Domains
+## 🗺️ Domains
 
 grimoire is a framework + reference skills. The domain structure is ready — contribute to fill your domain.
 
@@ -184,7 +261,7 @@ grimoire is a framework + reference skills. The domain structure is ready — co
 
 ---
 
-## Agent support
+## 🤖 Agent Support
 
 | Agent | Plugin install | Script install |
 | ----- | -------------- | -------------- |
@@ -196,7 +273,7 @@ grimoire is a framework + reference skills. The domain structure is ready — co
 
 ---
 
-## Contributing
+## 🤝 Contributing
 
 **grimoire has 32 skills. It needs 500. Pick a domain.**
 
@@ -216,6 +293,6 @@ The meta skills guide the full contribution workflow:
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md) for the full standard and [GOVERNANCE.md](./GOVERNANCE.md) for how the project and standard evolve.
 
-## License
+## 📄 License
 
-MIT
+This project is licensed under the [MIT license](https://opensource.org/licenses/mit-license.php) © Jeffrey Tse.
