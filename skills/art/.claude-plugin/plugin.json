@@ -1,0 +1,16 @@
+{
+  "name": "grimoire-art",
+  "description": "Visual art skills: painting, drawing, illustration, composition, color theory, digital art.",
+  "version": "0.1.0",
+  "author": { "name": "Jeffrey Tse", "email": "jeffreytse.mail@gmail.com" },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "skills": [
+    "./drawing/skills",
+    "./painting/skills",
+    "./digital-art/skills",
+    "./illustration/skills",
+    "./color-theory/skills"
+  ]
+}

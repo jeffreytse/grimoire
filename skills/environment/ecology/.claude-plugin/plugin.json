@@ -1,0 +1,10 @@
+{
+  "name": "grimoire-environment-ecology",
+  "description": "Ecology skills: ecosystems, biodiversity, conservation biology, wildlife, habitat protection, species.",
+  "version": "0.1.0",
+  "author": { "name": "Jeffrey Tse", "email": "jeffreytse.mail@gmail.com" },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "skills": "./skills"
+}

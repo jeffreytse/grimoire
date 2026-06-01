@@ -1,0 +1,16 @@
+{
+  "name": "grimoire-psychology",
+  "description": "Psychology skills: behavioral science, cognitive biases, CBT, communication patterns, persuasion, mental models.",
+  "version": "0.1.0",
+  "author": { "name": "Jeffrey Tse", "email": "jeffreytse.mail@gmail.com" },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "skills": [
+    "./cognitive/skills",
+    "./behavioral/skills",
+    "./social/skills",
+    "./clinical/skills",
+    "./positive/skills"
+  ]
+}

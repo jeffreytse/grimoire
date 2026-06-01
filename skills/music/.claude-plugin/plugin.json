@@ -1,0 +1,19 @@
+{
+  "name": "grimoire-music",
+  "description": "Music skills: mixing, production, composition, arrangement, and recording.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "skills": [
+    "./composition/skills",
+    "./production/skills",
+    "./mixing/skills",
+    "./theory/skills",
+    "./performance/skills"
+  ]
+}

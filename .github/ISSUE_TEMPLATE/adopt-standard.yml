@@ -1,0 +1,41 @@
+name: Adopt the Standard
+description: Declare your project as a Grimoire Skill Standard adopter
+labels: ["adopter"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Adopters are listed in [ADOPTERS.md](../../ADOPTERS.md). See [STANDARD.md § Adopting This Standard](../../STANDARD.md#adopting-this-standard) for criteria.
+  - type: input
+    id: project
+    attributes:
+      label: Project name and URL
+      placeholder: "my-skill-library — https://github.com/org/my-skill-library"
+    validations:
+      required: true
+  - type: input
+    id: skills-count
+    attributes:
+      label: Approximate number of skills
+      placeholder: "e.g. 12"
+    validations:
+      required: true
+  - type: input
+    id: validator
+    attributes:
+      label: Validator used
+      description: "validate-skill.sh (grimoire reference) or your own conformant implementation"
+      placeholder: "scripts/validate-skill.sh (grimoire reference)"
+    validations:
+      required: true
+  - type: checkboxes
+    id: compliance
+    attributes:
+      label: Compliance declaration
+      options:
+        - label: "My contributing guide references the Grimoire Skill Standard v1.0"
+          required: true
+        - label: "All skills pass the validator (0 errors)"
+          required: true
+        - label: "I use the Review Checklist from STANDARD.md to gate contributions"
+          required: true

@@ -1,0 +1,16 @@
+{
+  "name": "grimoire-pets",
+  "description": "Pets skills: pet care, training, behavior, nutrition, veterinary basics, breed guides.",
+  "version": "0.1.0",
+  "author": { "name": "Jeffrey Tse", "email": "jeffreytse.mail@gmail.com" },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "skills": [
+    "./dogs/skills",
+    "./cats/skills",
+    "./training/skills",
+    "./nutrition/skills",
+    "./health/skills"
+  ]
+}

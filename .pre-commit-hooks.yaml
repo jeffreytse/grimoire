@@ -1,0 +1,7 @@
+- id: validate-skill
+  name: Grimoire Skill Validator
+  description: Validates SKILL.md files against the Grimoire Skill Standard v1.0
+  language: script
+  entry: scripts/validate-skill.sh
+  files: 'SKILL\.md$'
+  pass_filenames: true

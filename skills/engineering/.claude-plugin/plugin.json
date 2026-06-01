@@ -1,0 +1,28 @@
+{
+  "name": "grimoire-engineering",
+  "description": "Engineering skills: development, frontend, architecture, testing, reliability, DevOps, cloud, networking, security, data, AI, hardware, mobile, performance, project management, product, and documentation.",
+  "version": "0.1.0",
+  "author": { "name": "Jeffrey Tse", "email": "jeffreytse.mail@gmail.com" },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "skills": [
+    "./development/skills",
+    "./architecture/skills",
+    "./testing/skills",
+    "./reliability/skills",
+    "./devops/skills",
+    "./security/skills",
+    "./data/skills",
+    "./ai/skills",
+    "./hardware/skills",
+    "./mobile/skills",
+    "./performance/skills",
+    "./project-management/skills",
+    "./product/skills",
+    "./documentation/skills",
+    "./networking/skills",
+    "./cloud/skills",
+    "./frontend/skills"
+  ]
+}

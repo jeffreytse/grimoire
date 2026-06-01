@@ -1,0 +1,18 @@
+{
+  "name": "grimoire-photography",
+  "description": "Photography skills: composition, exposure, lighting, editing, and visual storytelling.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "skills": [
+    "./composition/skills",
+    "./lighting/skills",
+    "./editing/skills",
+    "./genres/skills"
+  ]
+}

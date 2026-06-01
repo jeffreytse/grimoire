@@ -1,0 +1,16 @@
+{
+  "name": "grimoire-fashion",
+  "description": "Fashion skills: personal styling, wardrobe building, clothing design, color coordination, trend analysis.",
+  "version": "0.1.0",
+  "author": { "name": "Jeffrey Tse", "email": "jeffreytse.mail@gmail.com" },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "skills": [
+    "./styling/skills",
+    "./wardrobe/skills",
+    "./design/skills",
+    "./sustainability/skills",
+    "./accessories/skills"
+  ]
+}

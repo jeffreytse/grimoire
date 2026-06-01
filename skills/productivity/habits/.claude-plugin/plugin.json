@@ -1,0 +1,10 @@
+{
+  "name": "grimoire-productivity-habits",
+  "description": "Habit skills: habit formation, habit stacking, systems design, routines, behavior design, streak building.",
+  "version": "0.1.0",
+  "author": { "name": "Jeffrey Tse", "email": "jeffreytse.mail@gmail.com" },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "skills": "./skills"
+}

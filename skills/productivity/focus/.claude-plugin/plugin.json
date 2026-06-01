@@ -1,0 +1,10 @@
+{
+  "name": "grimoire-productivity-focus",
+  "description": "Focus skills: deep work, attention management, distraction elimination, flow state, monotasking, environment.",
+  "version": "0.1.0",
+  "author": { "name": "Jeffrey Tse", "email": "jeffreytse.mail@gmail.com" },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "skills": "./skills"
+}

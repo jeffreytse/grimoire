@@ -1,0 +1,67 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/jeffreytse/grimoire/blob/main/schema/skill.schema.json",
+  "title": "Grimoire Skill Frontmatter",
+  "description": "Grimoire Skill Standard v1.0 — frontmatter validation schema",
+  "type": "object",
+  "required": ["name", "description", "source", "tags"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "maxLength": 50,
+      "pattern": "^[a-z][a-z0-9]*(-[a-z][a-z0-9]*)+$",
+      "description": "Verb-first kebab-case skill name, ≤50 chars"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 500,
+      "pattern": "^Use when ",
+      "description": "Triggering conditions only — must start with 'Use when'"
+    },
+    "source": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Institution, standard body, or top-tier adopters"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9-]*$"
+      },
+      "minItems": 3,
+      "maxItems": 8,
+      "description": "4-axis tags: problem, tool/method, role/context, outcome"
+    },
+    "emerging": {
+      "type": "boolean",
+      "description": "true if not yet majority-adopted; 2-year promotion window"
+    },
+    "stable": {
+      "type": "boolean",
+      "description": "true if 5+ years uncontested, rarely changes"
+    },
+    "deprecated": {
+      "type": "boolean",
+      "description": "true if superseded or retired"
+    },
+    "deprecated_by": {
+      "type": "string",
+      "description": "Successor skill name, or 'none' if no successor"
+    },
+    "verified": {
+      "type": "boolean",
+      "description": "true if attributed, tested in production, and maintainer-reviewed"
+    }
+  },
+  "additionalProperties": false,
+  "if": {
+    "properties": {
+      "deprecated": { "const": true }
+    },
+    "required": ["deprecated"]
+  },
+  "then": {
+    "required": ["deprecated_by"]
+  }
+}

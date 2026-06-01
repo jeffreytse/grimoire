@@ -1,0 +1,13 @@
+{
+  "name": "grimoire-engineering-development",
+  "description": "Software development skills: coding, implementation, code review, refactoring, debugging.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "skills": "./skills"
+}

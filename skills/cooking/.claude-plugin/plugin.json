@@ -1,0 +1,16 @@
+{
+  "name": "grimoire-cooking",
+  "description": "Cooking skills: techniques, recipes, flavor pairing, nutrition, kitchen management, gastronomy.",
+  "version": "0.1.0",
+  "author": { "name": "Jeffrey Tse", "email": "jeffreytse.mail@gmail.com" },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "skills": [
+    "./techniques/skills",
+    "./baking/skills",
+    "./flavor/skills",
+    "./nutrition/skills",
+    "./world-cuisine/skills"
+  ]
+}

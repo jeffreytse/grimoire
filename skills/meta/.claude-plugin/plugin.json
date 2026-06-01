@@ -1,0 +1,15 @@
+{
+  "name": "meta",
+  "description": "Grimoire meta-skills: tools for searching, reviewing, and contributing to the grimoire skill library itself.",
+  "skills": [
+    "./skills/review-skill/SKILL.md",
+    "./skills/write-skill/SKILL.md",
+    "./skills/audit-domain/SKILL.md",
+    "./skills/deprecate-skill/SKILL.md",
+    "./skills/suggest-practice/SKILL.md",
+    "./skills/plan-solution/SKILL.md",
+    "./skills/review-practice-fit/SKILL.md",
+    "./skills/revise-skill/SKILL.md",
+    "./skills/design-domain/SKILL.md"
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "name": "grimoire-productivity-time-management",
+  "description": "Time management skills: scheduling, prioritization frameworks, GTD, time blocking, Pomodoro, batching.",
+  "version": "0.1.0",
+  "author": { "name": "Jeffrey Tse", "email": "jeffreytse.mail@gmail.com" },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "skills": "./skills"
+}

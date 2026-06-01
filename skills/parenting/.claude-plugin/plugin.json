@@ -1,0 +1,15 @@
+{
+  "name": "grimoire-parenting",
+  "description": "Parenting skills: child development, activities, discipline strategies, school prep, family routines.",
+  "version": "0.1.0",
+  "author": { "name": "Jeffrey Tse", "email": "jeffreytse.mail@gmail.com" },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "skills": [
+    "./infant/skills",
+    "./toddler/skills",
+    "./school-age/skills",
+    "./teen/skills"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "name": "grimoire-finance",
+  "description": "Finance skills: investing, personal finance, accounting, financial modeling, budgeting, economics.",
+  "version": "0.1.0",
+  "author": { "name": "Jeffrey Tse", "email": "jeffreytse.mail@gmail.com" },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "skills": [
+    "./personal-finance/skills",
+    "./investing/skills",
+    "./accounting/skills",
+    "./real-estate/skills",
+    "./corporate/skills"
+  ]
+}

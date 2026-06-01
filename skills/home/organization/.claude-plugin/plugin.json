@@ -1,0 +1,10 @@
+{
+  "name": "grimoire-home-organization",
+  "description": "Home organization skills: decluttering, storage systems, minimalism, KonMari method, space optimization.",
+  "version": "0.1.0",
+  "author": { "name": "Jeffrey Tse", "email": "jeffreytse.mail@gmail.com" },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "skills": "./skills"
+}

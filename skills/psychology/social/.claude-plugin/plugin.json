@@ -1,0 +1,10 @@
+{
+  "name": "grimoire-psychology-social",
+  "description": "Social psychology skills: group dynamics, influence, persuasion, social cognition, conformity, interpersonal skills.",
+  "version": "0.1.0",
+  "author": { "name": "Jeffrey Tse", "email": "jeffreytse.mail@gmail.com" },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "skills": "./skills"
+}

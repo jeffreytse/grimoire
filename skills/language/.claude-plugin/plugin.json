@@ -1,0 +1,15 @@
+{
+  "name": "grimoire-language",
+  "description": "Language skills: language learning, linguistics, translation, vocabulary, grammar, fluency.",
+  "version": "0.1.0",
+  "author": { "name": "Jeffrey Tse", "email": "jeffreytse.mail@gmail.com" },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "skills": [
+    "./learning/skills",
+    "./linguistics/skills",
+    "./translation/skills",
+    "./communication/skills"
+  ]
+}
