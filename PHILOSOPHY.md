@@ -16,17 +16,47 @@ A McKinsey engagement costs $1M. A senior lawyer bills $800/hr. A structural eng
 
 Not descriptions of what experts know — the exact steps they take, in the exact situation they face, proven at scale. If you can't act on it in the next five minutes, it isn't a skill.
 
+> **Story:** A junior engineer is assigned their first code review. They Google "how to review code." They get a Medium post: *be constructive, focus on the big picture, be kind.* They read it twice. They agonize for 45 minutes, leave vague comments like "this could be cleaner," and ship nothing actionable. The author doesn't know what to fix. The reviewer feels like they failed.
+>
+> Next time, they open the `review-pull-request` skill. Step 1: check security boundaries — 5 minutes. Step 2: look for N+1 queries — 5 minutes. Step 3: flag naming inconsistencies — 5 minutes. Done in 20. Three specific findings, each with a line number and a fix.
+>
+> That's the difference between knowledge and practice.
+
 ## Every claim must be proven.
 
 One skill. One concept. Adopted by most top-tier institutions in the field, with measurable impact and a named source. If you can't prove it, you can't ship it.
+
+> **Story:** A contributor submits a skill: *always wrap database calls in retry logic with exponential backoff.* It sounds right. Every experienced engineer nods.
+>
+> The reviewer asks: which institutions mandate this? With measurable outcomes? The contributor cites their own startup. Rejected — one team's convention isn't evidence.
+>
+> Three months later, they return. AWS SDK implements it by default. The Google SRE workbook dedicates a chapter to it. Netflix published failure-rate data showing a 40% reduction in cascading timeouts after Hystrix adopted it. The skill ships.
+>
+> The wait wasn't bureaucracy. It was the quality filter doing its job.
 
 ## Consensus is the floor.
 
 If the world's best professionals are split, grimoire acknowledges the debate — and encodes the majority position. When there is no consensus, there is no best practice to ship.
 
+> **Story:** A contributor submits a skill: *always use a monorepo.* Google does it. Reasonable.
+>
+> The reviewer checks the other side. Amazon runs thousands of microrepos. Meta started monorepo, partially reversed. The academic literature is inconclusive. The contributor wants grimoire to pick a side. Grimoire can't — the world's best practitioners are genuinely split.
+>
+> The skill gets held. Not rejected — held, pending evidence.
+>
+> Meanwhile, a different skill ships: `migrate-to-monorepo` — the exact steps for teams who have *already decided* to switch. A verb, not a verdict. The debate lives in the discussion thread. The practice waits for the evidence.
+
 ## Anyone who has mastered their craft can contribute.
 
 A nurse. A jazz musician. A securities lawyer. A structural engineer. Grimoire is not a developer project. It is a project for everyone who has spent 10,000 hours in a field and has something to say about how it's really done.
+
+> **Story:** A travel ICU nurse — 14 years, six hospitals, three countries — has handed off critically ill patients at shift change hundreds of times. She knows the exact sequence: vitals trend first, then pending labs, then family status, then the one thing most likely to go wrong before morning. She has watched nurses skip steps and patients deteriorate. She has the practice cold.
+>
+> No developer has this knowledge. No paper captures her exact sequence. The AI knows the theory of handoffs. It does not know what she knows.
+>
+> She opens a PR. Her first GitHub commit. The skill she writes — `conduct-icu-shift-handoff` — is more useful to 50,000 ICU nurses than anything in the engineering subdomain.
+>
+> Grimoire is for her.
 
 ## The skill outlasts the AI.
 
