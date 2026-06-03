@@ -58,11 +58,6 @@
     <img src="https://img.shields.io/badge/works%20with-Claude%20%C2%B7%20Codex%20%C2%B7%20Cursor%20%C2%B7%20Gemini%20%C2%B7%20OpenCode-blue"
       alt="Works with" />
   </a>
-
-  <a href="https://github.com/jeffreytse/grimoire/stargazers">
-    <img src="https://img.shields.io/github/stars/jeffreytse/grimoire?style=social"
-      alt="GitHub Stars" />
-  </a>
 </p>
 
 <div align="center">
@@ -83,6 +78,16 @@
   </sub>
 </div>
 <br>
+
+## 🎬 Demo
+
+> "I want to retire early. Where do I even start?" — three grimoire skills. One answer.
+
+![grimoire — FIRE number, budget optimisation, portfolio allocation in 30 seconds](./docs/demo.gif)
+
+*`/calculate-fire-number` → `/design-budget` → `/design-portfolio-allocation` — each output feeds the next*
+
+---
 
 ## 🤔 Why Grimoire?
 
