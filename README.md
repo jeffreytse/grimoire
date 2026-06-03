@@ -58,6 +58,11 @@
     <img src="https://img.shields.io/badge/works%20with-Claude%20%C2%B7%20Codex%20%C2%B7%20Cursor%20%C2%B7%20Gemini%20%C2%B7%20OpenCode-blue"
       alt="Works with" />
   </a>
+
+  <a href="https://github.com/jeffreytse/grimoire/stargazers">
+    <img src="https://img.shields.io/github/stars/jeffreytse/grimoire?style=social"
+      alt="GitHub Stars" />
+  </a>
 </p>
 
 <div align="center">
@@ -106,6 +111,8 @@ knows not to do. Practice is what grimoire encodes.
 
 ## ✨ What a Skill Looks Like
 
+**Engineering** — propose a commit message from staged diff:
+
 ```
 User: /propose-conventional-commit
 
@@ -119,35 +126,86 @@ Claude: Inspecting staged changes...
   Approve? [y/n]
 ```
 
-The skill runs `git diff --cached`, extracts scope and intent, drafts a Conventional Commits message, and waits for your approval. No freeform output, no guessing.
+**Law** — audit a SaaS contract before signing:
 
-Skill source: `skills/engineering/development/skills/propose-conventional-commit/`
+```
+User: /review-saas-contract
+
+Claude: Red flags found.
+
+  🔴 CRITICAL  Liability cap is $500 — your contract value is $240,000
+  🔴 CRITICAL  No data processing agreement — GDPR Art.28 requires one
+               before processing any EU customer data
+  🟡 WARNING   Auto-renewal clause: 90-day cancellation window in §14.3
+  🟡 WARNING   IP ownership of custom integrations is unassigned
+  ✓  PASS      SLA 99.9% with defined service credits
+
+  Do not sign. Renegotiate: liability cap, DPA, IP clause.
+  Source: ABA model SaaS agreements
+```
+
+**Finance** — calculate how much you need to retire:
+
+```
+User: /calculate-fire-number
+
+Claude: Applying Trinity Study model (Bengen 1994, 95% 30-year success rate)
+
+  Annual expenses:       $60,000
+  Safe withdrawal rate:  4.0%
+  ─────────────────────────────
+  FIRE number:           $1,500,000
+
+  At $4,000/month invested + 7% real return → retire in 20.4 years
+  Cut annual spend by $12,000               → retire in 16.8 years
+
+  Next: /design-portfolio-allocation
+```
+
+**Health** — design a training program:
+
+```
+User: /design-training-program
+
+Claude: Hypertrophy block — intermediate, 4 days/week
+
+  UPPER (Mon/Thu)   Bench 4×8 · Row 4×8 · OHP 3×10 · Face pull 3×15
+  LOWER (Tue/Fri)   Squat 4×6 · RDL 3×8 · Leg press 3×12
+
+  Progressive overload: +2.5 kg when all reps completed clean
+  Week 5: deload — 40% volume, same intensity
+
+  Source: NSCA CSCS + Israetel volume landmarks (2019)
+```
+
+Every skill is structured: triggering condition, verified source, numbered steps, no freeform guessing.
 
 ---
 
 ## 🎯 Or Describe Your Situation
 
-You don't need to know which skill applies. Describe the problem:
+You don't need to know which skill applies. Just describe the problem:
 
 ```
-User: My PRs always get rejected in code review.
+User: I signed a vendor contract and now they're saying they own my data.
 
-Claude: Situation matches: review-pull-request (engineering/development)
-        Not installed — get it with:
-        /plugins add github:jeffreytse/grimoire/skills/engineering/development
+Claude: Situation matches: review-saas-contract (law/contracts)
+        Applying review-practice-fit...
+
+        🔴 CRITICAL Data ownership clause absent — defaults to vendor jurisdiction
+        → Escalate to legal counsel immediately. Request amendment to §8.2.
 ```
 
 ```
-User: I have an existing API design — is it following best practices?
+User: My team keeps missing sprint goals and I don't know why.
 
-Claude: You have an existing solution. Applying review-practice-fit...
+Claude: Situation matches: plan-retrospective (engineering/project-management)
 
-        ### design-api-architecture — PARTIAL
-        ✓ REST endpoints, stateless auth
-        ✗ No versioning strategy, no pagination standard
-        → Fix: Add /v1/ prefix and cursor-based pagination before next deploy
-
-        🔴 Critical: No rate limiting → DoS exposure
+        Run a blameless retrospective (Amazon format):
+        1. Timeline reconstruction — what actually happened
+        2. Five whys — surface root causes, not symptoms
+        3. Action items with owners and deadlines
+        → /plan-retrospective to run the session now
 ```
 
 `suggest-practice` auto-classifies any situation, routes to the matching skill,
@@ -199,9 +257,14 @@ curl -fsSL https://raw.githubusercontent.com/jeffreytse/grimoire/main/scripts/in
 |-------|--------|--------------------|----------|
 | [`propose-conventional-commit`](./skills/engineering/development/skills/propose-conventional-commit/) | engineering/development | Angular/Google Conventional Commits | ✓ |
 | [`suggest-practice`](./skills/meta/skills/suggest-practice/) | meta | grimoire meta-skill | ✓ |
-| [`plan-solution`](./skills/meta/skills/plan-solution/) | meta | McKinsey MECE decomposition | ✓ |
+| [`design-slo`](./skills/engineering/reliability/skills/design-slo/) | engineering/reliability | Google SRE Book | ✓ |
 | [`review-pull-request`](./skills/engineering/development/skills/review-pull-request/) | engineering/development | Google Engineering Practices | ✓ |
 | [`write-post-mortem`](./skills/engineering/devops/skills/write-post-mortem/) | engineering/devops | Amazon blameless post-mortem | ✓ |
+| [`audit-gdpr-compliance`](./skills/law/privacy/skills/audit-gdpr-compliance/) | law/privacy | GDPR / EDPB guidelines | ✓ |
+| [`calculate-dcf`](./skills/finance/investing/skills/calculate-dcf/) | finance/investing | CFA Institute / Damodaran | ✓ |
+| [`design-training-program`](./skills/health/fitness/skills/design-training-program/) | health/fitness | NSCA CSCS curriculum | ✓ |
+| [`apply-first-principles`](./skills/productivity/focus/skills/apply-first-principles/) | productivity/focus | Aristotle / Descartes / SpaceX | ✓ |
+| [`design-go-to-market`](./skills/business/strategy/skills/design-go-to-market/) | business/strategy | Moore "Crossing the Chasm" | ✓ |
 
 ---
 
@@ -275,7 +338,7 @@ grimoire is a framework + reference skills. The domain structure is ready — co
 
 ## 🤝 Contributing
 
-**grimoire has 32 skills. It needs 500. Pick a domain.**
+**grimoire has 152 skills. It needs 500. Pick a domain.**
 
 Every domain has empty sub-domains waiting for skills. If you know a field — engineering, law, finance, music, cooking, anything — add the practices you've seen work at the highest level.
 
@@ -292,6 +355,23 @@ The meta skills guide the full contribution workflow:
 | Retire an outdated skill | [`deprecate-skill`](./skills/meta/skills/deprecate-skill/) |
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md) for the full standard and [GOVERNANCE.md](./GOVERNANCE.md) for how the project and standard evolve.
+
+## ❤️ Support
+
+grimoire is free. It replaces $500/hr lawyers, $300 doctor visits, and $1M McKinsey
+engagements — at zero cost, forever.
+
+If it saved you time, money, or a bad decision:
+
+- **[⭐ Star this repo](https://github.com/jeffreytse/grimoire)** — takes 2 seconds, helps thousands of people find it
+- **[💖 Sponsor on GitHub](https://github.com/sponsors/jeffreytse)** — keeps the maintainer funded to add more skills across more domains
+- **[☕ Ko-fi](https://ko-fi.com/jeffreytse)** · **[Patreon](https://patreon.com/jeffreytse)** · **[Liberapay](https://liberapay.com/jeffreytse)** — one-time or recurring
+
+Every star makes grimoire more visible. Every sponsorship funds one more domain.
+
+[![Star History Chart](https://api.star-history.com/svg?repos=jeffreytse/grimoire&type=Date)](https://star-history.com/#jeffreytse/grimoire&Date)
+
+---
 
 ## 📄 License
 
