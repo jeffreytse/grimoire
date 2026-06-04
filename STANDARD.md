@@ -309,6 +309,7 @@ Qualifying sources by domain:
 - One company's internal convention not adopted elsewhere
 - Emerging practices not yet proven at scale
 - Abstract philosophies that cannot be expressed as actionable steps
+- Large or popular community adoption without top-tier endorsement — community size is not a quality signal
 
 #### Visionary practitioner exception
 
@@ -378,6 +379,44 @@ Emerging skills **must** carry `emerging: true` in frontmatter and a status note
 ✅ "Structured prompt templates (XML tags) for LLM instructions" — adopted at Anthropic, OpenAI, Google DeepMind; early evidence of output reliability improvement
 ✅ "Continuous deployment with feature flags" — adopted at Netflix, Etsy, GitHub before it became mainstream; reduced deployment risk demonstrated in early case studies
 ```
+
+#### Community standard path
+
+A practice also qualifies if it is codified by a **recognized standards body** and
+meets **all three**:
+
+1. **Body is authoritative in its domain** — an established international, national,
+   or professional standards organization with a formal review process (see approved
+   bodies below)
+2. **Standard is current** — not superseded, withdrawn, or in draft-only status
+3. **Specific and actionable** — a concrete requirement or procedure from the standard,
+   not a general goal or aspiration
+
+**Approved bodies by domain:**
+
+| Domain | Bodies |
+|--------|--------|
+| Security | NIST, OWASP, ISO/IEC 27000-series, CIS |
+| Networking / Web | IETF (RFCs), W3C, IEEE |
+| Accessibility | W3C WCAG |
+| Engineering | IEEE, ANSI, ISO |
+| Health / Medicine | WHO, NIH, CDC, ACSM, NSCA |
+| Law | ABA, ISDA, NVCA model agreements |
+| Finance | CFA Institute, FASB, IFRS Foundation |
+| Psychology | APA, NICE guidelines |
+
+Bodies not in this table are allowed if they meet criterion 1 — but self-published
+"community standards" (GitHub orgs, individual blogs) are always rejected.
+
+**Source format for community standard practices:**
+```
+source: OWASP Top 10 (2021) — A03:2021 Injection
+source: NIST SP 800-53 Rev 5 — AC-2 Account Management
+source: W3C WCAG 2.2 — Success Criterion 1.4.3 Contrast (Minimum)
+source: IETF RFC 9110 — HTTP Semantics, Section 9.3.1
+```
+
+---
 
 ### 4. Specific over general
 
@@ -612,7 +651,7 @@ Before submitting a skill, verify:
 - [ ] Section explains why this approach over alternatives
 - [ ] Steps are concrete and immediately actionable
 - [ ] Scoped to one concept
-- [ ] Industry-proven — adopted by MOST top-tier companies or credentialed professionals (majority, not minority)
+- [ ] Industry-proven — passes at least one qualification path: (a) majority top-tier company/professional adoption, (b) visionary practitioner with verifiable outcomes, or (c) recognized standards body (NIST, OWASP, IETF, W3C, IEEE, WHO, ABA, etc.)
 - [ ] `tags` present with 3–8 tags covering all 4 axes: problem keyword, tool/method, role/context, outcome
 - [ ] `source` field present and cites credible institution or top-tier adopters
 - [ ] Practice has strong impact — not a marginal optimization
