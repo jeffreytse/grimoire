@@ -189,3 +189,9 @@ else
 fi
 
 echo "Done."
+
+echo ""
+echo "Note: Cursor and GitHub Copilot CLI require marketplace install (not handled by this script):"
+echo "  Cursor:  /add-plugin grimoire  (in Agent chat)"
+echo "  Copilot: copilot plugin install grimoire"
+echo "  See: https://github.com/jeffreytse/grimoire#-install"
