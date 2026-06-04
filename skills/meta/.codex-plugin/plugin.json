@@ -1,0 +1,41 @@
+{
+  "name": "meta",
+  "version": "1.0.0",
+  "description": "Grimoire meta-skills: tools for searching, reviewing, and contributing to the grimoire skill library itself.",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com",
+    "url": "https://github.com/jeffreytse"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": [
+    "./skills/review-skill/SKILL.md",
+    "./skills/write-skill/SKILL.md",
+    "./skills/audit-domain/SKILL.md",
+    "./skills/deprecate-skill/SKILL.md",
+    "./skills/suggest-practice/SKILL.md",
+    "./skills/plan-solution/SKILL.md",
+    "./skills/review-practice-fit/SKILL.md",
+    "./skills/revise-skill/SKILL.md",
+    "./skills/design-domain/SKILL.md"
+  ],
+  "interface": {
+    "displayName": "meta",
+    "shortDescription": "Grimoire meta-skills: tools for searching, reviewing, and contributing to the grimoire skill library itself.",
+    "developerName": "Jeffrey Tse",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/jeffreytse/grimoire"
+  }
+}

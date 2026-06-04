@@ -1,0 +1,26 @@
+{
+  "name": "grimoire-marketing",
+  "displayName": "grimoire-marketing",
+  "description": "Marketing skills: growth, SEO, content strategy, brand, social media, analytics, campaigns.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": [
+    "./seo/skills",
+    "./content/skills",
+    "./social-media/skills",
+    "./paid-ads/skills",
+    "./growth/skills",
+    "./analytics/skills"
+  ]
+}

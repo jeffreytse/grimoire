@@ -1,0 +1,37 @@
+{
+  "name": "grimoire-business",
+  "version": "1.0.0",
+  "description": "Business skills: strategy, operations, entrepreneurship, startups, leadership, management.",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com",
+    "url": "https://github.com/jeffreytse"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": [
+    "./strategy/skills",
+    "./operations/skills",
+    "./leadership/skills",
+    "./entrepreneurship/skills",
+    "./hr/skills"
+  ],
+  "interface": {
+    "displayName": "grimoire-business",
+    "shortDescription": "Business skills: strategy, operations, entrepreneurship, startups, leadership, management.",
+    "developerName": "Jeffrey Tse",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/jeffreytse/grimoire"
+  }
+}

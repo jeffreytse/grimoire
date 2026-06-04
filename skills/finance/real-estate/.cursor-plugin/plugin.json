@@ -1,0 +1,19 @@
+{
+  "name": "grimoire-finance-real-estate",
+  "displayName": "grimoire-finance-real-estate",
+  "description": "Real estate skills: property investment analysis, mortgages, rental income, REITs, due diligence, market analysis.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": "./skills"
+}

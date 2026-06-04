@@ -1,0 +1,37 @@
+{
+  "name": "grimoire-health",
+  "version": "1.0.0",
+  "description": "Health skills: fitness, nutrition, mental health, wellness, sleep, recovery, habit formation.",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com",
+    "url": "https://github.com/jeffreytse"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": [
+    "./fitness/skills",
+    "./nutrition/skills",
+    "./mental-health/skills",
+    "./sleep/skills",
+    "./medicine/skills"
+  ],
+  "interface": {
+    "displayName": "grimoire-health",
+    "shortDescription": "Health skills: fitness, nutrition, mental health, wellness, sleep, recovery, habit formation.",
+    "developerName": "Jeffrey Tse",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/jeffreytse/grimoire"
+  }
+}

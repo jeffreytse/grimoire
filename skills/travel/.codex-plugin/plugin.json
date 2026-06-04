@@ -1,0 +1,36 @@
+{
+  "name": "grimoire-travel",
+  "version": "1.0.0",
+  "description": "Travel skills: trip planning, itineraries, visa requirements, cultural etiquette, packing, budgeting.",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com",
+    "url": "https://github.com/jeffreytse"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": [
+    "./planning/skills",
+    "./budgeting/skills",
+    "./cultural/skills",
+    "./adventure/skills"
+  ],
+  "interface": {
+    "displayName": "grimoire-travel",
+    "shortDescription": "Travel skills: trip planning, itineraries, visa requirements, cultural etiquette, packing, budgeting.",
+    "developerName": "Jeffrey Tse",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/jeffreytse/grimoire"
+  }
+}

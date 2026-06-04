@@ -1,0 +1,37 @@
+{
+  "name": "grimoire-film",
+  "version": "1.0.0",
+  "description": "Film skills: cinematography, video production, direction, editing, screenwriting, sound design.",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com",
+    "url": "https://github.com/jeffreytse"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": [
+    "./cinematography/skills",
+    "./directing/skills",
+    "./editing/skills",
+    "./screenwriting/skills",
+    "./production/skills"
+  ],
+  "interface": {
+    "displayName": "grimoire-film",
+    "shortDescription": "Film skills: cinematography, video production, direction, editing, screenwriting, sound design.",
+    "developerName": "Jeffrey Tse",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/jeffreytse/grimoire"
+  }
+}

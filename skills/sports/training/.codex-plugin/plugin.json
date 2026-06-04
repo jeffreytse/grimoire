@@ -1,0 +1,31 @@
+{
+  "name": "grimoire-sports-training",
+  "version": "1.0.0",
+  "description": "Sports training skills: strength and conditioning, periodization, programming, athletic development, testing.",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com",
+    "url": "https://github.com/jeffreytse"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": "./skills",
+  "interface": {
+    "displayName": "grimoire-sports-training",
+    "shortDescription": "Sports training skills: strength and conditioning, periodization, programming, athletic development, testing.",
+    "developerName": "Jeffrey Tse",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/jeffreytse/grimoire"
+  }
+}

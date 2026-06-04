@@ -1,0 +1,31 @@
+{
+  "name": "grimoire-music-production",
+  "version": "1.0.0",
+  "description": "Music production skills: beat making, DAW workflow, sound design, sampling, mixing fundamentals, plugins.",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com",
+    "url": "https://github.com/jeffreytse"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": "./skills",
+  "interface": {
+    "displayName": "grimoire-music-production",
+    "shortDescription": "Music production skills: beat making, DAW workflow, sound design, sampling, mixing fundamentals, plugins.",
+    "developerName": "Jeffrey Tse",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/jeffreytse/grimoire"
+  }
+}

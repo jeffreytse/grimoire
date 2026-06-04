@@ -1,0 +1,19 @@
+{
+  "name": "grimoire-travel-cultural",
+  "displayName": "grimoire-travel-cultural",
+  "description": "Travel cultural skills: cultural etiquette, customs, local knowledge, respectful travel, language basics.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": "./skills"
+}

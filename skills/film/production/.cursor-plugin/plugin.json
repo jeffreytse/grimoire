@@ -1,0 +1,19 @@
+{
+  "name": "grimoire-film-production",
+  "displayName": "grimoire-film-production",
+  "description": "Film production skills: pre-production, budgeting, scheduling, crew management, location, logistics.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": "./skills"
+}

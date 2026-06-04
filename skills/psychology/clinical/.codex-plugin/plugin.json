@@ -1,0 +1,31 @@
+{
+  "name": "grimoire-psychology-clinical",
+  "version": "1.0.0",
+  "description": "Clinical psychology skills: therapy approaches, CBT, DBT, motivational interviewing, psychological assessment.",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com",
+    "url": "https://github.com/jeffreytse"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": "./skills",
+  "interface": {
+    "displayName": "grimoire-psychology-clinical",
+    "shortDescription": "Clinical psychology skills: therapy approaches, CBT, DBT, motivational interviewing, psychological assessment.",
+    "developerName": "Jeffrey Tse",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/jeffreytse/grimoire"
+  }
+}

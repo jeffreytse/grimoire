@@ -1,7 +1,7 @@
 {
   "name": "grimoire-automotive-buying",
   "description": "Car buying skills: new vs used evaluation, price negotiation, vehicle inspection, financing, dealer tactics.",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "author": { "name": "Jeffrey Tse", "email": "jeffreytse.mail@gmail.com" },
   "homepage": "https://github.com/jeffreytse/grimoire",
   "repository": "https://github.com/jeffreytse/grimoire",

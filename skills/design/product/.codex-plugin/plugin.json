@@ -1,0 +1,31 @@
+{
+  "name": "grimoire-design-product",
+  "version": "1.0.0",
+  "description": "Product design skills: industrial design, physical product design, form factor, ergonomics, materials, manufacturing.",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com",
+    "url": "https://github.com/jeffreytse"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": "./skills",
+  "interface": {
+    "displayName": "grimoire-design-product",
+    "shortDescription": "Product design skills: industrial design, physical product design, form factor, ergonomics, materials, manufacturing.",
+    "developerName": "Jeffrey Tse",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/jeffreytse/grimoire"
+  }
+}

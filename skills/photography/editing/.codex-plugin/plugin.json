@@ -1,0 +1,31 @@
+{
+  "name": "grimoire-photography-editing",
+  "version": "1.0.0",
+  "description": "Photography editing skills: post-processing workflow, Lightroom, Photoshop, color grading, retouching.",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com",
+    "url": "https://github.com/jeffreytse"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": "./skills",
+  "interface": {
+    "displayName": "grimoire-photography-editing",
+    "shortDescription": "Photography editing skills: post-processing workflow, Lightroom, Photoshop, color grading, retouching.",
+    "developerName": "Jeffrey Tse",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/jeffreytse/grimoire"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "name": "grimoire-law-employment",
+  "version": "1.0.0",
+  "description": "Employment law skills: labor law, HR compliance, workplace rights, discrimination, wrongful termination.",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com",
+    "url": "https://github.com/jeffreytse"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": "./skills",
+  "interface": {
+    "displayName": "grimoire-law-employment",
+    "shortDescription": "Employment law skills: labor law, HR compliance, workplace rights, discrimination, wrongful termination.",
+    "developerName": "Jeffrey Tse",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/jeffreytse/grimoire"
+  }
+}

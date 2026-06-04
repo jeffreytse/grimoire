@@ -1,0 +1,31 @@
+{
+  "name": "grimoire-travel-adventure",
+  "version": "1.0.0",
+  "description": "Adventure travel skills: hiking, backpacking, extreme travel, off-beaten-path, wilderness survival, gear.",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com",
+    "url": "https://github.com/jeffreytse"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": "./skills",
+  "interface": {
+    "displayName": "grimoire-travel-adventure",
+    "shortDescription": "Adventure travel skills: hiking, backpacking, extreme travel, off-beaten-path, wilderness survival, gear.",
+    "developerName": "Jeffrey Tse",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/jeffreytse/grimoire"
+  }
+}

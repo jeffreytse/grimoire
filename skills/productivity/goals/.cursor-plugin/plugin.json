@@ -1,0 +1,19 @@
+{
+  "name": "grimoire-productivity-goals",
+  "displayName": "grimoire-productivity-goals",
+  "description": "Goal setting skills: OKR methodology, vision setting, quarterly planning, milestone tracking, accountability.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": "./skills"
+}

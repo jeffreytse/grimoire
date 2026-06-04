@@ -1,0 +1,31 @@
+{
+  "name": "grimoire-design-ui-ux",
+  "version": "1.0.0",
+  "description": "UI/UX skills: user interface design, user experience, interaction design, usability, prototyping, design systems.",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com",
+    "url": "https://github.com/jeffreytse"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": "./skills",
+  "interface": {
+    "displayName": "grimoire-design-ui-ux",
+    "shortDescription": "UI/UX skills: user interface design, user experience, interaction design, usability, prototyping, design systems.",
+    "developerName": "Jeffrey Tse",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/jeffreytse/grimoire"
+  }
+}

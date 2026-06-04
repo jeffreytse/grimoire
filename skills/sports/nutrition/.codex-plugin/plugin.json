@@ -1,0 +1,31 @@
+{
+  "name": "grimoire-sports-nutrition",
+  "version": "1.0.0",
+  "description": "Sports nutrition skills: fueling strategies, supplementation, hydration, nutrient timing, recovery diet.",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com",
+    "url": "https://github.com/jeffreytse"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": "./skills",
+  "interface": {
+    "displayName": "grimoire-sports-nutrition",
+    "shortDescription": "Sports nutrition skills: fueling strategies, supplementation, hydration, nutrient timing, recovery diet.",
+    "developerName": "Jeffrey Tse",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/jeffreytse/grimoire"
+  }
+}

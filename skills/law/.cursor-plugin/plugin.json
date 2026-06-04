@@ -1,0 +1,25 @@
+{
+  "name": "grimoire-law",
+  "displayName": "grimoire-law",
+  "description": "Law skills: legal literacy, contracts, IP, compliance, regulatory, dispute resolution.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": [
+    "./contracts/skills",
+    "./ip/skills",
+    "./employment/skills",
+    "./privacy/skills",
+    "./corporate/skills"
+  ]
+}

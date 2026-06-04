@@ -1,0 +1,31 @@
+{
+  "name": "grimoire-cooking-baking",
+  "version": "1.0.0",
+  "description": "Baking skills: bread making, pastry, cakes, fermentation, gluten development, proofing, sourdough.",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com",
+    "url": "https://github.com/jeffreytse"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": "./skills",
+  "interface": {
+    "displayName": "grimoire-cooking-baking",
+    "shortDescription": "Baking skills: bread making, pastry, cakes, fermentation, gluten development, proofing, sourdough.",
+    "developerName": "Jeffrey Tse",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/jeffreytse/grimoire"
+  }
+}

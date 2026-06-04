@@ -2,7 +2,7 @@
   "name": "grimoire",
   "displayName": "grimoire",
   "description": "Every field's professional best practices — your expert consultant in engineering, medicine, law, finance, and more. Anywhere, anytime.",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "author": {
     "name": "Jeffrey Tse",
     "email": "jeffreytse.mail@gmail.com"

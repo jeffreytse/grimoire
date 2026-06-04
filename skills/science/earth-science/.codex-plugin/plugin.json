@@ -1,0 +1,31 @@
+{
+  "name": "grimoire-science-earth-science",
+  "version": "1.0.0",
+  "description": "Earth science skills: geology, meteorology, oceanography, climate systems, plate tectonics, natural disasters.",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com",
+    "url": "https://github.com/jeffreytse"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": "./skills",
+  "interface": {
+    "displayName": "grimoire-science-earth-science",
+    "shortDescription": "Earth science skills: geology, meteorology, oceanography, climate systems, plate tectonics, natural disasters.",
+    "developerName": "Jeffrey Tse",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/jeffreytse/grimoire"
+  }
+}

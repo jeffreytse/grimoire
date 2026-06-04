@@ -1,0 +1,19 @@
+{
+  "name": "grimoire-fashion-accessories",
+  "displayName": "grimoire-fashion-accessories",
+  "description": "Accessories skills: jewelry selection, bags, shoes, watches, belts, seasonal accessorizing, styling with accessories.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": "./skills"
+}

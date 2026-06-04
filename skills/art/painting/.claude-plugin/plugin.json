@@ -1,7 +1,7 @@
 {
   "name": "grimoire-art-painting",
   "description": "Painting skills: watercolor, oil painting, acrylic, gouache, brush techniques, glazing, color mixing.",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "author": { "name": "Jeffrey Tse", "email": "jeffreytse.mail@gmail.com" },
   "homepage": "https://github.com/jeffreytse/grimoire",
   "repository": "https://github.com/jeffreytse/grimoire",

@@ -1,0 +1,31 @@
+{
+  "name": "grimoire-education-e-learning",
+  "version": "1.0.0",
+  "description": "E-learning skills: online course design, LMS platforms, instructional design, video learning, MOOC creation.",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com",
+    "url": "https://github.com/jeffreytse"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": "./skills",
+  "interface": {
+    "displayName": "grimoire-education-e-learning",
+    "shortDescription": "E-learning skills: online course design, LMS platforms, instructional design, video learning, MOOC creation.",
+    "developerName": "Jeffrey Tse",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/jeffreytse/grimoire"
+  }
+}

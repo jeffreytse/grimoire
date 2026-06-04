@@ -1,0 +1,19 @@
+{
+  "name": "grimoire-engineering-security",
+  "displayName": "grimoire-engineering-security",
+  "description": "Security engineering skills: secure coding, threat modeling, vulnerability review, hardening.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": "./skills"
+}

@@ -1,0 +1,19 @@
+{
+  "name": "grimoire-language-communication",
+  "displayName": "grimoire-language-communication",
+  "description": "Communication skills: public speaking, rhetoric, cross-cultural communication, negotiation, active listening.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": "./skills"
+}

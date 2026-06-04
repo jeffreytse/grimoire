@@ -1,0 +1,19 @@
+{
+  "name": "grimoire-design-graphic",
+  "displayName": "grimoire-design-graphic",
+  "description": "Graphic design skills: print design, digital graphics, visual communication, layout, typography, composition.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": "./skills"
+}

@@ -1,0 +1,31 @@
+{
+  "name": "grimoire-design-branding",
+  "version": "1.0.0",
+  "description": "Branding skills: brand identity, logo design, brand guidelines, visual language, positioning, brand voice.",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com",
+    "url": "https://github.com/jeffreytse"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": "./skills",
+  "interface": {
+    "displayName": "grimoire-design-branding",
+    "shortDescription": "Branding skills: brand identity, logo design, brand guidelines, visual language, positioning, brand voice.",
+    "developerName": "Jeffrey Tse",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/jeffreytse/grimoire"
+  }
+}

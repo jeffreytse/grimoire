@@ -1,0 +1,19 @@
+{
+  "name": "grimoire-marketing-content",
+  "displayName": "grimoire-marketing-content",
+  "description": "Content marketing skills: content strategy, blog writing, video content, content calendar, distribution, repurposing.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": "./skills"
+}

@@ -1,0 +1,37 @@
+{
+  "name": "grimoire-environment",
+  "version": "1.0.0",
+  "description": "Environment skills: sustainability, ecology, climate science, renewable energy, conservation, carbon footprint.",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com",
+    "url": "https://github.com/jeffreytse"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": [
+    "./sustainability/skills",
+    "./ecology/skills",
+    "./climate/skills",
+    "./energy/skills",
+    "./policy/skills"
+  ],
+  "interface": {
+    "displayName": "grimoire-environment",
+    "shortDescription": "Environment skills: sustainability, ecology, climate science, renewable energy, conservation, carbon footprint.",
+    "developerName": "Jeffrey Tse",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/jeffreytse/grimoire"
+  }
+}

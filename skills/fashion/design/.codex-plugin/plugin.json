@@ -1,0 +1,31 @@
+{
+  "name": "grimoire-fashion-design",
+  "version": "1.0.0",
+  "description": "Fashion design skills: garment design, sewing, pattern making, fabric selection, construction techniques.",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com",
+    "url": "https://github.com/jeffreytse"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": "./skills",
+  "interface": {
+    "displayName": "grimoire-fashion-design",
+    "shortDescription": "Fashion design skills: garment design, sewing, pattern making, fabric selection, construction techniques.",
+    "developerName": "Jeffrey Tse",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/jeffreytse/grimoire"
+  }
+}

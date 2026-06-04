@@ -1,0 +1,25 @@
+{
+  "name": "grimoire-writing",
+  "displayName": "grimoire-writing",
+  "description": "Writing skills: creative writing, copywriting, storytelling, content creation, editing.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": [
+    "./creative/skills",
+    "./technical/skills",
+    "./copywriting/skills",
+    "./academic/skills",
+    "./journalism/skills"
+  ]
+}

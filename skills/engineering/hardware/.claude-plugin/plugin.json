@@ -1,7 +1,7 @@
 {
   "name": "grimoire-engineering-hardware",
   "description": "Hardware engineering skills: PCB design, FPGA, embedded systems, circuit design.",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "author": {
     "name": "Jeffrey Tse",
     "email": "jeffreytse.mail@gmail.com"

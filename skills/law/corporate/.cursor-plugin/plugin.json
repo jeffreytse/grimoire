@@ -1,0 +1,19 @@
+{
+  "name": "grimoire-law-corporate",
+  "displayName": "grimoire-law-corporate",
+  "description": "Corporate law skills: business structures, corporate governance, regulatory compliance, M&A, shareholder rights.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": "./skills"
+}

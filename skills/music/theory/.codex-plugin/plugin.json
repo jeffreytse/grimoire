@@ -1,0 +1,31 @@
+{
+  "name": "grimoire-music-theory",
+  "version": "1.0.0",
+  "description": "Music theory skills: scales, chord progressions, intervals, rhythm, ear training, modes, harmonic analysis.",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com",
+    "url": "https://github.com/jeffreytse"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": "./skills",
+  "interface": {
+    "displayName": "grimoire-music-theory",
+    "shortDescription": "Music theory skills: scales, chord progressions, intervals, rhythm, ear training, modes, harmonic analysis.",
+    "developerName": "Jeffrey Tse",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/jeffreytse/grimoire"
+  }
+}

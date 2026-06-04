@@ -1,0 +1,31 @@
+{
+  "name": "grimoire-sports-tactics",
+  "version": "1.0.0",
+  "description": "Sports tactics skills: game strategy, play design, opponent analysis, situational play, formations, set pieces.",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com",
+    "url": "https://github.com/jeffreytse"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": "./skills",
+  "interface": {
+    "displayName": "grimoire-sports-tactics",
+    "shortDescription": "Sports tactics skills: game strategy, play design, opponent analysis, situational play, formations, set pieces.",
+    "developerName": "Jeffrey Tse",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/jeffreytse/grimoire"
+  }
+}

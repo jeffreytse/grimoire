@@ -1,0 +1,31 @@
+{
+  "name": "grimoire-parenting-toddler",
+  "version": "1.0.0",
+  "description": "Toddler parenting skills: language development, behavior management, play, toilet training, 1-3 years.",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com",
+    "url": "https://github.com/jeffreytse"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": "./skills",
+  "interface": {
+    "displayName": "grimoire-parenting-toddler",
+    "shortDescription": "Toddler parenting skills: language development, behavior management, play, toilet training, 1-3 years.",
+    "developerName": "Jeffrey Tse",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/jeffreytse/grimoire"
+  }
+}

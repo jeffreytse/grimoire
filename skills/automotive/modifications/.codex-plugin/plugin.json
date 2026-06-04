@@ -1,0 +1,31 @@
+{
+  "name": "grimoire-automotive-modifications",
+  "version": "1.0.0",
+  "description": "Car modification skills: performance mods, aesthetic upgrades, audio systems, suspension tuning, legal compliance.",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com",
+    "url": "https://github.com/jeffreytse"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": "./skills",
+  "interface": {
+    "displayName": "grimoire-automotive-modifications",
+    "shortDescription": "Car modification skills: performance mods, aesthetic upgrades, audio systems, suspension tuning, legal compliance.",
+    "developerName": "Jeffrey Tse",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/jeffreytse/grimoire"
+  }
+}

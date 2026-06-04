@@ -1,0 +1,37 @@
+{
+  "name": "grimoire-productivity",
+  "version": "1.0.0",
+  "description": "Productivity skills: time management, personal effectiveness, goal setting, focus, habit systems.",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com",
+    "url": "https://github.com/jeffreytse"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": [
+    "./time-management/skills",
+    "./habits/skills",
+    "./focus/skills",
+    "./goals/skills",
+    "./tools/skills"
+  ],
+  "interface": {
+    "displayName": "grimoire-productivity",
+    "shortDescription": "Productivity skills: time management, personal effectiveness, goal setting, focus, habit systems.",
+    "developerName": "Jeffrey Tse",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/jeffreytse/grimoire"
+  }
+}

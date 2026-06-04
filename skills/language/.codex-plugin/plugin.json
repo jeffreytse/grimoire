@@ -1,0 +1,36 @@
+{
+  "name": "grimoire-language",
+  "version": "1.0.0",
+  "description": "Language skills: language learning, linguistics, translation, vocabulary, grammar, fluency.",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com",
+    "url": "https://github.com/jeffreytse"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": [
+    "./learning/skills",
+    "./linguistics/skills",
+    "./translation/skills",
+    "./communication/skills"
+  ],
+  "interface": {
+    "displayName": "grimoire-language",
+    "shortDescription": "Language skills: language learning, linguistics, translation, vocabulary, grammar, fluency.",
+    "developerName": "Jeffrey Tse",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/jeffreytse/grimoire"
+  }
+}

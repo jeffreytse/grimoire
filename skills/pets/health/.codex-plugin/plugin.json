@@ -1,0 +1,31 @@
+{
+  "name": "grimoire-pets-health",
+  "version": "1.0.0",
+  "description": "Pet health skills: vet care, common conditions, first aid, medications, preventive care, emergency signs.",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com",
+    "url": "https://github.com/jeffreytse"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": "./skills",
+  "interface": {
+    "displayName": "grimoire-pets-health",
+    "shortDescription": "Pet health skills: vet care, common conditions, first aid, medications, preventive care, emergency signs.",
+    "developerName": "Jeffrey Tse",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/jeffreytse/grimoire"
+  }
+}

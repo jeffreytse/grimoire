@@ -1,0 +1,37 @@
+{
+  "name": "grimoire-automotive",
+  "version": "1.0.0",
+  "description": "Automotive skills: car maintenance, buying guides, troubleshooting, modifications, EV, road trips.",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com",
+    "url": "https://github.com/jeffreytse"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": [
+    "./maintenance/skills",
+    "./troubleshooting/skills",
+    "./buying/skills",
+    "./modifications/skills",
+    "./ev/skills"
+  ],
+  "interface": {
+    "displayName": "grimoire-automotive",
+    "shortDescription": "Automotive skills: car maintenance, buying guides, troubleshooting, modifications, EV, road trips.",
+    "developerName": "Jeffrey Tse",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/jeffreytse/grimoire"
+  }
+}

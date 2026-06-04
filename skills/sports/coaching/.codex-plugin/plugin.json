@@ -1,0 +1,31 @@
+{
+  "name": "grimoire-sports-coaching",
+  "version": "1.0.0",
+  "description": "Sports coaching skills: team coaching, communication, motivation, game planning, athlete development, feedback.",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com",
+    "url": "https://github.com/jeffreytse"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": "./skills",
+  "interface": {
+    "displayName": "grimoire-sports-coaching",
+    "shortDescription": "Sports coaching skills: team coaching, communication, motivation, game planning, athlete development, feedback.",
+    "developerName": "Jeffrey Tse",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/jeffreytse/grimoire"
+  }
+}

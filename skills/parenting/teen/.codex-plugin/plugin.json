@@ -1,0 +1,31 @@
+{
+  "name": "grimoire-parenting-teen",
+  "version": "1.0.0",
+  "description": "Teen parenting skills: adolescent development, autonomy, identity, mental health support, college prep, 13-18 years.",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com",
+    "url": "https://github.com/jeffreytse"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": "./skills",
+  "interface": {
+    "displayName": "grimoire-parenting-teen",
+    "shortDescription": "Teen parenting skills: adolescent development, autonomy, identity, mental health support, college prep, 13-18 years.",
+    "developerName": "Jeffrey Tse",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/jeffreytse/grimoire"
+  }
+}

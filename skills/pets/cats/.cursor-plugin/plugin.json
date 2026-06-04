@@ -1,0 +1,19 @@
+{
+  "name": "grimoire-pets-cats",
+  "displayName": "grimoire-pets-cats",
+  "description": "Cat skills: behavior, enrichment, health care, grooming, litter, indoor/outdoor management.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": "./skills"
+}

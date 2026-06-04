@@ -1,0 +1,31 @@
+{
+  "name": "grimoire-marketing-paid-ads",
+  "version": "1.0.0",
+  "description": "Paid ads skills: PPC, display advertising, programmatic buying, retargeting, ad copywriting, bidding strategies.",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com",
+    "url": "https://github.com/jeffreytse"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": "./skills",
+  "interface": {
+    "displayName": "grimoire-marketing-paid-ads",
+    "shortDescription": "Paid ads skills: PPC, display advertising, programmatic buying, retargeting, ad copywriting, bidding strategies.",
+    "developerName": "Jeffrey Tse",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/jeffreytse/grimoire"
+  }
+}

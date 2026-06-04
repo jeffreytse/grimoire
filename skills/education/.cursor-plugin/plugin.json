@@ -1,0 +1,25 @@
+{
+  "name": "grimoire-education",
+  "displayName": "grimoire-education",
+  "description": "Education skills: teaching, curriculum design, learning strategies, pedagogy, assessment.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": [
+    "./curriculum/skills",
+    "./teaching/skills",
+    "./e-learning/skills",
+    "./assessment/skills",
+    "./learning-science/skills"
+  ]
+}

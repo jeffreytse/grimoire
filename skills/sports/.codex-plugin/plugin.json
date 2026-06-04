@@ -1,0 +1,37 @@
+{
+  "name": "grimoire-sports",
+  "version": "1.0.0",
+  "description": "Sports skills: coaching, training methodology, athletic performance, tactics, recovery.",
+  "author": {
+    "name": "Jeffrey Tse",
+    "email": "jeffreytse.mail@gmail.com",
+    "url": "https://github.com/jeffreytse"
+  },
+  "homepage": "https://github.com/jeffreytse/grimoire",
+  "repository": "https://github.com/jeffreytse/grimoire",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "best-practices",
+    "grimoire"
+  ],
+  "skills": [
+    "./training/skills",
+    "./coaching/skills",
+    "./nutrition/skills",
+    "./tactics/skills",
+    "./recovery/skills"
+  ],
+  "interface": {
+    "displayName": "grimoire-sports",
+    "shortDescription": "Sports skills: coaching, training methodology, athletic performance, tactics, recovery.",
+    "developerName": "Jeffrey Tse",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/jeffreytse/grimoire"
+  }
+}
