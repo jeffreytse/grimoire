@@ -50,8 +50,12 @@ check_skill() {
   else
     local verb
     verb=$(echo "$name" | cut -d'-' -f1)
-    local approved_verbs="propose write review audit design calculate diagnose optimize suggest deprecate plan negotiate"
-    if ! echo "$approved_verbs" | grep -qw "$verb"; then
+    local approved_verbs="propose write review audit design calculate diagnose optimize suggest deprecate plan negotiate apply run"
+    local rejected_verbs="do handle manage improve get use help"
+    if echo "$rejected_verbs" | grep -qw "$verb"; then
+      red "    [FAIL] name: verb '$verb' is a rejected verb (too vague) — see STANDARD.md"
+      (( file_errors++ )) || true
+    elif ! echo "$approved_verbs" | grep -qw "$verb"; then
       warn "    [WARN] name: verb '$verb' not in approved list — confirm intentional"
     fi
     if [[ ${#name} -gt 50 ]]; then
@@ -108,7 +112,8 @@ check_skill() {
   emerging=$(echo "$frontmatter" | grep -E '^emerging:' | head -1 | sed 's/^emerging:[[:space:]]*//' || true)
   if [[ "$emerging" == "true" ]]; then
     if ! grep -q '\*\*Status:\*\* Emerging' "$file"; then
-      warn "    [WARN] emerging: true but missing '**Status:** Emerging' line in Why section"
+      red "    [FAIL] emerging: true but missing '**Status:** Emerging' line in Why section"
+      (( file_errors++ )) || true
     fi
   fi
 
@@ -154,7 +159,8 @@ check_skill() {
   # --- Size check ---
 
   if [[ "$lines" -lt 50 ]]; then
-    warn "    [WARN] only $lines lines — target is 50–300"
+    red "    [FAIL] only $lines lines — minimum is 50 (add steps, examples, or edge cases)"
+    (( file_errors++ )) || true
   elif [[ "$lines" -gt 300 ]]; then
     red "    [FAIL] $lines lines exceeds 300-line limit — consider splitting"
     (( file_errors++ )) || true

@@ -93,6 +93,8 @@ Pattern: `<verb>-<subject>[-<qualifier>]`
 | `deprecate-` | Retire an outdated artifact |
 | `plan-` | Create a structured sequence of actions |
 | `negotiate-` | Handle a back-and-forth agreement process |
+| `apply-` | Apply a technique, method, or framework to a situation |
+| `run-` | Facilitate or execute a meeting, session, or process |
 
 Verbs not in this table are allowed if none of the above fit — but vague verbs below are always rejected:
 
