@@ -43,3 +43,9 @@ PagerDuty's own incident command model assigns an "External Communications" role
 - **IC also coding** — The Incident Commander context-switching into technical work means no one is tracking the big picture; incidents take longer to resolve.
 - **Postmortem theater** — Writing a postmortem but not tracking action items means the same incident recurs; the postmortem becomes a ritual with no learning loop.
 - **Vague severity definitions** — When SEV1 means "whatever the on-call thinks is bad," escalation and response are inconsistent across teams.
+
+## When NOT to Use
+
+- Do not apply a full incident command structure to routine maintenance windows or planned deployments that have a pre-approved rollback plan and zero unexpected customer impact.
+- Do not use this process for one-person teams or solo operators where assigning separate Incident Commander and SME roles is structurally impossible — instead document a simplified checklist tailored to solo response.
+- Do not run a blameless postmortem for every minor bug fix or low-severity alert; reserve the process for SEV1/SEV2 events where the effort of a full postmortem is proportional to the potential for systemic learning.

@@ -47,3 +47,9 @@ A Redis memory runbook might include:
 - **Prose runbooks** — Paragraphs of explanation without numbered steps require the operator to parse meaning under stress; errors increase dramatically.
 - **Stale commands** — Commands referencing deprecated flags or old hostnames fail silently; operators lose time debugging the runbook instead of the incident.
 - **Missing rollback** — An operator who cannot undo a step will hesitate or skip it; hesitation extends incidents.
+
+## When NOT to Use
+
+- Do not write a runbook for a novel incident type that has never recurred — invest that effort in a postmortem and write the runbook only after the second occurrence confirms it is a repeatable failure mode.
+- Do not use a runbook to document architectural decisions or system design rationale; those belong in an ADR or design doc, and mixing them into runbooks forces operators to parse explanation when they need action.
+- Do not create runbooks for procedures that require real-time expert judgment on ambiguous system state — if the steps cannot be deterministic, a runbook creates false confidence and should be replaced with an escalation path to the subject matter expert.

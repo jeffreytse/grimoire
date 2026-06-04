@@ -44,3 +44,9 @@ C major → G major: Bass C → G (leap of 4th, acceptable for bass). Tenor E �
 - Neglecting the leading tone resolution — unresolved leading tones make cadences feel incomplete.
 - Spacing voices incorrectly — large gaps between upper voices (more than an octave between S and A) produce a hollow, unbalanced sound.
 - Applying strict classical rules to jazz/pop — jazz voice leading tolerates parallel motion and omits fifths; know the style convention before applying rules.
+
+## When NOT to Use
+
+- When writing in a deliberately atonal or serial style where smooth voice leading would undermine the intended harmonic language.
+- When producing electronic or sample-based music where voices are not independent melodic lines and do not need to function as separate streams.
+- When the arrangement already has locked-in MIDI parts or recorded performances where re-voicing individual lines would require full re-recording.

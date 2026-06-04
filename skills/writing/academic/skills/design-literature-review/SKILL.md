@@ -44,3 +44,9 @@ A literature review is not a summary of sources read — it is a synthesis that 
 - Annotated bibliography disguised as a review: listing sources without synthesis is not a literature review
 - Gap stated without support from the literature: reviewers require evidence from prior authors acknowledging the gap
 - Omitting contradictory evidence: cherry-picking weakens credibility and may constitute academic misconduct
+
+## When NOT to Use
+
+- Do not apply this skill to a theoretical or conceptual paper that builds an argument from first principles rather than from accumulated empirical studies, where a formal literature review would misrepresent the work as empirically grounded when it is not.
+- Do not use this skill when the literature in a field is so sparse (fewer than 10 relevant studies) that a structured synthesis cannot identify patterns, and an annotated bibliography with commentary is the more honest form.
+- Do not apply this skill to grant proposals targeting funders who explicitly require a brief "background" paragraph rather than a full literature review, as exhaustive synthesis in that context signals unfamiliarity with the format and wastes the reviewers' time.

@@ -44,3 +44,9 @@ A medical student preparing for USMLE Step 1 uses Anki with the Zanki deck (30,0
 - **Complex multi-part cards** — "Describe the coagulation cascade" produces a guess and a re-queue; the specific broken-down steps produce lasting memory.
 - **Adding without reviewing** — Creating 500 cards and not reviewing them for two weeks produces an unmountable backlog and abandoned decks.
 - **Passive re-reading instead of retrieval** — Reading the answer before guessing eliminates the testing effect; the card must be answered before flipping.
+
+## When NOT to Use
+
+- When the learning goal is conceptual understanding or problem-solving skill rather than discrete fact recall — spaced repetition optimizes for retrieval of atomic items, not for developing the flexible reasoning needed to apply concepts to novel problems.
+- When the material will be needed only within the next 48–72 hours and long-term retention is not required — massed practice (focused review) is more time-efficient for short-horizon recall than building and scheduling a card deck.
+- When the learner does not yet understand the material being encoded — adding cards for content not yet comprehended produces rote strings that are recalled without meaning and are difficult to correct once incorrectly encoded.

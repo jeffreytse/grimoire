@@ -46,3 +46,9 @@ An HR team auditing new-employee onboarding discovered 14 days of the 21-day pro
 - **Auditing the org chart instead of the work** — Mapping departments instead of following the work unit produces a political map, not an efficiency map.
 - **No quantification** — "This step feels slow" without cycle time data produces no defensible prioritization.
 - **Improving everywhere equally** — Spreading improvement effort across all steps ignores the constraint; overall throughput does not improve.
+
+## When NOT to Use
+
+- Do not audit a process that runs fewer than ten times per month — the improvement ROI rarely justifies the mapping effort when volume is too low to amortize the change.
+- Do not apply lean value stream mapping to creative or knowledge-discovery work (research, design exploration, strategy) where variability and iteration are the intended output, not waste.
+- Do not conduct an efficiency audit immediately after a major system migration or reorganization; the process is in flux and the current-state map will be obsolete before improvements can be implemented.

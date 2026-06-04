@@ -45,3 +45,9 @@ A product page ranks #8 for "noise-cancelling headphones under $100." Audit reve
 - Fixing meta tags without addressing content gaps — rankings require relevance, not just technical hygiene.
 - Ignoring cannibalization — two pages targeting the same keyword split signals and suppress both.
 - Running a one-time audit — on-page SEO degrades with CMS updates and content edits; schedule quarterly reviews.
+
+## When NOT to Use
+
+- Do not perform an on-page SEO audit on URLs that are intentionally noindexed (login pages, thank-you pages, internal tools) — these pages are excluded from search indexing and on-page optimization has no ranking effect.
+- Do not use this audit process as the primary diagnostic for a site experiencing a sudden traffic drop — a manual penalty, algorithm update, or domain-level issue requires a site-wide audit and backlink analysis, not a page-level on-page review.
+- Do not apply on-page SEO optimization to pages targeting informational keywords when the core problem is insufficient domain authority — technical hygiene cannot overcome a domain rating gap against established competitors in high-competition SERPs.

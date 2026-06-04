@@ -44,3 +44,9 @@ A component API is a contract. Once published and used, breaking changes cost th
 - Designing for the first use case only: a `UserCard` with hardcoded user-domain props cannot become a `ProductCard` without a rewrite; design for the rendering pattern, not the data domain
 - Boolean prop explosion: when a component accumulates 12 boolean props, it has 4096 possible states — most untested and some contradictory; use variant enums instead
 - Not forwarding refs: consuming code that needs to measure a DOM node or integrate with a third-party library will be blocked and forced to wrap the component unnecessarily
+
+## When NOT to Use
+
+- When building a one-off page-specific component that will never be reused outside its current context, investing in a composable compound-component API adds complexity with no return.
+- When prototyping or validating a feature idea in a throwaway spike, formal API design slows iteration; defer until the design is confirmed and the component graduates to the shared library.
+- When wrapping a third-party component purely for local theming, designing a full props interface duplicates an already-stable upstream API; prefer thin wrappers or CSS overrides instead.

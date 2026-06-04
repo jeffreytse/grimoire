@@ -44,3 +44,9 @@ A value proposition is not a slogan. It is a falsifiable claim that a specific c
 - Writing for everyone: a value proposition aimed at all buyers persuades none
 - Leading with features instead of outcomes: buyers buy outcomes, not feature lists
 - Omitting the alternative: without contrast, the claim has no meaning
+
+## When NOT to Use
+
+- Do not apply this skill to internal product documentation or engineering specs where the audience already knows what the product does and needs implementation detail, not positioning language.
+- Do not use this skill for brand storytelling campaigns focused on emotional identity and long-term affinity rather than purchase conversion, where a crisp rational value claim would undercut the campaign's atmospheric intent.
+- Do not apply this skill when the product is still in discovery and the target segment has not been validated through customer interviews; writing a value proposition before confirming real pains produces confident-sounding fiction that misleads product decisions.

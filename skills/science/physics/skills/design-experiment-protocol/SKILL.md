@@ -44,3 +44,9 @@ Experiment: Measure the effect of temperature on electrical resistance of a meta
 - No controlled variables list — experimenter assumes conditions are constant without verifying; temperature drift or vibration corrupts results invisibly.
 - Too few repetitions — single-trial measurements cannot distinguish the true value from measurement noise; minimum 5 trials is required for meaningful Type A uncertainty.
 - Confusing precision and accuracy — an instrument with 0.001mm resolution but ±0.5mm calibration accuracy produces precise-looking but inaccurate data; characterize both.
+
+## When NOT to Use
+
+- When conducting a qualitative or exploratory observation aimed at generating hypotheses rather than testing a specific quantitative prediction — rigorous variable control and uncertainty analysis impose premature constraints before the phenomenon is understood well enough to define measurable variables.
+- When the experiment is a purely computational or simulation study with no physical measurement — Monte Carlo simulations and numerical models have their own validation methodology and do not require physical instrument calibration or Type A uncertainty from repeated trials.
+- When the required precision exceeds what the available instruments and environment can provide — designing a protocol around measurement specifications that cannot be met in the available facility produces a formally correct but practically unexecutable protocol.

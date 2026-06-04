@@ -44,3 +44,9 @@ Good brief: "How might we help new users experience the core value of the produc
 - **Solution-as-brief** — "Design a dashboard with X, Y, and Z features" is a spec, not a brief; it skips problem framing and eliminates creative exploration.
 - **No constraints** — "The sky is the limit" produces unfocused exploration and solutions that cannot ship; real constraints sharpen design thinking.
 - **No stakeholder sign-off** — A brief approved only by design leads to stakeholders redirecting the project mid-execution based on expectations that were never aligned.
+
+## When NOT to Use
+
+- Do not write a formal design brief for small, well-scoped changes (e.g., updating a button label or fixing a broken form layout) where the problem, audience, and success criterion are already unambiguous to all parties.
+- Do not use a brief as a substitute for discovery research — if the team does not yet have enough user insight to write a meaningful challenge statement, conduct exploratory research first rather than inventing a brief around assumptions.
+- Do not write a brief for work where the solution is contractually or technically predetermined — if engineering constraints or a client specification have already defined the output, a brief framing it as open exploration creates false expectations about design latitude.

@@ -45,3 +45,9 @@ Cognitive demanding tasks — writing, coding, designing, analysis — require t
 - **Starting without a defined output** — Sessions without a goal drift into research spirals and produce nothing shippable
 - **Scheduling deep work in the afternoon by default** — Decision fatigue and social residue accumulate through the day; mornings are structurally better for most people
 - **Measuring time spent, not depth** — 4 hours with Slack open is not 4 deep work hours; only interrupted-free time counts
+
+## When NOT to Use
+
+- When the work is inherently collaborative and requires real-time back-and-forth decision-making with others, such as live incident response or pair programming sessions where isolation would block the team.
+- When you are operating in an on-call rotation or a role that requires immediate interrupt response (e.g., support engineer, operations lead) — the structural obligation to respond fast is incompatible with deep work sessions.
+- When a task is genuinely shallow and well-defined (data entry, form filling, routine file organisation) — applying deep work overhead to low-cognitive-load tasks wastes the practice on work that does not require it.

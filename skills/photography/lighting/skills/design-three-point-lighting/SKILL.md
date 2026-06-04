@@ -44,3 +44,9 @@ Corporate headshot setup: Key = 60cm softbox, camera-left, 45° angle, 45° down
 - Rim light without a grid — uncontrolled spill onto the face creates hot spots and flare that override the key light's shadow pattern.
 - Key light at eye level — creates the "interrogation light" look with undereye shadows; raise the key to slightly above eye level.
 - No consideration of background — subject lit beautifully but merged with the background; rim light and background exposure must be considered together.
+
+## When NOT to Use
+
+- When shooting environmental or documentary portraits where the goal is to record the subject within their natural context and artificial three-point lighting would destroy the authenticity of the scene.
+- When the location or power constraints make three-light placement physically impossible (narrow spaces, no AC power, run-and-gun news coverage) and a single-light or available-light approach is the only viable option.
+- When the creative intent is a flat, high-key, or deliberately unlit aesthetic (fashion editorial, minimalist product) where three-point dimensionality would contradict the visual concept.

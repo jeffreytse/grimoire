@@ -46,3 +46,9 @@ Audiences are wired to expect setup, escalation, and resolution. Structure is no
 - Starting with backstory instead of action: the inciting incident must arrive before the reader loses interest
 - Resolving the external conflict without addressing the internal wound: the story feels hollow even if the plot resolves
 - Writing a midpoint that is merely eventful rather than transformative: it must change what the story is about
+
+## When NOT to Use
+
+- Do not apply this skill to experimental or avant-garde literary fiction that deliberately subverts narrative convention, where imposing three-act beat positions would neutralize the formal disruption that constitutes the work's artistic statement.
+- Do not use this skill for short fiction under 3,000 words, where the compressed form cannot accommodate the full structural arc and forcing beat-sheet percentages produces a rushed, mechanical feel rather than the tight unity a short story requires.
+- Do not apply this skill to episodic narrative podcasts or serialized fiction where each episode must function as a standalone story, making a single overarching structural skeleton inappropriate without first designing the episode-level micro-structure separately.

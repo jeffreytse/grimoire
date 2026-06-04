@@ -47,3 +47,9 @@ Good (Stripe-style):
 - **"Various bug fixes and performance improvements"** — tells users nothing; enumerate specific fixes.
 - **Commit message verbatim** — developer-oriented messages lack context for users.
 - **Omitting the "so what"** — "Added retry logic" → who cares; "Failed webhook deliveries are now retried automatically for 72 hours" → clear user value.
+
+## When NOT to Use
+
+- When the release contains only internal refactors, dependency upgrades, or infrastructure changes that have no observable effect on user behavior, publishing a release note creates noise without informing any user decision.
+- When the change is a hotfix for an actively exploited security vulnerability, publish a minimal security advisory through your coordinated disclosure process instead of a detailed release note that could aid attackers before users patch.
+- When the audience is exclusively internal engineering teams consuming an internal library with no external contract, a commit log or internal Slack post is sufficient; a polished user-facing release note format is mismatched to the audience.

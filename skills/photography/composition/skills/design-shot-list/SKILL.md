@@ -44,3 +44,9 @@ Corporate headshot session (4 hours, 10 subjects): Shot list includes per-subjec
 - No time budget per shot — sessions run over and clients are unhappy; time estimates are mandatory.
 - Building the shot list without client input — photographer's vision and client's requirements diverge; the list must reflect client deliverables.
 - Forgetting establishing shots — context images are often the most-used by editorial and marketing teams but are the shots photographers most often skip.
+
+## When NOT to Use
+
+- When shooting purely personal or fine-art work with no client deliverables, where spontaneous discovery and improvisation are the creative process.
+- When covering breaking news or unscripted documentary events where the scene cannot be predicted or pre-listed and rigid adherence to a list causes missed candid moments.
+- When the session is an open-ended creative exploration with a client who has explicitly hired the photographer for their editorial judgment rather than specific prescribed deliverables.

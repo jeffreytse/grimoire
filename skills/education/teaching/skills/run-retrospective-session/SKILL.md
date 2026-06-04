@@ -43,3 +43,9 @@ An engineering team retrospective after a failed product launch uses the timelin
 - **Skipping the data phase** — Moving directly to "what should we do differently" without building a shared fact base produces opinions, not insights.
 - **Facilitator as participant** — When the facilitator shares their own views on what went wrong, they shut down dissenting observations from the group.
 - **No follow-through** — Retrospectives without action items, owners, and follow-up become a ritual that teams lose faith in; the next retrospective's first question must be "what happened to last time's commitments?"
+
+## When NOT to Use
+
+- When the experience being reflected on occurred more than two weeks ago and participants no longer have reliable episodic memory of specific events and decisions.
+- When psychological safety is absent — if participants fear retaliation for honest input, a retrospective will surface only safe opinions and calcify the status quo rather than changing it.
+- When the group has not yet completed the experience — a mid-sprint retrospective on an ongoing crisis redirects attention away from execution; wait until the event has a clear ending before debriefing.

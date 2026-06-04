@@ -46,3 +46,9 @@ PKCE flow (SPA):
 - **Storing JWTs in localStorage** — XSS attacks steal tokens; use memory + httpOnly cookies.
 - **Long-lived access tokens** — a stolen token is valid until expiry; keep them short-lived.
 - **Skipping `state` parameter** — enables CSRF attacks on the OAuth callback.
+
+## When NOT to Use
+
+- When the system is an internal CLI tool or offline script used exclusively by a single authenticated OS user, OAuth 2.0 delegation flows add needless complexity; OS-level identity or a static API key with environment-scoped access is sufficient.
+- When designing auth for a purely machine-to-machine backend service running in a trusted private network with no human login surface, PKCE and OIDC session management are irrelevant; focus on mTLS and service account credential rotation instead.
+- When an existing identity provider (e.g., Auth0, Cognito, Okta) is already integrated and its default flows satisfy security requirements, redesigning the auth flow risks introducing vulnerabilities into a battle-tested configuration without added benefit.

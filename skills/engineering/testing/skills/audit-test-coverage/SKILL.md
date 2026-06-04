@@ -45,3 +45,9 @@ Coverage gap analysis:
 - **Treating line coverage as quality signal** — a test that calls code without asserting outcomes increases coverage without value.
 - **Ignoring branch coverage** — a function with 100% line coverage may have untested `else` paths.
 - **Setting coverage targets globally** — boilerplate code and generated code dilute meaningful coverage goals.
+
+## When NOT to Use
+
+- When the codebase is a throwaway prototype or spike with a planned rewrite, investing in coverage audits and mutation testing produces findings that will be discarded along with the code.
+- When the module under review is entirely generated code (e.g., ORM migrations, protobuf stubs, GraphQL schema types), coverage metrics on generated output measure the generator, not engineering decisions, and should be excluded rather than audited.
+- When the team is in an active incident response, a coverage audit is a non-urgent quality task that should not compete for attention with restoring system availability.

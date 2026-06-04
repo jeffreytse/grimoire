@@ -47,3 +47,9 @@ Each service has its own DB; communication is via Kafka events; no service calls
 - **Distributed monolith** — services that must deploy together or share a database gain none of the benefits of microservices.
 - **Decomposing too early** — start with a well-structured monolith ("modular monolith") until domain boundaries are understood.
 - **No contract versioning** — breaking API changes cascade across services; version APIs from day one.
+
+## When NOT to Use
+
+- When the team has fewer than 8 engineers, the operational overhead of independent deployments, distributed tracing, and per-service databases will consume more capacity than the autonomy gains.
+- When the domain boundaries are not yet understood — building microservices before the domain model stabilizes results in services that must be merged or split within months, producing a distributed monolith with extra steps.
+- When the system has no requirement for independent scaling or independent team ownership, a well-structured modular monolith delivers the same maintainability at a fraction of the operational complexity.

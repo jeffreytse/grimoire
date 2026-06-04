@@ -43,3 +43,9 @@ Stripe's engineering hiring process assigns one interviewer exclusively to "cros
 - **Job description as scorecard** — Listing 20 requirements produces no shared evaluation standard; interviewers still evaluate on vibes.
 - **Group debrief without pre-scores** — The loudest voice or most senior person anchors the group; quiet dissent disappears.
 - **Skipping reference checks** — The best signal on how someone handles failure comes from prior managers, not from the candidate.
+
+## When NOT to Use
+
+- Do not apply this process for a one-off contractor or freelancer engagement where speed matters more than predictive validity and no scorecard infrastructure exists.
+- Do not use structured behavioral interviewing for roles where the team is so small that every hire is a relationship hire requiring cultural co-founder judgment beyond a rubric.
+- Do not run a full structured process when backfilling an identical role with an internal transfer who has already demonstrated the competencies in the same environment.

@@ -44,3 +44,9 @@ Write: "Sarah led the customer advisory board launch [accomplishment → increas
 - **Recency bias** — Only remembering the last 6 weeks of a 12-month period; fixed by reviewing notes from the entire cycle before writing.
 - **Vague positives** — "Always goes above and beyond" gives no signal about what to keep doing and signals the reviewer didn't observe closely.
 - **Inflation to avoid conflict** — Rating someone "meets expectations" when they don't helps no one and creates a legal and calibration problem at the next review.
+
+## When NOT to Use
+
+- Do not write a formal performance review for someone in their first 30 days on the job — a structured onboarding check-in is more appropriate when the role expectations have not yet been fully experienced.
+- Do not use this process to document an active termination decision; once the decision is final, the review becomes a legal document and HR and legal counsel must lead the process.
+- Do not write a written review when the manager has had no direct observational data on the employee's work for the review period — a secondhand review based only on hearsay produces unfair ratings and legal exposure.

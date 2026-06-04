@@ -43,3 +43,9 @@ A manager notices a senior engineer has gone quiet in planning meetings. In the 
 - **Status-report 1:1s** — Spending the whole meeting asking "what did you finish this week?" wastes the only private conversation slot for real feedback.
 - **Skipping when busy** — Canceling during high-pressure periods is exactly when direct reports most need support and managers most need signal.
 - **No written record** — Without notes, commitments evaporate and patterns go unnoticed across months.
+
+## When NOT to Use
+
+- Do not use the 1:1 format to deliver a disciplinary warning or a formal performance improvement plan — those require HR-documented separate conversations with a clear record.
+- Do not hold 1:1s with someone you manage as a skip-level when their direct manager is present in the org; coordinate through the proper reporting line to avoid undermining that manager's authority.
+- Do not substitute 1:1s for team-wide communication on decisions that affect the whole group — announcements made only in 1:1s create information asymmetry and erode team trust.

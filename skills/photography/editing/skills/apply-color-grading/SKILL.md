@@ -44,3 +44,9 @@ Travel/lifestyle brand grade: Tone curve — slight S-curve, shadows lifted to R
 - Over-saturating to make images "pop" — oversaturation looks artificial in print and on calibrated monitors; use Vibrance at +15-25 maximum.
 - Applying the same grade preset to all image types — outdoor daylight and indoor mixed-light images require different base corrections before the same grade can be applied consistently.
 - Never reviewing the grade on a calibrated display — grades applied on uncalibrated monitors produce images that look correct in the editing environment but wrong in delivery.
+
+## When NOT to Use
+
+- When delivering images for scientific, forensic, or medical documentation purposes where color accuracy must be preserved and creative interpretation would compromise evidentiary integrity.
+- When the client brief specifies straight color-correct processing (e.g., product catalog photography requiring exact color matching to physical samples).
+- When images are destined for press/offset printing with a strict ICC profile workflow managed by the print production team, where creative grading applied before handoff will be overridden by print calibration.

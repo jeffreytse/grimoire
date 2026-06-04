@@ -47,3 +47,9 @@ The core insight is that the value of notes is not in storage but in retrieval a
 - **Not linking when filing** — A note without links is isolated; the network effect only emerges from explicit connections
 - **Using the tool as a to-do list or project manager** — Zettelkasten is for developing ideas, not tracking tasks; mixing the two degrades both
 - **Waiting to write permanent notes until you "understand enough"** — Write the note at the frontier of your current understanding; confusion articulated is the beginning of insight
+
+## When NOT to Use
+
+- When the knowledge domain is short-lived or project-specific (a one-off compliance requirement, a temporary workaround) — investing in permanent linked notes for information with no long-term value creates maintenance debt with no compounding return.
+- When you need to produce output immediately — the Zettelkasten method is a slow-build system optimised for long-term synthesis; if a deadline is hours away, writing directly from sources is faster than routing through the note network.
+- When the person is a beginner in a new field who has not yet built enough conceptual scaffolding to identify what is worth making atomic — premature atomisation of half-understood ideas produces an unlinked pile of fragments rather than a connected knowledge network; linear note-taking is more appropriate until a baseline mental model is established.

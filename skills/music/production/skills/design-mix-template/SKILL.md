@@ -44,3 +44,9 @@ Pop/R&B template: 8 drum tracks (kick, snare, hats, OH L/R, room L/R, perc) → 
 - Gain staging after processing — EQ and compression behavior changes dramatically at different input levels; stage gain first.
 - Using absolute fader positions as gain reference — faders should be at unity (0 dB) after gain staging; track levels set with gain trim plugin.
 - Skipping the reference track — ears adapt to the mix; periodic A/B against a professional reference catches tonal drift.
+
+## When NOT to Use
+
+- When working on a one-off mix for a single-instrument recording (e.g., solo piano or voice) where a full bus architecture adds complexity without any corresponding benefit.
+- When the DAW session has already been built by a tracking engineer with an established routing structure that would require destructive reorganization to replace.
+- When the deliverable is stems or individual rendered tracks for a sync library, where the final mix will be assembled externally and no master bus chain is needed.

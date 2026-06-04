@@ -44,3 +44,9 @@ JavaScript is the most expensive resource per byte on the web: it must be downlo
 - Optimizing gzip size without checking parse time: a bundle that goes from 400KB to 350KB gzip is still 350KB for the JS engine to parse
 - Splitting code without prefetching critical routes: code splitting without `<link rel="prefetch">` on likely-next routes can make navigation feel slower, not faster
 - Running bundle analysis only once: bundle size regressions happen incrementally through dependency updates; automate the check
+
+## When NOT to Use
+
+- The application is a Node.js backend service or CLI tool — JavaScript parse/compile time on V8 in a server environment is not the bottleneck; bundle size analysis addresses browser delivery costs that do not apply.
+- The performance problem is high Time to First Byte (TTFB > 800ms) — server response time must be fixed before client-side bundle optimization, because no amount of JS reduction compensates for a slow origin.
+- The project uses a non-JavaScript frontend (e.g., server-rendered Rails, Django templates) — bundle analysis tooling and tree-shaking concepts do not apply to server-rendered HTML without a JS build pipeline.

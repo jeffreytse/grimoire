@@ -44,3 +44,9 @@ Brief for "remote work productivity tips": Intent = informational listicle. Top 
 - Over-specifying word count — forces padding or cuts when the topic dictates natural length.
 - Omitting CTAs from the brief — writers default to no CTA; it must be explicitly specified.
 - Writing briefs for a single keyword — cluster-based briefs produce pages with far greater topical depth.
+
+## When NOT to Use
+
+- Do not write a full SEO-oriented content brief for social media posts, email newsletters, or other content formats that are not indexed by search engines and are not intended to rank.
+- Do not use this process for breaking news or reactive content that must publish within hours, where SERP analysis and competitor research would cause the piece to miss its relevance window.
+- Do not apply this skill when the writer is a domain expert producing original research or thought leadership — prescribing heading structure and required entities constrains the unique insight that makes such content rank.

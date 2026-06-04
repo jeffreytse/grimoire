@@ -44,3 +44,9 @@ Slack launched exclusively to developers at technology companies before expandin
 - **Boiling the ocean** — Listing five target segments dilutes message and sales focus; no segment feels the product is built for them.
 - **Skipping the whole product** — Launching with missing integrations forces customers to do workarounds, killing referrals.
 - **Vanity launch metrics** — Tracking press mentions instead of activation rate masks whether the product actually delivers value.
+
+## When NOT to Use
+
+- Do not run a full GTM process for an internal tool or productivity feature with no external customers — the beachhead and distribution channel steps do not apply when the "buyer" is a fixed internal team.
+- Do not use this framework when the product has not yet achieved problem-solution fit; launching with a GTM plan before validating that the product solves the problem burns distribution budget on a message that will change.
+- Do not apply the single-beachhead constraint to a platform business where multi-sided network effects require simultaneously acquiring supply and demand — forcing one beachhead in that context prevents the minimum viable network from forming.

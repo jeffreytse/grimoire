@@ -43,3 +43,9 @@ GOV.UK redesigned its navigation from department-based categories ("Home Office,
 - **Org-chart IA** — Structuring navigation by internal department makes sense internally but fails for external users who don't know how the organization is structured.
 - **Skipping tree testing** — Designing navigation visually first embeds the IA into mockups before it's been validated; teams then resist changes due to sunk cost.
 - **Too many levels deep** — Users lose context below three levels; they forget where they are and cannot backtrack effectively.
+
+## When NOT to Use
+
+- Do not apply a full IA design process to single-purpose tools with fewer than 10 distinct content items — the overhead of card sorting and tree testing exceeds the complexity of the problem.
+- Do not redesign information architecture when poor findability is caused by search quality or content gaps rather than structural organization — fixing navigation will not help users who cannot articulate what they are looking for.
+- Do not run card sorts or tree tests as a substitute for understanding actual user goals — if the content inventory itself is wrong or incomplete, structural validation produces a well-organized system for the wrong content.

@@ -44,3 +44,9 @@ SaaS company targeting "project management software": Seeds include "task tracki
 - Skipping SERP validation — a keyword with "how to" intent rarely ranks a product page.
 - Building a one-size-fits-all strategy — B2B and B2C audiences use different search vocabulary even for identical products.
 - Ignoring search volume trends — use 12-month averages, not point-in-time snapshots.
+
+## When NOT to Use
+
+- Do not build a keyword strategy for a brand-new domain with zero authority and no link-building plan — without domain rating, even low-difficulty clusters will not rank and the strategy produces false prioritization signals.
+- Do not apply this skill to purely social or community-driven content strategies where discoverability depends on platform algorithms (TikTok, Instagram Reels) rather than keyword-matched search intent.
+- Do not use this process for paid search campaign keyword selection — PPC keyword strategy requires bid data, Quality Score mechanics, and match-type planning that differ fundamentally from organic keyword clustering.

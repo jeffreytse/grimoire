@@ -47,3 +47,9 @@ GitFlow (scheduled releases):
 - **Trunk-based without feature flags** — incomplete features ship to production.
 - **GitFlow on a CD team** — `develop` diverges from `main`; integration pain increases.
 - **No branch naming convention** — branches like `fix` or `test2` are untrackable.
+
+## When NOT to Use
+
+- When working as a solo developer on a personal project with no CI/CD pipeline, the overhead of a formal branching strategy exceeds its coordination benefit; commit directly to main.
+- When the repository hosts infrastructure-as-code or configuration files that are always applied from a single source of truth, a multi-branch model introduces drift risk that outweighs its benefits.
+- When a team has already converged on a functioning strategy and deployment metrics are healthy, redesigning the branching model creates churn without a concrete problem to solve.

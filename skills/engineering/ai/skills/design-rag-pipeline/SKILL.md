@@ -44,3 +44,9 @@ Evaluation: RAGAS framework measuring faithfulness, answer relevancy, context pr
 - **Fixed chunk size without evaluation** — chunk size is domain-specific; test against real queries before fixing.
 - **No metadata filtering** — users querying 2024 docs get 2019 docs mixed in; filter by date, source, or category before vector search.
 - **Skipping re-ranking** — returning the raw top-K from vector search includes many irrelevant chunks; re-ranking is low-cost, high-impact.
+
+## When NOT to Use
+
+- When the LLM's training data already covers the knowledge domain comprehensively and the knowledge does not change frequently, fine-tuning or prompt engineering is simpler and cheaper than building a retrieval pipeline.
+- When the corpus is fewer than a few hundred short documents, a full vector database + embedding pipeline is over-engineered; load all documents directly into context or use keyword search instead.
+- When latency requirements are under 200ms end-to-end, the retrieval + re-ranking round-trip typically adds 300-800ms and RAG should not be applied without explicit latency budgeting.

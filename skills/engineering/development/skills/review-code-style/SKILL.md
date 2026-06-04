@@ -44,3 +44,9 @@ Review comment: "Per the Airbnb JS guide §13.1, prefer `const` over `let`/`var`
 - **Running the linter locally only** — violations slip through; enforce in CI.
 - **Reviewing style before logic** — wastes time if the logic will be refactored.
 - **No agreed baseline** — without a shared guide, style debates are subjective and unresolvable.
+
+## When NOT to Use
+
+- When reviewing a proof-of-concept or throwaway script where style consistency has no long-term maintenance value, a style review wastes review bandwidth better spent on correctness.
+- When the codebase has no linter configured and no style guide agreed upon, a style review before establishing that baseline will produce unresolvable subjective disagreements rather than actionable fixes.
+- When reviewing a logic-heavy diff where the author is mid-refactor, block on logic correctness first; style feedback during structural churn will be invalidated by the next revision.

@@ -1,11 +1,11 @@
 ---
-name: evaluate-natural-light
+name: review-natural-light
 description: Use when assessing natural light for a shoot location or planning a golden-hour session
 source: Bryan Peterson "Understanding Exposure" (2004), Joe McNally "The Moment It Clicks" (2008), Outdoor Photographer magazine technical guides
 tags: [photography, lighting, natural-light, golden-hour, window-light, reflector, exposure]
 ---
 
-# Evaluate Natural Light
+# Review Natural Light
 
 Assess natural light conditions — direction, quality, and color — and determine whether to use, modify, or wait for better light.
 
@@ -44,3 +44,9 @@ Outdoor portrait at 3pm (harsh midday sun): Subject moved to open shade on north
 - Placing subjects in direct sunlight for "even" illumination — direct sun creates harsh shadows and causes subjects to squint; open shade is always preferable.
 - Ignoring the color temperature of shade — blue shade casts are unflattering on skin tones and must be corrected in WB settings, not just accepted.
 - Using a silver reflector in already-harsh conditions — silver reflectors amplify hard light; use white for soft fill or gold for warm fill in direct sun conditions.
+
+## When NOT to Use
+
+- When shooting in a windowless interior or fully light-controlled studio where there is no natural light to assess and all sources are artificial.
+- When the creative intent is to use only artificial strobe or continuous lighting and natural light is being actively blocked or controlled out of the scene.
+- When the shoot is taking place at night or under conditions where natural light is negligible and ambient artificial sources (streetlights, neon signs) are the relevant lighting to evaluate instead.

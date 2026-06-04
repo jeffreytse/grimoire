@@ -46,3 +46,9 @@ Landscape: Rocky coastline in the foreground occupies lower two-thirds. Dramatic
 - Centering the horizon "to include both sky and ground equally" — equal division is a conflict; choose the more important element and give it two-thirds of the frame.
 - Using the rule for every single shot regardless of subject — architectural symmetry, reflected water, and formal portraits often require centered composition.
 - Cropping to fix composition in post without considering the original framing — significant crops reduce resolution; compose correctly in camera.
+
+## When NOT to Use
+
+- When composing formally symmetrical subjects — architecture with central vanishing points, bilateral symmetry in nature, or mirror reflections — where centered placement is the correct compositional choice, not a default.
+- When shooting for social media formats that algorithmically crop or reframe images, making precise in-camera thirds placement irrelevant until the crop is known.
+- When working in abstract or pattern photography where the subject fills the entire frame without a distinct focal point and the thirds grid provides no meaningful anchor.

@@ -44,3 +44,9 @@ Pop mix stereo layout: Center (0): kick, snare, bass, lead vocal. L15/R15: acous
 - Width added via stereo widening plugins without mono check — stereo widening creates phase issues that collapse badly in mono.
 - No depth dimension — all elements at the same perceived distance create a flat, 2D mix; reverb pre-delay creates the front-to-back illusion.
 - Panning everything hard left or right — full-pan elements dominate one side; reserves hard pan for accents and FX, not primary instruments.
+
+## When NOT to Use
+
+- When delivering a mono-only format such as a podcast bed, mono broadcast stem, or any output that will be permanently summed before playback.
+- When mixing for immersive audio formats (Dolby Atmos, Ambisonics) where the stereo panning paradigm is replaced by three-dimensional object positioning tools.
+- When the source recording is a single mono microphone and artificial stereo widening would introduce phase artifacts not present in the original performance.

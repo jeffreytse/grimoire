@@ -45,3 +45,9 @@ Landing page copy is not general marketing writing. Every element exists to earn
 - Writing for the product instead of the customer: copy that explains features before establishing that you understand the customer's problem loses readers immediately
 - CTA button text that says "Learn More": it signals no commitment but also no reward; tell them exactly what happens when they click
 - Placing testimonials at the bottom: social proof belongs next to the claim it validates
+
+## When NOT to Use
+
+- Do not apply this skill to enterprise software pages where purchase decisions are made by procurement committees over months, not by a single visitor during a single scroll; those pages require detailed specification sheets and RFP support content instead.
+- Do not use this skill for content marketing articles or blog posts whose goal is education and organic SEO, not immediate conversion; applying conversion-first structure to informational content degrades readability and search ranking.
+- Do not apply this skill when the product requires a mandatory sales call or demo before purchase, making a self-serve CTA misleading; in that case the page's job is qualification and meeting booking, which requires a different structural approach.

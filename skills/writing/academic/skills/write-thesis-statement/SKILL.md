@@ -43,3 +43,9 @@ A thesis is not an observation or a topic — it is a claim someone could disagr
 - Stating a fact instead of an argument: facts require no proof, so the paper has nothing to do
 - Thesis too broad to support in the assigned length: a 10-page paper cannot prove a claim that requires a book
 - Burying the thesis in the middle of the introduction: readers lose orientation and cannot evaluate whether evidence is relevant
+
+## When NOT to Use
+
+- Do not apply this skill to descriptive or exploratory research reports that present findings without advancing a central argument, such as lab reports or field observation summaries where the goal is documentation rather than persuasion.
+- Do not use this skill for personal or reflective essays in which the purpose is to explore a question openly rather than defend a predetermined position, as forcing a falsifiable thesis onto reflective writing produces artificial closure.
+- Do not apply this skill to journalistic or policy briefing documents where the writer's role is to present multiple positions neutrally; a single defended claim violates the genre's objectivity norms.

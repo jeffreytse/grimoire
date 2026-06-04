@@ -46,3 +46,9 @@ The Diátaxis framework distinguishes four fundamentally different reader needs 
 - Creating an omnibus "Getting Started" page that tries to be all four types at once
 - Hiding how-to guides inside tutorials, leaving intermediate users with no obvious path
 - Writing explanation content inside reference pages, making them harder to scan
+
+## When NOT to Use
+
+- Do not apply this skill to single-page internal tools or scripts with fewer than five commands or options, where a single well-commented README section serves the reader better than a four-quadrant Diátaxis architecture.
+- Do not use this skill when documentation is being written for a one-time deliverable such as a project handover or audit report, where the audience reads it once sequentially and navigational hierarchy adds overhead without benefit.
+- Do not apply this skill to auto-generated API reference output from tools like Swagger UI or Javadoc, where the structure is dictated by the toolchain and manually imposing a custom information architecture breaks the generation pipeline.

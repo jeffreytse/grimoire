@@ -44,3 +44,9 @@ Vocal chain: High-pass (100Hz, 12dB/oct) → De-esser (6-9kHz dynamic cut) → C
 - EQ boost before compression — boosted frequencies hit the compressor harder and trigger it more aggressively than intended.
 - Reverb on the input of a bus chain — every processor after the reverb processes the reverb tail, destroying depth and muddying the mix.
 - No gain check between stages — undetected clipping at an intermediate stage produces audible distortion that downstream processors cannot fix.
+
+## When NOT to Use
+
+- When deliberately designing a lo-fi or distortion-based aesthetic where conventional gain staging and processing order are intentionally violated for the desired sonic character.
+- When working entirely within a hardware analog chain where plugin insert order is not applicable and physical signal flow is fixed by the console or patch bay routing.
+- When the session is a live recording capture with no processing — designing a signal chain before the performance context is established adds constraints before any sonic problems are identified.

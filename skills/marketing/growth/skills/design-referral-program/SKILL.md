@@ -44,3 +44,9 @@ SaaS tool at $29/mo: Referrer gets 1 month free per successful referral; referee
 - No fraud prevention — self-referral and fake account farming drain program budget.
 - Burying the referral prompt in account settings — placement in the peak satisfaction moment is the primary driver of participation rate.
 - Launching and forgetting — referral programs decay; refresh incentives and placement quarterly.
+
+## When NOT to Use
+
+- Do not design a referral program before achieving product-market fit — users who are not yet delighted will not refer, and the social proof damage from neutral or negative referrals outweighs any acquisition benefit.
+- Do not use a referral program as a primary acquisition channel in regulated industries (e.g., financial services, healthcare) where incentivized referrals may constitute unlawful inducement under applicable compliance rules.
+- Do not launch a referral program when the product has a natural privacy expectation that makes sharing awkward — users of confidential HR, legal, or therapy tools will not share their use publicly regardless of incentive size.

@@ -44,3 +44,9 @@ Runbooks fail when they assume knowledge the on-call engineer does not have at 3
 - Runbook describes symptoms but not commands: a reader should never have to decide what to check — the runbook decides for them
 - Missing rollback path: root cause fixes take time; users need relief now; always provide an immediate mitigation first
 - Runbook last updated when the service was first deployed: stale runbooks are worse than no runbook because they build false confidence
+
+## When NOT to Use
+
+- The service is still being designed and its alert set has not been finalized — writing runbooks for alerts that do not yet exist produces documents that will be abandoned when the actual alerting design changes.
+- The failure mode is a novel, complex distributed system failure requiring deep system knowledge to diagnose — forcing an unfamiliar on-call engineer to follow a runbook for a failure that requires expert judgment causes slower resolution than immediately escalating to the service owner.
+- The team is writing a runbook for a one-time migration or deprecated service being decommissioned next month — the maintenance cost of keeping it current outweighs the benefit for a service with a known end-of-life date.

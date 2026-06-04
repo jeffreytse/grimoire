@@ -43,3 +43,9 @@ Error budget is the mathematical expression of acceptable unreliability. Consumi
 - Reviewing error budget only after incidents: by the time you review, the policy consequence has already been delayed
 - Attributing all consumption to unavoidable causes: this removes the feedback loop that improves reliability
 - Setting burn rate alerts that only trigger at 100% consumption: at that point, users have already suffered the full impact
+
+## When NOT to Use
+
+- No SLO has been defined for the service yet — error budget auditing requires a target SLO as the denominator; run `design-slo` first to establish the baseline before attempting an audit.
+- The service is in alpha or private beta with fewer than 100 users — statistical noise in error rates at low traffic volumes makes burn rate calculations meaningless and will trigger false policy responses.
+- The team is in the middle of a major incident with active user impact — auditing historical budget consumption during an active outage delays mitigation; complete incident response first and run the audit during the post-incident review.

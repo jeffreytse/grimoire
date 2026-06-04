@@ -44,3 +44,9 @@ B2B SaaS company, Q3 calendar: Pillar "Remote Team Management" publishes July 1.
 - Building a calendar in isolation from SEO keyword strategy — topics chosen by feel rather than demand data.
 - Skipping the monthly review — stale calendars with missed deadlines lose team trust quickly.
 - Treating all channels identically — LinkedIn and Instagram require different formats, not reposts of the same asset.
+
+## When NOT to Use
+
+- Do not build a quarterly calendar for a pre-product-market-fit startup where content strategy will pivot within weeks as the audience and offer are still being validated.
+- Do not use an editorial calendar process for single one-off content pieces such as a press release or a crisis communications statement that have no ongoing publishing cadence.
+- Do not apply this skill when the team lacks a dedicated content owner — a calendar without assigned accountability becomes a list of intentions, not a publishing system.

@@ -46,3 +46,9 @@ OKRs force the distinction between aspiration (Objective) and evidence of succes
 - **Task-list KRs** — "Complete three customer interviews" is an output, not an outcome; it will be hit even if nothing improves.
 - **Too many OKRs** — More than five KRs per Objective splits focus; teams optimize for easy wins.
 - **Set-and-forget** — OKRs without weekly check-ins decay into decoration on a slide deck.
+
+## When NOT to Use
+
+- Do not write OKRs for a team in crisis mode (incident recovery, emergency pivot, leadership transition) where the priority changes week-to-week and locking to a quarterly target creates misaligned incentives.
+- Do not apply OKRs to compliance, legal, or safety obligations that must be 100% met regardless of ambition — these belong in a separate baseline commitments list, not in stretch OKRs where 70% attainment is celebrated.
+- Do not use OKRs as a substitute for strategy; if the team does not yet have clarity on what problem they are solving or who they serve, writing OKRs will lock in the wrong direction before the strategy is validated.

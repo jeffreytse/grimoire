@@ -44,3 +44,9 @@ Bass guitar and kick drum masking: Kick has energy at 60Hz (punch) and 3-5kHz (c
 - Boosting muddy frequencies (200-400Hz) to add warmth — this frequency range is already overloaded in most mixes; cut rather than boost.
 - Using the same EQ settings on every element of a type — every kick drum, bass, and vocal is different; EQ by ear, not by preset.
 - Radical cuts (>12dB) as the first move — these create phase artifacts; identify the exact problem frequency precisely before cutting deeply.
+
+## When NOT to Use
+
+- When the recording has fundamental source problems (wrong microphone placement, room acoustics, instrument intonation) that EQ cannot fix and re-recording is the correct solution.
+- When delivering unprocessed stems to a dedicated mix engineer who will perform all EQ decisions in the final mix context, not the production context.
+- When working with already-mastered reference audio or sample packs where EQ changes will alter the material's calibrated tonal balance and licensing compliance.

@@ -47,3 +47,9 @@ Small undone tasks accumulate as open loops in working memory, creating a persis
 - **Scope creep during execution** — Starting a 2-minute task that expands to 20 minutes; if it grows, stop, convert to a proper scheduled task, and resume later
 - **Skipping the classification step for >2 min tasks** — Without an explicit next action, deferred tasks become forgotten tasks
 - **Applying it to important-but-brief tasks without full attention** — Speed is not the same as carelessness; quick tasks still deserve correct execution
+
+## When NOT to Use
+
+- When you are inside a deep work block — applying the rule reactively throughout the day fragments concentration; all sub-2-minute items encountered during a focus session must be captured and batched to a dedicated processing window instead.
+- When the task involves an irreversible action (sending a financial transfer, deleting data, publishing a public announcement) — the rule's speed bias increases error rate; such tasks require deliberate review regardless of estimated duration.
+- When the volume of incoming sub-2-minute items is so high that acting on each one immediately would consume the entire day — in high-throughput roles (support queues, Slack-heavy teams), batching wins over the rule's individual-item logic.

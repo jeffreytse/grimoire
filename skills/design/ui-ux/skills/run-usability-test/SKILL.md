@@ -44,3 +44,9 @@ A checkout flow test with 5 users revealed that 4 of 5 participants assumed "Con
 - **Tasks that describe the UI** — "Click the Settings icon in the top right" removes all the discovery behavior you were trying to observe.
 - **Facilitator over-helping** — Jumping in when a user hesitates gives you false success data; real users won't have a facilitator.
 - **Testing too late** — Running usability tests on shipped code instead of prototypes means findings require expensive rework; test early and often.
+
+## When NOT to Use
+
+- Do not run a moderated usability test when the question is quantitative — if you need to know what percentage of users succeed or which of two designs performs better, an unmoderated study or A/B test provides statistically valid data that think-aloud sessions cannot.
+- Do not use usability testing to validate business strategy or product-market fit — if users can complete tasks easily but do not want the product, that is a market research problem, not a usability problem.
+- Do not recruit convenience participants (teammates, friends, or people in the office) when the target audience has specialized domain knowledge or context — testing a medical records interface with non-clinicians produces misleading results about real-world task failure.

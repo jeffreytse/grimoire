@@ -47,3 +47,9 @@ Acceptance Criteria:
 - **Splitting by technical layer** — "frontend story" and "backend story" for the same feature; stories must deliver end-to-end user value.
 - **Vague AC** — "the system should work correctly" is untestable; every criterion must have a clear pass/fail condition.
 - **Writing epics as stories** — "as a user, I want a full reporting dashboard" is an epic; split into individual report stories.
+
+## When NOT to Use
+
+- When the work is purely technical infrastructure with no direct user interaction (e.g., migrating a database, upgrading a runtime), force-fitting it into user story format produces a fictional actor and obscures the real engineering rationale; use a technical task or spike instead.
+- When the team is in a continuous-flow kanban model without sprint planning ceremonies, the INVEST sizing and sprint-scoping constraints are irrelevant and the story format adds overhead without process benefit.
+- When requirements are handed down as a fixed, non-negotiable regulatory or compliance specification, the "Negotiable" criterion of INVEST cannot be satisfied and a formal requirements document is the appropriate artifact.

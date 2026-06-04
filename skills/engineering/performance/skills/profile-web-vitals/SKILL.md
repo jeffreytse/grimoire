@@ -43,3 +43,9 @@ Core Web Vitals measure what users experience, not what the server reports. A fa
 - Optimizing desktop Lighthouse score while ignoring mobile field data: 60%+ of web traffic is mobile, where CWV scores are dramatically worse
 - Attributing CLS to one element without checking the full page scroll: CLS accumulates across all shifts in the viewport lifetime
 - Deploying multiple performance changes simultaneously: makes it impossible to attribute which change caused the improvement
+
+## When NOT to Use
+
+- The site receives fewer than 1,000 monthly sessions — CrUX requires a minimum traffic threshold to populate field data, making the entire field-first diagnostic approach impossible.
+- The performance complaint is about a React or Vue rendering bottleneck causing UI freezes unrelated to page load — profiling Web Vitals metrics (LCP, CLS, INP at page level) will not isolate in-component re-render loops; use the React Profiler or Vue DevTools instead.
+- The website is a server-rendered admin dashboard used exclusively on corporate LAN by internal users — Core Web Vitals are optimized for public internet traffic patterns, and optimizing them for this audience yields no business value.

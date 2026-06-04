@@ -46,3 +46,9 @@ Push notification permission is among the most fragile trust signals in mobile U
 - Sending the OS permission prompt on the first screen of the first launch: users have no context for why they should grant permission
 - Notification body that duplicates the title: both lines should add information, not repeat it
 - Generic broadcast notifications with no personalization: they train users that notifications from your app are noise
+
+## When NOT to Use
+
+- The app is a consumer-facing tool where the user has not yet experienced core value — sending notifications before the user has completed onboarding will increase uninstall rates, not retention.
+- The notification is purely informational with no required action and the same information is visible next time the user opens the app — interrupting the user adds no value and erodes permission trust.
+- The team lacks backend infrastructure to segment users by behavior or attributes — sending the same blast notification to all users is an anti-pattern this skill explicitly prohibits, so apply this skill only after segmentation capability is in place.

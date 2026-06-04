@@ -45,3 +45,9 @@ Without a block plan, knowledge workers spend most of the day responding to what
 - **Treating blocks as wishes** — blocks must be honored like external appointments or the system erodes
 - **Mixing deep and shallow in the same block** — destroys the cognitive benefit of theming; keep them separate
 - **Skipping the shutdown ritual** — without it, the next day starts unplanned and reactive
+
+## When NOT to Use
+
+- When your role is primarily reactive by design — a customer-facing support agent or an ER nurse whose entire value is responding to unpredictable demands cannot impose rigid pre-planned blocks without harming their core function.
+- When you are in a highly fluid creative phase (early-stage brainstorming, research exploration) where the value comes from following unexpected threads rather than executing a predetermined schedule.
+- When your day has fewer than three discrete tasks — time blocking adds planning overhead that exceeds its benefit for a simple two-item workday; a plain to-do list suffices.

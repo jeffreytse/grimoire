@@ -45,3 +45,9 @@ Hypothesis: "Adding a progress bar to the onboarding flow will increase activati
 - Running 5 experiments simultaneously on the same funnel — interaction effects make attribution impossible.
 - Treating ICE scores as objective truth — they reflect team assumptions; validate high-ICE ideas with qualitative research first.
 - Shipping winners without monitoring retention impact — a change that boosts activation but hurts 30-day retention is a loss.
+
+## When NOT to Use
+
+- Do not run an A/B experiment when daily traffic is below the minimum sample size threshold for the expected effect size — underpowered tests will reach statistical significance by chance and produce misleading ship decisions.
+- Do not use this structured experiment framework for one-time irreversible changes such as a pricing model overhaul or a full product rebrand, where the cost of running a controlled test exceeds the cost of a phased rollout with monitoring.
+- Do not apply ICE-scored experimentation to compliance-driven changes or legal requirements — these must ship regardless of expected impact and do not benefit from prioritization scoring.

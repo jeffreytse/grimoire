@@ -44,3 +44,9 @@ Airbnb's 2014 rebrand (Designstudio + Airbnb in-house) started with the position
 - **Logo-first design** — Designing the logo before strategy produces a beautiful mark disconnected from meaning; it will need to be redesigned within 3 years as the brand evolves.
 - **Too many colors** — A 12-color brand palette is not a system; it is a permission slip for inconsistency at every touchpoint.
 - **No prohibited uses guide** — Without explicit misuse examples, every designer makes their own interpretation; brand consistency collapses at scale.
+
+## When NOT to Use
+
+- Do not run a full brand identity process for an internal tool, prototype, or MVP that will be sunset or rebranded before it reaches a stable customer base — invest in brand systems when the product's core value proposition has been validated.
+- Do not design a new brand identity when the existing brand has high recognition and trust equity among the target audience — brand refreshes that replace familiar signals destroy accumulated recognition and require years of re-education to recover.
+- Do not use the full archetype and positioning framework for sub-brands or product lines that must stay subordinate to a parent brand — independent identity work on a sub-brand without parent brand governance will fragment the overall brand architecture and confuse customers.

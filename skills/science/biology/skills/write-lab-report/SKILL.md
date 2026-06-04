@@ -46,3 +46,9 @@ Contrast with incorrect Discussion mixed in: "Treatment with inhibitor X signifi
 - Interpreting results in the Results section — results present data; discussion interprets it. Mixing the two obscures the difference between observation and inference.
 - Reporting "p < 0.05" instead of exact p-value — exact p-values allow readers to apply their own significance thresholds and are required by Nature and most major journals.
 - Writing the Introduction as a literature review instead of a funnel — Introduction should narrow from broad biology → specific gap → this experiment's hypothesis, not provide a general review of the field.
+
+## When NOT to Use
+
+- When the output is a research proposal or grant application — those formats require specific sections (Aims, Significance, Innovation, Approach) that do not map to IMRaD and are evaluated by different criteria than a completed experiment report.
+- When the work is a methods development or protocol paper where the primary contribution is the technique itself — these use an alternative structure that foregrounds validation benchmarks, comparison to prior methods, and step-by-step protocol tables rather than hypothesis-driven IMRaD flow.
+- When summarizing secondary literature or writing a review article — review papers synthesize existing findings across many studies and follow a distinct structure (scope, search strategy, synthesis, limitations) that differs fundamentally from a single-experiment lab report.

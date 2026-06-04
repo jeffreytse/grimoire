@@ -44,3 +44,9 @@ The scene/sequel unit creates the forward momentum readers describe as "unputdow
 - Scenes that end with "and then they waited": no disaster, no momentum, reader puts the book down
 - Skipping the sequel: characters leap from crisis to action without processing, feeling robotic and unbelievable
 - Scene goals too vague to succeed or fail: "she wanted to feel better" cannot end in a measurable disaster
+
+## When NOT to Use
+
+- Do not apply this skill to lyrical or meditative literary fiction where scenes function as associative impressions rather than goal-conflict-disaster units, and imposing a mechanical disaster ending would violate the prose's contemplative register.
+- Do not use this skill for transitional passages and montage sequences whose explicit purpose is to compress time or establish mood without conflict, not to advance a scene-level dramatic goal.
+- Do not apply this skill to the final resolution scene of a story once all major dramatic questions are answered; forcing a new disaster onto the closing pages denies readers the earned sense of completion the structure spent the whole narrative building toward.

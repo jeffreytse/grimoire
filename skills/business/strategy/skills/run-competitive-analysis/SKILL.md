@@ -43,3 +43,9 @@ When Notion entered the note-taking market, the JTBD lens revealed their real co
 - **Only analyzing direct competitors** — Ignores substitutes and the status quo, which are often the biggest competitive threats.
 - **Matrix without evidence** — Scores based on internal opinion, not customer data, produce false confidence.
 - **Static analysis** — A six-month-old competitive matrix is misleading in markets where competitors ship weekly.
+
+## When NOT to Use
+
+- Do not use this framework when the product is in pure discovery mode with no validated problem — competitive analysis before problem-market fit anchors design to incumbents and blinds you to novel solutions.
+- Do not run a competitive analysis as a substitute for talking to customers; matrix scores derived entirely from marketing pages and analyst reports reflect competitor messaging, not actual customer experience.
+- Do not apply Porter's Five Forces to an internal tooling or platform decision where there is no external market — the framework assumes market competition and produces misleading outputs when applied to build-vs-buy or internal prioritization questions.

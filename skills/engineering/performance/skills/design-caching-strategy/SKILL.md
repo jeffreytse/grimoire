@@ -45,3 +45,9 @@ Caching decisions are permanent performance wins: unlike code optimizations, a c
 - Caching by file extension instead of content type: a `.json` endpoint with user data should not be cached public regardless of extension
 - Setting `max-age=0` thinking it disables caching: it sets TTL to zero, meaning the resource is immediately stale but still cacheable and revalidatable
 - Forgetting to vary on `Accept-Encoding`: serving a gzip response to a client that sent no `Accept-Encoding` breaks parsing
+
+## When NOT to Use
+
+- The endpoint returns financial transaction records, healthcare data, or other content where serving a stale response even briefly could cause incorrect decisions — correctness requirements override caching benefits and `no-store` must be used with no exceptions.
+- The service does not yet have a CDN in front of it and the team has no near-term plans to add one — HTTP caching strategy design for `s-maxage` and `stale-while-revalidate` requires CDN infrastructure to take effect; without it, only browser-level caching applies.
+- The performance bottleneck has been identified as database query latency on cache misses, not high request volume — application-level query result caching (Redis, Memcached) should be designed instead of HTTP caching headers, which do not reduce database load on the first uncached request.

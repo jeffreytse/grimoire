@@ -47,3 +47,9 @@ Criterion: Evidence Quality (in a persuasive essay)
 - **Vague descriptors** — "Good evidence" vs. "Poor evidence" without behavioral specifics produces low inter-rater reliability; raters revert to holistic judgment.
 - **Too many criteria** — A 10-criterion rubric overwhelms both rater and learner; reduce to 4–6 most impactful dimensions.
 - **Rubric revealed after grading** — Sharing the rubric only as a graded feedback tool misses 80% of its developmental value; it must precede the task.
+
+## When NOT to Use
+
+- When evaluating creative or expressive work where the primary goal is originality and a predetermined criterion grid would constrain the range of valid approaches and penalize legitimate artistic risk.
+- When a single, globally holistic judgment is both faster and adequate — brief low-stakes formative checks do not benefit from analytic rubrics and the overhead of writing one exceeds its instructional value.
+- When the task is being assessed for the first time with no prior examples of student work, because behavioral descriptors written without anchor samples will be too vague to produce consistent inter-rater agreement.

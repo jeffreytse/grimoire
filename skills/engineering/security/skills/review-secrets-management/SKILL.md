@@ -45,3 +45,9 @@ CI/CD: Secrets injected at runtime via Vault agent sidecar or AWS IAM role; neve
 - **`.env` files in git** — even if removed in a later commit, they exist in git history; `gitleaks --no-git` will not find them; scan full history.
 - **Long-lived service account keys** — GCP/AWS keys that never rotate are indefinite blast radius; prefer Workload Identity / IRSA.
 - **Secrets in CI environment variables visible in logs** — always mask secrets in CI output; audit pipeline logs for leakage.
+
+## When NOT to Use
+
+- When reviewing a purely static frontend application that has no server-side secrets and communicates only with public, unauthenticated APIs, a secrets management audit has no applicable surface area.
+- When the system is an air-gapped, offline embedded device with no network connectivity and no dynamic credential issuance, centralized secrets manager patterns designed for cloud or networked systems do not apply.
+- When the scope of the review is limited to a single algorithm or business logic function with no I/O, credentials, or external service calls, a secrets management audit is out of scope and should not block that review.

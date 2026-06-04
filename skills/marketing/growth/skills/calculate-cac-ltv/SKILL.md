@@ -44,3 +44,9 @@ SaaS product: S&M spend = $120k/quarter, new customers = 200. CAC = $600. ARPU =
 - Using aggregate churn not cohort churn — masks that older cohorts churn faster; produces optimistic LTV.
 - Comparing LTV to CAC without gross margin adjustment — comparing revenue to cost, not profit to cost.
 - Ignoring CAC payback period — a 5x LTV:CAC ratio with 36-month payback can still cause a cash flow crisis.
+
+## When NOT to Use
+
+- Do not calculate LTV for a business with fewer than 6 months of retention data — there is insufficient cohort history to produce a statistically valid churn rate, making the LTV figure speculative.
+- Do not apply this skill to marketplace or transactional businesses with highly irregular purchase frequency (e.g., real estate, weddings) where the standard ARPU ÷ churn model does not reflect actual revenue patterns.
+- Do not use blended CAC/LTV analysis to justify channel-level budget decisions — channel-segmented unit economics are required; blended numbers can mask a profitable channel subsidizing an unprofitable one.

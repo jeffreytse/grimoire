@@ -45,3 +45,9 @@ Result: +3.2% (95% CI: [1.1%, 5.3%], p=0.003). Ship.
 - **Peeking and stopping early** — inflates false positive rate; at α=0.05, peeking 5× gives a true false-positive rate of ~19%.
 - **No power analysis** — underpowered experiments produce inconclusive results and waste traffic.
 - **Using page views as the unit of randomization** — same user sees both variants; violates stable unit treatment value assumption (SUTVA).
+
+## When NOT to Use
+
+- When daily active users are too low to reach the required sample size within a reasonable time window, running the experiment will produce underpowered, inconclusive results regardless of how long it runs.
+- When the change being evaluated is a critical security patch, compliance fix, or regression repair, ethical and legal obligations require shipping immediately rather than exposing a control group to a known defect.
+- When the product surface has strong network effects between users (e.g., social feeds, multiplayer features), user-level randomization creates interference between variants that invalidates the causal assumption underpinning the experiment.

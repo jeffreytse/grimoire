@@ -46,3 +46,9 @@ High-priority debt item:
 - **Conflating all debt as bad** — deliberate-prudent debt (shipping an MVP shortcut) is a valid business decision.
 - **Measuring only lines of code or coverage** — misses architectural debt (wrong abstractions, coupling) that static metrics don't surface.
 - **No business buy-in** — auditing without budget allocation produces a list that is never acted upon.
+
+## When NOT to Use
+
+- When the system is scheduled for full replacement within the next two quarters, auditing and cataloging debt in code that will be discarded wastes engineering time that should go toward the migration.
+- When the team has no capacity allocated for remediation, performing a detailed audit creates a growing backlog that demoralizes engineers without producing any reduction in actual debt.
+- When a specific module is under active, rapid redesign by its owners, auditing that module for debt produces findings that will be invalidated before any remediation can begin.

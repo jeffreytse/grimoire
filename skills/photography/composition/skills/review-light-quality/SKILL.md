@@ -1,11 +1,11 @@
 ---
-name: evaluate-light-quality
+name: review-light-quality
 description: Use when assessing the lighting conditions for a scene before shooting or planning a lighting setup
 source: Joe McNally "The Hot Shoe Diaries" (2009), Bryan Peterson "Understanding Exposure" (2004), NYIP lighting curriculum
 tags: [photography, lighting, light-quality, direction, color-temperature, hard-light, soft-light]
 ---
 
-# Evaluate Light Quality
+# Review Light Quality
 
 Assess the direction, quality, color temperature, and intensity of available light to determine its suitability or required modification.
 
@@ -44,3 +44,9 @@ Portrait session at 2pm: Direct sun is harsh (small source, high contrast, overh
 - Ignoring color temperature in mixed lighting — an orange tungsten lamp + blue window light produces a green cast in the midtones that no single WB setting corrects.
 - Assuming overcast = bad — diffused overcast light is often the ideal portrait condition; missing it is a failure of light literacy.
 - Not considering how light will change over the session — a 2-hour event shoot in afternoon will transition from harsh midday to warm golden; sequence shots accordingly.
+
+## When NOT to Use
+
+- When shooting in a fully controlled studio with all-artificial lighting where ambient light is irrelevant and every light source is metered directly.
+- When the creative intent is deliberately harsh, flat, or unconventional lighting and evaluating "suitability" would override the intentional aesthetic choice.
+- When shooting fast-moving documentary or street photography where pausing to evaluate light loses the decisive moment.

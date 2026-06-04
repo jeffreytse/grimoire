@@ -43,3 +43,9 @@ External plot and internal arc must mirror each other — the plot's challenges 
 - Arc resolved by external event rather than internal choice: the protagonist watches things change around them instead of causing change
 - Lie never clearly established: readers cannot track transformation they cannot measure
 - Transformation happens too early, leaving no dramatic tension in the final act
+
+## When NOT to Use
+
+- Do not apply this skill to ensemble or literary fiction where multiple characters share equal narrative weight and no single protagonist's internal transformation governs the story's meaning.
+- Do not use this skill for flat-arc protagonists whose function is to remain unchanged and catalyze transformation in supporting characters; imposing a growth arc onto them undermines the story's thematic design.
+- Do not apply this skill to episodic or serial fiction formats (such as procedural TV or short story collections) where each installment must reset the character to a stable baseline, making a cumulative arc structurally incompatible with the format.

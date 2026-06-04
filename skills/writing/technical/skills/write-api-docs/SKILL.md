@@ -46,3 +46,9 @@ Well-written API docs reduce integration time and support burden simultaneously.
 - Documenting only the happy path: developers need error states more than success states when debugging at 2 AM
 - Letting examples drift from the schema: contradictions destroy trust faster than missing docs
 - Burying authentication requirements: state them at the top of every endpoint, not just in an intro section
+
+## When NOT to Use
+
+- Do not apply this skill to internal-only APIs consumed by a single team that owns both producer and consumer, where informal inline code comments and a team wiki page provide sufficient shared context without the overhead of formal reference documentation.
+- Do not use this skill for GraphQL APIs where the schema is self-describing and tools like GraphiQL or Apollo Sandbox auto-generate interactive reference; applying this skill's narrative-layer approach to a self-documenting schema creates duplicate, drift-prone content.
+- Do not apply this skill before the API contract is stable; writing full reference docs against an actively changing interface produces documentation debt faster than it produces value, and the effort is better spent on a draft OpenAPI spec reviewed by consumers first.

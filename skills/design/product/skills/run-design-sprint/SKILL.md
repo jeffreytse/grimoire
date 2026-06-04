@@ -43,3 +43,9 @@ Slack used a sprint to test whether users would understand a "Shared Channels" c
 - **No clear Decider** — Without a designated decision-maker, "sticky vote" results get relitigated; the sprint stalls.
 - **Building real code Thursday** — Engineering sprints that build working software miss the point; a Keynote prototype tests the idea 10× faster.
 - **Recruiting wrong participants** — Testing with colleagues or non-representative users produces invalid signal; recruit screened participants matching the target persona.
+
+## When NOT to Use
+
+- Do not run a design sprint when the critical question has already been answered by existing user research or live product data — a sprint adds cost without new signal.
+- Do not use a design sprint for execution work where the solution is already decided and the team needs to build, not explore — a sprint is a decision tool, not a delivery tool.
+- Do not run a sprint when the Decider (a senior product or business leader with authority to commit) cannot be present all five days — without decision authority in the room, the sprint's outputs become recommendations that get relitigated after Friday.

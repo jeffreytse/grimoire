@@ -44,3 +44,9 @@ Pop verse in C major: C – Am – F – G (I – vi – IV – V). Adds color: 
 - Overusing secondary dominants — chains of secondary dominants obscure tonal center and exhaust listeners.
 - Ignoring the melody — a progression that sounds great solo may clash badly with the tune.
 - Never leaving I-IV-V — limits emotional range; learn borrowed chords and modal interchange to expand the palette.
+
+## When NOT to Use
+
+- When composing in an atonal or 12-tone system where functional harmony and tonal center are intentionally absent.
+- When scoring ambient or drone-based music where static harmonic fields, not chord movement, provide the intended emotional effect.
+- When the production style relies entirely on sampled loops where the harmonic content is fixed and cannot be redesigned from the chord level.

@@ -46,3 +46,9 @@ A README is the storefront for your project. Most visitors decide whether to use
 - Missing prerequisites: readers hit errors on step one and abandon the project
 - Installation steps that only work on the author's machine due to undocumented env assumptions
 - No license section: many companies cannot legally use unlicensed software, so omitting it forfeits enterprise users
+
+## When NOT to Use
+
+- Do not apply this skill to private internal microservices or tooling repositories where the audience is a single team with direct Slack access to the author, and a brief purpose comment at the top of the main file is sufficient orientation.
+- Do not use this skill for libraries or packages that already have dedicated documentation sites (e.g., Docusaurus, Read the Docs), where the README should be a minimal pointer to that canonical source rather than a self-contained guide that will drift out of sync.
+- Do not apply this skill to experimental or throwaway repositories created for a single spike or proof of concept, where investing in structured README content creates false signals of project maturity and misleads potential contributors about maintenance intentions.

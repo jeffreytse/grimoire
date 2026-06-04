@@ -45,3 +45,9 @@ Without SLOs, reliability work is driven by gut feel and loudest complaint. SLOs
 - Setting SLOs without an error budget policy: an SLO without a policy is just a dashboard metric
 - Measuring availability from the server side: a 200 OK from a server that returned empty data is not a successful user request
 - Setting aspirational SLOs that the service has never achieved: unreachable targets destroy team credibility
+
+## When NOT to Use
+
+- The service has no instrumentation and no historical request-success or latency data — SLOs require a measurable SLI; invest in observability instrumentation before defining targets.
+- The service is an internal batch processing job with no real-time user impact — availability-based SLOs are designed for request-serving systems; batch jobs need throughput and lateness SLIs, which require a different design approach.
+- The team has not agreed on an error budget policy — an SLO without a documented policy for what happens when budget depletes is a vanity metric; design the policy first or the SLO will be ignored in practice.

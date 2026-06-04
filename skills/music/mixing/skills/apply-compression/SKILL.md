@@ -44,3 +44,9 @@ Snare drum compression for punch: Ratio 4:1, threshold -18dB, attack 30ms (let t
 - Too-slow release — causes gain reduction to "pump" in tempo with the music, creating an audible rhythmic wobble.
 - Compressing every track with the same settings — different sources have different dynamic profiles; ratios and attack times must be adjusted per source.
 - Not using makeup gain for A/B comparison — the uncompressed version will always sound "better" if it's louder; match levels before judging.
+
+## When NOT to Use
+
+- When the source is a classical or acoustic ensemble recording where preserving wide natural dynamics is essential to the performance's musical integrity.
+- When dealing with MIDI instruments whose dynamics are already perfectly uniform and compression would only reduce headroom without controlling anything meaningful.
+- When the mix is already printing for a mastering engineer who has explicitly requested uncompressed, full-dynamic stem deliveries.

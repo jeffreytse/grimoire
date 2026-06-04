@@ -44,3 +44,9 @@ Claim: √2 is irrational. Strategy selection: Irrationality is an impossibility
 - Writing the inductive step without stating the inductive hypothesis — assumes what must be proved; a logical error that invalidates the proof.
 - Circular reasoning in contradiction proofs — deriving the contradiction using the original claim (not its negation) proves nothing.
 - Confusing "proof by example" with a universal proof — a single example demonstrates a claim for one case; it does not prove the universal.
+
+## When NOT to Use
+
+- When the goal is numerical computation or approximation rather than deductive proof — selecting a proof strategy is irrelevant if the task requires a calculated result rather than a logical derivation.
+- When the claim is an open conjecture at the research frontier where no known technique is sufficient — applying standard proof strategies to unsolved problems wastes time better spent on exploratory heuristics, special cases, and literature review.
+- When the claim's truth value is first being established empirically via counterexample search — verifying a conjecture is false requires producing one counterexample, not designing a proof strategy for it.

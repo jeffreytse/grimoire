@@ -46,3 +46,9 @@ AIDA works because it maps to the reader's cognitive journey. You cannot demand 
 - Starting with "I" or "We": immediately signals the copy is about you, not the reader
 - Skipping desire and jumping from interest to action: readers click on conviction, not curiosity alone
 - Weak CTAs like "Click here": tell readers exactly what they get, not just what to do
+
+## When NOT to Use
+
+- Do not apply this skill to retention communications sent to existing paying customers, where leading with a problem-focused attention hook implies the customer made a poor choice and erodes relationship trust.
+- Do not use this skill for regulatory or compliance communications (privacy notices, terms updates, safety disclosures) where the legal obligation is complete disclosure rather than persuasion, and the AIDA funnel would obscure required information.
+- Do not apply this skill to B2B thought leadership content such as white papers or research reports, where credibility is established through depth and neutrality rather than through a persuasive sequence designed to drive immediate action.

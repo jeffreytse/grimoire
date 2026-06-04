@@ -47,3 +47,9 @@ Urgency creates psychological pressure that hijacks prioritisation. The matrix m
 - **Never scheduling Q2** — It feels safe to defer because there's no deadline; this is how strategic debt accumulates
 - **Using the matrix as a one-time exercise** — Without weekly audits, task lists drift back to feeling uniformly urgent
 - **Confusing delegation with elimination** — Q3 tasks still need to be done; eliminate only genuine Q4
+
+## When NOT to Use
+
+- When you have only one or two tasks to choose between — the matrix's overhead is disproportionate for trivial decisions where common sense is faster and sufficient.
+- When all tasks are imposed by external constraints with no real discretion (e.g., you are an individual contributor with a fully loaded sprint and no authority to defer or delegate) — the matrix cannot help when the prioritisation decision is not yours to make.
+- When the task list is being evaluated in a crisis that requires immediate triage rather than deliberate categorisation — in a live production outage, act on the highest-impact action available rather than pausing to classify every item into quadrants.

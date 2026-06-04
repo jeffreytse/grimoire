@@ -44,3 +44,9 @@ A modal audit reveals the close button has `aria-label="close"` but pressing Esc
 - **Audit = run Lighthouse** — Lighthouse catches ~30% of WCAG violations; teams that stop there ship inaccessible products confidently.
 - **ARIA without semantics** — Adding `role="button"` to a `<div>` without also adding `tabindex="0"` and keyboard handlers creates the appearance of accessibility without the reality.
 - **Fixing automation findings only** — Critical barriers like incorrect screen reader announcements for dynamic content are invisible to automated tools.
+
+## When NOT to Use
+
+- Do not substitute a WCAG 2.1 AA audit for a higher standard when the product serves users with cognitive disabilities or when the organization has committed to WCAG 2.2 or AAA — a passing AA audit does not guarantee the product is usable by all disability groups.
+- Do not run an accessibility audit as a one-time pre-launch gate rather than a recurring practice — new components, content updates, and third-party script changes introduce violations continuously, so a single audit provides only a point-in-time snapshot.
+- Do not treat an audit as complete if no real assistive technology users were involved in testing — automated tools and developer screen reader checks consistently miss interaction patterns that diverge from how actual users navigate with specialized hardware or custom AT configurations.

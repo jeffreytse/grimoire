@@ -43,3 +43,9 @@ Performance optimization without measurement is guesswork. Platform-provided met
 - Optimizing only on flagship devices: performance issues surface on mid-range and low-end devices with slower CPUs and less RAM
 - Measuring in the simulator: iOS Simulator uses host Mac CPU and memory; Instruments data from simulator is not representative of real-device behavior
 - Fixing ANRs by moving work to background threads without checking the work is actually safe to parallelize
+
+## When NOT to Use
+
+- The app has not yet reached production or has fewer than 1,000 daily active users — insufficient real-device data makes platform metrics (Android Vitals, MetricKit) statistically unreliable for prioritization.
+- The reported performance complaint stems from server-side latency exceeding 3 seconds — mobile profiling tools cannot diagnose backend bottlenecks and the audit effort should be redirected to backend observability.
+- The development team is mid-sprint on a feature with a hard customer deadline and no existing baseline metrics — auditing without an established baseline produces findings that cannot be acted on without risking the release.

@@ -47,3 +47,9 @@ The Pomodoro Technique works by treating time as a discrete, visible unit rather
 - **Using breaks for productive tasks** — Email and Slack during breaks prevent cognitive recovery; the break must be genuinely restful
 - **Applying pomodoros to meetings or calls** — The technique is for solo focused work; do not time-box collaborative sessions this way
 - **Ignoring the long break** — Skipping the 20-minute break after four pomodoros causes cumulative fatigue that degrades afternoon performance
+
+## When NOT to Use
+
+- When you are in a deep flow state where the work is progressing well and the 25-minute boundary would forcibly interrupt cognitive momentum on a complex problem that requires sustained context-holding.
+- When the task is inherently long-form and indivisible, such as a live performance, a surgical procedure, or a real-time technical interview, where a mandatory stop mid-task would cause direct harm or failure.
+- When your primary productivity bottleneck is not fatigue or procrastination but external blockers (waiting for approvals, slow CI pipelines, or dependency on others) — the Pomodoro timer adds no value when the constraint is not your own focus.

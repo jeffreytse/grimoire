@@ -44,3 +44,9 @@ Pop song structure: Intro (4 bars) → Verse 1 (16) → Pre-chorus (8) → Choru
 - Bridge that introduces a new main idea — bridges should deepen the song's theme, not start a new one.
 - Outro longer than the bridge — outro is a release valve, not a development section; keep it brief.
 - Writing sections independently before designing the overall arc — results in sections that don't build toward each other.
+
+## When NOT to Use
+
+- When composing through-composed film or game music where scene timing and picture lock dictate form, making standard song structure templates irrelevant.
+- When working in free-form jazz or improvised music where structure emerges from real-time performer interaction rather than pre-planned section maps.
+- When the brief calls for a single-section loop (e.g., a 4-bar stem pack or background music cue) where verse-chorus architecture would be artificial.

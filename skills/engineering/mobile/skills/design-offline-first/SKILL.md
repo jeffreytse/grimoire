@@ -43,3 +43,9 @@ Treating the network as unreliable by default — rather than an exception — p
 - Designing offline as an afterthought: retrofitting sync onto an online-first data model is an order-of-magnitude harder than designing for it initially
 - Last-write-wins without user awareness: silently discarding a user's edits because a teammate saved 1 second later will cause data loss complaints
 - Not persisting the sync queue across app restarts: a queue only in memory is lost on crash, causing silent data loss
+
+## When NOT to Use
+
+- The application is inherently real-time and requires live data to be useful (e.g., stock trading, live video streaming, multiplayer gaming) — stale local state would produce incorrect or dangerous outcomes.
+- The data is highly sensitive with strict regulatory requirements (e.g., HIPAA, PCI-DSS) where persisting data to the local device storage creates an unacceptable compliance risk without additional encryption and audit controls being designed first.
+- The team is rebuilding an existing online-only product under a 2-week deadline — offline-first sync architecture cannot be safely retrofitted in this timeframe and the attempt will introduce data corruption bugs worse than the original connectivity errors.

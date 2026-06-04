@@ -45,3 +45,9 @@ Canary with Kubernetes and Argo Rollouts:
 - **No rollback plan** — "we'll just redeploy" is not a plan; migration side effects may not be reversible.
 - **Canary without meaningful metrics** — routing 5% of traffic but not measuring business-specific error rates makes the canary blind.
 - **Blue-green without database schema alignment** — running two app versions against a single DB with incompatible schemas causes immediate data corruption.
+
+## When NOT to Use
+
+- The service is a stateful database engine or distributed storage cluster — deployment strategies designed for stateless application tiers do not apply; database version upgrades follow vendor-specific rolling upgrade procedures that must not be overridden with generic canary or blue-green patterns.
+- The deployment is a hotfix for a critical security vulnerability actively being exploited in production — gradual canary exposure intentionally delays full rollout, which prolongs user exposure to the vulnerability; deploy to 100% immediately with monitoring and accept the higher blast radius.
+- The infrastructure has no health check mechanism and no traffic splitting capability — canary and rolling strategies both depend on automated health signal to gate promotion; without these primitives, the strategy cannot be executed safely and infrastructure prerequisites must be built first.

@@ -44,3 +44,9 @@ Wedding photography workflow (1,200 RAW files): Import with date folder + couple
 - No folder structure — files scattered across the desktop become unrecoverable after 6 months; date+client folder structure is mandatory from day one.
 - Editing to 100% zoom for all adjustments — color and tone decisions must be made at fit-to-screen view; 100% zoom is for sharpness and noise evaluation only.
 - Skipping the consistency review — delivers batches where image 1 is warm and image 50 is cool; clients notice and request revisions.
+
+## When NOT to Use
+
+- When the assignment is single-image fine-art work where each image is an independent piece with its own creative treatment and batch consistency is neither required nor desired.
+- When a client or publisher has an in-house retouching team that receives RAW files and applies their own standardized processing pipeline, making a custom delivery workflow redundant or conflicting.
+- When shooting personal rapid-turnaround social content where a minimal edit-and-post approach is intentional and the overhead of a multi-stage structured workflow exceeds the value delivered.
