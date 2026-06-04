@@ -3,10 +3,13 @@ name: skill-name
 description: Use when <triggering conditions and context — NOT a summary of the steps>.
 source: <institution, standard body, or "Widely adopted at [Company1, Company2, ...]">
 tags: [problem-keyword, tool-or-method, role-or-context, outcome]
+# related: [companion-skill, next-skill]  # optional — genuine sequences only, not domain neighbors
 # emerging: true        # uncomment if not yet majority-adopted (2-year promotion window)
 # stable: true          # uncomment if 5+ years uncontested, rarely changes
 # deprecated: true      # uncomment if superseded
 # deprecated_by: skill-name  # required when deprecated; use "none" if no successor
+# practitioner: true    # uncomment if practitioner-contributed (credentials required in source field)
+# verified: true        # uncomment to request verification badge (note production use in PR)
 ---
 
 # Skill Name
@@ -44,6 +47,13 @@ Remove this section entirely if the steps are self-evident.
 <!--
 List predictable pitfalls.
 Remove this section if there are none worth noting.
+-->
+
+## When NOT to Use
+
+<!--
+Describe conditions where applying this skill would be wrong or harmful.
+Remove this section if there are no meaningful exceptions.
 -->
 
 <!--
