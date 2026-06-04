@@ -66,6 +66,7 @@ description: Use when <triggering conditions and context>.
 source: <Author/Org, "Title", Year — or "Widely adopted at [Company1, Company2, ...]">
 tags: [problem-keyword-1, problem-keyword-2, problem-keyword-3]
 related: [companion-skill-name, next-skill-in-sequence]  # optional
+practitioner: true  # optional — marks practitioner-contributed skill (see Practitioner path)
 ---
 ```
 
@@ -435,6 +436,33 @@ source: W3C WCAG 2.2 — Success Criterion 1.4.3 Contrast (Minimum)
 source: IETF RFC 9110 — HTTP Semantics, Section 9.3.1
 ```
 
+#### Practitioner path
+
+A practice also qualifies if contributed by a **verified domain practitioner** and
+meets **all four**:
+
+1. **Credentials are verifiable** — contributor names a specific certification,
+   competition record, years of recognized practice, or publication. Self-declared
+   mastery is not sufficient.
+2. **Practice is specific and actionable** — concrete steps, not a philosophy or mindset
+3. **Practice is falsifiable** — a conceivable outcome could disprove it; unfalsifiable
+   claims are rejected on this path exactly as on all others
+4. **Scoped to practitioner's domain of expertise** — a master saddler contributes
+   leatherwork skills, not nutrition advice
+
+Practitioner skills **must** carry `practitioner: true` in frontmatter. They are
+displayed in a separate README section and are not mixed with Active/Stable skills.
+
+**Source format for practitioner contributions:**
+```
+source: Jane Smith, Master Saddler, LCSB-certified, 30yr practice
+source: Dr. John Doe, APA-licensed CBT therapist, 15yr specialization
+source: Park Jae-won, 5× national archery champion, KAA Level 3 coach
+```
+
+**Promotion path:** If a practitioner skill later achieves majority top-tier adoption,
+remove `practitioner: true` and promote to Active via the normal lifecycle.
+
 ---
 
 ### 4. Specific over general
@@ -569,10 +597,12 @@ Every skill moves through a defined lifecycle. The current state is declared in 
 | **Active** | *(none — default)* | Majority adoption, cited evidence |
 | **Stable** | `stable: true` | 5+ years proven, rarely needs updates |
 | **Deprecated** | `deprecated: true` + `deprecated_by: skill-name` | Superseded or retired |
+| **Practitioner** | `practitioner: true` | Expert-contributed; no org-scale adoption evidence required |
 
 ```
-PROPOSED → EMERGING → ACTIVE → STABLE → DEPRECATED
-(PR state)  (tagged)  (default) (tagged)   (tagged)
+PROPOSED → EMERGING    → ACTIVE → STABLE → DEPRECATED
+         ↘ PRACTITIONER ↗
+(PR state)  (tagged)     (default) (tagged)   (tagged)
 ```
 
 ### Promotion criteria
@@ -592,6 +622,7 @@ The following combinations are invalid and rejected by the validator:
 - `stable: true` + `emerging: true` — a skill cannot be both unproven and proven
 - `deprecated: true` + `emerging: true` — a retired skill is not also in trial
 - `deprecated: true` without `deprecated_by:` — deprecation must name the successor or `none`
+- `practitioner: true` + `stable: true` — practitioner skills have no adoption evidence; stable requires 5+ years broad cross-industry adoption
 
 ---
 
@@ -670,7 +701,9 @@ Before submitting a skill, verify:
 - [ ] Section explains why this approach over alternatives
 - [ ] Steps are concrete and immediately actionable
 - [ ] Scoped to one concept
-- [ ] Industry-proven — passes at least one qualification path: (a) majority top-tier company/professional adoption, (b) visionary practitioner with verifiable outcomes, or (c) recognized standards body (NIST, OWASP, IETF, W3C, IEEE, WHO, ABA, etc.)
+- [ ] Industry-proven — passes at least one qualification path: (a) majority top-tier company/professional adoption, (b) visionary practitioner with verifiable outcomes, (c) recognized standards body (NIST, OWASP, IETF, W3C, IEEE, WHO, ABA, etc.), or (d) verified domain practitioner (`practitioner: true`)
+- [ ] If `practitioner: true`, `source` names specific verifiable credentials (certification, competition record, publication, or years in recognized context)
+- [ ] If `practitioner: true`, skill is falsifiable and actionable — practitioner path cannot substitute for a philosophy or ideology
 - [ ] `tags` present with 3–8 tags covering all 4 axes: problem keyword, tool/method, role/context, outcome
 - [ ] `source` field present and cites credible institution or top-tier adopters
 - [ ] Practice has strong impact — not a marginal optimization

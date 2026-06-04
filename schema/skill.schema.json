@@ -49,6 +49,10 @@
       "type": "string",
       "description": "Successor skill name, or 'none' if no successor"
     },
+    "practitioner": {
+      "type": "boolean",
+      "description": "true if contributed by a verified domain practitioner (no org-scale adoption evidence required)"
+    },
     "verified": {
       "type": "boolean",
       "description": "true if attributed, tested in production, and maintainer-reviewed"
@@ -63,13 +67,26 @@
     }
   },
   "additionalProperties": false,
-  "if": {
-    "properties": {
-      "deprecated": { "const": true }
+  "allOf": [
+    {
+      "if": {
+        "properties": { "deprecated": { "const": true } },
+        "required": ["deprecated"]
+      },
+      "then": {
+        "required": ["deprecated_by"]
+      }
     },
-    "required": ["deprecated"]
-  },
-  "then": {
-    "required": ["deprecated_by"]
-  }
+    {
+      "if": {
+        "properties": { "practitioner": { "const": true } },
+        "required": ["practitioner"]
+      },
+      "then": {
+        "properties": {
+          "stable": { "not": { "const": true } }
+        }
+      }
+    }
+  ]
 }

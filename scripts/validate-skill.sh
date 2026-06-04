@@ -119,10 +119,16 @@ check_skill() {
 
   # --- Lifecycle checks ---
 
-  local stable deprecated deprecated_by
+  local stable deprecated deprecated_by practitioner
   stable=$(echo "$frontmatter"        | grep -E '^stable:'        | head -1 | sed 's/^stable:[[:space:]]*//'        || true)
   deprecated=$(echo "$frontmatter"    | grep -E '^deprecated:'    | head -1 | sed 's/^deprecated:[[:space:]]*//'    || true)
   deprecated_by=$(echo "$frontmatter" | grep -E '^deprecated_by:' | head -1 | sed 's/^deprecated_by:[[:space:]]*//' || true)
+  practitioner=$(echo "$frontmatter"  | grep -E '^practitioner:'  | head -1 | sed 's/^practitioner:[[:space:]]*//'  || true)
+
+  if [[ "$practitioner" == "true" ]] && [[ "$stable" == "true" ]]; then
+    red "    [FAIL] practitioner: and stable: cannot both be true — stable requires broad cross-industry adoption"
+    (( file_errors++ )) || true
+  fi
 
   if [[ "$deprecated" == "true" ]] && [[ -z "$deprecated_by" ]]; then
     red "    [FAIL] deprecated: true but missing deprecated_by: field (use skill-name or 'none')"
