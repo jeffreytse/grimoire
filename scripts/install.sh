@@ -15,23 +15,23 @@ Options:
   --domain <name>       Install all skills for a domain (e.g. engineering, photography)
   --subdomain <name>    Restrict to one sub-domain within a domain (e.g. development)
   --skill <path>        Install one skill (e.g. engineering/development/propose-conventional-commit)
-  --target <agent>      Target: claude (default), codex, gemini, all
+  --target <agent>      Target: auto (default), claude, codex, gemini, all
   --list                List available domains, sub-domains, and skills
   --help                Show this help
 
 Examples:
-  install.sh                                                # All skills, Claude Code
+  install.sh                                                # All skills, all detected agents
   install.sh --domain engineering                           # All engineering sub-domains
   install.sh --domain engineering --subdomain development   # One sub-domain
   install.sh --skill engineering/development/propose-conventional-commit
-  install.sh --domain engineering --target all              # All agents
+  install.sh --domain engineering --target all              # All agents (force)
 EOF
 }
 
-# Detect if a domain dir is flat (has skills/) or nested (has sub-domain dirs)
+# Detect if a domain dir is flat (has non-empty skills/) or nested (has sub-domain dirs)
 is_nested() {
   local domain_dir="$1"
-  [[ ! -d "${domain_dir}/skills" ]]
+  [[ ! -d "${domain_dir}/skills" ]] || [[ -z "$(ls -A "${domain_dir}/skills/" 2>/dev/null)" ]]
 }
 
 list_skills() {
@@ -70,6 +70,14 @@ install_skill_dir() {
   echo "  installed: ${skill_name} -> ${dest_dir}/${skill_name}"
 }
 
+detect_agents() {
+  local detected=()
+  [[ -d "${HOME}/.claude" ]]  && detected+=("claude")
+  [[ -d "${HOME}/.agents" ]]  && detected+=("codex")
+  [[ -d "${HOME}/.gemini" ]]  && detected+=("gemini")
+  echo "${detected[@]:-}"
+}
+
 do_install() {
   local src="$1"
   local target="$2"
@@ -81,6 +89,11 @@ do_install() {
       install_skill_dir "${src}" "${CLAUDE_SKILLS_DIR}"
       install_skill_dir "${src}" "${AGENTS_SKILLS_DIR}"
       install_skill_dir "${src}" "${GEMINI_SKILLS_DIR}"
+      ;;
+    auto)
+      [[ -d "${HOME}/.claude" ]]  && install_skill_dir "${src}" "${CLAUDE_SKILLS_DIR}"
+      [[ -d "${HOME}/.agents" ]]  && install_skill_dir "${src}" "${AGENTS_SKILLS_DIR}"
+      [[ -d "${HOME}/.gemini" ]]  && install_skill_dir "${src}" "${GEMINI_SKILLS_DIR}"
       ;;
   esac
 }
@@ -128,7 +141,7 @@ install_domain() {
 DOMAIN=""
 SUBDOMAIN=""
 SKILL=""
-TARGET="claude"
+TARGET="auto"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -141,6 +154,16 @@ while [[ $# -gt 0 ]]; do
     *) echo "Unknown option: $1"; usage; exit 1 ;;
   esac
 done
+
+if [[ "${TARGET}" == "auto" ]]; then
+  read -ra detected <<< "$(detect_agents)"
+  if [[ ${#detected[@]} -eq 0 ]]; then
+    echo "No agents detected (~/.claude, ~/.agents, ~/.gemini). Defaulting to Claude Code."
+    TARGET="claude"
+  else
+    echo "Detected agents: ${detected[*]}"
+  fi
+fi
 
 if [[ -n "${SKILL}" ]]; then
   # Format: domain/subdomain/skill-name OR domain/skill-name

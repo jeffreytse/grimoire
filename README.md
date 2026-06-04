@@ -35,7 +35,7 @@
   </a>
 
   <a href="./LICENSE">
-    <img src="https://img.shields.io/badge/License-MIT-yellow.svg"
+    <img src="https://img.shields.io/badge/License-MIT-greygreen.svg"
       alt="License: MIT" />
   </a>
 
@@ -58,6 +58,11 @@
     <img src="https://img.shields.io/badge/works%20with-Claude%20%C2%B7%20Codex%20%C2%B7%20Cursor%20%C2%B7%20Gemini%20%C2%B7%20OpenCode-blue"
       alt="Works with" />
   </a>
+
+  <a href="./skills/">
+    <img src="https://img.shields.io/badge/skills-508-blueviolet"
+      alt="508 Skills" />
+  </a>
 </p>
 
 <div align="center">
@@ -65,8 +70,10 @@
     <a href="#-why-grimoire">Why</a> |
     <a href="#-what-a-skill-looks-like">Features</a> |
     <a href="#%EF%B8%8F-install">Install</a> |
+    <a href="#-quick-start">Quick Start</a> |
     <a href="#%EF%B8%8F-domains">Domains</a> |
     <a href="#-contributing">Contributing</a> |
+    <a href="https://github.com/jeffreytse/grimoire/releases">Changelog</a> |
     <a href="#-license">License</a>
   </h4>
 </div>
@@ -220,39 +227,65 @@ or tells you exactly what to install if the skill isn't in your library yet.
 
 ## ⚒️ Install
 
-**All skills (Claude Code):**
-
-```bash
-/plugins add github:jeffreytse/grimoire
-```
-
-**One domain:**
-
-```bash
-/plugins add github:jeffreytse/grimoire/skills/engineering
-/plugins add github:jeffreytse/grimoire/skills/writing
-```
-
-**One sub-domain:**
-
-```bash
-/plugins add github:jeffreytse/grimoire/skills/engineering/development
-```
-
-**Via script (Claude Code, Codex, Gemini CLI, Copilot):**
+**One command. Every AI agent on your system.**
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/jeffreytse/grimoire/main/scripts/install.sh | bash
 ```
 
-**Granular installs:**
+Auto-detects Claude Code, Codex, and Gemini CLI. Installs to every agent found. No flags needed.
+
+---
+
+**Native plugin shortcuts (Claude Code / Codex):**
+
+```bash
+/plugins add github:jeffreytse/grimoire                         # all skills
+/plugins add github:jeffreytse/grimoire/skills/engineering      # one domain
+/plugins add github:jeffreytse/grimoire/skills/engineering/development  # one sub-domain
+```
+
+---
+
+**Granular script installs:**
 
 ```bash
 ./scripts/install.sh --domain engineering
 ./scripts/install.sh --domain engineering --subdomain development
 ./scripts/install.sh --skill engineering/development/propose-conventional-commit
-./scripts/install.sh --domain writing --target all
+./scripts/install.sh --target all    # force install to all agents, even if not detected
 ```
+
+**OpenCode:** add to `opencode.json`:
+```json
+{ "plugins": ["grimoire@git+https://github.com/jeffreytse/grimoire.git"] }
+```
+
+---
+
+## 🚀 Quick Start
+
+**After install, describe any problem in plain language:**
+
+```
+User: I need to raise a Series A but don't know how to pitch investors.
+
+Claude: Situation matches: write-value-proposition + design-go-to-market + apply-pyramid-principle
+        Applying suggest-practice...
+        → Start with your value prop. /write-value-proposition
+```
+
+Or invoke a skill directly:
+
+```bash
+/suggest-practice          # describe any problem — auto-routes to the right skill
+/review-pull-request       # engineering code review
+/calculate-fire-number     # how much do I need to retire?
+/review-saas-contract      # flag dangerous clauses before signing
+/design-training-program   # build a training program
+```
+
+**New to grimoire?** Start with `/suggest-practice`. Describe any professional or life situation — it reads your context and routes you to the matching skill, or tells you exactly what to install if the skill isn't in your library yet.
 
 ---
 
@@ -343,9 +376,17 @@ grimoire is a framework + reference skills. The domain structure is ready — co
 
 ## 🤝 Contributing
 
-**grimoire has 162 skills. It needs 500. Pick a domain.**
+**grimoire has 508 skills. It needs 1000. Pick a domain.**
 
 Every domain has empty sub-domains waiting for skills. If you know a field — engineering, law, finance, music, cooking, anything — add the practices you've seen work at the highest level.
+
+**Your first skill in ~30 minutes:**
+1. Pick a practice you've used at the highest level in your field
+2. Run `/write-skill` — it guides you through the format step by step
+3. Open a PR — `/review-skill` runs automatically and flags any gaps
+4. Merge after review passes
+
+Not sure where to start? Browse [open issues](https://github.com/jeffreytse/grimoire/issues) for requested skills, or pick any empty sub-domain from the table below.
 
 Skills must pass [`review-skill`](./skills/meta/skills/review-skill/) before merge.
 The meta skills guide the full contribution workflow:
