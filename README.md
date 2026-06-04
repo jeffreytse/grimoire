@@ -1,6 +1,6 @@
 <div align="center">
   <a href="https://github.com/jeffreytse/grimoire">
-    <img alt="grimoire" src="./docs/banner.svg" width="700">
+    <img alt="grimoire" src="./assets/banner.svg" width="700">
   </a>
 
   <p>📖 The world's professional best practices — your expert consultant, anywhere, anytime.</p>
@@ -81,11 +81,11 @@
 
 ## 🎬 Demo
 
-> "I want to retire early. Where do I even start?" — three grimoire skills. One answer.
+> "I'm 42, AI just took my job, I have a mortgage. What do I do?" — one question. Four grimoire skills. A plan.
 
-![grimoire — FIRE number, budget optimisation, portfolio allocation in 30 seconds](./docs/demo.gif)
+![grimoire demo — natural language problem solved with grimoire best practices](./assets/demo.gif)
 
-*`/calculate-fire-number` → `/design-budget` → `/design-portfolio-allocation` — each output feeds the next*
+*Describe any problem in plain language. Claude reads your grimoire and auto-routes: `apply-first-principles` → `calculate-fire-number` → `design-pricing-strategy` → `write-value-proposition`*
 
 ---
 
@@ -343,7 +343,7 @@ grimoire is a framework + reference skills. The domain structure is ready — co
 
 ## 🤝 Contributing
 
-**grimoire has 152 skills. It needs 500. Pick a domain.**
+**grimoire has 162 skills. It needs 500. Pick a domain.**
 
 Every domain has empty sub-domains waiting for skills. If you know a field — engineering, law, finance, music, cooking, anything — add the practices you've seen work at the highest level.
 
