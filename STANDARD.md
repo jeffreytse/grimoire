@@ -63,8 +63,9 @@ skills/law/contracts/skills/review-saas-agreement/SKILL.md
 ---
 name: verb-first-kebab-case
 description: Use when <triggering conditions and context>.
-source: <institution, standard body, or "Widely adopted at [Company1, Company2, ...]">
+source: <Author/Org, "Title", Year — or "Widely adopted at [Company1, Company2, ...]">
 tags: [problem-keyword-1, problem-keyword-2, problem-keyword-3]
+related: [companion-skill-name, next-skill-in-sequence]  # optional
 ---
 ```
 
@@ -158,15 +159,18 @@ Verbs not in this table are allowed if none of the above fit — but vague verbs
 - Max 500 characters
 
 **`source`**
-- Required — makes every skill's origin verifiable
-- Cite the institution, standard body, or top-tier adopters
+- Required — makes every skill's origin auditable by a third party
+- Format: `Author/Org, "Title", Year` — enough for a reader to locate the original
 - Examples:
-  - `Google Engineering Practices, Netflix Tech Blog`
-  - `WHO Clinical Guidelines, Mayo Clinic evidence-based protocols`
-  - `CFA Institute Standards, Bridgewater All Weather principles`
-  - `ABA Model Rules, ISDA Master Agreement standards`
-  - `McKinsey Problem Solving, BCG Strategic Analysis`
-  - `Widely adopted at Google, Netflix, Stripe, Airbnb`
+  - `Google, "Google Engineering Practices", 2023`
+  - `WHO, "Global Guidelines on Hand Hygiene in Health Care", 2009`
+  - `CFA Institute, "Standards of Practice Handbook", 12th ed. 2022`
+  - `ABA, "Model Rules of Professional Conduct", 2023`
+  - `ISDA, "Master Agreement", 2002`
+  - `McKinsey & Company, "Problem Solving", internal methodology`
+  - `BCG, "Strategic Analysis Frameworks"`
+  - `Bacchelli & Bird, "Expectations, Outcomes, and Challenges of Modern Code Review", ICSE 2013`
+  - `Widely adopted at Google, Netflix, Stripe, Airbnb` — acceptable when no single document exists
 
 **`tags`** (required)
 - Used by `suggest-practice` to match skills to user situations — cover all four axes:
@@ -191,6 +195,14 @@ description: Use when committing — inspects staged files, drafts conventional 
 description: Use when the user asks to commit, wants a commit message, or invokes /propose-commit.
 ```
 
+**`related`** (optional)
+- Companion skills commonly used before, after, or alongside this one
+- Use when skills form a natural sequence or reinforce each other
+- Examples:
+  - `apply-first-principles` → `related: [design-solution, evaluate-tradeoffs]`
+  - `diagnose-deployment-failure` → `related: [write-postmortem, design-runbook]`
+- Do NOT list skills just because they share a domain — only list genuine sequences
+
 ### Content structure
 
 **Required:**
@@ -203,8 +215,8 @@ description: Use when the user asks to commit, wants a commit message, or invoke
 | `## Steps` or `## Core Pattern` | **Required** |
 | `## Rules` | Recommended |
 | `## Examples` | Recommended |
-| `## Common Mistakes` | Optional |
-| `## When NOT to Use` | Optional |
+| `## Common Mistakes` | **Recommended** |
+| `## When NOT to Use` | **Recommended** |
 
 ### Why This Is Best Practice (required)
 
@@ -275,6 +287,11 @@ One skill = one concept. If a skill covers two separable things, split it.
 Adopted by **most** top-tier companies or credentialed professionals in the domain,
 with demonstrated strong impact. Majority adoption at the top — not a niche technique,
 not one company's approach, not an emerging trend.
+
+A practice must also be **falsifiable** — there must exist possible evidence that could
+prove it wrong. If no conceivable outcome could disprove the claim, it is a belief or
+philosophy, not a practice. Unfalsifiable claims are always rejected regardless of which
+qualification path is used.
 
 ```
 ❌ "Drink enough water throughout the day." (generic, not industry standard)
@@ -660,3 +677,8 @@ Before submitting a skill, verify:
 - [ ] Safety footer present (health / law / finance / mental-health)
 - [ ] Not superseded by a newer practice with equal or broader top-tier adoption
 - [ ] 50–300 lines
+- [ ] Practice is falsifiable — conceivable evidence could disprove it (not a philosophy or belief)
+- [ ] Lifecycle flags consistent — no conflicting combinations (`stable` + `emerging`, `deprecated` + `emerging`, `deprecated` without `deprecated_by`)
+- [ ] If `related:` present, lists genuine sequences only (not domain neighbors)
+- [ ] If health domain, evidence-tier tags present on factual claims (`[RCT]`, `[SR]`, `[Consensus]`, `[Practical]`)
+- [ ] If `emerging: true`, `## Why This Is Best Practice` includes status note with named orgs and review date

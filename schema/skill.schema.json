@@ -52,6 +52,14 @@
     "verified": {
       "type": "boolean",
       "description": "true if attributed, tested in production, and maintainer-reviewed"
+    },
+    "related": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9]*(-[a-z][a-z0-9]*)+$"
+      },
+      "description": "Companion skill names used in sequence or parallel"
     }
   },
   "additionalProperties": false,
