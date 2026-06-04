@@ -60,8 +60,8 @@
   </a>
 
   <a href="./skills/">
-    <img src="https://img.shields.io/badge/skills-508-blueviolet"
-      alt="508 Skills" />
+    <img src="https://img.shields.io/badge/skills-514-blue"
+      alt="514 Skills" />
   </a>
 </p>
 
@@ -237,6 +237,14 @@ Auto-detects Claude Code, Codex, and Gemini CLI. Installs to every agent found. 
 
 ---
 
+**Windows (PowerShell):**
+
+```powershell
+Invoke-WebRequest https://raw.githubusercontent.com/jeffreytse/grimoire/main/scripts/install.ps1 -OutFile install.ps1; .\install.ps1
+```
+
+---
+
 **Native plugin shortcuts (Claude Code / Codex):**
 
 ```bash
@@ -255,6 +263,25 @@ Auto-detects Claude Code, Codex, and Gemini CLI. Installs to every agent found. 
 ./scripts/install.sh --skill engineering/development/propose-conventional-commit
 ./scripts/install.sh --target all    # force install to all agents, even if not detected
 ```
+
+**Gemini CLI:**
+
+```bash
+gemini extensions install https://github.com/jeffreytse/grimoire   # install
+gemini extensions update grimoire                                  # update later
+```
+
+---
+
+**Cursor** — in Agent chat:
+
+```
+/add-plugin grimoire
+```
+
+Or search "grimoire" in the plugin marketplace.
+
+---
 
 **OpenCode:** add to `opencode.json`:
 ```json
@@ -293,16 +320,18 @@ Or invoke a skill directly:
 
 | Skill | Domain | Source methodology | Verified |
 |-------|--------|--------------------|----------|
-| [`propose-conventional-commit`](./skills/engineering/development/skills/propose-conventional-commit/) | engineering/development | Angular/Google Conventional Commits | ✓ |
-| [`suggest-practice`](./skills/meta/skills/suggest-practice/) | meta | grimoire meta-skill | ✓ |
-| [`design-slo`](./skills/engineering/reliability/skills/design-slo/) | engineering/reliability | Google SRE Book | ✓ |
-| [`review-pull-request`](./skills/engineering/development/skills/review-pull-request/) | engineering/development | Google Engineering Practices | ✓ |
-| [`write-post-mortem`](./skills/engineering/devops/skills/write-post-mortem/) | engineering/devops | Amazon blameless post-mortem | ✓ |
-| [`audit-gdpr-compliance`](./skills/law/privacy/skills/audit-gdpr-compliance/) | law/privacy | GDPR / EDPB guidelines | ✓ |
-| [`calculate-dcf`](./skills/finance/investing/skills/calculate-dcf/) | finance/investing | CFA Institute / Damodaran | ✓ |
-| [`design-training-program`](./skills/health/fitness/skills/design-training-program/) | health/fitness | NSCA CSCS curriculum | ✓ |
-| [`apply-first-principles`](./skills/productivity/focus/skills/apply-first-principles/) | productivity/focus | Aristotle / Descartes / SpaceX | ✓ |
+| [`apply-five-whys`](./skills/engineering/reliability/skills/apply-five-whys/) | engineering/reliability | Toyota Production System / Google SRE | ✓ |
 | [`design-go-to-market`](./skills/business/strategy/skills/design-go-to-market/) | business/strategy | Moore "Crossing the Chasm" | ✓ |
+| [`audit-gdpr-compliance`](./skills/law/privacy/skills/audit-gdpr-compliance/) | law/privacy | GDPR / EDPB guidelines | ✓ |
+| [`calculate-fire-number`](./skills/finance/personal-finance/skills/calculate-fire-number/) | finance/personal-finance | Bengen (1994) / Trinity Study | ✓ |
+| [`design-training-program`](./skills/health/fitness/skills/design-training-program/) | health/fitness | NSCA CSCS curriculum | ✓ |
+| [`apply-mise-en-place`](./skills/cooking/techniques/skills/apply-mise-en-place/) | cooking/techniques | Culinary Institute of America | ✓ |
+| [`apply-acceptance-commitment-therapy`](./skills/psychology/cognitive/skills/apply-acceptance-commitment-therapy/) | psychology/cognitive | Hayes / ACBS meta-analyses | ✓ |
+| [`apply-spaced-repetition`](./skills/education/curriculum/skills/apply-spaced-repetition/) | education/curriculum | Ebbinghaus / Roediger & Karpicke | ✓ |
+| [`write-value-proposition`](./skills/writing/copywriting/skills/write-value-proposition/) | writing/copywriting | Osterwalder "Value Proposition Design" | ✓ |
+| [`design-training-periodization-plan`](./skills/sports/training/skills/design-training-periodization-plan/) | sports/training | Bompa "Periodization" / NSCA | ✓ |
+
+→ [Browse all 514 skills by domain](./SKILLS.md)
 
 ---
 
@@ -368,15 +397,15 @@ grimoire is a framework + reference skills. The domain structure is ready — co
 | ----- | -------------- | -------------- |
 | Claude Code | `/plugins add github:jeffreytse/grimoire` | `--target claude` |
 | Codex | `/plugins add github:jeffreytse/grimoire` | `--target codex` |
-| Cursor | `/plugins add github:jeffreytse/grimoire` | `--target all` |
+| Cursor | `/add-plugin grimoire` (in Agent chat) | `--target all` |
 | OpenCode | See [`.opencode/INSTALL.md`](./.opencode/INSTALL.md) | `--target all` |
-| Gemini CLI | — | `--target gemini` |
+| Gemini CLI | `gemini extensions install https://github.com/jeffreytse/grimoire` | `--target gemini` |
 
 ---
 
 ## 🤝 Contributing
 
-**grimoire has 508 skills. It needs 1000. Pick a domain.**
+**grimoire has 514 skills. It needs 1000. Pick a domain.**
 
 Every domain has empty sub-domains waiting for skills. If you know a field — engineering, law, finance, music, cooking, anything — add the practices you've seen work at the highest level.
 
