@@ -42,3 +42,9 @@ Sources: WHO Surgical Safety Checklist 2009, FAA Advisory Circular AC 120-21
 - Checking off steps from memory after completing a block.
 - Using the checklist only for documentation, not real-time verification.
 - Skipping it when "everything is obviously fine."
+
+## When NOT to Use
+
+- When the process has a single step with no failure modes worth gating.
+- When operating in an exploratory phase where rigid sequencing inhibits discovery.
+- When the checklist has not been validated against the actual process it covers.
