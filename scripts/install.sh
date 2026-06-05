@@ -1,7 +1,18 @@
 #!/usr/bin/env bash
-set -uo pipefail
+set -eo pipefail
 
-REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+SCRIPT_PATH="${BASH_SOURCE[0]:-}"
+if [[ -n "${SCRIPT_PATH}" && -f "${SCRIPT_PATH}" ]]; then
+  REPO_ROOT="$(cd "$(dirname "${SCRIPT_PATH}")/.." && pwd)"
+  _TMPDIR=""
+else
+  # Running via curl | bash — clone to a temp dir
+  _TMPDIR="$(mktemp -d)"
+  trap 'rm -rf "${_TMPDIR}"' EXIT
+  echo "Downloading grimoire..."
+  git clone --depth 1 --quiet https://github.com/jeffreytse/grimoire.git "${_TMPDIR}"
+  REPO_ROOT="${_TMPDIR}"
+fi
 SKILLS_ROOT="${REPO_ROOT}/skills"
 CLAUDE_SKILLS_DIR="${HOME}/.claude/skills"
 AGENTS_SKILLS_DIR="${HOME}/.agents/skills"
