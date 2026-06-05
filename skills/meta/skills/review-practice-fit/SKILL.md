@@ -3,7 +3,6 @@ name: review-practice-fit
 description: Use when the user already has a solution, plan, approach, or design and wants to know how well it aligns with best practices — including gaps, what's missing, and what to fix.
 source: McKinsey as-is/to-be gap analysis methodology, Google Engineering Practices design review, ISO 9001 gap audit standards
 tags: [gap-analysis, solution-review, practice-alignment, quality-audit, practitioner, decision-maker, solution-improvement, practice-compliance]
-verified: true
 ---
 
 # Review Practice Fit

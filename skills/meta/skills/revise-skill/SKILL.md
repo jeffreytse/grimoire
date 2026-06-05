@@ -3,7 +3,6 @@ name: revise-skill
 description: Use when an existing SKILL.md has review-skill findings to address, a citation has become inaccurate, steps reference an outdated tool, or scope needs adjusting — splitting a skill that covers two concepts, or expanding one that is too shallow.
 source: IETF RFC errata process (BCP 9), MDN Web Docs contribution guidelines, Wikipedia article improvement process
 tags: [skill-revision, quality-debt, targeted-fix, contributor, maintainer, review-pass]
-verified: true
 ---
 
 # Revise Skill

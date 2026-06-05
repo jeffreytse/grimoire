@@ -3,7 +3,6 @@ name: plan-solution
 description: Use when the user's problem spans multiple domains, requires coordinating several best practices, or is too complex for a single skill — e.g. "launch a startup", "handle a workplace medical emergency", "going through a divorce while buying a house."
 source: McKinsey Problem Solving (MECE methodology, Rasiel 1999), Kepner-Tregoe problem analysis, Design Thinking (IDEO/Stanford d.school)
 tags: [complex-problem, multi-domain, problem-decomposition, mece, skill-orchestration, problem-solver, structured-solution, cross-domain]
-verified: true
 ---
 
 # Plan Solution

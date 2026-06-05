@@ -3,7 +3,6 @@ name: deprecate-skill
 description: Use when a grimoire skill has become outdated — the referenced tool no longer exists at scale, the source institution revised its position, a newer practice has achieved majority top-tier adoption that supersedes it, or the skill fails review-skill criteria it once passed.
 source: npm deprecation guidelines, IETF RFC obsolescence process (BCP 9), Semantic Versioning (semver.org)
 tags: [skill-maintenance, staleness, deprecation, outdated-practice, maintainer, knowledge-freshness]
-verified: true
 ---
 
 # Deprecate Skill
