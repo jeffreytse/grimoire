@@ -44,7 +44,7 @@ EOF
 # ── Banner ────────────────────────────────────────────────────────────────────
 print_banner() {
   local version
-  version="$(grep -oE '"version": *"[^"]+"' "${REPO_ROOT}/.claude-plugin/plugin.json" 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)"
+  version="$(cat "${REPO_ROOT}/VERSION" 2>/dev/null | tr -d '[:space:]')"
   version="${version:-1.0.0}"
 
   # All colors use $'...' so they contain actual ESC bytes (works in printf %s and variables)

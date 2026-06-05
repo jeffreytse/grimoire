@@ -61,11 +61,8 @@ Examples:
 function Print-Banner {
     $version = "1.0.0"
     try {
-        $pluginJson = Join-Path $RepoRoot ".claude-plugin\plugin.json"
-        if (Test-Path $pluginJson) {
-            $content = Get-Content $pluginJson -Raw
-            if ($content -match '"version"\s*:\s*"([0-9]+\.[0-9]+\.[0-9]+)"') { $version = $Matches[1] }
-        }
+        $versionFile = Join-Path $RepoRoot "VERSION"
+        if (Test-Path $versionFile) { $version = (Get-Content $versionFile -Raw).Trim() }
     } catch {}
 
     $e  = [char]27
