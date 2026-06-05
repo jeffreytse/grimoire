@@ -248,7 +248,8 @@ Invoke-WebRequest https://raw.githubusercontent.com/jeffreytse/grimoire/main/scr
 **Native plugin shortcuts (Claude Code / Codex):**
 
 ```bash
-/plugins add github:jeffreytse/grimoire                         # all skills
+/plugins add github:jeffreytse/grimoire                         # all skills (latest)
+/plugins add github:jeffreytse/grimoire@v1.0.0                  # pin to a release
 /plugins add github:jeffreytse/grimoire/skills/engineering      # one domain
 /plugins add github:jeffreytse/grimoire/skills/engineering/development  # one sub-domain
 ```
@@ -267,8 +268,9 @@ Invoke-WebRequest https://raw.githubusercontent.com/jeffreytse/grimoire/main/scr
 **Gemini CLI:**
 
 ```bash
-gemini extensions install https://github.com/jeffreytse/grimoire   # install
-gemini extensions update grimoire                                  # update later
+gemini extensions install https://github.com/jeffreytse/grimoire          # latest
+gemini extensions install https://github.com/jeffreytse/grimoire@v1.0.0   # pin to a release
+gemini extensions update grimoire                                         # update later
 ```
 
 ---
