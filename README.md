@@ -24,13 +24,13 @@
       alt="Donate (GitHub Sponsor)" />
   </a>
 
-  <a href="https://github.com/jeffreytse/zsh-vi-mode/releases">
+  <a href="https://github.com/jeffreytse/grimoire/releases">
     <img src="https://img.shields.io/github/v/release/jeffreytse/grimoire?color=brightgreen"
       alt="Release Version" />
   </a>
 
   <a href="https://github.com/jeffreytse/grimoire/graphs/contributors">
-    <img src="https://img.shields.io/github/contributors/jeffreytse/grimoire"
+    <img src="https://img.shields.io/github/contributors/jeffreytse/grimoire?color=brightgreen"
       alt="Contributors" />
   </a>
 
@@ -50,7 +50,7 @@
   </a>
 
   <a href="https://ko-fi.com/jeffreytse">
-    <img height="20" src="https://www.ko-fi.com/img/githubbutton_sm.svg"
+    <img height="20" src="https://ko-fi.com/img/githubbutton_sm.svg"
       alt="Donate (Ko-fi)" />
   </a>
 
@@ -61,7 +61,7 @@
 
   <a href="./skills/">
     <img src="https://img.shields.io/badge/skills-514-blue"
-      alt="514 Skills" />
+      alt="505 Skills" />
   </a>
 </p>
 
