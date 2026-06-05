@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://jeffreytse.github.io/grimoire/sitemap.xml

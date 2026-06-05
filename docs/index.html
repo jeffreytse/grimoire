@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Grimoire — The World's Best Practices for Your AI</title>
+  <link rel="icon" href="https://raw.githubusercontent.com/jeffreytse/grimoire/main/assets/icon-book.svg" type="image/svg+xml" />
+  <meta name="description" content="The world's professional best practices for every AI assistant. 514 verified skills across 27 domains — engineering, law, medicine, finance, and more. Free, open-source, MIT." />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Grimoire — Expert Skills for Your AI" />
+  <meta property="og:description" content="The world's knowledge is in your AI. The world's practice is not. 514 verified skills across 27 domains." />
+  <meta property="og:image" content="https://raw.githubusercontent.com/jeffreytse/grimoire/main/assets/banner-1280x640.svg" />
+  <meta property="og:url" content="https://jeffreytse.github.io/grimoire/" />
+  <meta property="og:type" content="website" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Grimoire — Expert Skills for Your AI" />
+  <meta name="twitter:description" content="514 verified best practices across 27 domains. Works with Claude Code, Cursor, Codex, Gemini CLI, and more." />
+  <meta name="twitter:image" content="https://raw.githubusercontent.com/jeffreytse/grimoire/main/assets/banner-1280x640.svg" />
+
+  <!-- SEO -->
+  <link rel="canonical" href="https://jeffreytse.github.io/grimoire/" />
+  <meta name="keywords" content="AI skills, expert skills, best practices, Claude Code, Cursor, Codex, Gemini CLI, engineering, prompt, AI assistant, grimoire" />
+  <meta name="author" content="jeffreytse" />
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Grimoire",
+    "url": "https://jeffreytse.github.io/grimoire/",
+    "description": "The world's professional best practices for every AI assistant. 514 verified skills across 27 domains — engineering, law, medicine, finance, and more.",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "author": {
+      "@type": "Person",
+      "name": "jeffreytse",
+      "url": "https://github.com/jeffreytse"
+    },
+    "license": "https://opensource.org/licenses/MIT",
+    "codeRepository": "https://github.com/jeffreytse/grimoire",
+    "keywords": "AI, skills, best practices, engineering, law, medicine, finance, Claude Code, Cursor, Codex",
+    "image": "https://raw.githubusercontent.com/jeffreytse/grimoire/main/assets/banner-1280x640.svg"
+  }
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            gold: { DEFAULT: '#c9933a', light: '#e8d08a', dark: '#8b6220', glow: 'rgba(201,147,58,0.15)' },
+            night: { DEFAULT: '#080c18', 2: '#0d1120', 3: '#111826', 4: '#1a2233', border: '#1e2a3a' },
+          },
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+          animation: {
+            'float': 'float 6s ease-in-out infinite',
+            'pulse-gold': 'pulse-gold 3s ease-in-out infinite',
+            'fade-up': 'fade-up 0.6s ease-out forwards',
+          },
+          keyframes: {
+            float: { '0%,100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-8px)' } },
+            'pulse-gold': { '0%,100%': { boxShadow: '0 0 0 0 rgba(201,147,58,0)' }, '50%': { boxShadow: '0 0 24px 4px rgba(201,147,58,0.25)' } },
+            'fade-up': { '0%': { opacity: '0', transform: 'translateY(20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+    * { box-sizing: border-box; }
+    html { background: #080c18; color: #e2e8f0; }
+
+    .glass {
+      background: rgba(13, 17, 32, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(30, 42, 58, 0.8);
+    }
+
+    .card-hover {
+      transition: all 0.25s ease;
+    }
+    .card-hover:hover {
+      transform: translateY(-3px);
+      border-color: rgba(201, 147, 58, 0.5);
+      box-shadow: 0 8px 32px rgba(201, 147, 58, 0.12);
+    }
+
+    .gold-gradient {
+      background: linear-gradient(135deg, #c9933a 0%, #e8d08a 50%, #c9933a 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-glow {
+      background: radial-gradient(ellipse 60% 40% at 50% 60%, rgba(201,147,58,0.12) 0%, transparent 70%);
+    }
+
+    .install-block {
+      background: #0a0e1a;
+      border: 1px solid #1e2a3a;
+      border-radius: 12px;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    }
+
+    .tab-btn.active {
+      background: rgba(201, 147, 58, 0.15);
+      border-color: rgba(201, 147, 58, 0.5);
+      color: #e8d08a;
+    }
+
+    .domain-card {
+      background: #111826;
+      border: 1px solid #1e2a3a;
+      border-radius: 12px;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      display: block;
+    }
+    .domain-card:hover {
+      border-color: rgba(201, 147, 58, 0.45);
+      background: #1a2233;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(201, 147, 58, 0.1);
+    }
+
+    .step-line {
+      background: linear-gradient(180deg, #c9933a 0%, rgba(201,147,58,0.1) 100%);
+    }
+
+    .counter { font-variant-numeric: tabular-nums; }
+
+    /* Stars background */
+    .stars {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .star {
+      position: absolute;
+      border-radius: 50%;
+      background: #ffffff;
+      animation: twinkle var(--dur, 4s) var(--delay, 0s) ease-in-out infinite;
+    }
+    @keyframes twinkle {
+      0%,100% { opacity: var(--min-op, 0.1); }
+      50% { opacity: var(--max-op, 0.5); }
+    }
+
+    .copy-btn:hover { background: rgba(201,147,58,0.15); }
+    .copy-btn.copied { color: #4ade80; }
+
+    /* Scroll-reveal */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body class="min-h-screen font-sans antialiased" style="background:#080c18">
+
+<!-- ─── NAVBAR ──────────────────────────────────────────────── -->
+<nav class="fixed top-0 left-0 right-0 z-50 px-6 py-3 glass">
+  <div class="flex items-center justify-between mx-auto max-w-7xl">
+    <!-- Logo -->
+    <a href="#" class="flex items-center gap-3 group">
+      <img
+        src="https://raw.githubusercontent.com/jeffreytse/grimoire/main/assets/icon-book.svg"
+        alt="Grimoire"
+        class="w-9 h-9 group-hover:scale-105 transition-transform"
+      />
+      <span class="text-lg font-bold tracking-tight text-white">grimoire</span>
+    </a>
+
+    <!-- Links -->
+    <div class="items-center hidden text-sm md:flex gap-6 text-slate-400">
+      <a href="#domains" class="hover:text-gold-light transition-colors">Skills</a>
+      <a href="#install" class="hover:text-gold-light transition-colors">Install</a>
+      <a href="https://github.com/jeffreytse/grimoire/tree/main/docs" target="_blank" class="hover:text-gold-light transition-colors">Docs</a>
+      <a href="https://github.com/jeffreytse/grimoire/blob/main/CONTRIBUTING.md" target="_blank" class="hover:text-gold-light transition-colors">Contribute</a>
+    </div>
+
+    <!-- CTA -->
+    <a
+      href="https://github.com/jeffreytse/grimoire"
+      target="_blank"
+      class="flex items-center px-4 py-2 text-sm font-semibold rounded-lg gap-2 transition-all"
+      style="background:rgba(201,147,58,0.15); border:1px solid rgba(201,147,58,0.4); color:#e8d08a;"
+      onmouseover="this.style.background='rgba(201,147,58,0.25)'"
+      onmouseout="this.style.background='rgba(201,147,58,0.15)'"
+    >
+      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+      Star on GitHub
+    </a>
+  </div>
+</nav>
+
+<!-- ─── HERO ────────────────────────────────────────────────── -->
+<section class="relative flex items-center justify-center min-h-screen pt-20 overflow-hidden">
+  <!-- Stars -->
+  <div class="stars" id="stars"></div>
+  <!-- Glow -->
+  <div class="absolute inset-0 hero-glow"></div>
+  <!-- Gold orb -->
+  <div class="absolute rounded-full pointer-events-none top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96" style="background:radial-gradient(circle, rgba(201,147,58,0.08) 0%, transparent 70%)"></div>
+
+  <div class="relative z-10 max-w-4xl px-6 mx-auto text-center">
+    <!-- Icon -->
+    <div class="flex justify-center mb-8">
+      <img
+        src="https://raw.githubusercontent.com/jeffreytse/grimoire/main/assets/icon-book.svg"
+        alt="Grimoire"
+        class="w-36 h-36 animate-float drop-shadow-2xl"
+        style="filter: drop-shadow(0 0 24px rgba(201,147,58,0.4))"
+      />
+    </div>
+
+    <!-- Headline -->
+    <h1 class="mb-6 text-5xl font-black leading-tight tracking-tight md:text-7xl">
+      <span class="text-white">Expert Skills</span><br/>
+      <span class="gold-gradient">for Your AI</span>
+    </h1>
+
+    <p class="max-w-2xl mx-auto mb-4 text-xl font-light leading-relaxed md:text-2xl text-slate-400">
+      The world's knowledge is in your AI.<br/>
+      <span class="font-medium text-slate-300">The world's practice is not.</span>
+    </p>
+    <p class="max-w-xl mx-auto mb-10 text-base text-slate-500">
+      <span id="hero-total">514</span> verified best practices across <span id="hero-domains">27</span> domains — engineering, law, medicine, finance, and more.
+      Works with every major AI assistant.
+    </p>
+
+    <!-- Install command -->
+    <div class="flex items-center justify-between max-w-xl p-4 mx-auto mb-8 install-block gap-4">
+      <span class="text-sm" style="color:#8b949e">
+        <span style="color:#c9933a">$</span>
+        <span class="ml-2" style="color:#e2e8f0">/plugins add github:jeffreytse/grimoire</span>
+      </span>
+      <button
+        id="hero-copy"
+        class="copy-btn flex-shrink-0 px-3 py-1.5 rounded text-xs font-medium transition-all text-slate-400 border border-night-border"
+        onclick="copyText('/plugins add github:jeffreytse/grimoire', 'hero-copy')"
+        title="Copy"
+      >
+        Copy
+      </button>
+    </div>
+
+    <!-- CTAs -->
+    <div class="flex flex-col justify-center sm:flex-row gap-4">
+      <a
+        href="https://github.com/jeffreytse/grimoire"
+        target="_blank"
+        class="flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl text-base font-bold transition-all animate-pulse-gold"
+        style="background:linear-gradient(135deg,#c9933a,#8b6220); color:#fff; box-shadow:0 4px 24px rgba(201,147,58,0.3)"
+        onmouseover="this.style.transform='scale(1.03)'; this.style.boxShadow='0 6px 32px rgba(201,147,58,0.45)'"
+        onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 4px 24px rgba(201,147,58,0.3)'"
+      >
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+        Star on GitHub
+      </a>
+      <a
+        href="#domains"
+        class="flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl text-base font-semibold transition-all"
+        style="border:1px solid #1e2a3a; color:#94a3b8;"
+        onmouseover="this.style.borderColor='rgba(201,147,58,0.4)'; this.style.color='#e8d08a'; this.style.background='rgba(201,147,58,0.05)'"
+        onmouseout="this.style.borderColor='#1e2a3a'; this.style.color='#94a3b8'; this.style.background='transparent'"
+      >
+        Browse <span id="cta-total">514</span> Skills
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- Scroll arrow -->
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce text-slate-600">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+  </div>
+</section>
+
+<!-- ─── STATS BAR ────────────────────────────────────────────── -->
+<section class="py-10 border-y" style="border-color:#1e2a3a; background:#0d1120">
+  <div class="max-w-5xl px-6 mx-auto">
+    <div class="text-center grid grid-cols-2 md:grid-cols-4 gap-6">
+      <div class="reveal">
+        <div class="text-4xl font-black counter gold-gradient" data-target="514">0</div>
+        <div class="mt-1 text-sm tracking-wider uppercase text-slate-500">Skills</div>
+      </div>
+      <div class="reveal">
+        <div class="text-4xl font-black counter gold-gradient" data-target="27">0</div>
+        <div class="mt-1 text-sm tracking-wider uppercase text-slate-500">Domains</div>
+      </div>
+      <div class="reveal">
+        <div class="text-4xl font-black counter gold-gradient" data-target="5">0</div>
+        <div class="mt-1 text-sm tracking-wider uppercase text-slate-500">AI Platforms</div>
+      </div>
+      <div class="reveal">
+        <div class="text-4xl font-black text-slate-300">MIT</div>
+        <div class="mt-1 text-sm tracking-wider uppercase text-slate-500">License</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── THE HOOK ─────────────────────────────────────────────── -->
+<section class="px-6 py-24" style="background:#080c18">
+  <div class="max-w-4xl mx-auto text-center reveal">
+    <p class="mb-6 text-sm font-semibold tracking-widest uppercase" style="color:#c9933a">The Problem</p>
+    <h2 class="mb-6 text-4xl font-bold leading-tight text-white md:text-5xl">
+      Your AI knows everything.<br/>
+      <span class="text-slate-400">Knowing and doing are different.</span>
+    </h2>
+    <p class="max-w-2xl mx-auto mb-16 text-lg leading-relaxed text-slate-400">
+      McKinsey charges $1M for frameworks your AI already has access to. A lawyer charges $800/hour for contracts. A doctor charges $300 for advice rooted in evidence your AI can find.
+      <span class="text-slate-300"> Grimoire encodes the expert's playbook — the 10,000-hour practitioner's exact steps — and makes it available to everyone.</span>
+    </p>
+
+    <!-- Comparison -->
+    <div class="max-w-3xl mx-auto text-left grid md:grid-cols-2 gap-6">
+      <div class="p-6 rounded-xl" style="background:#111826; border:1px solid #1e2a3a">
+        <div class="mb-4 text-sm font-semibold tracking-wider text-red-400 uppercase">Without Grimoire</div>
+        <ul class="text-sm space-y-3 text-slate-400">
+          <li class="flex gap-3"><span class="text-red-500 mt-0.5">✗</span> "Write a business strategy" → generic advice</li>
+          <li class="flex gap-3"><span class="text-red-500 mt-0.5">✗</span> "Review my contract" → vague suggestions</li>
+          <li class="flex gap-3"><span class="text-red-500 mt-0.5">✗</span> "Debug my architecture" → surface observations</li>
+          <li class="flex gap-3"><span class="text-red-500 mt-0.5">✗</span> "Plan my workout" → generic fitness tips</li>
+        </ul>
+      </div>
+      <div class="p-6 rounded-xl" style="background:#0f1c12; border:1px solid rgba(74,222,128,0.2)">
+        <div class="mb-4 text-sm font-semibold tracking-wider text-green-400 uppercase">With Grimoire</div>
+        <ul class="text-sm space-y-3 text-slate-300">
+          <li class="flex gap-3"><span class="text-green-400 mt-0.5">✓</span> Routes through McKinsey 7S + MECE + BCG matrix</li>
+          <li class="flex gap-3"><span class="text-green-400 mt-0.5">✓</span> Applies ABA clause analysis + negotiation playbook</li>
+          <li class="flex gap-3"><span class="text-green-400 mt-0.5">✓</span> Follows Google SRE runbooks + C4 model review</li>
+          <li class="flex gap-3"><span class="text-green-400 mt-0.5">✓</span> Applies NSCA periodization + RPE protocols</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── DEMO ─────────────────────────────────────────────────── -->
+<section class="px-6 py-20" style="background:#0d1120">
+  <div class="max-w-4xl mx-auto reveal">
+    <div class="mb-12 text-center">
+      <p class="mb-4 text-sm font-semibold tracking-widest uppercase" style="color:#c9933a">See It In Action</p>
+      <h2 class="mb-4 text-3xl font-bold text-white md:text-4xl">One question. Four expert frameworks.</h2>
+      <p class="max-w-xl mx-auto text-slate-400">Ask your AI about a real problem. Grimoire routes it through the right skills automatically.</p>
+    </div>
+
+    <!-- Demo GIF -->
+    <div class="mb-8 overflow-hidden border rounded-2xl" style="border-color:#1e2a3a; box-shadow:0 0 60px rgba(201,147,58,0.08)">
+      <img
+        src="https://raw.githubusercontent.com/jeffreytse/grimoire/main/assets/demo.gif"
+        alt="Grimoire demo — AI routing through expert skills"
+        class="w-full"
+        loading="lazy"
+      />
+    </div>
+
+    <!-- Demo caption -->
+    <div class="p-5 text-sm rounded-xl" style="background:#111826; border:1px solid #1e2a3a">
+      <p class="mb-3 text-slate-400">
+        <span class="font-semibold text-gold-light">Prompt:</span>
+        <span class="italic text-slate-300"> "I'm 42, AI just took my job, I have a mortgage. What do I do?"</span>
+      </p>
+      <p class="mb-2 text-xs font-medium tracking-wider uppercase text-slate-500">Auto-routed through 4 skills:</p>
+      <div class="flex flex-wrap gap-2">
+        <span class="px-3 py-1 text-xs font-medium rounded-full" style="background:rgba(201,147,58,0.15); color:#e8d08a; border:1px solid rgba(201,147,58,0.3)">apply-first-principles</span>
+        <span class="px-3 py-1 text-xs font-medium rounded-full" style="background:rgba(201,147,58,0.15); color:#e8d08a; border:1px solid rgba(201,147,58,0.3)">calculate-fire-number</span>
+        <span class="px-3 py-1 text-xs font-medium rounded-full" style="background:rgba(201,147,58,0.15); color:#e8d08a; border:1px solid rgba(201,147,58,0.3)">design-pricing-strategy</span>
+        <span class="px-3 py-1 text-xs font-medium rounded-full" style="background:rgba(201,147,58,0.15); color:#e8d08a; border:1px solid rgba(201,147,58,0.3)">write-value-proposition</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── HOW IT WORKS ──────────────────────────────────────────── -->
+<section class="px-6 py-20" style="background:#080c18">
+  <div class="max-w-3xl mx-auto reveal">
+    <div class="mb-16 text-center">
+      <p class="mb-4 text-sm font-semibold tracking-widest uppercase" style="color:#c9933a">How It Works</p>
+      <h2 class="text-3xl font-bold text-white md:text-4xl">From zero to expert in 3 steps</h2>
+    </div>
+    <div class="relative">
+      <!-- Steps -->
+      <div class="space-y-12">
+        <div class="flex gap-6">
+          <div class="flex flex-col items-center">
+            <div class="z-10 flex items-center justify-center w-10 h-10 text-sm font-bold rounded-full shrink-0" style="background:linear-gradient(135deg,#c9933a,#8b6220); color:#fff">1</div>
+            <div class="flex-1 w-px mt-2" style="background:rgba(201,147,58,0.2)"></div>
+          </div>
+          <div class="pb-12">
+            <h3 class="mb-2 text-lg font-bold text-white">Install once, everywhere</h3>
+            <p class="text-sm leading-relaxed text-slate-400">One command installs grimoire into every AI agent on your system. Claude Code, Cursor, Codex, Gemini CLI, OpenCode — all detect it automatically.</p>
+          </div>
+        </div>
+        <div class="flex gap-6">
+          <div class="flex flex-col items-center">
+            <div class="z-10 flex items-center justify-center w-10 h-10 text-sm font-bold rounded-full shrink-0" style="background:linear-gradient(135deg,#c9933a,#8b6220); color:#fff">2</div>
+            <div class="flex-1 w-px mt-2" style="background:rgba(201,147,58,0.2)"></div>
+          </div>
+          <div class="pb-12">
+            <h3 class="mb-2 text-lg font-bold text-white">Ask your AI naturally</h3>
+            <p class="text-sm leading-relaxed text-slate-400">No special syntax. No commands to memorize. Just describe your problem. The AI finds the matching skill and routes through it automatically.</p>
+          </div>
+        </div>
+        <div class="flex gap-6">
+          <div class="flex flex-col items-center">
+            <div class="z-10 flex items-center justify-center w-10 h-10 text-sm font-bold rounded-full shrink-0" style="background:linear-gradient(135deg,#c9933a,#8b6220); color:#fff">3</div>
+          </div>
+          <div>
+            <h3 class="mb-2 text-lg font-bold text-white">Get expert-grade output</h3>
+            <p class="text-sm leading-relaxed text-slate-400">Your AI follows the same frameworks as top institutions — McKinsey, Google, WHO, ABA, NSCA — and produces actionable, verifiable, specific output. Not summaries. Steps.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── DOMAINS ──────────────────────────────────────────────── -->
+<section id="domains" class="px-6 py-20" style="background:#0d1120">
+  <div class="mx-auto max-w-7xl">
+    <div class="mb-12 text-center reveal">
+      <p id="domain-count-label" class="mb-4 text-sm font-semibold tracking-widest uppercase" style="color:#c9933a">27 Domains</p>
+      <h2 class="mb-4 text-3xl font-bold text-white md:text-4xl">Every field. Every expert.</h2>
+      <p class="max-w-xl mx-auto text-slate-400">Browse <span id="domain-total-label">514</span> skills across every professional domain. Each skill is proven, actionable, and sourced from top-tier institutions.</p>
+    </div>
+
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 reveal">
+      <!-- Domain cards (27 total) — counts updated live via fetchSkillCounts() -->
+      <a href="https://github.com/jeffreytse/grimoire/tree/main/skills/engineering" target="_blank" class="p-4 domain-card" data-domain="engineering">
+        <div class="mb-2 text-2xl">⚙️</div>
+        <div class="text-sm font-semibold text-slate-200">Engineering</div>
+        <div class="mt-1 text-xs skill-count" style="color:#c9933a">101 skills</div>
+      </a>
+      <a href="https://github.com/jeffreytse/grimoire/tree/main/skills/business" target="_blank" class="p-4 domain-card" data-domain="business">
+        <div class="mb-2 text-2xl">💼</div>
+        <div class="text-sm font-semibold text-slate-200">Business</div>
+        <div class="mt-1 text-xs skill-count" style="color:#c9933a">33 skills</div>
+      </a>
+      <a href="https://github.com/jeffreytse/grimoire/tree/main/skills/health" target="_blank" class="p-4 domain-card" data-domain="health">
+        <div class="mb-2 text-2xl">🏥</div>
+        <div class="text-sm font-semibold text-slate-200">Health</div>
+        <div class="mt-1 text-xs skill-count" style="color:#c9933a">26 skills</div>
+      </a>
+      <a href="https://github.com/jeffreytse/grimoire/tree/main/skills/law" target="_blank" class="p-4 domain-card" data-domain="law">
+        <div class="mb-2 text-2xl">⚖️</div>
+        <div class="text-sm font-semibold text-slate-200">Law</div>
+        <div class="mt-1 text-xs skill-count" style="color:#c9933a">25 skills</div>
+      </a>
+      <a href="https://github.com/jeffreytse/grimoire/tree/main/skills/writing" target="_blank" class="p-4 domain-card" data-domain="writing">
+        <div class="mb-2 text-2xl">✍️</div>
+        <div class="text-sm font-semibold text-slate-200">Writing</div>
+        <div class="mt-1 text-xs skill-count" style="color:#c9933a">24 skills</div>
+      </a>
+      <a href="https://github.com/jeffreytse/grimoire/tree/main/skills/design" target="_blank" class="p-4 domain-card" data-domain="design">
+        <div class="mb-2 text-2xl">🎨</div>
+        <div class="text-sm font-semibold text-slate-200">Design</div>
+        <div class="mt-1 text-xs skill-count" style="color:#c9933a">23 skills</div>
+      </a>
+      <a href="https://github.com/jeffreytse/grimoire/tree/main/skills/finance" target="_blank" class="p-4 domain-card" data-domain="finance">
+        <div class="mb-2 text-2xl">💰</div>
+        <div class="text-sm font-semibold text-slate-200">Finance</div>
+        <div class="mt-1 text-xs skill-count" style="color:#c9933a">22 skills</div>
+      </a>
+      <a href="https://github.com/jeffreytse/grimoire/tree/main/skills/education" target="_blank" class="p-4 domain-card" data-domain="education">
+        <div class="mb-2 text-2xl">📚</div>
+        <div class="text-sm font-semibold text-slate-200">Education</div>
+        <div class="mt-1 text-xs skill-count" style="color:#c9933a">20 skills</div>
+      </a>
+      <a href="https://github.com/jeffreytse/grimoire/tree/main/skills/marketing" target="_blank" class="p-4 domain-card" data-domain="marketing">
+        <div class="mb-2 text-2xl">📣</div>
+        <div class="text-sm font-semibold text-slate-200">Marketing</div>
+        <div class="mt-1 text-xs skill-count" style="color:#c9933a">20 skills</div>
+      </a>
+      <a href="https://github.com/jeffreytse/grimoire/tree/main/skills/music" target="_blank" class="p-4 domain-card" data-domain="music">
+        <div class="mb-2 text-2xl">🎵</div>
+        <div class="text-sm font-semibold text-slate-200">Music</div>
+        <div class="mt-1 text-xs skill-count" style="color:#c9933a">18 skills</div>
+      </a>
+      <a href="https://github.com/jeffreytse/grimoire/tree/main/skills/productivity" target="_blank" class="p-4 domain-card" data-domain="productivity">
+        <div class="mb-2 text-2xl">⚡</div>
+        <div class="text-sm font-semibold text-slate-200">Productivity</div>
+        <div class="mt-1 text-xs skill-count" style="color:#c9933a">17 skills</div>
+      </a>
+      <a href="https://github.com/jeffreytse/grimoire/tree/main/skills/photography" target="_blank" class="p-4 domain-card" data-domain="photography">
+        <div class="mb-2 text-2xl">📷</div>
+        <div class="text-sm font-semibold text-slate-200">Photography</div>
+        <div class="mt-1 text-xs skill-count" style="color:#c9933a">16 skills</div>
+      </a>
+      <a href="https://github.com/jeffreytse/grimoire/tree/main/skills/psychology" target="_blank" class="p-4 domain-card" data-domain="psychology">
+        <div class="mb-2 text-2xl">🧠</div>
+        <div class="text-sm font-semibold text-slate-200">Psychology</div>
+        <div class="mt-1 text-xs skill-count" style="color:#c9933a">16 skills</div>
+      </a>
+      <a href="https://github.com/jeffreytse/grimoire/tree/main/skills/science" target="_blank" class="p-4 domain-card" data-domain="science">
+        <div class="mb-2 text-2xl">🔬</div>
+        <div class="text-sm font-semibold text-slate-200">Science</div>
+        <div class="mt-1 text-xs skill-count" style="color:#c9933a">16 skills</div>
+      </a>
+      <a href="https://github.com/jeffreytse/grimoire/tree/main/skills/sports" target="_blank" class="p-4 domain-card" data-domain="sports">
+        <div class="mb-2 text-2xl">🏋️</div>
+        <div class="text-sm font-semibold text-slate-200">Sports</div>
+        <div class="mt-1 text-xs skill-count" style="color:#c9933a">15 skills</div>
+      </a>
+      <a href="https://github.com/jeffreytse/grimoire/tree/main/skills/cooking" target="_blank" class="p-4 domain-card" data-domain="cooking">
+        <div class="mb-2 text-2xl">🍳</div>
+        <div class="text-sm font-semibold text-slate-200">Cooking</div>
+        <div class="mt-1 text-xs skill-count" style="color:#c9933a">11 skills</div>
+      </a>
+      <a href="https://github.com/jeffreytse/grimoire/tree/main/skills/environment" target="_blank" class="p-4 domain-card" data-domain="environment">
+        <div class="mb-2 text-2xl">🌱</div>
+        <div class="text-sm font-semibold text-slate-200">Environment</div>
+        <div class="mt-1 text-xs skill-count" style="color:#c9933a">11 skills</div>
+      </a>
+      <a href="https://github.com/jeffreytse/grimoire/tree/main/skills/language" target="_blank" class="p-4 domain-card" data-domain="language">
+        <div class="mb-2 text-2xl">🗣️</div>
+        <div class="text-sm font-semibold text-slate-200">Language</div>
+        <div class="mt-1 text-xs skill-count" style="color:#c9933a">11 skills</div>
+      </a>
+      <a href="https://github.com/jeffreytse/grimoire/tree/main/skills/art" target="_blank" class="p-4 domain-card" data-domain="art">
+        <div class="mb-2 text-2xl">🖼️</div>
+        <div class="text-sm font-semibold text-slate-200">Art</div>
+        <div class="mt-1 text-xs skill-count" style="color:#c9933a">10 skills</div>
+      </a>
+      <a href="https://github.com/jeffreytse/grimoire/tree/main/skills/automotive" target="_blank" class="p-4 domain-card" data-domain="automotive">
+        <div class="mb-2 text-2xl">🚗</div>
+        <div class="text-sm font-semibold text-slate-200">Automotive</div>
+        <div class="mt-1 text-xs skill-count" style="color:#c9933a">10 skills</div>
+      </a>
+      <a href="https://github.com/jeffreytse/grimoire/tree/main/skills/fashion" target="_blank" class="p-4 domain-card" data-domain="fashion">
+        <div class="mb-2 text-2xl">👗</div>
+        <div class="text-sm font-semibold text-slate-200">Fashion</div>
+        <div class="mt-1 text-xs skill-count" style="color:#c9933a">10 skills</div>
+      </a>
+      <a href="https://github.com/jeffreytse/grimoire/tree/main/skills/film" target="_blank" class="p-4 domain-card" data-domain="film">
+        <div class="mb-2 text-2xl">🎬</div>
+        <div class="text-sm font-semibold text-slate-200">Film</div>
+        <div class="mt-1 text-xs skill-count" style="color:#c9933a">10 skills</div>
+      </a>
+      <a href="https://github.com/jeffreytse/grimoire/tree/main/skills/home" target="_blank" class="p-4 domain-card" data-domain="home">
+        <div class="mb-2 text-2xl">🏠</div>
+        <div class="text-sm font-semibold text-slate-200">Home</div>
+        <div class="mt-1 text-xs skill-count" style="color:#c9933a">10 skills</div>
+      </a>
+      <a href="https://github.com/jeffreytse/grimoire/tree/main/skills/parenting" target="_blank" class="p-4 domain-card" data-domain="parenting">
+        <div class="mb-2 text-2xl">👶</div>
+        <div class="text-sm font-semibold text-slate-200">Parenting</div>
+        <div class="mt-1 text-xs skill-count" style="color:#c9933a">10 skills</div>
+      </a>
+      <a href="https://github.com/jeffreytse/grimoire/tree/main/skills/pets" target="_blank" class="p-4 domain-card" data-domain="pets">
+        <div class="mb-2 text-2xl">🐾</div>
+        <div class="text-sm font-semibold text-slate-200">Pets</div>
+        <div class="mt-1 text-xs skill-count" style="color:#c9933a">10 skills</div>
+      </a>
+      <a href="https://github.com/jeffreytse/grimoire/tree/main/skills/travel" target="_blank" class="p-4 domain-card" data-domain="travel">
+        <div class="mb-2 text-2xl">✈️</div>
+        <div class="text-sm font-semibold text-slate-200">Travel</div>
+        <div class="mt-1 text-xs skill-count" style="color:#c9933a">10 skills</div>
+      </a>
+      <a href="https://github.com/jeffreytse/grimoire/tree/main/skills/meta" target="_blank" class="p-4 domain-card" data-domain="meta">
+        <div class="mb-2 text-2xl">🔮</div>
+        <div class="text-sm font-semibold text-slate-200">Meta</div>
+        <div class="mt-1 text-xs skill-count" style="color:#c9933a">9 skills</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PLATFORMS ────────────────────────────────────────────── -->
+<section class="px-6 py-20" style="background:#080c18">
+  <div class="max-w-4xl mx-auto text-center reveal">
+    <p class="mb-4 text-sm font-semibold tracking-widest uppercase" style="color:#c9933a">Universal</p>
+    <h2 class="mb-4 text-3xl font-bold text-white md:text-4xl">Works with every AI assistant</h2>
+    <p class="mb-12 text-slate-400">Install once. Every AI agent on your system picks it up automatically.</p>
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+      <div class="p-5 text-center rounded-xl card-hover" style="background:#111826; border:1px solid #1e2a3a">
+        <div class="mb-2 text-2xl">🤖</div>
+        <div class="text-sm font-semibold text-slate-200">Claude Code</div>
+        <div class="mt-1 text-xs text-slate-500">Anthropic</div>
+      </div>
+      <div class="p-5 text-center rounded-xl card-hover" style="background:#111826; border:1px solid #1e2a3a">
+        <div class="mb-2 text-2xl">⌨️</div>
+        <div class="text-sm font-semibold text-slate-200">Cursor</div>
+        <div class="mt-1 text-xs text-slate-500">AI Editor</div>
+      </div>
+      <div class="p-5 text-center rounded-xl card-hover" style="background:#111826; border:1px solid #1e2a3a">
+        <div class="mb-2 text-2xl">💻</div>
+        <div class="text-sm font-semibold text-slate-200">Codex</div>
+        <div class="mt-1 text-xs text-slate-500">OpenAI</div>
+      </div>
+      <div class="p-5 text-center rounded-xl card-hover" style="background:#111826; border:1px solid #1e2a3a">
+        <div class="mb-2 text-2xl">🔷</div>
+        <div class="text-sm font-semibold text-slate-200">Gemini CLI</div>
+        <div class="mt-1 text-xs text-slate-500">Google</div>
+      </div>
+      <div class="p-5 text-center rounded-xl card-hover" style="background:#111826; border:1px solid #1e2a3a">
+        <div class="mb-2 text-2xl">🔵</div>
+        <div class="text-sm font-semibold text-slate-200">OpenCode</div>
+        <div class="mt-1 text-xs text-slate-500">Community</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── INSTALL ──────────────────────────────────────────────── -->
+<section id="install" class="px-6 py-20" style="background:#0d1120">
+  <div class="max-w-3xl mx-auto reveal">
+    <div class="mb-12 text-center">
+      <p class="mb-4 text-sm font-semibold tracking-widest uppercase" style="color:#c9933a">Installation</p>
+      <h2 class="mb-4 text-3xl font-bold text-white md:text-4xl">One command. Done.</h2>
+      <p class="text-slate-400">Pick your agent. Copy. Paste. Start using <span id="install-total-1">514</span> expert skills.</p>
+    </div>
+
+    <!-- Tabs -->
+    <div class="flex flex-wrap justify-center mb-6 gap-2">
+      <button class="px-4 py-2 text-sm font-medium border rounded-lg tab-btn active transition-all" style="border-color:rgba(201,147,58,0.5)" onclick="showTab('claude')">Claude Code</button>
+      <button class="px-4 py-2 text-sm font-medium border rounded-lg tab-btn border-night-border text-slate-400 transition-all" onclick="showTab('all')">All Agents</button>
+      <button class="px-4 py-2 text-sm font-medium border rounded-lg tab-btn border-night-border text-slate-400 transition-all" onclick="showTab('domain')">By Domain</button>
+      <button class="px-4 py-2 text-sm font-medium border rounded-lg tab-btn border-night-border text-slate-400 transition-all" onclick="showTab('skill')">By Skill</button>
+    </div>
+
+    <!-- Tab content -->
+    <div id="tab-claude" class="tab-content">
+      <div class="p-5 install-block">
+        <div class="flex items-start justify-between mb-3 gap-4">
+          <pre class="flex-1 overflow-x-auto text-sm text-slate-300">/plugins add github:jeffreytse/grimoire</pre>
+          <button class="copy-btn px-3 py-1.5 rounded text-xs font-medium text-slate-400 border border-night-border shrink-0 transition-all" onclick="copyText('/plugins add github:jeffreytse/grimoire', 'btn-claude')">Copy</button>
+        </div>
+        <p class="text-xs text-slate-500">Run inside Claude Code. Installs all <span id="install-total-2">514</span> skills from the official plugin registry.</p>
+      </div>
+    </div>
+
+    <div id="tab-all" class="hidden tab-content">
+      <div class="p-5 install-block">
+        <div class="flex items-start justify-between mb-3 gap-4">
+          <pre class="flex-1 overflow-x-auto text-sm text-slate-300">curl -sSL https://raw.githubusercontent.com/jeffreytse/grimoire/main/scripts/install.sh | bash</pre>
+          <button class="copy-btn px-3 py-1.5 rounded text-xs font-medium text-slate-400 border border-night-border shrink-0 transition-all" onclick="copyText('curl -sSL https://raw.githubusercontent.com/jeffreytse/grimoire/main/scripts/install.sh | bash', 'btn-all')">Copy</button>
+        </div>
+        <p class="text-xs text-slate-500">Auto-detects Claude Code, Cursor, Codex, Gemini CLI, and OpenCode. Installs to all found agents.</p>
+      </div>
+    </div>
+
+    <div id="tab-domain" class="hidden tab-content">
+      <div class="p-5 install-block">
+        <div class="flex items-start justify-between mb-3 gap-4">
+          <pre class="flex-1 overflow-x-auto text-sm text-slate-300">./scripts/install.sh --domain engineering</pre>
+          <button class="copy-btn px-3 py-1.5 rounded text-xs font-medium text-slate-400 border border-night-border shrink-0 transition-all" onclick="copyText('./scripts/install.sh --domain engineering', 'btn-domain')">Copy</button>
+        </div>
+        <p class="text-xs text-slate-500">Install one domain only. Replace <code class="text-gold-light">engineering</code> with any of the <span id="install-domains">27</span> available domains.</p>
+      </div>
+    </div>
+
+    <div id="tab-skill" class="hidden tab-content">
+      <div class="p-5 install-block">
+        <div class="flex items-start justify-between mb-3 gap-4">
+          <pre class="flex-1 overflow-x-auto text-sm text-slate-300">./scripts/install.sh --skill engineering/development/propose-commit</pre>
+          <button class="copy-btn px-3 py-1.5 rounded text-xs font-medium text-slate-400 border border-night-border shrink-0 transition-all" onclick="copyText('./scripts/install.sh --skill engineering/development/propose-commit', 'btn-skill')">Copy</button>
+        </div>
+        <p class="text-xs text-slate-500">Install a single skill by path. Use the <code class="text-gold-light">&lt;domain&gt;/&lt;subdomain&gt;/&lt;skill-name&gt;</code> pattern.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── QUALITY ──────────────────────────────────────────────── -->
+<section class="px-6 py-20" style="background:#080c18">
+  <div class="max-w-5xl mx-auto reveal">
+    <div class="mb-12 text-center">
+      <p class="mb-4 text-sm font-semibold tracking-widest uppercase" style="color:#c9933a">Quality Standard</p>
+      <h2 class="mb-4 text-3xl font-bold text-white md:text-4xl">What makes a grimoire skill</h2>
+      <p class="max-w-xl mx-auto text-slate-400">Every skill passes 4 gates before merge. No vague advice. No generic tips.</p>
+    </div>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div class="p-6 rounded-xl" style="background:#111826; border:1px solid #1e2a3a">
+        <div class="mb-3 text-2xl">✅</div>
+        <h3 class="mb-2 text-base font-bold text-white">Actionable</h3>
+        <p class="text-sm leading-relaxed text-slate-400">Reader can do it immediately. Steps, not descriptions. Commands, not concepts.</p>
+      </div>
+      <div class="p-6 rounded-xl" style="background:#111826; border:1px solid #1e2a3a">
+        <div class="mb-3 text-2xl">🏛️</div>
+        <h3 class="mb-2 text-base font-bold text-white">Proven</h3>
+        <p class="text-sm leading-relaxed text-slate-400">Adopted by top-tier institutions — Google, McKinsey, WHO, ABA, NSCA. Cited, auditable, third-party verified.</p>
+      </div>
+      <div class="p-6 rounded-xl" style="background:#111826; border:1px solid #1e2a3a">
+        <div class="mb-3 text-2xl">🎯</div>
+        <h3 class="mb-2 text-base font-bold text-white">Specific</h3>
+        <p class="text-sm leading-relaxed text-slate-400">Names tools. Cites numbers. Shows exact commands. One skill, one concept. No overlap.</p>
+      </div>
+      <div class="p-6 rounded-xl" style="background:#111826; border:1px solid #1e2a3a">
+        <div class="mb-3 text-2xl">🤝</div>
+        <h3 class="mb-2 text-base font-bold text-white">Consensus</h3>
+        <p class="text-sm leading-relaxed text-slate-400">Encodes majority position among experts. No 50/50 debates. Stable, durable knowledge.</p>
+      </div>
+    </div>
+    <div class="mt-8 text-center">
+      <a href="https://github.com/jeffreytse/grimoire/blob/main/STANDARD.md" target="_blank" class="text-sm text-slate-500 hover:text-gold-light transition-colors">
+        Read the full quality standard →
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CONTRIBUTE ───────────────────────────────────────────── -->
+<section class="px-6 py-20" style="background:#0d1120">
+  <div class="max-w-3xl mx-auto text-center reveal">
+    <div class="inline-flex items-center px-4 py-2 mb-8 text-xs font-semibold rounded-full gap-2" style="background:rgba(201,147,58,0.1); border:1px solid rgba(201,147,58,0.3); color:#e8d08a">
+      Open to everyone with mastery
+    </div>
+    <h2 class="mb-4 text-3xl font-bold text-white md:text-4xl">
+      You don't need to be a developer.
+    </h2>
+    <p class="mb-8 text-lg leading-relaxed text-slate-400">
+      Any expert with 10,000 hours of practice can contribute a skill — a doctor, a chef, a lawyer, a coach, a musician. If you know the playbook, encode it.
+    </p>
+    <div class="mb-10 text-left grid sm:grid-cols-3 gap-4">
+      <div class="p-5 rounded-xl" style="background:#111826; border:1px solid #1e2a3a">
+        <div class="mb-1 text-base font-semibold text-white">Write the skill</div>
+        <p class="text-xs text-slate-500">Plain Markdown. Follow the template. Add your 10,000-hour steps.</p>
+      </div>
+      <div class="p-5 rounded-xl" style="background:#111826; border:1px solid #1e2a3a">
+        <div class="mb-1 text-base font-semibold text-white">Pass quality review</div>
+        <p class="text-xs text-slate-500">Automated validation + human review. Proven, actionable, specific.</p>
+      </div>
+      <div class="p-5 rounded-xl" style="background:#111826; border:1px solid #1e2a3a">
+        <div class="mb-1 text-base font-semibold text-white">Ship to everyone</div>
+        <p class="text-xs text-slate-500">Merged to main. Available to every AI agent globally. Forever.</p>
+      </div>
+    </div>
+    <a
+      href="https://github.com/jeffreytse/grimoire/blob/main/CONTRIBUTING.md"
+      target="_blank"
+      class="inline-flex items-center px-8 py-4 text-base font-bold gap-2 rounded-xl transition-all"
+      style="background:linear-gradient(135deg,#c9933a,#8b6220); color:#fff; box-shadow:0 4px 24px rgba(201,147,58,0.25)"
+      onmouseover="this.style.transform='scale(1.03)'"
+      onmouseout="this.style.transform='scale(1)'"
+    >
+      Contribute a Skill
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+    </a>
+  </div>
+</section>
+
+<!-- ─── FOOTER ───────────────────────────────────────────────── -->
+<footer class="px-6 py-12 border-t" style="border-color:#1e2a3a; background:#080c18">
+  <div class="max-w-5xl mx-auto">
+    <div class="flex flex-col items-center justify-between md:flex-row gap-6">
+      <!-- Brand -->
+      <div class="flex items-center gap-3">
+        <img
+          src="https://raw.githubusercontent.com/jeffreytse/grimoire/main/assets/icon-book.svg"
+          alt="Grimoire"
+          class="w-7 h-7 opacity-70"
+        />
+        <span class="text-sm font-semibold text-slate-400">grimoire</span>
+        <span class="text-sm text-slate-600">·</span>
+        <span class="text-xs text-slate-600">MIT License</span>
+      </div>
+
+      <!-- Links -->
+      <div class="flex items-center text-sm gap-6 text-slate-500">
+        <a href="https://github.com/jeffreytse/grimoire" target="_blank" class="hover:text-gold-light transition-colors">GitHub</a>
+        <a href="https://github.com/jeffreytse/grimoire/tree/main/docs" target="_blank" class="hover:text-gold-light transition-colors">Docs</a>
+        <a href="https://github.com/jeffreytse/grimoire/blob/main/STANDARD.md" target="_blank" class="hover:text-gold-light transition-colors">Standard</a>
+        <a href="https://github.com/jeffreytse/grimoire/blob/main/CONTRIBUTING.md" target="_blank" class="hover:text-gold-light transition-colors">Contribute</a>
+        <a href="https://github.com/jeffreytse/grimoire/blob/main/ROADMAP.md" target="_blank" class="hover:text-gold-light transition-colors">Roadmap</a>
+      </div>
+    </div>
+    <div class="mt-6 text-xs text-center text-slate-700 space-y-1">
+      <div>The world's best practices belong to everyone.</div>
+      <div>Built with ❤︎ by <a href="https://github.com/jeffreytse" target="_blank" class="hover:text-gold-light transition-colors">jeffreytse</a> and <a href="https://github.com/jeffreytse/grimoire/graphs/contributors" target="_blank" class="hover:text-gold-light transition-colors">contributors</a>.</div>
+    </div>
+  </div>
+</footer>
+
+<!-- ─── SCRIPTS ──────────────────────────────────────────────── -->
+<script>
+  // Generate star field
+  const starsEl = document.getElementById('stars');
+  for (let i = 0; i < 80; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random() * 2 + 0.5;
+    s.style.cssText = `
+      width:${size}px; height:${size}px;
+      left:${Math.random()*100}%;
+      top:${Math.random()*100}%;
+      --dur:${Math.random()*4+3}s;
+      --delay:${Math.random()*4}s;
+      --min-op:${Math.random()*0.1};
+      --max-op:${Math.random()*0.4+0.1};
+    `;
+    starsEl.appendChild(s);
+  }
+
+  // Counter animation
+  function animateCounter(el, target, duration = 1400) {
+    let start = null;
+    const step = ts => {
+      if (!start) start = ts;
+      const progress = Math.min((ts - start) / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 3);
+      el.textContent = Math.floor(ease * target);
+      if (progress < 1) requestAnimationFrame(step);
+      else el.textContent = target;
+    };
+    requestAnimationFrame(step);
+  }
+
+  // Scroll-reveal + counter trigger
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        // Trigger counters inside this element
+        entry.target.querySelectorAll('[data-target]').forEach(el => {
+          animateCounter(el, parseInt(el.dataset.target));
+        });
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Tab switching
+  function showTab(name) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.classList.remove('active');
+      btn.style.borderColor = '';
+      btn.style.color = '';
+    });
+    document.getElementById('tab-' + name).classList.remove('hidden');
+    event.currentTarget.classList.add('active');
+  }
+
+  // Copy to clipboard
+  function copyText(text, btnId) {
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById(btnId) || event.currentTarget;
+      const original = btn.textContent;
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = original;
+        btn.classList.remove('copied');
+      }, 2000);
+    });
+  }
+
+  // Apply skill counts to DOM
+  function applySkillCounts(counts, total) {
+    document.querySelectorAll('[data-domain]').forEach(card => {
+      const count = counts[card.dataset.domain];
+      if (count) card.querySelector('.skill-count').textContent = `${count} skills`;
+    });
+
+    const domainCount = Object.keys(counts).length;
+
+    // Stats bar counter (data-target="514")
+    const totalEl = document.querySelector('[data-target="514"]');
+    if (totalEl) {
+      if (totalEl.textContent !== '0') totalEl.textContent = total;
+      else totalEl.dataset.target = total;
+    }
+
+    // Stats bar counter (data-target="27")
+    const domainStatEl = document.querySelector('[data-target="27"]');
+    if (domainStatEl) {
+      if (domainStatEl.textContent !== '0') domainStatEl.textContent = domainCount;
+      else domainStatEl.dataset.target = domainCount;
+    }
+
+    // Section label "27 Domains"
+    const labelEl = document.getElementById('domain-count-label');
+    if (labelEl) labelEl.textContent = `${domainCount} Domains`;
+
+    // All other inline total/domain count spans
+    ['domain-total-label', 'hero-total', 'cta-total', 'install-total-1', 'install-total-2'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = total;
+    });
+    ['hero-domains', 'install-domains'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = domainCount;
+    });
+  }
+
+  // Fetch live skill counts — no auth needed (public repo, 60 req/hr per IP)
+  // localStorage cache avoids repeat hits from shared-IP networks (24h TTL)
+  const SKILL_CACHE_KEY = 'grimoire_skill_counts';
+  const SKILL_CACHE_TTL = 900000; // 15m
+
+  async function fetchSkillCounts() {
+    try {
+      const cached = JSON.parse(localStorage.getItem(SKILL_CACHE_KEY) || 'null');
+      if (cached && Date.now() - cached.ts < SKILL_CACHE_TTL) {
+        applySkillCounts(cached.counts, cached.total);
+        return;
+      }
+    } catch (_) {}
+
+    try {
+      const res = await fetch('https://api.github.com/repos/jeffreytse/grimoire/git/trees/main?recursive=1');
+      const { tree } = await res.json();
+      const counts = {};
+      let total = 0;
+      const re = /^skills\/([^/]+)\/[^/]+\/skills\/[^/]+\/SKILL\.md$/;
+      for (const item of tree) {
+        const m = item.path.match(re);
+        if (m) { counts[m[1]] = (counts[m[1]] || 0) + 1; total++; }
+      }
+      localStorage.setItem(SKILL_CACHE_KEY, JSON.stringify({ counts, total, ts: Date.now() }));
+      applySkillCounts(counts, total);
+    } catch (_) {
+      // Silently fail — hardcoded fallback counts remain
+    }
+  }
+  fetchSkillCounts();
+</script>
+
+</body>
+</html>
