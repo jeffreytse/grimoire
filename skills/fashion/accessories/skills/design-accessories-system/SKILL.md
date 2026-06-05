@@ -3,6 +3,7 @@ name: design-accessories-system
 description: Use when building a curated accessories collection that maximizes outfit transformation potential while minimizing redundancy and storage complexity
 source: AICI professional styling curriculum; FIT accessory design program; Stacy London "The Truth About Style" (2013)
 tags: [fashion, accessories, styling, wardrobe, capsule]
+verified: true
 ---
 
 # Design Accessories System

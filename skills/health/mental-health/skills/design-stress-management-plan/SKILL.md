@@ -3,6 +3,7 @@ name: design-stress-management-plan
 description: Use when helping an individual identify stress sources and build a personalized, multi-modal plan to reduce chronic stress and build resilience
 source: APA "Stress in America" survey and stress management guidelines; Lazarus & Folkman "Stress, Appraisal, and Coping" (1984); Somerfield & McCrae "Stress and Coping Research" American Psychologist (2000)
 tags: [mental-health, stress, coping, resilience]
+verified: true
 ---
 
 # Design Stress Management Plan

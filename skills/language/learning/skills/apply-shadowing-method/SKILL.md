@@ -3,6 +3,7 @@ name: apply-shadowing-method
 description: Use when a learner needs to improve pronunciation, prosody, and speaking fluency by mimicking native speech in real time
 source: Alexander Arguelles shadowing methodology; Tamai "Research on Shadowing" (2002); Murphey "Teaching One-to-One" applied to pronunciation
 tags: [shadowing, pronunciation, fluency, prosody]
+verified: true
 ---
 
 # Apply Shadowing Method

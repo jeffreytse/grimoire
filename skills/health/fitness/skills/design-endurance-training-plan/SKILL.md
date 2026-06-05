@@ -3,6 +3,7 @@ name: design-endurance-training-plan
 description: Use when creating a periodized aerobic training plan for running, cycling, triathlon, or other endurance sports
 source: Daniels "Daniels' Running Formula" (2014, 3rd ed.); Friel "The Triathlete's Training Bible" (2016); Seiler "What is Best Practice for Training Intensity Distribution" IJSPP (2010)
 tags: [fitness, endurance, running, periodization]
+verified: true
 ---
 
 # Design Endurance Training Plan

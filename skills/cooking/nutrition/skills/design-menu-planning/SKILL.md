@@ -3,6 +3,7 @@ name: design-menu-planning
 description: Use when creating a restaurant menu, planning meals for a catering event, designing a weekly household menu, or developing a cycle menu for an institution
 source: CIA "The Professional Chef" (9th ed.); Academy of Nutrition and Dietetics; National Restaurant Association Educational Foundation menu planning guidelines
 tags: [cooking, menu-planning, nutrition, restaurant, food-service]
+verified: true
 ---
 
 # Design Menu Planning

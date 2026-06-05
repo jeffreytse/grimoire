@@ -3,6 +3,7 @@ name: write-software-license-agreement
 description: Use when drafting or reviewing a software license agreement, EULA, or open-source license for software products
 source: SPDX (Software Package Data Exchange) license classification; OSI (Open Source Initiative) approved licenses; EULA drafting guidelines (Software & Information Industry Association)
 tags: [contract-law, software-licensing, ip-law, technology-contracts]
+verified: true
 ---
 
 # Write Software License Agreement

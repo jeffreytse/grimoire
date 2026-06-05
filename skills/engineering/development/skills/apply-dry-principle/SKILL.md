@@ -3,6 +3,7 @@ name: apply-dry-principle
 description: Use when you notice duplicated code, logic, data, or knowledge across a codebase and need to decide whether and how to consolidate it.
 source: Hunt & Thomas, "The Pragmatic Programmer", 1999 (Addison-Wesley)
 tags: [code-quality, duplication, refactoring, developer, maintainability, defect-reduction]
+verified: true
 ---
 
 # Apply DRY Principle

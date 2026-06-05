@@ -3,6 +3,7 @@ name: run-usability-test
 description: Use when validating a UI design, prototype, or live product with real users to find usability problems before or after launch
 source: Jakob Nielsen "Usability Engineering" (1993); Nielsen Norman Group Think-Aloud Protocol; Nielsen's 5-user heuristic
 tags: [usability-testing, ux-research, think-aloud, user-research, design-validation, ux]
+verified: true
 ---
 
 # Run Usability Test

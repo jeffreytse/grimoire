@@ -3,6 +3,7 @@ name: design-weight-management-plan
 description: Use when creating a structured evidence-based plan for weight loss, weight gain, or weight maintenance for an individual
 source: NIH "Clinical Guidelines on the Identification, Evaluation, and Treatment of Overweight and Obesity" (1998); WHO obesity guidelines; Wing & Phelan "Long-Term Weight Loss Maintenance" AJCN (2005)
 tags: [nutrition, weight-management, obesity, caloric-deficit]
+verified: true
 ---
 
 # Design Weight Management Plan

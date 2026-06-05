@@ -3,6 +3,7 @@ name: write-readme
 description: Use when creating or improving a README file for a software project or open-source repository
 source: "GitHub Community Standards; Make a README (Danny Guo); Shields.io badge documentation"
 tags: [readme, documentation, open-source, github, onboarding]
+verified: true
 ---
 
 # Write README

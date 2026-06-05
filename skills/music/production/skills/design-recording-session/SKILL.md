@@ -3,6 +3,7 @@ name: design-recording-session
 description: Use when planning and executing a professional recording session for any instrument or vocal, in a studio or home recording environment
 source: Huber & Runstein "Modern Recording Techniques" (2017, 9th ed.); AES recording standards; Owsinski "The Recording Engineer's Handbook" (2017)
 tags: [music-production, recording, studio-engineering, audio-engineering]
+verified: true
 ---
 
 # Design Recording Session

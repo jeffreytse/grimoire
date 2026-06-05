@@ -3,6 +3,7 @@ name: run-heuristic-evaluation
 description: Use when conducting a usability review of an interface to identify usability problems without running user tests, using Nielsen's 10 heuristics as the evaluation framework.
 source: Nielsen "Usability Engineering" (1993); Nielsen & Molich "Heuristic evaluation of user interfaces" (1990); Nielsen Norman Group heuristic evaluation methodology; ISO 9241-110 (2020)
 tags: [ux, usability, heuristic-evaluation, inspection, design-review]
+verified: true
 ---
 
 # Run a Heuristic Evaluation

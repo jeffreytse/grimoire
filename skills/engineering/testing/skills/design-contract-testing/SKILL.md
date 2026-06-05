@@ -3,6 +3,7 @@ name: design-contract-testing
 description: Use when multiple teams maintain independent services that communicate via APIs, or when integration test environments are slow, expensive, or unavailable
 source: Pact contract testing framework (DiUS Computing); Richardson "Microservices Patterns" (2018) Ch. 9; Martin Fowler "IntegrationContractTest" article
 tags: [testing, microservices, api, integration]
+verified: true
 ---
 
 # Design Contract Testing

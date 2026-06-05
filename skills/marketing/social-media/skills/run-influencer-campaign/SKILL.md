@@ -3,6 +3,7 @@ name: run-influencer-campaign
 description: Use when planning, executing, or evaluating an influencer marketing campaign including creator selection, brief creation, and performance measurement
 source: WOMMA (Word of Mouth Marketing Association) guidelines; FTC Endorsement Guides (16 CFR Part 255); Nielsen "Global Trust in Advertising" report
 tags: [influencer, social-media, campaign, creator, partnerships]
+verified: true
 ---
 
 # Run Influencer Campaign

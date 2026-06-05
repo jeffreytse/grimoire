@@ -3,6 +3,7 @@ name: design-distraction-free-environment
 description: Use when designing a physical or digital workspace to minimize interruptions and maximize sustained cognitive performance
 source: Newport "Deep Work" (2016) environment design chapter; Mark et al. "The Cost of Interrupted Work" CHI (2008); González & Mark "Constant, Constant, Multi-Tasking Craziness" CHI (2004)
 tags: [environment-design, focus, productivity, workspace, distraction]
+verified: true
 ---
 
 # Design Distraction-Free Environment

@@ -3,6 +3,7 @@ name: design-content-calendar
 description: Use when planning a content publishing schedule across channels for a quarter or longer
 source: CoSchedule Content Calendar Methodology, Content Marketing Institute Editorial Planning Guide
 tags: [content-marketing, editorial-planning, content-calendar, content-pillars, scheduling, strategy]
+verified: true
 ---
 
 # Design Content Calendar

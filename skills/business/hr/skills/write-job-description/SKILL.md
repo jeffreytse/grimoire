@@ -3,6 +3,7 @@ name: write-job-description
 description: Use when creating or improving a job posting, role description, or position specification to attract qualified candidates
 source: SHRM job description writing guidelines; O*NET occupational classification system (US DOL); LinkedIn talent insights best practices for job postings
 tags: [hr, recruiting, hiring, talent-acquisition, writing]
+verified: true
 ---
 
 # Write Job Description

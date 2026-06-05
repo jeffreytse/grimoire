@@ -3,6 +3,7 @@ name: design-real-estate-due-diligence
 description: Use when designing or executing a due diligence process for a real estate acquisition, whether residential, commercial, or development
 source: CCIM due diligence checklist; RICS due diligence standards; Urban Land Institute real estate transaction guidelines
 tags: [real-estate, due-diligence, investment-analysis, property-acquisition]
+verified: true
 ---
 
 # Design Real Estate Due Diligence

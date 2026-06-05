@@ -3,6 +3,7 @@ name: run-performance-review
 description: Use when a coach needs to systematically evaluate an athlete's performance, provide structured feedback, and set goals for the next training phase
 source: US Olympic and Paralympic Committee athlete monitoring framework; NSCA coach-athlete feedback protocols; Côté & Gilbert "An Integrative Definition of Coaching Effectiveness" International Journal of Sports Science & Coaching (2009)
 tags: [performance-review, feedback, athlete-development, coaching, goal-setting]
+verified: true
 ---
 
 # Run Performance Review

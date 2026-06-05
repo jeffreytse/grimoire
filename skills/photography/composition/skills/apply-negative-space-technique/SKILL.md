@@ -3,6 +3,7 @@ name: apply-negative-space-technique
 description: Use when composing a photograph to create visual impact, emphasize the subject, and evoke mood through deliberate use of empty space.
 source: Freeman "The Photographer's Eye" (2007); Zakia "Perception and Imaging" (2013); NPPA (National Press Photographers Association) composition principles; Szarkowski "The Photographer's Eye" (MoMA 1966)
 tags: [photography, composition, visual-design, framing, art, aesthetics, negative-space]
+verified: true
 ---
 
 # Apply Negative Space Technique

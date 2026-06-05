@@ -3,6 +3,7 @@ name: write-sql-query
 description: Use when writing, reviewing, or optimizing SQL queries for correctness, performance, and maintainability
 source: Joe Celko "SQL for Smarties" (5th ed., Morgan Kaufmann 2014); Use The Index, Luke (use-the-index-luke.com); PostgreSQL documentation
 tags: [sql, database, performance, query-optimization, indexing, data]
+verified: true
 ---
 
 # Write SQL Query

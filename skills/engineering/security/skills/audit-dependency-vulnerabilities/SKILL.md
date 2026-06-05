@@ -3,6 +3,7 @@ name: audit-dependency-vulnerabilities
 description: Use when auditing third-party dependencies for known vulnerabilities, license issues, or supply chain risks
 source: OWASP A06:2021 – Vulnerable and Outdated Components; NIST NVD (nvd.nist.gov); Snyk (snyk.io); GitHub Advisory Database
 tags: [security, dependencies, vulnerabilities, owasp, supply-chain, cve, snyk]
+verified: true
 ---
 
 # Audit Dependency Vulnerabilities

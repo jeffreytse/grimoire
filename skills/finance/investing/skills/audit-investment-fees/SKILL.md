@@ -3,6 +3,7 @@ name: audit-investment-fees
 description: Use when auditing investment account fees, fund expenses, and advisor costs to identify excessive charges and optimize total investment cost
 source: Bogle "The Little Book of Common Sense Investing" (2007); CFA Institute research on fee impact; SEC mutual fund fee disclosure requirements (Form N-1A)
 tags: [investing, investment-fees, cost-analysis, personal-finance]
+verified: true
 ---
 
 # Audit Investment Fees

@@ -3,6 +3,7 @@ name: design-domain
 description: Use when adding a new domain or sub-domain to grimoire — whether starting a brand-new domain (health, finance, law), adding a new sub-domain to an existing domain, or deciding whether a new sub-domain is needed at all.
 source: Apache Software Foundation project governance, npm package organization standards, Library of Congress classification system
 tags: [domain-creation, knowledge-architecture, subdomain-design, contributor, maintainer, domain-release]
+verified: true
 ---
 
 # Design Domain

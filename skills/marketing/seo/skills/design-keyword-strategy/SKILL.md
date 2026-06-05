@@ -3,6 +3,7 @@ name: design-keyword-strategy
 description: Use when building a keyword strategy for a new site, content campaign, or product launch
 source: Ahrefs Keyword Research Methodology, Search Intent Taxonomy (Moz), Google's Quality Rater Guidelines
 tags: [seo, keyword-research, search-intent, keyword-clustering, content-strategy]
+verified: true
 ---
 
 # Design Keyword Strategy

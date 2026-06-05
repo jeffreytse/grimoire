@@ -3,6 +3,7 @@ name: design-ci-pipeline
 description: Use when designing or improving a continuous integration pipeline for a software project
 source: "Accelerate" — Forsgren, Humble & Kim (IT Revolution, 2018); DORA metrics (dora.dev); Trunk-Based Development (trunkbaseddevelopment.com)
 tags: [ci, devops, dora, pipeline, automation, trunk-based-development]
+verified: true
 ---
 
 # Design CI Pipeline

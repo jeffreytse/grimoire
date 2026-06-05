@@ -3,6 +3,7 @@ name: apply-pre-performance-routine
 description: Use when an athlete or coach needs to build a reliable, repeatable preparation sequence that consistently produces optimal arousal and focus before competition or high-stakes performance
 source: AASP pre-performance routine research; Lidor & Mayan "Can Beginning Learners Benefit from Preperformance Routines?" Sport Psychologist (2005); Weinberg & Gould "Foundations of Sport and Exercise Psychology" (2019)
 tags: [pre-performance, routine, mental-preparation, arousal-regulation, sport-psychology]
+verified: true
 ---
 
 # Apply Pre-Performance Routine

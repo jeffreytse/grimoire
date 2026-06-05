@@ -3,6 +3,7 @@ name: design-gut-health-protocol
 description: Use when an individual needs a systematic evidence-based protocol to improve gut microbiome diversity, reduce digestive symptoms, and support long-term gastrointestinal health
 source: Sonnenburg "The Good Gut" (2015); Cryan et al. "The Microbiota-Gut-Brain Axis" Physiological Reviews (2019); Zmora et al. "Personalized Gut Mucosal Colonization Resistance to Empiric Probiotics" Cell (2018); AGA Clinical Guidelines on Gut Microbiome (2020)
 tags: [gut-health, microbiome, probiotics, prebiotics, fiber, digestive-health, gut-brain-axis]
+verified: true
 ---
 
 # Design Gut Health Protocol

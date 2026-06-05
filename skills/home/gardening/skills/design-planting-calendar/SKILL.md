@@ -3,6 +3,7 @@ name: design-planting-calendar
 description: Use when creating a seasonal planting schedule, determining optimal start dates for seeds and transplants, or planning succession planting
 source: Master Gardener Program "University Extension Planting Guides" (2023); Old Farmer's Almanac "Planting Methodology" (2024); USDA "Plant Hardiness Zone Map" (2023)
 tags: [gardening, planting-calendar, seed-starting, seasonal-planning]
+verified: true
 ---
 
 # Design Planting Calendar

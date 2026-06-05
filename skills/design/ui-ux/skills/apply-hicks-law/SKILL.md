@@ -3,6 +3,7 @@ name: apply-hicks-law
 description: Use when simplifying navigation menus, option lists, decision points, or any interface where too many choices slow users down
 source: Hick "On the Rate of Gain of Information" Quarterly Journal of Experimental Psychology (1952); Nielsen Norman Group Hick's Law article; Raskin "The Humane Interface" (2000)
 tags: [hicks-law, decision-design, ux, navigation, simplicity]
+verified: true
 ---
 
 # Apply Hick's Law

@@ -3,6 +3,7 @@ name: design-controlled-experiment
 description: Use when planning a physics experiment that requires controlling variables to isolate causal relationships between physical quantities
 source: Fisher "The Design of Experiments" (1935); Box, Hunter & Hunter "Statistics for Experimenters" (2005); NIST/SEMATECH e-Handbook of Statistical Methods
 tags: [physics, experiment-design, controls, scientific-method]
+verified: true
 ---
 
 # Design Controlled Experiment

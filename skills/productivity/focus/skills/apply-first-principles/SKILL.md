@@ -3,6 +3,7 @@ name: apply-first-principles
 description: Use when solving a problem that feels constrained by inherited assumptions or industry convention
 source: Aristotle, "Posterior Analytics" (350 BCE); René Descartes, "Meditations on First Philosophy" (1641)
 tags: [reasoning, problem-solving, productivity, innovation, critical-thinking]
+verified: true
 ---
 
 # Apply First Principles

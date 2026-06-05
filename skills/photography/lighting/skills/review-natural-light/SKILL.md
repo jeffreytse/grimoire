@@ -3,6 +3,7 @@ name: review-natural-light
 description: Use when assessing natural light for a shoot location or planning a golden-hour session
 source: Bryan Peterson "Understanding Exposure" (2004), Joe McNally "The Moment It Clicks" (2008), Outdoor Photographer magazine technical guides
 tags: [photography, lighting, natural-light, golden-hour, window-light, reflector, exposure]
+verified: true
 ---
 
 # Review Natural Light

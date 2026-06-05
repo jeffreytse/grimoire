@@ -3,6 +3,7 @@ name: apply-color-theory-principles
 description: Use when making deliberate color decisions in painting, design, or illustration to create harmony, contrast, mood, and visual hierarchy
 source: Johannes Itten "The Art of Color" (1961); Josef Albers "Interaction of Color" (1963); Bauhaus foundation curriculum; Munsell color system
 tags: [color, color-theory, painting, design]
+verified: true
 ---
 
 # Apply Color Theory Principles

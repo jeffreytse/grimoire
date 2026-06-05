@@ -3,6 +3,7 @@ name: design-portfolio-allocation
 description: Use when constructing or rebalancing an investment portfolio across asset classes
 source: Markowitz (1952) "Portfolio Selection" Journal of Finance; CFA Institute Portfolio Management curriculum; Vanguard Research on asset allocation
 tags: [finance, investing, portfolio, asset-allocation, diversification, risk]
+verified: true
 ---
 
 # Design Portfolio Allocation

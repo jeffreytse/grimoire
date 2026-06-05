@@ -3,6 +3,7 @@ name: design-knife-skills-progression
 description: Use when teaching knife skills to a beginner cook, designing a culinary curriculum, or systematically improving personal knife technique from unsafe to professional level
 source: CIA "The Professional Chef" (9th ed.); Jacques Pépin "La Technique" (1976); Le Cordon Bleu knife skills curriculum
 tags: [cooking, knife-skills, teaching, technique, safety]
+verified: true
 ---
 
 # Design Knife Skills Progression

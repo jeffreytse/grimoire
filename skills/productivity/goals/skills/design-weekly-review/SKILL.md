@@ -3,6 +3,7 @@ name: design-weekly-review
 description: Use when closing out a work week to clear cognitive load, review progress, and prepare the next week for intentional execution
 source: David Allen, "Getting Things Done" (2001); adopted at Google, LinkedIn, top consulting firms
 tags: [goals, weekly-review, gtd, planning, reflection, system-maintenance]
+verified: true
 ---
 
 # Design Weekly Review

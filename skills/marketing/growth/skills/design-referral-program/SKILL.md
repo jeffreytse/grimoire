@@ -3,6 +3,7 @@ name: design-referral-program
 description: Use when designing a customer referral or word-of-mouth program for a product or service
 source: Sean Ellis & Morgan Brown "Hacking Growth" (2017), Dropbox and Airbnb referral case studies, Viral Loops methodology
 tags: [growth, referral, viral-coefficient, word-of-mouth, acquisition, retention]
+verified: true
 ---
 
 # Design Referral Program

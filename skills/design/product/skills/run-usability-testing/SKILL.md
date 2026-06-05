@@ -3,6 +3,7 @@ name: run-usability-testing
 description: Use when planning or conducting usability tests to identify UI friction, task completion failures, or navigation problems with real users
 source: Nielsen "Usability Engineering" (1993); Nielsen Norman Group usability testing guidelines; ISO 9241-11:2018 usability definition and measurement
 tags: [usability, research, ux, testing, user-research]
+verified: true
 ---
 
 # Run Usability Testing

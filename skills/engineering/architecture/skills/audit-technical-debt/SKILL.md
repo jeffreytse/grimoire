@@ -3,6 +3,7 @@ name: audit-technical-debt
 description: Use when assessing, cataloging, or prioritizing technical debt in an existing codebase or system
 source: Ward Cunningham (originator, 1992 OOPSLA); SQALE model (Letouzey & Coq, 2012); Martin Fowler "TechnicalDebtQuadrant" (martinfowler.com)
 tags: [technical-debt, code-quality, refactoring, audit, architecture, sqale]
+verified: true
 ---
 
 # Audit Technical Debt

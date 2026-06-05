@@ -3,6 +3,7 @@ name: design-event-driven-architecture
 description: Use when designing systems that need loose coupling between services, asynchronous processing of high-volume events, or real-time data propagation across multiple consumers
 source: Hohpe & Woolf "Enterprise Integration Patterns" (2003); Richardson "Microservices Patterns" (2018); Stopford "Designing Event-Driven Systems" (O'Reilly 2018)
 tags: [architecture, events, microservices, messaging]
+verified: true
 ---
 
 # Design Event-Driven Architecture

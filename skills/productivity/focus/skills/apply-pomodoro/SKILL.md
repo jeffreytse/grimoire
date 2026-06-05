@@ -3,6 +3,7 @@ name: apply-pomodoro
 description: Use when starting a focused work session to maintain consistent output and prevent cognitive fatigue across a full workday
 source: Francesco Cirillo, "The Pomodoro Technique" (1992); Ariga & Lleras, University of Illinois (2011)
 tags: [focus, pomodoro, time-management, cognitive-performance, breaks, anti-fatigue]
+verified: true
 ---
 
 # Apply Pomodoro

@@ -3,6 +3,7 @@ name: design-link-building-strategy
 description: Use when designing a sustainable link acquisition strategy to improve domain authority and organic search rankings through ethical content-driven outreach.
 source: Google "Webmaster Guidelines" (2024); Moz "Domain Authority" research; Semrush "Link Building Study" (2023); Backlinko "Link Building for SEO" (Fishkin/Dean original research)
 tags: [seo, link-building, backlinks, outreach, content-marketing]
+verified: true
 ---
 
 # Design a Link Building Strategy

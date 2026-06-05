@@ -3,6 +3,7 @@ name: design-dog-training-program
 description: Use when creating a structured dog training plan for a new dog, addressing specific behavioral issues, or building obedience and life-skills curriculum
 source: APDT "LIMA Guidelines" (2012); Karen Pryor "Don't Shoot the Dog" (1984); IAABC "Competency Standards" (2019)
 tags: [dog-training, behavior, positive-reinforcement, obedience]
+verified: true
 ---
 
 # Design Dog Training Program

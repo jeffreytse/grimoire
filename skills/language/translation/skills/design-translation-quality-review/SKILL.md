@@ -3,6 +3,7 @@ name: design-translation-quality-review
 description: Use when establishing a quality review process for translated content to ensure accuracy, fluency, and cultural appropriateness before publication.
 source: ISO 17100:2015 (Translation Services Requirements); ASTM F2575-14 (Quality Aspects in Translation); Localization Industry Standards Association (LISA) QA model; TAUS (Translation Automation User Society) DQF framework
 tags: [translation, localization, quality, review, language, communication, internationalization]
+verified: true
 ---
 
 # Design Translation Quality Review

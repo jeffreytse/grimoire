@@ -3,6 +3,7 @@ name: write-api-docs
 description: Use when writing or improving API reference documentation, endpoint descriptions, or OpenAPI specifications
 source: "Docs for Developers (Bhatti et al., 2021); Stripe API Docs; OpenAPI Initiative Specification 3.1"
 tags: [api, documentation, openapi, reference, technical-writing]
+verified: true
 ---
 
 # Write API Docs

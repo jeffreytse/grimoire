@@ -3,6 +3,7 @@ name: design-load-test
 description: Use when designing or running load, stress, or performance tests to validate system behavior under traffic
 source: Steve Smith "The Art of Application Performance Testing" (O'Reilly 2015); k6 documentation (k6.io); Gatling documentation (gatling.io)
 tags: [load-testing, performance, k6, gatling, stress-testing, scalability]
+verified: true
 ---
 
 # Design Load Test

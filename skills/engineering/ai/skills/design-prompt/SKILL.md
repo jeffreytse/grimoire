@@ -3,6 +3,7 @@ name: design-prompt
 description: Use when crafting or improving prompts for large language models — including system prompts, user-facing instructions, evaluation prompts, RAG query templates, agent tool descriptions, or any text that instructs an LLM to perform a task. Trigger when prompt outputs are inconsistent, too long, off-format, or incorrect.
 source: Anthropic Prompt Engineering Guide (docs.anthropic.com), OpenAI Prompt Engineering Guide (platform.openai.com), "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models" (Wei et al., NeurIPS 2022)
 tags: [llm, prompt-engineering, ai, chain-of-thought, few-shot, instruction-design, output-quality]
+verified: true
 ---
 
 # Design Prompt

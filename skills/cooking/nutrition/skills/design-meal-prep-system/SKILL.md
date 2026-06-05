@@ -3,6 +3,7 @@ name: design-meal-prep-system
 description: Use when planning weekly meal preparation, building a sustainable cooking routine, or helping someone reduce daily cooking time while maintaining nutritional quality
 source: Academy of Nutrition and Dietetics meal planning guidelines; USDA MyPlate framework; Larson et al. "Meal Preparation and Planning" Public Health Nutrition (2019)
 tags: [cooking, meal-prep, nutrition, planning, efficiency]
+verified: true
 ---
 
 # Design Meal Prep System

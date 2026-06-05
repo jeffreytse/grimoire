@@ -3,6 +3,7 @@ name: run-family-meeting
 description: Use when a family needs a structured, recurring forum for problem-solving, decision-making, and connection among school-age children and parents
 source: Rudolf Dreikurs family council methodology; Jane Nelsen "Positive Discipline" family meetings chapter; Adlerian psychology application to family systems
 tags: [family, communication, problem-solving, school-age, democratic-parenting]
+verified: true
 ---
 
 # Run Family Meeting

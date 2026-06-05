@@ -3,6 +3,7 @@ name: design-test-pyramid
 description: Use when establishing a testing strategy for a new project, when test suites are slow or flaky, or when the ratio of unit/integration/e2e tests is imbalanced
 source: Mike Cohn "Succeeding with Agile" (2009) test pyramid; Martin Fowler test pyramid article (2012); Google Testing Blog test pyramid guidance
 tags: [testing, architecture, quality, ci-cd]
+verified: true
 ---
 
 # Design Test Pyramid

@@ -3,6 +3,7 @@ name: design-behavior-change-plan
 description: Use when someone needs to adopt a new behavior, break an unwanted habit, or overcome motivational barriers to sustained action
 source: Prochaska & DiClemente Transtheoretical Model (1983); BJ Fogg "Tiny Habits" (2019); Michie et al. "The Behaviour Change Wheel" (2011)
 tags: [behavior-change, habits, motivation, self-efficacy, intervention-design]
+verified: true
 ---
 
 # Design Behavior Change Plan

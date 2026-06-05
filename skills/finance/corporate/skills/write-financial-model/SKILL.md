@@ -3,6 +3,7 @@ name: write-financial-model
 description: Use when building a three-statement financial model for a company or business unit
 source: McKinsey "Valuation: Measuring and Managing the Value of Companies" (7th ed.); Macabacus financial modeling standards; BIWS (Breaking Into Wall Street) modeling curriculum
 tags: [finance, corporate, financial-modeling, three-statement, forecasting, sensitivity]
+verified: true
 ---
 
 # Write Financial Model

@@ -3,6 +3,7 @@ name: apply-progressive-overload
 description: Use when systematically increasing training stimulus over time to ensure continued adaptation and prevent plateaus
 source: DeLorme & Watkins "Techniques of Progressive Resistance Exercise" (1948); NSCA progressive overload guidelines; Schoenfeld et al. JSCR meta-analyses on volume and intensity
 tags: [fitness, progressive-overload, programming, adaptation]
+verified: true
 ---
 
 # Apply Progressive Overload

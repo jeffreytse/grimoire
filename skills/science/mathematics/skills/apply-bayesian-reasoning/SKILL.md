@@ -3,6 +3,7 @@ name: apply-bayesian-reasoning
 description: Use when updating beliefs from evidence, estimating probabilities under uncertainty, or making decisions where prior knowledge and new data must be combined
 source: Bayes "An Essay towards Solving a Problem in the Doctrine of Chances" (1763); Jaynes "Probability Theory: The Logic of Science" (2003); Gelman et al. "Bayesian Data Analysis" (2013)
 tags: [statistics, bayesian, probability, decision-making]
+verified: true
 ---
 
 # Apply Bayesian Reasoning

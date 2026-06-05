@@ -3,6 +3,7 @@ name: apply-dimensional-analysis
 description: Use when deriving relationships between physical quantities, checking equations for consistency, or scaling physical models to different sizes or conditions
 source: Buckingham Pi theorem (Buckingham 1914); Bridgman "Dimensional Analysis" (1922); Barenblatt "Scaling, Self-Similarity, and Intermediate Asymptotics" (1996)
 tags: [physics, dimensional-analysis, scaling, fluid-mechanics]
+verified: true
 ---
 
 # Apply Dimensional Analysis

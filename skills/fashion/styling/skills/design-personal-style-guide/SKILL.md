@@ -3,6 +3,7 @@ name: design-personal-style-guide
 description: Use when defining a coherent personal aesthetic identity that guides all future wardrobe decisions and shopping behavior
 source: AICI (Association of Image Consultants International) professional standards; David Kibbe "Metamorphosis" (1987); certified image consultant methodology (FIT/AICI training)
 tags: [fashion, styling, personal-brand, identity, wardrobe]
+verified: true
 ---
 
 # Design Personal Style Guide

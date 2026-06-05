@@ -3,6 +3,7 @@ name: run-behavioral-assessment
 description: Use when evaluating a dog's behavioral baseline before training, shelter intake, adoption, or when addressing a specific behavioral concern
 source: ASPCA "SAFER Assessment" protocol; IAABC behavioral assessment standards; Brambell Committee "Five Freedoms" (1965)
 tags: [behavioral-assessment, dog-behavior, shelter, welfare]
+verified: true
 ---
 
 # Run Behavioral Assessment

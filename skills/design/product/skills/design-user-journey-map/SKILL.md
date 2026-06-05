@@ -3,6 +3,7 @@ name: design-user-journey-map
 description: Use when mapping end-to-end user experiences to identify pain points, emotional lows, and opportunity areas across a product or service touchpoint chain.
 source: Nielsen Norman Group "Journey Mapping 101" (2020); Kalbach "Mapping Experiences" (2016); IDEO "Design Thinking" methodology; Rosenbaum et al. "The Handbook of Service Marketing Research" (2011)
 tags: [ux, design, journey-mapping, user-research, service-design]
+verified: true
 ---
 
 # Design a User Journey Map

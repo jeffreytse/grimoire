@@ -3,6 +3,7 @@ name: apply-color-coordination-principles
 description: Use when building outfits, selecting wardrobe pieces, or advising on color combinations that create visually harmonious and intentional looks
 source: Johannes Itten "The Art of Color" (1961) applied to fashion; Pantone Color Institute fashion forecasting methodology; AICI (Association of Image Consultants International) color analysis curriculum
 tags: [fashion, styling, color, wardrobe, visual-design]
+verified: true
 ---
 
 # Apply Color Coordination Principles

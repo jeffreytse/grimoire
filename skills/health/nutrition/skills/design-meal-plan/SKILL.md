@@ -3,6 +3,7 @@ name: design-meal-plan
 description: Use when building a structured weekly meal plan aligned to caloric targets, macronutrient goals, and lifestyle constraints
 source: Academy of Nutrition and Dietetics Evidence Analysis Library; USDA Dietary Guidelines for Americans 2020–2025; Alan Aragon's Research Review (AARR) on meal timing
 tags: [health, nutrition, meal-planning, meal-prep, dietary-guidelines, nutrient-timing]
+verified: true
 ---
 
 # Design Meal Plan

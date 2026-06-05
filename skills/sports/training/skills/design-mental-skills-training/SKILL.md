@@ -3,6 +3,7 @@ name: design-mental-skills-training
 description: Use when an athlete needs a structured program to build visualization, focus, confidence, or emotional regulation for competitive performance
 source: Vealey "Mental Skills Training" (2007); Orlick "In Pursuit of Excellence" (2016); AASP (Association for Applied Sport Psychology); USOC Sport Psychology resources
 tags: [mental-performance, visualization, focus, confidence, sport-psychology, imagery]
+verified: true
 ---
 
 # Design Mental Skills Training

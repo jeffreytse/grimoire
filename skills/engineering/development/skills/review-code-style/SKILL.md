@@ -3,6 +3,7 @@ name: review-code-style
 description: Use when reviewing code for style consistency, readability, or adherence to a team or language style guide
 source: Google Engineering Practices / Google Style Guides (google.github.io/styleguide)
 tags: [code-review, style, linting, readability, quality]
+verified: true
 ---
 
 # Review Code Style

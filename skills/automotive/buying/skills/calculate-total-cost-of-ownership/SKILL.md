@@ -3,6 +3,7 @@ name: calculate-total-cost-of-ownership
 description: Use when comparing vehicles to buy or lease and need to evaluate the true multi-year financial cost beyond the sticker price
 source: AAA "Your Driving Costs" annual study; Edmunds True Cost to Own (TCO) methodology; Consumer Reports car ownership cost analysis
 tags: [automotive, buying, cost, finance]
+verified: true
 ---
 
 # Calculate Total Cost of Ownership

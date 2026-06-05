@@ -3,6 +3,7 @@ name: design-flexibility-mobility-program
 description: Use when an individual needs a systematic program to improve joint mobility, muscular flexibility, and movement quality for fitness, injury prevention, or sport
 source: Cook "Movement" (2010); McGill "Low Back Disorders" 3rd ed. (2015); NSCA Flexibility and Mobility Guidelines; FMS (Functional Movement Screen) research base
 tags: [flexibility, mobility, FMS, stretching, movement-quality, joint-health, injury-prevention]
+verified: true
 ---
 
 # Design Flexibility and Mobility Program

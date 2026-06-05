@@ -3,6 +3,7 @@ name: write-meta-tags
 description: Use when writing or auditing title tags and meta descriptions for any webpage
 source: Google Search Documentation (developers.google.com/search), Moz Title Tag Guide
 tags: [seo, meta-tags, title-tag, meta-description, on-page, click-through-rate]
+verified: true
 ---
 
 # Write Meta Tags

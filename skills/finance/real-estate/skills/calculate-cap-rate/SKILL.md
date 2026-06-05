@@ -3,6 +3,7 @@ name: calculate-cap-rate
 description: Use when evaluating a commercial real estate investment using capitalization rate analysis to assess property value and return potential
 source: CCIM (Certified Commercial Investment Member) Institute curriculum; CBRE cap rate methodology; Appraisal Institute "The Appraisal of Real Estate" (14th ed.)
 tags: [real-estate, investment-analysis, valuation, cap-rate]
+verified: true
 ---
 
 # Calculate Cap Rate

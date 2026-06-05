@@ -3,6 +3,7 @@ name: calculate-ecosystem-services-value
 description: Use when estimating the economic value of natural ecosystems for policy decisions, environmental impact assessments, conservation investments, or natural capital accounting
 source: Costanza et al. "The value of the world's ecosystem services and natural capital" (Nature, 1997); TEEB "The Economics of Ecosystems and Biodiversity" (2010); Natural Capital Coalition "Natural Capital Protocol" (2016); MEA "Millennium Ecosystem Assessment" (2005)
 tags: [ecosystem-services, natural-capital, valuation, environmental-economics, biodiversity, teeb]
+verified: true
 ---
 
 # Calculate Ecosystem Services Value

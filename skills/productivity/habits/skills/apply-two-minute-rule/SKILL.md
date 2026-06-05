@@ -3,6 +3,7 @@ name: apply-two-minute-rule
 description: Use when processing any inbox, task list, or request to decide whether to act immediately or schedule
 source: David Allen, "Getting Things Done" (2001); GTD methodology
 tags: [habits, gtd, task-management, inbox-zero, decision-making, procrastination]
+verified: true
 ---
 
 # Apply Two-Minute Rule

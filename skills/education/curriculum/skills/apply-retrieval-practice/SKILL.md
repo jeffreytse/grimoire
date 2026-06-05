@@ -3,6 +3,7 @@ name: apply-retrieval-practice
 description: Use when designing study strategies or instructional activities that use testing and recall to strengthen long-term memory
 source: Roediger & Karpicke "Test-Enhanced Learning" Psychological Science (2006); Dunlosky et al. "Improving Students' Learning" Psychological Science in the Public Interest (2013); APA "Strengthening the Student Toolbox"
 tags: [retrieval-practice, testing-effect, learning-science, study, memory]
+verified: true
 ---
 
 # Apply Retrieval Practice

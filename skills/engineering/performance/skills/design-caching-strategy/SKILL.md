@@ -3,6 +3,7 @@ name: design-caching-strategy
 description: Use when designing or auditing HTTP caching, CDN configuration, or application-level cache policies for a web service
 source: "RFC 7234 HTTP/1.1 Caching; MDN Cache-Control documentation; Fastly Caching Best Practices; 'Caching at Scale' (Varnish Software)"
 tags: [performance, caching, cache-control, cdn, http, stale-while-revalidate, headers]
+verified: true
 ---
 
 # Design Caching Strategy

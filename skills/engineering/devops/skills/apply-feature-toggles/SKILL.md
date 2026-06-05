@@ -3,6 +3,7 @@ name: apply-feature-toggles
 description: Use when you need to separate code deployment from feature release, enable A/B testing, implement gradual rollouts, or allow rapid disabling of features in production without a rollback deployment.
 source: Hodgson "Feature Toggles (aka Feature Flags)" (martinfowler.com, 2017); Fowler endorsement and publication; DORA "Accelerate" (2018); LaunchDarkly State of Feature Management Report (2023)
 tags: [devops, deployment, feature-flags, continuous-delivery, trunk-based-development, release-management, experimentation]
+verified: true
 ---
 
 # Apply Feature Toggles

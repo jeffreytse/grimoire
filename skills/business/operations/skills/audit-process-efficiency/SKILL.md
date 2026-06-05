@@ -3,6 +3,7 @@ name: audit-process-efficiency
 description: Use when identifying waste, bottlenecks, or inefficiencies in a repeatable business or operational workflow
 source: Taiichi Ohno "Toyota Production System" (1978); Mike Rother "Learning to See" (1998) — Value Stream Mapping
 tags: [process-efficiency, lean, value-stream-mapping, waste-reduction, operations, continuous-improvement]
+verified: true
 ---
 
 # Audit Process Efficiency

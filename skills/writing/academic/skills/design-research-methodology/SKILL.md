@@ -3,6 +3,7 @@ name: design-research-methodology
 description: Use when designing or documenting a research methodology for academic studies, dissertations, or empirical research proposals
 source: Creswell "Research Design: Qualitative, Quantitative, and Mixed Methods" (2018); SAGE Research Methods; American Educational Research Association (AERA) standards
 tags: [academic-writing, research-design, methodology, empirical-research]
+verified: true
 ---
 
 # Design Research Methodology

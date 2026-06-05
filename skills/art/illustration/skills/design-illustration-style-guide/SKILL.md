@@ -3,6 +3,7 @@ name: design-illustration-style-guide
 description: Use when establishing a cohesive visual language for an illustration project, brand, publication, or product requiring consistent artwork across multiple pieces or contributors
 source: AIGA professional practice standards; Steven Heller "The Education of an Illustrator" (2000); Society of Illustrators professional guidelines
 tags: [illustration, style-guide, branding, consistency]
+verified: true
 ---
 
 # Design Illustration Style Guide

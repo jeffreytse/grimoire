@@ -3,6 +3,7 @@ name: design-preventive-maintenance-schedule
 description: Use when creating or reviewing a vehicle preventive maintenance plan based on mileage, time intervals, and manufacturer recommendations
 source: AAA Approved Auto Repair "Vehicle Maintenance Guide" (2023); SAE International OEM service manual intervals; NHTSA "Vehicle Safety and Maintenance" guidelines
 tags: [automotive, maintenance, preventive, schedule, oil-change, inspection]
+verified: true
 ---
 
 # Design Preventive Maintenance Schedule

@@ -3,6 +3,7 @@ name: audit-investment-thesis
 description: Use when evaluating the strength and validity of an investment thesis before committing capital
 source: Charlie Munger's "Poor Charlie's Almanack"; Howard Marks memos (Oaktree Capital); Seth Klarman "Margin of Safety"
 tags: [finance, investing, thesis, due-diligence, mental-models, margin-of-safety]
+verified: true
 ---
 
 # Audit Investment Thesis

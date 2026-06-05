@@ -3,6 +3,7 @@ name: design-sleep-hygiene-protocol
 description: Use when creating individualized sleep hygiene recommendations to improve sleep onset, duration, and quality for someone with poor sleep habits
 source: AASM (American Academy of Sleep Medicine) sleep hygiene guidelines; Walker "Why We Sleep" (2017); Hauri "Sleep Hygiene" original framework (1977)
 tags: [sleep, sleep-hygiene, insomnia, health]
+verified: true
 ---
 
 # Design Sleep Hygiene Protocol

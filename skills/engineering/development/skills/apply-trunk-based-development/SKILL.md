@@ -3,6 +3,7 @@ name: apply-trunk-based-development
 description: Use when teams want to increase deployment frequency, reduce merge conflicts, or adopt continuous integration and delivery practices
 source: Forsgren, Humble & Kim "Accelerate" (2018); DORA research identifying trunk-based development as elite performance predictor; Paul Hammant trunkbaseddevelopment.com
 tags: [development, ci-cd, git, devops]
+verified: true
 ---
 
 # Apply Trunk-Based Development

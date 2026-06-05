@@ -3,6 +3,7 @@ name: write-release-note
 description: Use when writing user-facing release notes for a software product release
 source: Stripe Developer Documentation style guide; GitHub Release Notes guidelines; Apple App Store release note best practices
 tags: [release-notes, product, documentation, communication, changelog]
+verified: true
 ---
 
 # Write Release Note

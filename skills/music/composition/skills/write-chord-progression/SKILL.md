@@ -3,6 +3,7 @@ name: write-chord-progression
 description: Use when composing or evaluating a chord progression for a song, section, or harmonic exercise
 source: Berklee College of Music Harmony Curriculum, Mark Levine "The Jazz Theory Book", Alan Belkin "Tonal Harmony"
 tags: [music, composition, harmony, chord-progression, diatonic, secondary-dominants, voice-leading]
+verified: true
 ---
 
 # Write Chord Progression

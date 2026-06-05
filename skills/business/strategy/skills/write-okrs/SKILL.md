@@ -3,6 +3,7 @@ name: write-okrs
 description: Use when setting quarterly or annual goals for a team, department, or company to align effort with strategy
 source: John Doerr "Measure What Matters" (2018); Google OKR methodology (re-OKR guide)
 tags: [okrs, goal-setting, strategy, alignment, performance, planning]
+verified: true
 ---
 
 # Write OKRs

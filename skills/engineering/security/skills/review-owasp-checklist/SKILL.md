@@ -3,6 +3,7 @@ name: review-owasp-checklist
 description: Use when reviewing a new codebase for security, before a production launch, after a security incident, or during a compliance audit requiring OWASP Top 10 coverage.
 source: OWASP Top 10 2021 (owasp.org/Top10), NIST SP 800-53, OWASP Application Security Verification Standard (ASVS) v4.0
 tags: [owasp, security-review, vulnerability, injection, authentication, developer, security-engineer]
+verified: true
 ---
 
 # Review OWASP Checklist

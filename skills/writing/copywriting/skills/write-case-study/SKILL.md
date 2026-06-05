@@ -3,6 +3,7 @@ name: write-case-study
 description: Use when writing a B2B case study to demonstrate customer success, build social proof, or support sales enablement with a compelling narrative.
 source: HubSpot Case Study Methodology; Hennig-Thurau et al. "Electronic Word-of-Mouth" (2004); Demand Gen Report "2023 B2B Buyer Behavior Study"; Content Marketing Institute "B2B Content Marketing Benchmarks" (2024)
 tags: [copywriting, b2b, case-study, social-proof, sales-enablement]
+verified: true
 ---
 
 # Write a B2B Case Study

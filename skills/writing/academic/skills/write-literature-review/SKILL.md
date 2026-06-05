@@ -3,6 +3,7 @@ name: write-literature-review
 description: Use when writing a systematic or narrative literature review for academic research, thesis chapters, or grant proposals
 source: APA Publication Manual 7th ed.; PRISMA (Preferred Reporting Items for Systematic Reviews and Meta-Analyses) guidelines; Booth et al. "Systematic Approaches to a Successful Literature Review" (2016)
 tags: [academic-writing, literature-review, research, citation]
+verified: true
 ---
 
 # Write Literature Review

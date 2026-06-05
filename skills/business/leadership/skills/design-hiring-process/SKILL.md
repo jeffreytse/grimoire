@@ -3,6 +3,7 @@ name: design-hiring-process
 description: Use when building or overhauling a hiring process for a role to reduce bias and improve quality-of-hire
 source: Laszlo Bock "Work Rules!" (2015); Google's Project Oxygen hiring research; Schmidt & Hunter meta-analysis (1998)
 tags: [hiring, recruiting, structured-interviews, bias-reduction, talent-acquisition, leadership]
+verified: true
 ---
 
 # Design Hiring Process

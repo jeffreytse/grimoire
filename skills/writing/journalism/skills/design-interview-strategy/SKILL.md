@@ -3,6 +3,7 @@ name: design-interview-strategy
 description: Use when planning and conducting a journalistic interview to maximize source cooperation and information yield
 source: IRE (Investigative Reporters and Editors) interviewing methodology; Biagi "Media/Impact" journalism curriculum; SPJ best practices for source interviews
 tags: [journalism, interviewing, sources, reporting]
+verified: true
 ---
 
 # Design Interview Strategy

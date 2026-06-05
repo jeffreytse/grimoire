@@ -3,6 +3,7 @@ name: suggest-practice
 description: Use when the user describes any situation, problem, goal, complaint, or question — including when they want to browse available best practices for a topic, don't know which domain applies, or don't know a best practice exists for their situation.
 source: Information retrieval best practices (van Rijsbergen, 1979), Nielsen Norman Group search UX guidelines
 tags: [skill-discovery, auto-classify, problem-routing, problem-solver, situation-analysis, practice-recommendation]
+verified: true
 ---
 
 # Suggest Practice

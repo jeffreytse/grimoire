@@ -3,6 +3,7 @@ name: design-goal-setting-framework
 description: Use when someone needs to define, prioritize, or create an actionable system around meaningful goals — personal, professional, or organizational
 source: Locke & Latham "A Theory of Goal Setting and Task Performance" (1990); Doran "There's a SMART Way to Write Management Goals" (1981); Oettingen WOOP implementation intention research
 tags: [goal-setting, planning, performance, motivation, implementation-intentions]
+verified: true
 ---
 
 # Design Goal Setting Framework

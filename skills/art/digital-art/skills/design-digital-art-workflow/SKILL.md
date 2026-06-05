@@ -3,6 +3,7 @@ name: design-digital-art-workflow
 description: Use when establishing or optimizing a professional digital painting or illustration workflow across hardware, software, and file management systems
 source: Wacom professional workflow standards; SIGGRAPH industry practices; Ctrl+Paint foundational digital painting methodology (Matt Kohr)
 tags: [digital-art, workflow, painting, tools]
+verified: true
 ---
 
 # Design Digital Art Workflow

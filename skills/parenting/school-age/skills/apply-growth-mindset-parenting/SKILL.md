@@ -3,6 +3,7 @@ name: apply-growth-mindset-parenting
 description: Use when a parent wants to cultivate resilience, effort-orientation, and learning persistence in a school-age child through everyday interactions
 source: Carol Dweck "Mindset" (2006) Stanford research; Mueller & Dweck "Praise for Intelligence Can Undermine Children's Motivation" JPSP (1998); PERTS growth mindset educator toolkit
 tags: [growth-mindset, resilience, school-age, motivation, praise]
+verified: true
 ---
 
 # Apply Growth Mindset Parenting

@@ -3,6 +3,7 @@ name: apply-figure-drawing-fundamentals
 description: Use when drawing the human figure with accurate proportion, structure, and anatomical believability
 source: Andrew Loomis "Figure Drawing for All It's Worth" (1943); George Bridgman "Constructive Anatomy" (1920); RISD, Pratt, Art Center foundation drawing curriculum
 tags: [drawing, figure, anatomy, proportion]
+verified: true
 ---
 
 # Apply Figure Drawing Fundamentals

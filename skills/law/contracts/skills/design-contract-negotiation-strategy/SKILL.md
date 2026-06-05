@@ -3,6 +3,7 @@ name: design-contract-negotiation-strategy
 description: Use when planning or executing a contract negotiation for commercial agreements, partnerships, or high-stakes deals
 source: Fisher, Ury & Patton "Getting to Yes" (Harvard Negotiation Project, 1981); Mnookin et al. "Beyond Winning" (2000); ABA contract negotiation guidelines
 tags: [contract-law, negotiation, deal-making, commercial-contracts]
+verified: true
 ---
 
 # Design Contract Negotiation Strategy

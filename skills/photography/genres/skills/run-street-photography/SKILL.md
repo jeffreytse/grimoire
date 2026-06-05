@@ -3,6 +3,7 @@ name: run-street-photography
 description: Use when approaching street photography including ethical considerations, camera settings, anticipation, and the decisive moment
 source: Henri Cartier-Bresson "The Decisive Moment" (1952); Magnum Photos street photography tradition; Badger "The Genius of Photography" (2007)
 tags: [street-photography, documentary, candid, composition, ethics]
+verified: true
 ---
 
 # Run Street Photography

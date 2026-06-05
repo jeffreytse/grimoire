@@ -3,6 +3,7 @@ name: apply-gestural-drawing
 description: Use when learning or teaching foundational drawing, capturing movement and essence of a subject, or building observational speed and sensitivity before detail work.
 source: Kimon Nicolaïdes "The Natural Way to Draw" (1941); Betty Edwards "Drawing on the Right Side of the Brain" (1979); RISD, Pratt, SVA foundation curriculum
 tags: [drawing, gesture, figure-drawing, observation, foundation]
+verified: true
 ---
 
 # Apply Gestural Drawing

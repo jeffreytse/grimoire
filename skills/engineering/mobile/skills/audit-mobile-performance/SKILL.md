@@ -3,6 +3,7 @@ name: audit-mobile-performance
 description: Use when diagnosing performance problems in a mobile app or conducting a systematic mobile performance review
 source: "Android Vitals (Google Play Console); Apple MetricKit (Apple Developer Documentation); 'Mobile Performance' — Google Developers; RAIL model"
 tags: [mobile, performance, android-vitals, metrickit, profiling, startup, frame-rate]
+verified: true
 ---
 
 # Audit Mobile Performance

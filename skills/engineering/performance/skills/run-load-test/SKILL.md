@@ -3,6 +3,7 @@ name: run-load-test
 description: Use when validating system performance before a launch, during capacity planning, after significant code or infrastructure changes, or when investigating SLO latency budget breaches
 source: Google SRE load testing guidance; k6/JMeter/Locust best practices; Gregg "Systems Performance" (2020) capacity chapter
 tags: [performance, testing, reliability, capacity]
+verified: true
 ---
 
 # Run Load Test

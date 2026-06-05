@@ -3,6 +3,7 @@ name: design-sleep-protocol
 description: Use when building or improving a personal sleep routine to maximize sleep quality, duration, and consistency
 source: Matthew Walker "Why We Sleep" (2017); American Academy of Sleep Medicine (AASM) clinical guidelines; American Academy of Sleep Medicine Sleep Hygiene Recommendations
 tags: [health, sleep, sleep-hygiene, circadian-rhythm, recovery, protocol]
+verified: true
 ---
 
 # Design Sleep Protocol

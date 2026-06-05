@@ -3,6 +3,7 @@ name: apply-mindfulness-based-stress-reduction
 description: Use when guiding an individual through the MBSR protocol or implementing mindfulness-based practices to reduce chronic stress, anxiety, or pain
 source: Kabat-Zinn "Full Catastrophe Living" (1990); Grossman et al. "Mindfulness-Based Stress Reduction and Health Benefits" JPSM meta-analysis (2004); Oxford Mindfulness Centre clinical research
 tags: [mental-health, mindfulness, MBSR, stress-reduction]
+verified: true
 ---
 
 # Apply Mindfulness-Based Stress Reduction

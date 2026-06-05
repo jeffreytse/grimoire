@@ -3,6 +3,7 @@ name: audit-accessibility
 description: Use when auditing a product or component for accessibility compliance or when preparing for WCAG 2.1 AA certification
 source: W3C WCAG 2.1 (2018); WAI-ARIA Authoring Practices 1.2; Deque axe-core open-source ruleset
 tags: [accessibility, wcag, a11y, screen-reader, aria, inclusive-design, audit]
+verified: true
 ---
 
 # Audit Accessibility

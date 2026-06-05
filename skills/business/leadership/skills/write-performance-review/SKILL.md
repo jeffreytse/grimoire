@@ -3,6 +3,7 @@ name: write-performance-review
 description: Use when writing or calibrating a performance review for a direct report at any level
 source: Kim Scott "Radical Candor" (2017); SBI Feedback Model (Center for Creative Leadership); Adobe Check-in Model
 tags: [performance-review, feedback, leadership, sbi-model, talent-management, coaching]
+verified: true
 ---
 
 # Write Performance Review

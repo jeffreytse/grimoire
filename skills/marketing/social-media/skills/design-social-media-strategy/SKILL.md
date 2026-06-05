@@ -3,6 +3,7 @@ name: design-social-media-strategy
 description: Use when building or auditing a social media strategy including platform selection, content mix, posting cadence, and KPIs
 source: Hootsuite "Social Media Trends" annual report; Sprout Social Index research; Tuten & Solomon "Social Media Marketing" (2017)
 tags: [social-media, strategy, marketing, content, engagement]
+verified: true
 ---
 
 # Design Social Media Strategy

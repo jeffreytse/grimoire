@@ -3,6 +3,7 @@ name: apply-typography-hierarchy
 description: Use when designing a typographic system for a document, website, or brand that needs clear visual hierarchy and readable body text
 source: Robert Bringhurst "The Elements of Typographic Style" (4th ed., 2012); Ellen Lupton "Thinking with Type" (2010)
 tags: [typography, type-hierarchy, visual-design, layout, readability, type-scale]
+verified: true
 ---
 
 # Apply Typography Hierarchy

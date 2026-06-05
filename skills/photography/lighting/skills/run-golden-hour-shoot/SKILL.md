@@ -3,6 +3,7 @@ name: run-golden-hour-shoot
 description: Use when planning and executing a photography session timed to golden hour to capture warm, directional natural light for portraits, landscapes, or editorial work
 source: Kelby "The Digital Photography Book" Vol. 1–5 (2016 ed.); Freeman "Perfect Exposure" (2009); NPPA (National Press Photographers Association) natural light ethics and technique guidelines; Light Stalking natural light research (2019)
 tags: [golden-hour, natural-light, portrait-photography, landscape, exposure, timing]
+verified: true
 ---
 
 # Run Golden Hour Shoot

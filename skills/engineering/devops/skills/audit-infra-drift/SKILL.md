@@ -3,6 +3,7 @@ name: audit-infra-drift
 description: Use when detecting, auditing, or remediating drift between declared infrastructure configuration and actual deployed state
 source: GitOps Principles (opengitops.dev); HashiCorp Terraform documentation; AWS Config documentation
 tags: [infrastructure, drift, terraform, gitops, aws-config, iac, devops]
+verified: true
 ---
 
 # Audit Infrastructure Drift

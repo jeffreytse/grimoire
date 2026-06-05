@@ -3,6 +3,7 @@ name: design-slo-sla-framework
 description: Use when establishing reliability targets for services, defining error budgets for engineering teams, or negotiating service commitments with customers
 source: Google SRE Workbook (2018) Ch. 2; Beyer et al. "Site Reliability Engineering" (2016); Treynor "The Calculus of Service Availability" Queue (2017)
 tags: [reliability, sre, slo, observability]
+verified: true
 ---
 
 # Design SLO/SLA Framework

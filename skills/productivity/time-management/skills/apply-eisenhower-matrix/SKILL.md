@@ -3,6 +3,7 @@ name: apply-eisenhower-matrix
 description: Use when your task list feels overwhelming and you need to decide what to do, defer, delegate, or drop
 source: Dwight D. Eisenhower (1954 speech); Stephen Covey, "The 7 Habits of Highly Effective People" (1989)
 tags: [prioritization, time-management, decision-making, delegation, task-management]
+verified: true
 ---
 
 # Apply Eisenhower Matrix

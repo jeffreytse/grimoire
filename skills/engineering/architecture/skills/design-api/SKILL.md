@@ -3,6 +3,7 @@ name: design-api
 description: Use when designing a new REST API, adding endpoints to an existing API, or reviewing an API design for correctness, consistency, and long-term maintainability.
 source: Fielding "REST Architectural Constraints" (2000 dissertation); Google API Design Guide (cloud.google.com/apis/design); Stripe API design; OpenAPI Specification (openapis.org)
 tags: [api-design, rest, http, developer-experience, versioning, contracts]
+verified: true
 ---
 
 # Design API

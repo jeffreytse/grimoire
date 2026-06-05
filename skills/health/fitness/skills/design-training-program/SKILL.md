@@ -3,6 +3,7 @@ name: design-training-program
 description: Use when creating a structured resistance training program for strength, hypertrophy, or athletic performance
 source: NSCA CSCS Certification curriculum (3rd ed.); Zatsiorsky & Kraemer "Science and Practice of Strength Training"; ACSM's Guidelines for Exercise Testing and Prescription (11th ed.)
 tags: [health, fitness, strength-training, programming, periodization, hypertrophy]
+verified: true
 ---
 
 # Design Training Program

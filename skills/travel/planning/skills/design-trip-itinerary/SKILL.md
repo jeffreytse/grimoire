@@ -3,6 +3,7 @@ name: design-trip-itinerary
 description: Use when planning a trip itinerary, organizing a travel schedule, or structuring daily activities for a journey
 source: ASTA (American Society of Travel Advisors) trip planning standards; Lonely Planet trip planning methodology; travel industry standard itinerary structure
 tags: [travel, planning, itinerary, trip-design]
+verified: true
 ---
 
 # Design Trip Itinerary

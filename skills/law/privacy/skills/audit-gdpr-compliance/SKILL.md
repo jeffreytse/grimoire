@@ -3,6 +3,7 @@ name: audit-gdpr-compliance
 description: Use when assessing an organization's compliance with the General Data Protection Regulation
 source: GDPR (EU) 2016/679; European Data Protection Board (EDPB) guidelines; ICO (UK Information Commissioner's Office) accountability framework
 tags: [law, privacy, gdpr, compliance, data-protection, ropa, dpa]
+verified: true
 ---
 
 # Audit GDPR Compliance

@@ -3,6 +3,7 @@ name: audit-travel-insurance-coverage
 description: Use when selecting, comparing, or reviewing travel insurance policies, or assessing whether existing coverage is adequate for a trip
 source: ASTA travel insurance guidelines; Squaremouth travel insurance comparison methodology; US Travel Insurance Association (USTIA) coverage standards
 tags: [travel, insurance, risk, planning]
+verified: true
 ---
 
 # Audit Travel Insurance Coverage

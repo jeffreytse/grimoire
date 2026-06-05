@@ -3,6 +3,7 @@ name: design-accessibility-standards
 description: Use when auditing or designing UI components to meet WCAG 2.2, Section 508, or ARIA accessibility requirements
 source: WCAG 2.2 (W3C Web Content Accessibility Guidelines); Section 508 (US Rehabilitation Act); ARIA specification (W3C WAI-ARIA 1.2)
 tags: [accessibility, wcag, aria, a11y, inclusive-design]
+verified: true
 ---
 
 # Design Accessibility Standards

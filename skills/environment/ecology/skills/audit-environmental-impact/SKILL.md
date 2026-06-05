@@ -3,6 +3,7 @@ name: audit-environmental-impact
 description: Use when conducting a formal assessment of a project, facility, or operation's impacts on ecosystems, biodiversity, and natural resources.
 source: NEPA (National Environmental Policy Act) Environmental Impact Statement process; EPA Environmental Review guidelines; ISO 14001:2015
 tags: [environmental-impact, biodiversity, ecology, assessment, compliance]
+verified: true
 ---
 
 # Audit Environmental Impact

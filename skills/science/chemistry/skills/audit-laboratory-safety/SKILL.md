@@ -3,6 +3,7 @@ name: audit-laboratory-safety
 description: Use when conducting a systematic safety inspection of a chemical laboratory or evaluating compliance with laboratory safety regulations
 source: OSHA Laboratory Standard (29 CFR 1910.1450); ACS "Safety in Academic Chemistry Laboratories" (2003); CHP (Chemical Hygiene Plan) requirements
 tags: [chemistry, laboratory-safety, compliance, risk-assessment]
+verified: true
 ---
 
 # Audit Laboratory Safety

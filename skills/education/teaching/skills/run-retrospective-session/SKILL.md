@@ -3,6 +3,7 @@ name: run-retrospective-session
 description: Use when facilitating a learning retrospective after a course, project, or experience to help participants extract and apply lessons
 source: David Kolb "Experiential Learning" (1984); Norman Kerth "Project Retrospectives" (2001); Derby & Larsen "Agile Retrospectives" (2006)
 tags: [retrospective, experiential-learning, facilitation, reflection, kolb, teaching]
+verified: true
 ---
 
 # Run Retrospective Session

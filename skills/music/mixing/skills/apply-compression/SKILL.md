@@ -3,6 +3,7 @@ name: apply-compression
 description: Use when applying dynamic compression to any audio source to control dynamics or add punch and glue
 source: Mike Senior "Mixing Secrets for the Small Studio" (2011), Bob Katz "Mastering Audio" (2002), Roey Izhaki "Mixing Audio" (2017)
 tags: [music, mixing, compression, dynamics, attack, release, parallel-compression, glue]
+verified: true
 ---
 
 # Apply Compression

@@ -3,6 +3,7 @@ name: apply-circular-economy-principles
 description: Use when redesigning products, services, or business models to eliminate waste, keep materials in use, and regenerate natural systems.
 source: Ellen MacArthur Foundation "Towards the Circular Economy" (2012); European Commission Circular Economy Action Plan (2020); McDonough & Braungart "Cradle to Cradle" (2002)
 tags: [circular-economy, waste, design, sustainability, business-model]
+verified: true
 ---
 
 # Apply Circular Economy Principles

@@ -3,6 +3,7 @@ name: audit-energy-consumption
 description: Use when assessing a building, facility, or organization's energy use to identify waste, prioritize efficiency improvements, and establish a baseline for reduction targets.
 source: ASHRAE Standard 211-2018 (Commercial Building Energy Audits); ISO 50001:2018 (Energy Management Systems); DOE Better Buildings program; EPA ENERGY STAR Portfolio Manager methodology
 tags: [energy, sustainability, efficiency, audit, operations, environment, buildings, cost-reduction]
+verified: true
 ---
 
 # Audit Energy Consumption

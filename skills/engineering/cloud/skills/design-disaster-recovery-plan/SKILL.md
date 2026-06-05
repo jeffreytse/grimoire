@@ -3,6 +3,7 @@ name: design-disaster-recovery-plan
 description: Use when establishing or auditing business continuity for cloud systems that must recover from catastrophic failures, data loss, or prolonged outages
 source: AWS Well-Architected Reliability Pillar; NIST SP 800-34 Rev.1; ISO 22301:2019 Business Continuity Management
 tags: [cloud, reliability, disaster-recovery, business-continuity]
+verified: true
 ---
 
 # Design Disaster Recovery Plan

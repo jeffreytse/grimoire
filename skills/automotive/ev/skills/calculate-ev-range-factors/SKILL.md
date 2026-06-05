@@ -3,6 +3,7 @@ name: calculate-ev-range-factors
 description: Use when planning an EV trip, evaluating an EV purchase, or explaining why an EV is delivering less range than its rated EPA estimate
 source: DOE Alternative Fuels Data Center (AFDC); EPA fuel economy test methodology (SAE J1634); NHTSA EV range reporting standards
 tags: [automotive, ev, range, electric-vehicle]
+verified: true
 ---
 
 # Calculate EV Range Factors

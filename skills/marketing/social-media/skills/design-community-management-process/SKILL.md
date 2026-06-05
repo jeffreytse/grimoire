@@ -3,6 +3,7 @@ name: design-community-management-process
 description: Use when building or auditing a community management process for online brand communities, social media comments, or user forums
 source: CMX Hub "Community Industry Report" (annual); Millington "Buzzing Communities" (2012); Fever Bee community management methodology
 tags: [community, social-media, engagement, moderation, brand]
+verified: true
 ---
 
 # Design Community Management Process

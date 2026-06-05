@@ -3,6 +3,7 @@ name: design-pricing-strategy
 description: Use when setting, revising, or validating the pricing for a product or service
 source: Simon-Kucher & Partners pricing methodology; Van Westendorp Price Sensitivity Meter; Thomas Nagle "The Strategy and Tactics of Pricing" (5th ed.)
 tags: [finance, corporate, pricing, value-based-pricing, monetization, strategy]
+verified: true
 ---
 
 # Design Pricing Strategy

@@ -3,6 +3,7 @@ name: write-tech-spec
 description: Use when a non-trivial engineering change needs to be documented before implementation — including new services, significant refactors, API design, database schema changes, cross-team dependencies, or any work estimated above 1 week. Trigger before the sprint that contains implementation work.
 source: Stripe engineering spec process (described in Stripe Press engineering culture), Notion design doc format (Notion Engineering Blog), Google technical writing standards (developers.google.com/tech-writing)
 tags: [technical-spec, design-doc, architecture, engineering, alignment, api-design, pre-implementation]
+verified: true
 ---
 
 # Write Tech Spec

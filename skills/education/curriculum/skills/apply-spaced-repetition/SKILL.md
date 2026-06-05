@@ -3,6 +3,7 @@ name: apply-spaced-repetition
 description: Use when designing a learning or study system that schedules review sessions to maximize long-term retention with minimum time investment
 source: Ebbinghaus "Über das Gedächtnis" (1885) forgetting curve; Cepeda et al. "Distributed Practice in Verbal Recall Tasks" Psych Bulletin (2006) meta-analysis; Kornell & Bjork JEPLMC (2008)
 tags: [spaced-repetition, memory, retention, learning-science, study]
+verified: true
 ---
 
 # Apply Spaced Repetition

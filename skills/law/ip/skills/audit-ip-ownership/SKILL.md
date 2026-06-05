@@ -3,6 +3,7 @@ name: audit-ip-ownership
 description: Use when verifying that a company or individual owns the intellectual property they believe they own
 source: USPTO guidance on IP ownership and assignment; work-for-hire doctrine (17 U.S.C. § 101); ABA Section of Intellectual Property Law IP audit guidelines
 tags: [law, ip, intellectual-property, ownership, assignment, work-for-hire]
+verified: true
 ---
 
 # Audit IP Ownership

@@ -3,6 +3,7 @@ name: design-data-pipeline
 description: Use when designing, building, or reviewing a data pipeline for ingestion, transformation, or analytics
 source: Maxime Beauchemin "Functional Data Engineering" (medium.com/@maximebeauchemin, 2018); dbt documentation (docs.getdbt.com); Apache Airflow documentation
 tags: [data-engineering, data-pipeline, dbt, airflow, etl, elt, functional-data-engineering]
+verified: true
 ---
 
 # Design Data Pipeline

@@ -3,6 +3,7 @@ name: design-vocabulary-acquisition-system
 description: Use when a learner needs a systematic, research-backed method to build and retain a large working vocabulary in a target language
 source: Paul Nation "Learning Vocabulary in Another Language" (2001); Beck, McKeown & Kucan "Bringing Words to Life" (2002); Schmitt "Vocabulary in Language Teaching" (2000)
 tags: [vocabulary, acquisition, spaced-repetition, frequency]
+verified: true
 ---
 
 # Design Vocabulary Acquisition System

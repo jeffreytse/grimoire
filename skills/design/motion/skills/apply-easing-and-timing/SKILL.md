@@ -3,6 +3,7 @@ name: apply-easing-and-timing
 description: Use when choosing easing curves and durations for specific UI animations, transitions, or motion design decisions
 source: Thomas & Johnston "The Illusion of Life: Disney Animation" (1981); Material Design motion spec (Google 2014); Lasseter "Principles of Traditional Animation Applied to 3D Computer Animation" SIGGRAPH (1987)
 tags: [motion, easing, timing, animation, ux]
+verified: true
 ---
 
 # Apply Easing and Timing

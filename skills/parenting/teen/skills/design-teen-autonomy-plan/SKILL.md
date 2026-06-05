@@ -3,6 +3,7 @@ name: design-teen-autonomy-plan
 description: Use when a parent needs to intentionally expand a teenager's independence and decision-making authority in a structured, developmentally appropriate way
 source: Laurence Steinberg "The Age of Opportunity" (2014); Wendy Grolnick autonomy-supportive parenting research; AAP adolescent development guidelines
 tags: [teen, autonomy, independence, adolescent-development, parenting]
+verified: true
 ---
 
 # Design Teen Autonomy Plan

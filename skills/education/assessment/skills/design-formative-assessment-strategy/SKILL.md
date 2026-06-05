@@ -3,6 +3,7 @@ name: design-formative-assessment-strategy
 description: Use when designing formative assessment strategies to provide ongoing feedback and guide learning during instruction
 source: Black & Wiliam "Inside the Black Box" Phi Delta Kappan (1998); Hattie "Visible Learning" (2009) effect size meta-analysis; OECD "Formative Assessment: Improving Learning in Secondary Classrooms" (2005)
 tags: [formative-assessment, feedback, teaching, learning, education]
+verified: true
 ---
 
 # Design Formative Assessment Strategy

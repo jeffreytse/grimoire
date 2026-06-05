@@ -3,6 +3,7 @@ name: design-storage-system
 description: Use when designing or redesigning storage for closets, pantries, garages, or whole-home storage optimization
 source: NAPO "Professional Organizer Guidelines" (2022); California Closets "Design Methodology" (2023); Container Store "Organization System Principles" (2023)
 tags: [storage, organization, space-planning, home-management]
+verified: true
 ---
 
 # Design Storage System

@@ -3,6 +3,7 @@ name: design-vendor-agreement-template
 description: Use when creating a reusable vendor agreement template that covers SLAs, liability, data handling, termination, and exit provisions for recurring supplier or service provider relationships
 source: IACCM "Contracting Principles" (2019); ICC International Contract Templates (2021); UNCITRAL Model Law on Public Procurement (2011); GDPR Article 28 Data Processing Agreements; Adams "A Manual of Style for Contract Drafting" (4th ed., 2017)
 tags: [vendor-agreement, contract-template, sla, data-processing, procurement, gdpr]
+verified: true
 ---
 
 # Design Vendor Agreement Template

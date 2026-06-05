@@ -3,6 +3,7 @@ name: design-capital-structure
 description: Use when advising on or designing the optimal capital structure for a company, including debt-equity mix, financing decisions, and leverage analysis
 source: Modigliani-Miller theorems (1958, 1963); Myers "The Capital Structure Puzzle" JoF (1984); Brealey, Myers & Allen "Principles of Corporate Finance" (2019)
 tags: [corporate-finance, capital-structure, leverage, financing]
+verified: true
 ---
 
 # Design Capital Structure

@@ -3,6 +3,7 @@ name: design-compensation-structure
 description: Use when building or redesigning a salary band structure, total rewards framework, or compensation philosophy for an organization
 source: WorldatWork total rewards framework; Radford compensation survey methodology; SHRM compensation management guidelines
 tags: [hr, compensation, total-rewards, salary, talent-management]
+verified: true
 ---
 
 # Design Compensation Structure

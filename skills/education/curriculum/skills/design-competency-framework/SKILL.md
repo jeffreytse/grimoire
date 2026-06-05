@@ -3,6 +3,7 @@ name: design-competency-framework
 description: Use when defining or structuring the skills, knowledge, and behaviors required for a role, profession, or learning pathway
 source: OECD Education 2030 framework; SHRM competency model; Spencer & Spencer "Competence at Work" (1993)
 tags: [competency, framework, curriculum, talent, skills]
+verified: true
 ---
 
 # Design Competency Framework

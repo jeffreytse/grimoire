@@ -3,6 +3,7 @@ name: run-operational-review
 description: Use when facilitating a recurring business review meeting to assess operational performance, address blockers, and align leadership on priorities
 source: Amazon S-Team operational review methodology; Google OKR quarterly review process; Harnish "Scaling Up" (2014) rhythm of meetings
 tags: [operations, management, business-review, meetings, performance, cadence]
+verified: true
 ---
 
 # Run Operational Review

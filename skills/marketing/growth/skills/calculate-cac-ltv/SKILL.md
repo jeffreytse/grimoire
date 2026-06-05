@@ -3,6 +3,7 @@ name: calculate-cac-ltv
 description: Use when calculating customer acquisition cost and lifetime value to evaluate channel efficiency or business health
 source: David Skok "SaaS Metrics 2.0" (forentrepreneurs.com), Bessemer Venture Partners SaaS Benchmarks, Bill Gurley "Dangerous Seduction of the Lifetime Value Formula"
 tags: [growth, saas-metrics, cac, ltv, unit-economics, financial-modeling, retention]
+verified: true
 ---
 
 # Calculate CAC and LTV

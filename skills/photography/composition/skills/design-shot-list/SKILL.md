@@ -3,6 +3,7 @@ name: design-shot-list
 description: Use when planning a photography session, event coverage, or commercial shoot that requires pre-defined deliverables
 source: ASMP (American Society of Media Photographers) Professional Business Practices, Vincent Laforet commercial photography workflow
 tags: [photography, pre-production, shot-list, planning, commercial, event-photography, deliverables]
+verified: true
 ---
 
 # Design Shot List

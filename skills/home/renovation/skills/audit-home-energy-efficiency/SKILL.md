@@ -3,6 +3,7 @@ name: audit-home-energy-efficiency
 description: Use when assessing a home's energy performance, identifying efficiency upgrades, or preparing for weatherization improvements
 source: DOE "Home Energy Score Methodology" (2023); ENERGY STAR "Home Energy Audit Standards" (2023); RESNET "HERS Index Technical Standards" (2023)
 tags: [energy-efficiency, home-audit, weatherization, sustainability]
+verified: true
 ---
 
 # Audit Home Energy Efficiency

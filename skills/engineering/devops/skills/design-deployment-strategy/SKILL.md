@@ -3,6 +3,7 @@ name: design-deployment-strategy
 description: Use when selecting or designing a deployment strategy for releasing software to production safely
 source: AWS Well-Architected Framework (Reliability Pillar); Netflix Tech Blog (canary deployments); Martin Fowler "BlueGreenDeployment" (martinfowler.com)
 tags: [deployment, blue-green, canary, rolling, devops, reliability, aws]
+verified: true
 ---
 
 # Design Deployment Strategy

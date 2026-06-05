@@ -3,6 +3,7 @@ name: run-customer-discovery
 description: Use when validating a startup idea, product hypothesis, or new feature by conducting structured interviews with target customers before building
 source: Steve Blank "The Four Steps to the Epiphany" (2005); Ries "The Lean Startup" (2011); IDEO design thinking customer research methodology
 tags: [entrepreneurship, customer-discovery, lean-startup, product, research]
+verified: true
 ---
 
 # Run Customer Discovery

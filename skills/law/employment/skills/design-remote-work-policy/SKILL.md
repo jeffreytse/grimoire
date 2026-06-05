@@ -3,6 +3,7 @@ name: design-remote-work-policy
 description: Use when creating or updating a remote work policy for a company or team
 source: SHRM (Society for Human Resource Management) Remote Work Policy guide; DOL (Department of Labor) FLSA wage and hour compliance for remote workers; IRS Publication 587 (Business Use of Home)
 tags: [law, employment, remote-work, policy, compliance, wage-hour, data-security]
+verified: true
 ---
 
 # Design Remote Work Policy

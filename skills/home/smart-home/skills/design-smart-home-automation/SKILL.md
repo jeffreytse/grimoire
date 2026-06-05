@@ -3,6 +3,7 @@ name: design-smart-home-automation
 description: Use when designing, planning, or architecting a smart home automation system including device selection, protocol choice, and automation logic
 source: Z-Wave Alliance "Interoperability Standards" (2023); CSA (Connectivity Standards Alliance) "Matter Protocol Specification" (2023); CEDIA "Smart Home Design Guidelines" (2022)
 tags: [smart-home, automation, iot, home-technology]
+verified: true
 ---
 
 # Design Smart Home Automation

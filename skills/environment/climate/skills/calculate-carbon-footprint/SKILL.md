@@ -3,6 +3,7 @@ name: calculate-carbon-footprint
 description: Use when quantifying greenhouse gas emissions for an organization, product, project, or activity to establish a baseline or report emissions.
 source: GHG Protocol Corporate Standard (WRI/WBCSD, 2001); IPCC emissions factor methodology; ISO 14064-1:2018
 tags: [carbon, emissions, ghg, climate, measurement]
+verified: true
 ---
 
 # Calculate Carbon Footprint

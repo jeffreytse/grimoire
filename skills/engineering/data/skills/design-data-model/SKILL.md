@@ -3,6 +3,7 @@ name: design-data-model
 description: Use when designing a new relational database schema, adding entities to an existing system, reviewing a schema for normalization issues, or planning migrations — before writing DDL or ORM models.
 source: E.F. Codd (1970) "A Relational Model of Data for Large Shared Data Banks", Martin Fowler "Patterns of Enterprise Application Architecture" (2002), PostgreSQL documentation
 tags: [schema-design, normalization, relational-database, data-modeling, constraints, indexing, backend, correctness]
+verified: true
 ---
 
 # Design Data Model

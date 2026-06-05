@@ -3,6 +3,7 @@ name: design-spaced-repetition
 description: Use when designing a curriculum, flashcard deck, or study system intended to maximize long-term retention of facts, concepts, or procedures
 source: Hermann Ebbinghaus "Über das Gedächtnis" (1885); Piotr Wozniak SM-2 algorithm (1987); Gwern Branwen spaced repetition review
 tags: [spaced-repetition, memory, learning-science, curriculum-design, retention, anki]
+verified: true
 ---
 
 # Design Spaced Repetition

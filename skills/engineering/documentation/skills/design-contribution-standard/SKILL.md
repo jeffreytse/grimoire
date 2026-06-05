@@ -3,6 +3,7 @@ name: design-contribution-standard
 description: Use when creating quality standards for a knowledge repository, skill library, documentation site, or any artifact collection that will accept external contributors over time — including when the current standard has grown inconsistent or unenforced.
 source: Wikipedia Manual of Style and Featured Article criteria, npm package quality scoring, Apple App Store Review Guidelines, MDN Web Docs content guidelines, StackOverflow question quality criteria
 tags: [contribution-quality, knowledge-governance, style-guide, documentation-standards, reviewer, maintainer, consistency]
+verified: true
 ---
 
 # Design Contribution Standard

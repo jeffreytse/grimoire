@@ -3,6 +3,7 @@ name: design-emergency-kit
 description: Use when assembling or auditing a vehicle emergency kit for roadside safety and breakdown preparedness
 source: AAA "Roadside Emergency Kit" guidelines; FEMA "Emergency Supply List" standards; NHTSA roadside safety recommendations
 tags: [automotive, emergency, safety, roadside]
+verified: true
 ---
 
 # Design Emergency Kit

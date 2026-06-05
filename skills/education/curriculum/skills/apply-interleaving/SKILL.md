@@ -3,6 +3,7 @@ name: apply-interleaving
 description: Use when designing practice schedules that mix different problem types or topics to improve discrimination and long-term retention
 source: Rohrer & Taylor "The Shuffling of Mathematics Problems Improves Learning" Instructional Science (2007); Kornell & Bjork "Learning Concepts and Categories" Psychological Science (2008)
 tags: [interleaving, learning-science, practice, curriculum, problem-solving]
+verified: true
 ---
 
 # Apply Interleaving

@@ -3,6 +3,7 @@ name: design-network-segmentation
 description: Use when designing network architecture for systems that handle sensitive data, require regulatory compliance, or need to contain blast radius from breaches
 source: NIST SP 800-125B network security guidelines; CIS Controls v8 Control 12; PCI DSS v4.0 network segmentation requirements
 tags: [networking, security, architecture, compliance]
+verified: true
 ---
 
 # Design Network Segmentation

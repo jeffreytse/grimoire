@@ -3,6 +3,7 @@ name: calculate-dcf
 description: Use when valuing a company, project, or asset using discounted cash flow analysis
 source: CFA Institute Level II curriculum; Damodaran's "Investment Valuation" (3rd ed.); McKinsey "Valuation" (7th ed.)
 tags: [finance, investing, valuation, dcf, wacc, modeling]
+verified: true
 ---
 
 # Calculate DCF

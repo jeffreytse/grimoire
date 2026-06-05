@@ -3,6 +3,7 @@ name: calculate-capacity-plan
 description: Use when provisioning infrastructure for a new system, preparing for anticipated traffic growth, or ensuring headroom before a major product launch
 source: Google SRE Workbook capacity planning chapter; Allspaw "The Art of Capacity Planning" (O'Reilly 2008); NIST cloud scalability guidelines
 tags: [performance, capacity, infrastructure, reliability]
+verified: true
 ---
 
 # Calculate Capacity Plan

@@ -3,6 +3,7 @@ name: write-news-article
 description: Use when drafting a news article, breaking news report, or structured journalistic story for publication
 source: AP Stylebook (Associated Press, annual); SPJ Code of Ethics; Kovach & Rosenstiel "The Elements of Journalism" (2014)
 tags: [journalism, news-writing, ap-style, reporting]
+verified: true
 ---
 
 # Write News Article

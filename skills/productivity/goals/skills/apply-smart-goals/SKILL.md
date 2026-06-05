@@ -3,6 +3,7 @@ name: apply-smart-goals
 description: Use when setting any goal — personal, team, or organisational — to ensure it is precise enough to drive execution and measure success
 source: George T. Doran, "Management Review" (1981); Edwin Locke & Gary Latham, goal-setting theory (1990)
 tags: [goals, smart-goals, planning, measurement, performance, okrs]
+verified: true
 ---
 
 # Apply SMART Goals

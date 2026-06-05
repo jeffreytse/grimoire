@@ -3,6 +3,7 @@ name: apply-continuity-editing-principles
 description: Use when assembling a cut and need to ensure spatial coherence, temporal logic, and smooth performance continuity across edits within a scene
 source: Edward Dmytryk "On Film Editing" (1984); Walter Murch "In the Blink of an Eye" (2001); Karel Reisz & Gavin Millar "The Technique of Film Editing" (1968)
 tags: [editing, continuity, post-production, film-editing, storytelling, cuts]
+verified: true
 ---
 
 # Apply Continuity Editing Principles

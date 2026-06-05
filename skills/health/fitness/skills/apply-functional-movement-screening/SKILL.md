@@ -3,6 +3,7 @@ name: apply-functional-movement-screening
 description: Use when assessing an athlete's or client's movement quality to identify dysfunction, asymmetry, and injury risk before designing a training or rehabilitation program
 source: Cook, Burton & Hoogenboom "Functional Movement Screening" IJSPT (2006); Cook "Movement" (2010); Kiesel, Plisky & Butler "Functional Movement Test Scores Improve Following a Standardized Off-Season" (2011); NSCA movement assessment guidelines
 tags: [FMS, movement-screening, injury-prevention, assessment, dysfunction, asymmetry, movement-quality]
+verified: true
 ---
 
 # Apply Functional Movement Screening

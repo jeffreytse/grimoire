@@ -3,6 +3,7 @@ name: design-bedtime-routine
 description: Use when a parent needs to establish or improve an infant's sleep routine to promote healthy sleep habits and reduce night wakings
 source: AAP safe sleep guidelines (2022); NHS infant sleep advice; Mindell et al. "Behavioral Treatment of Bedtime Problems and Night Wakings" Sleep (2006)
 tags: [infant, sleep, bedtime, routine, safe-sleep]
+verified: true
 ---
 
 # Design Bedtime Routine

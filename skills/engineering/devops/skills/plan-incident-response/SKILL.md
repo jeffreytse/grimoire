@@ -3,6 +3,7 @@ name: plan-incident-response
 description: Use when a production incident is declared or suspected, when building an incident response runbook, or when running a post-incident review that needs a structured process.
 source: Google Site Reliability Engineering book (Beyer et al., O'Reilly 2016), PagerDuty Incident Response Guide (response.pagerduty.com)
 tags: [incident-response, sre, on-call, postmortem, devops, reliability, production]
+verified: true
 ---
 
 # Plan Incident Response

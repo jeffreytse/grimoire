@@ -3,6 +3,7 @@ name: calculate-wacc
 description: Use when calculating the Weighted Average Cost of Capital for a company to use as the discount rate in valuation or capital budgeting decisions
 source: Modigliani & Miller "The Cost of Capital, Corporation Finance" (1958); Damodaran "Investment Valuation" (2012); CFA Institute Level II curriculum
 tags: [corporate-finance, wacc, valuation, cost-of-capital]
+verified: true
 ---
 
 # Calculate WACC

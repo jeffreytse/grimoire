@@ -3,6 +3,7 @@ name: apply-time-blocking
 description: Use when planning your workday to eliminate reactive drift and protect deep work time
 source: Cal Newport, "Deep Work" (2016); time-block.com
 tags: [time-management, scheduling, deep-work, planning, focus, productivity]
+verified: true
 ---
 
 # Apply Time Blocking

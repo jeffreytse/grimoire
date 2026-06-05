@@ -3,6 +3,7 @@ name: design-competitive-analysis
 description: Use when building a structured framework to assess a competitive landscape, evaluate market position, or inform strategic decisions about differentiation
 source: Michael Porter "Competitive Strategy" (1980); Porter "The Five Competitive Forces That Shape Strategy" HBR (2008); McKinsey competitive intelligence methodology
 tags: [strategy, competitive-analysis, porter, market-intelligence, business-strategy]
+verified: true
 ---
 
 # Design Competitive Analysis

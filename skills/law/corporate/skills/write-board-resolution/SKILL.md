@@ -3,6 +3,7 @@ name: write-board-resolution
 description: Use when drafting a formal board resolution to authorize corporate actions, approve transactions, appoint officers, or document board decisions with legal effect
 source: MBCA "Model Business Corporation Act" (ABA, 2022 revision); Delaware General Corporation Law (DGCL) §141; NACD "Director Handbook" (2021); ABA Business Law Section Corporate Governance Committee
 tags: [board-resolution, corporate-governance, corporate-law, directors, authorization, mbca]
+verified: true
 ---
 
 # Write Board Resolution

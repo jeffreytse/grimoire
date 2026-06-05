@@ -3,6 +3,7 @@ name: review-secrets-management
 description: Use when reviewing how secrets, credentials, API keys, or certificates are stored, rotated, and accessed in a system
 source: OWASP Secrets Management Cheat Sheet (cheatsheetseries.owasp.org); HashiCorp Vault documentation; AWS Secrets Manager docs
 tags: [security, secrets, credentials, vault, aws-secrets-manager, owasp]
+verified: true
 ---
 
 # Review Secrets Management

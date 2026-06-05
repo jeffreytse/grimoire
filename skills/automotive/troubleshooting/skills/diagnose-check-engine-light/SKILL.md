@@ -3,6 +3,7 @@ name: diagnose-check-engine-light
 description: Use when a check engine light is illuminated and you need to identify the fault code, assess severity, and decide next steps
 source: SAE J1979 OBD-II diagnostic standard; NHTSA vehicle emissions standards; ASE Automotive Service Excellence diagnostic certification curriculum (A6/A8)
 tags: [automotive, troubleshooting, obd2, check-engine]
+verified: true
 ---
 
 # Diagnose Check Engine Light

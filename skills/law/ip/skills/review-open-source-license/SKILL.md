@@ -3,6 +3,7 @@ name: review-open-source-license
 description: Use when evaluating open source software licenses for commercial use, distribution, or modification rights
 source: Open Source Initiative (OSI) approved license list; SPDX License List (Software Package Data Exchange); TLDR Legal; FSF (Free Software Foundation) license compatibility matrix
 tags: [law, ip, open-source, licensing, copyleft, permissive, spdx]
+verified: true
 ---
 
 # Review Open Source License

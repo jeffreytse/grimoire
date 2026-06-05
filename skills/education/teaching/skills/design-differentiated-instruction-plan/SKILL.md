@@ -3,6 +3,7 @@ name: design-differentiated-instruction-plan
 description: Use when planning lessons or units that must accommodate learners with diverse readiness levels, learning profiles, or interests within the same classroom or group
 source: Tomlinson "The Differentiated Classroom" (ASCD, 2nd ed. 2014); CAST "Universal Design for Learning Guidelines" (UDL 2.2, 2018); ASCD differentiation research; Vygotsky "Mind in Society" (1978) Zone of Proximal Development
 tags: [differentiated-instruction, udl, inclusive-education, lesson-design, learning-needs, vygotsky]
+verified: true
 ---
 
 # Design Differentiated Instruction Plan

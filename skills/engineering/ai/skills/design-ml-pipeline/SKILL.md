@@ -3,6 +3,7 @@ name: design-ml-pipeline
 description: Use when building or refactoring machine learning systems that need to move from experimentation to reliable production deployment
 source: Sculley et al. "Hidden Technical Debt in Machine Learning Systems" NIPS (2015); Google MLOps Continuous Delivery and Automation Pipelines (2020); Huyen "Designing Machine Learning Systems" (2022)
 tags: [ai, mlops, architecture, data-engineering]
+verified: true
 ---
 
 # Design ML Pipeline

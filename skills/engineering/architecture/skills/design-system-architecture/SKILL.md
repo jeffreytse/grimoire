@@ -3,6 +3,7 @@ name: design-system-architecture
 description: Use when asked to design, evaluate, or document the high-level architecture of a system — including new systems, major feature additions, or scaling a system beyond its current design limits.
 source: Amazon/Google SWE design practices; Kleppmann "Designing Data-Intensive Applications" (O'Reilly 2017); Google SRE Book (O'Reilly 2016)
 tags: [system-design, architecture, scalability, trade-offs, distributed-systems, technical-leadership]
+verified: true
 ---
 
 # Design System Architecture

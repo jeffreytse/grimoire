@@ -3,6 +3,7 @@ name: design-literature-review
 description: Use when planning or writing a literature review section for a research paper, thesis, or systematic review
 source: "PRISMA 2020 Guidelines (Page et al., 2021); Systematic Reviews in Health Sciences (Petticrew & Roberts, 2006); APA Publication Manual 7th ed."
 tags: [academic-writing, literature-review, research, systematic-review, prisma, gap-analysis]
+verified: true
 ---
 
 # Design Literature Review

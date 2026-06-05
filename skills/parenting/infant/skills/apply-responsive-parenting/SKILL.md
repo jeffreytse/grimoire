@@ -3,6 +3,7 @@ name: apply-responsive-parenting
 description: Use when a caregiver wants to build secure attachment with an infant through consistent, attuned responses to the infant's signals and needs
 source: Mary Ainsworth attachment theory (1978); ZERO TO THREE responsive caregiving research; AAP "Caring for Your Baby and Young Child" guidelines
 tags: [infant, attachment, responsiveness, caregiving, bonding]
+verified: true
 ---
 
 # Apply Responsive Parenting

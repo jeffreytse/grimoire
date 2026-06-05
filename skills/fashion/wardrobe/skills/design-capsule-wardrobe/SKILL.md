@@ -3,6 +3,7 @@ name: design-capsule-wardrobe
 description: Use when building a minimal, versatile wardrobe that maximizes outfit combinations while minimizing total pieces owned
 source: Susie Faux (originator, 1973); Project 333 (Courtney Carver); Klepp & Rysst "Clothing and Sustainability" International Journal of Fashion Studies (2016)
 tags: [fashion, wardrobe, minimalism, sustainability, capsule]
+verified: true
 ---
 
 # Design Capsule Wardrobe

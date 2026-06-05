@@ -3,6 +3,7 @@ name: apply-decluttering-method
 description: Use when systematically reducing household clutter, choosing an organizing method, or preparing for a whole-home sort
 source: Marie Kondo "The Life-Changing Magic of Tidying Up" (2011); NAPO "Professional Organizer Standards" (2022); Peter Walsh "It's All Too Much" (2007)
 tags: [decluttering, organization, minimalism, home-management]
+verified: true
 ---
 
 # Apply Decluttering Method

@@ -3,6 +3,7 @@ name: calculate-macronutrient-targets
 description: Use when setting individualized daily protein, carbohydrate, and fat targets based on a person's body composition, activity level, and performance or health goal
 source: ISSN Position Stand on Macronutrients (2017); Helms et al. "Evidence-Based Recommendations for Natural Bodybuilding Contest Preparation" JISSN (2014); USDA Dietary Reference Intakes (DRI) tables; Thomas et al. "Position of the Academy of Nutrition and Dietetics" (2016)
 tags: [macronutrients, protein, carbohydrates, fat, nutrition, body-composition, performance-nutrition]
+verified: true
 ---
 
 # Calculate Macronutrient Targets

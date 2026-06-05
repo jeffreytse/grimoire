@@ -3,6 +3,7 @@ name: design-waste-reduction-program
 description: Use when developing or improving an organization's systematic approach to minimizing waste generation, increasing diversion from landfill, and achieving zero waste targets.
 source: EPA Waste Hierarchy (Resource Conservation and Recovery Act); Zero Waste International Alliance (ZWIA) standard; EU Waste Framework Directive 2008/98/EC
 tags: [waste, zero-waste, recycling, circular, operations]
+verified: true
 ---
 
 # Design Waste Reduction Program

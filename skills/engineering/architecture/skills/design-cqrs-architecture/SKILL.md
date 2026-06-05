@@ -3,6 +3,7 @@ name: design-cqrs-architecture
 description: Use when designing a system where read and write workloads have significantly different scaling, consistency, or model requirements that a single unified model cannot serve efficiently.
 source: Young "CQRS Documents" (2010); Fowler "CQRS" (martinfowler.com, 2011); Microsoft Azure Architecture Guide CQRS pattern; Vernon "Implementing Domain-Driven Design" (2013)
 tags: [architecture, cqrs, patterns, scalability, design, distributed-systems, ddd, event-sourcing]
+verified: true
 ---
 
 # Design CQRS Architecture

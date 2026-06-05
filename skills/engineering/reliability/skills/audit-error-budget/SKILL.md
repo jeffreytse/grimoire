@@ -3,6 +3,7 @@ name: audit-error-budget
 description: Use when reviewing error budget consumption, setting burn rate alerts, or making reliability investment decisions based on budget status
 source: "Site Reliability Engineering (Google, 2016) Ch. 3; 'Alerting on SLOs' (Google SRE Workbook, 2018 Ch. 5); Alex Hidalgo 'Implementing SLOs' (2020)"
 tags: [sre, error-budget, burn-rate, reliability, alerting, slo, operations]
+verified: true
 ---
 
 # Audit Error Budget

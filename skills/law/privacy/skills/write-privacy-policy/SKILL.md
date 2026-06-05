@@ -3,6 +3,7 @@ name: write-privacy-policy
 description: Use when drafting or updating a privacy policy to comply with GDPR, CCPA, and general best practices
 source: GDPR Articles 13–14 (disclosure requirements); CCPA (California Civil Code § 1798.100–.199); FTC Privacy and Data Security guidance; EDPB Transparency Guidelines
 tags: [law, privacy, privacy-policy, gdpr, ccpa, transparency, disclosure]
+verified: true
 ---
 
 # Write Privacy Policy

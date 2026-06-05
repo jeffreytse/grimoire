@@ -3,6 +3,7 @@ name: design-team-cohesion-program
 description: Use when a coach or team leader needs to build or repair team unity, trust, and collective identity to improve both performance and athlete satisfaction
 source: Albert Carron group dynamics in sport (1982); AASP team building guidelines; Carron, Colman, Wheeler & Stevens "Cohesion and Performance in Sport" JSEP (2002) meta-analysis
 tags: [team-cohesion, team-building, group-dynamics, leadership, culture]
+verified: true
 ---
 
 # Design Team Cohesion Program

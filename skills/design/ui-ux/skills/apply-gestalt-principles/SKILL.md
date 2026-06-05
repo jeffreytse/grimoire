@@ -3,6 +3,7 @@ name: apply-gestalt-principles
 description: Use when arranging UI elements to create visual hierarchy, grouping, and clarity using perceptual psychology principles
 source: Wertheimer "Gestalt Theory" (1924); Nielsen Norman Group gestalt principles article; Chang "Gestalt Design Principles" (2002)
 tags: [gestalt, visual-design, ui, perception, hierarchy]
+verified: true
 ---
 
 # Apply Gestalt Principles

@@ -3,6 +3,7 @@ name: negotiate-nda
 description: Use when reviewing, drafting, or negotiating a non-disclosure agreement
 source: American Bar Association (ABA) Business Law Section NDA guidance; Practical Law Company NDA playbook; Uniform Trade Secrets Act (UTSA)
 tags: [law, contracts, nda, confidentiality, trade-secrets, negotiation]
+verified: true
 ---
 
 # Negotiate NDA

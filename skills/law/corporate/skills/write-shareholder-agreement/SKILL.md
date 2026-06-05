@@ -3,6 +3,7 @@ name: write-shareholder-agreement
 description: Use when drafting or reviewing a shareholder agreement for a startup, private company, or joint venture
 source: NVCA (National Venture Capital Association) model documents; Gunderson Dettmer model shareholder agreement; Delaware General Corporation Law (DGCL)
 tags: [corporate-law, shareholder-agreement, startup-law, venture-capital]
+verified: true
 ---
 
 # Write Shareholder Agreement

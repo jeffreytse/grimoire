@@ -3,6 +3,7 @@ name: design-restful-api
 description: Use when designing HTTP API endpoints — choosing resource names, HTTP methods, status codes, versioning strategy, and response shapes.
 source: Roy Fielding, "Architectural Styles and the Design of Network-based Software Architectures", 2000; IETF RFC 9110 (HTTP Semantics, 2022)
 tags: [api-design, rest, http, developer, interoperability, client-compatibility]
+verified: true
 ---
 
 # Design RESTful API

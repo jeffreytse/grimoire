@@ -3,6 +3,7 @@ name: apply-twelve-factor-app
 description: Use when building or refactoring cloud-native applications to ensure portability, scalability, and operability across environments
 source: Adam Wiggins "The Twelve-Factor App" (2011, Heroku); Cloud Native Computing Foundation (CNCF) best practices; Fowler "Patterns of Enterprise Application Architecture"
 tags: [cloud, architecture, devops, twelve-factor]
+verified: true
 ---
 
 # Apply Twelve-Factor App

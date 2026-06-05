@@ -3,6 +3,7 @@ name: write-integration-test
 description: Use when writing tests that verify the interaction between two or more components, services, or external systems
 source: Google Testing Blog (testing.googleblog.com); Martin Fowler "IntegrationTest" (martinfowler.com); Pact contract testing (pact.io)
 tags: [integration-testing, testing, contract-tests, test-pyramid, quality]
+verified: true
 ---
 
 # Write Integration Test

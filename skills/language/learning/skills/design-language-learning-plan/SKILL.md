@@ -3,6 +3,7 @@ name: design-language-learning-plan
 description: Use when a learner needs a structured, goal-oriented roadmap to reach a defined proficiency level in a target language
 source: ACTFL Proficiency Guidelines (2012); Krashen "Principles and Practice in Second Language Acquisition" (1982); CEFR Common European Framework of Reference (Council of Europe)
 tags: [language-learning, planning, proficiency, curriculum]
+verified: true
 ---
 
 # Design Language Learning Plan

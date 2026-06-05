@@ -3,6 +3,7 @@ name: run-difficult-conversation
 description: Use when preparing for or facilitating a high-stakes conversation involving conflict, feedback, performance issues, or sensitive interpersonal topics
 source: Stone, Patton & Heen "Difficult Conversations" (Harvard Negotiation Project, 1999); Patterson et al. "Crucial Conversations" (2002); Scott "Radical Candor" (2017)
 tags: [leadership, communication, conflict-resolution, feedback, management]
+verified: true
 ---
 
 # Run Difficult Conversation

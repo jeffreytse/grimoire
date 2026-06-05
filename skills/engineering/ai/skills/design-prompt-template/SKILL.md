@@ -3,6 +3,7 @@ name: design-prompt-template
 description: Use when building LLM-powered features that require consistent, reliable outputs across varied inputs, or when prompt quality is causing inconsistent application behavior
 source: OpenAI "Prompt Engineering Guide" best practices; Anthropic model card guidance; Wei et al. "Chain-of-Thought Prompting" NeurIPS (2022)
 tags: [ai, llm, prompt-engineering, product]
+verified: true
 ---
 
 # Design Prompt Template

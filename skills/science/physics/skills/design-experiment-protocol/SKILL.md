@@ -3,6 +3,7 @@ name: design-experiment-protocol
 description: Use when designing a physics experiment or laboratory investigation requiring control of variables and uncertainty quantification
 source: NIST Guidelines for Evaluating and Expressing the Uncertainty of Measurement (1994), Taylor "An Introduction to Error Analysis" (1997), APS (American Physical Society) experiment design standards
 tags: [science, physics, experiment-design, measurement, uncertainty, control-variables, protocol, scientific-method]
+verified: true
 ---
 
 # Design Experiment Protocol

@@ -3,6 +3,7 @@ name: design-song-structure
 description: Use when planning or evaluating the large-scale form of a song or instrumental composition
 source: Berklee Online Songwriting Certificate Curriculum, Pat Pattison "Writing Better Lyrics" (2009), Jason Blume "6 Steps to Songwriting Success"
 tags: [music, composition, songwriting, song-structure, form, verse-chorus, arrangement]
+verified: true
 ---
 
 # Design Song Structure

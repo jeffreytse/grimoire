@@ -3,6 +3,7 @@ name: design-story-structure
 description: Use when outlining a story, screenplay, novel, or narrative and need to establish its structural backbone
 source: "Save the Cat! (Blake Snyder, 2005); The Writer's Journey (Christopher Vogler, 1992); Story (Robert McKee, 1997)"
 tags: [storytelling, structure, screenplay, novel, three-act, beat-sheet]
+verified: true
 ---
 
 # Design Story Structure

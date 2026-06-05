@@ -3,6 +3,7 @@ name: run-exit-interview
 description: Use when conducting or designing an exit interview process for departing employees to capture retention insights
 source: SHRM exit interview best practices; Harvard Business Review "Making Exit Interviews Count" (2008); Work Institute Retention Report (2020)
 tags: [hr, retention, exit-interview, talent-management, employee-experience]
+verified: true
 ---
 
 # Run Exit Interview

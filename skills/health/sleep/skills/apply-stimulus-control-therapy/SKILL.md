@@ -3,6 +3,7 @@ name: apply-stimulus-control-therapy
 description: Use when treating insomnia by re-associating the bed and bedroom with rapid sleep onset and eliminating the conditioned arousal that perpetuates sleeplessness
 source: Bootzin "Stimulus Control Treatment for Insomnia" (1972); AASM clinical practice guidelines for insomnia (2021); Morin "Insomnia: Psychological Assessment and Management" (1993)
 tags: [sleep, insomnia, stimulus-control, CBT-I]
+verified: true
 ---
 
 # Apply Stimulus Control Therapy

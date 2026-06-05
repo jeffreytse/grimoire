@@ -3,6 +3,7 @@ name: design-equity-compensation-plan
 description: Use when designing or auditing an equity compensation plan covering stock options, RSUs, or other equity awards for startups or growth-stage companies
 source: NVCA "Model Equity Incentive Plan" (2023); NCEO "Equity Compensation" (2022); ASC 718 FASB Stock Compensation Standard; Carta "Equity Benchmarking Data" (2023 State of Private Markets)
 tags: [equity-compensation, stock-options, rsu, startup, cap-table, asc-718]
+verified: true
 ---
 
 # Design Equity Compensation Plan

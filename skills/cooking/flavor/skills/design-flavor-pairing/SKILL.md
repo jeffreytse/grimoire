@@ -3,6 +3,7 @@ name: design-flavor-pairing
 description: Use when creating new recipes, pairing ingredients for a dish, or developing a menu where ingredient combinations need to be novel, harmonious, or scientifically grounded
 source: Ahn et al. "Flavor Network and the Principles of Food Pairing" Nature Scientific Reports (2011); François Chartier "Taste Buds and Molecules" (2010); Heston Blumenthal flavor pairing research
 tags: [cooking, flavor, pairing, food-science, recipe-development]
+verified: true
 ---
 
 # Design Flavor Pairing

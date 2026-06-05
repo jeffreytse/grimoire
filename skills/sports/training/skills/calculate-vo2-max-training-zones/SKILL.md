@@ -3,6 +3,7 @@ name: calculate-vo2-max-training-zones
 description: Use when an athlete needs to establish individualized aerobic and anaerobic training zones based on VO2max or lactate threshold data
 source: Daniels "Daniels' Running Formula" (2014); Coggan & Allen "Training and Racing with a Power Meter" (2010); NSCA Essentials of Strength and Conditioning (2016); AHA Cardiovascular Exercise Guidelines
 tags: [vo2max, training-zones, aerobic, anaerobic, lactate-threshold, periodization, endurance]
+verified: true
 ---
 
 # Calculate VO2max Training Zones

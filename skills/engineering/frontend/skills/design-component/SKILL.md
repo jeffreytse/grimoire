@@ -3,6 +3,7 @@ name: design-component
 description: Use when creating a new UI component, refactoring an existing one into something reusable, or reviewing a component design for composability, accessibility, and maintainability before implementation.
 source: Atomic Design methodology (Brad Frost, 2013), Airbnb React component guidelines, Meta (React team) component design principles, Storybook component-driven development documentation
 tags: [component-design, react, ui, atomic-design, accessibility, props-contract, composability, frontend]
+verified: true
 ---
 
 # Design Component

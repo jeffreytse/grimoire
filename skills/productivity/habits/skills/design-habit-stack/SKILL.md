@@ -3,6 +3,7 @@ name: design-habit-stack
 description: Use when introducing a new habit and needing a reliable cue to trigger it consistently
 source: James Clear, "Atomic Habits" (2018); Peter Gollwitzer, implementation intentions research (1999)
 tags: [habits, behavior-design, routine, consistency, behavior-change, atomic-habits]
+verified: true
 ---
 
 # Design Habit Stack

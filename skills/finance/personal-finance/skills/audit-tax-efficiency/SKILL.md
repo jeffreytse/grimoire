@@ -3,6 +3,7 @@ name: audit-tax-efficiency
 description: Use when reviewing an investment portfolio or financial plan for unnecessary tax drag
 source: IRS Publication 550 (Investment Income and Expenses); Vanguard research on tax-efficient investing; Kitces.com on asset location and tax-loss harvesting
 tags: [finance, personal-finance, tax, tax-loss-harvesting, asset-location, tax-efficiency]
+verified: true
 ---
 
 # Audit Tax Efficiency

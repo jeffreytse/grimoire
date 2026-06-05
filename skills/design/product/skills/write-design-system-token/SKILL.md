@@ -3,6 +3,7 @@ name: write-design-system-token
 description: Use when defining, naming, or documenting design tokens for a design system to ensure consistent visual decisions across platforms
 source: W3C Design Tokens Community Group specification (2023); Salesforce Lightning Design System; Figma Token Studio documentation
 tags: [design-tokens, design-system, tokens, theming, css-variables, component-design]
+verified: true
 ---
 
 # Write Design System Token

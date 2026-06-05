@@ -3,6 +3,7 @@ name: write-changelog
 description: Use when writing or updating a CHANGELOG for a software project before a release
 source: Keep a Changelog (keepachangelog.com); Conventional Commits specification (conventionalcommits.org)
 tags: [changelog, release, documentation, conventional-commits, versioning]
+verified: true
 ---
 
 # Write Changelog

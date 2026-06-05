@@ -3,6 +3,7 @@ name: audit-wardrobe-efficiency
 description: Use when evaluating an existing wardrobe to identify underused items, redundancies, and gaps that reduce outfit utility
 source: Marie Kondo "The Life-Changing Magic of Tidying Up" (2011); Project 333 methodology; Fletcher "Sustainable Fashion and Textiles" (2008)
 tags: [fashion, wardrobe, audit, minimalism, sustainability]
+verified: true
 ---
 
 # Audit Wardrobe Efficiency

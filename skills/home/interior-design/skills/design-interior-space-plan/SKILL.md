@@ -3,6 +3,7 @@ name: design-interior-space-plan
 description: Use when planning furniture placement, traffic flow, and functional zones for any interior room or open-plan space
 source: ASID "Interior Design Practice Standards" (2023); NCIDQ "Examination Content Outline" (2022); Francis Ching "Interior Design Illustrated" (2012)
 tags: [interior-design, space-planning, furniture-layout, room-design]
+verified: true
 ---
 
 # Design Interior Space Plan

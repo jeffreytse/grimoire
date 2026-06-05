@@ -3,6 +3,7 @@ name: run-one-on-one
 description: Use when preparing for or improving weekly one-on-one meetings between a manager and a direct report
 source: Ben Horowitz "The Hard Thing About Hard Things" (2014); Manager Tools Podcast (Horstman & Auzenne)
 tags: [one-on-one, leadership, management, coaching, feedback, retention]
+verified: true
 ---
 
 # Run One-on-One

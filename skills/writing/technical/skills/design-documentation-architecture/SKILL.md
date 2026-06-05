@@ -3,6 +3,7 @@ name: design-documentation-architecture
 description: Use when planning the overall structure and information architecture of a documentation system for a product, API, or software project
 source: Divio Documentation System (Procida 2017) — four-quadrant model; Google Developer Documentation Style Guide; Strimling "Every Page is Page One" (2014)
 tags: [technical-writing, documentation, information-architecture, developer-experience]
+verified: true
 ---
 
 # Design Documentation Architecture

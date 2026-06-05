@@ -3,6 +3,7 @@ name: design-auth-flow
 description: Use when designing or reviewing authentication and authorization flows for web, mobile, or API systems
 source: OAuth 2.0 RFC 6749; PKCE RFC 7636; OWASP Authentication Cheat Sheet (cheatsheetseries.owasp.org)
 tags: [authentication, oauth2, pkce, security, authorization, owasp]
+verified: true
 ---
 
 # Design Auth Flow

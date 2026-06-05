@@ -3,6 +3,7 @@ name: design-experiment
 description: Use when designing an A/B test or online controlled experiment to evaluate a product change
 source: Kohavi, Tang & Xu "Trustworthy Online Controlled Experiments" (Cambridge University Press 2020); Evan Miller "How Not To Run an A/B Test" (evanmiller.org)
 tags: [experimentation, ab-testing, statistics, product, data-science, hypothesis-testing]
+verified: true
 ---
 
 # Design Experiment

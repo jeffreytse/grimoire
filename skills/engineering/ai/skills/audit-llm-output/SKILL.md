@@ -3,6 +3,7 @@ name: audit-llm-output
 description: Use when evaluating, auditing, or improving the quality, factual accuracy, or safety of LLM-generated outputs
 source: RAGAS framework (ragas.io); TruLens (trulens.org); Anthropic "Model Card" methodology; HELM benchmark (Stanford CRFM)
 tags: [llm, evaluation, hallucination, ragas, ai-quality, factual-grounding, safety]
+verified: true
 ---
 
 # Audit LLM Output

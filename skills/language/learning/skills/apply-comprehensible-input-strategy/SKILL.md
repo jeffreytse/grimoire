@@ -3,6 +3,7 @@ name: apply-comprehensible-input-strategy
 description: Use when a learner wants to accelerate acquisition through structured exposure to target-language content just above their current level
 source: Stephen Krashen "The Input Hypothesis" (1985); Mason & Krashen "Extensive Reading in English as a Foreign Language" (1997); Free Voluntary Reading research
 tags: [comprehensible-input, reading, listening, acquisition]
+verified: true
 ---
 
 # Apply Comprehensible Input Strategy

@@ -3,6 +3,7 @@ name: design-corporate-governance-structure
 description: Use when designing or evaluating a corporate governance framework for a company, including board structure, oversight mechanisms, and accountability systems
 source: OECD Principles of Corporate Governance (2023); Sarbanes-Oxley Act (SOX) governance requirements; NACD (National Association of Corporate Directors) guidelines
 tags: [corporate-governance, board-structure, compliance, corporate-law]
+verified: true
 ---
 
 # Design Corporate Governance Structure

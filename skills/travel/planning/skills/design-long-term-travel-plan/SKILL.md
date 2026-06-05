@@ -3,6 +3,7 @@ name: design-long-term-travel-plan
 description: Use when planning extended travel of 3+ months, designing a location-independent lifestyle, or structuring a sabbatical or gap year
 source: Remote Year methodology; Nomadic Matt "How to Travel the World on $50 a Day" (2013); GPS (Global Positioning System) of location-independent work research
 tags: [travel, long-term, remote-work, nomad, planning]
+verified: true
 ---
 
 # Design Long-Term Travel Plan

@@ -3,6 +3,7 @@ name: write-design-brief
 description: Use when starting a design project, commissioning design work, or aligning stakeholders before any visual design begins
 source: IDEO Design Kit (Human-Centered Design); Stanford d.school Design Brief framework; D&AD Brief Writing Guide
 tags: [design-brief, ux, problem-framing, design-process, stakeholder-alignment, project-initiation]
+verified: true
 ---
 
 # Write Design Brief

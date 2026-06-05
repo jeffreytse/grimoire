@@ -3,6 +3,7 @@ name: write-api-documentation
 description: Use when writing or reviewing API reference documentation, endpoint descriptions, or developer-facing SDK documentation
 source: Google Developer Documentation Style Guide; OpenAPI Specification (Swagger) documentation standards; Stripe API documentation (industry benchmark)
 tags: [technical-writing, api-documentation, developer-experience, openapi]
+verified: true
 ---
 
 # Write API Documentation

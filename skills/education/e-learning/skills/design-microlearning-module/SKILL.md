@@ -3,6 +3,7 @@ name: design-microlearning-module
 description: Use when designing a short, focused learning module (3–10 minutes) targeting a single skill or knowledge application
 source: Josh Bersin "The Disruption of Digital Learning" (2017); ATD (Association for Talent Development) microlearning guidelines; Torgerson "The Microlearning Guide" (2021)
 tags: [microlearning, e-learning, training, performance-support, mobile-learning]
+verified: true
 ---
 
 # Design Microlearning Module

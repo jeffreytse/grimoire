@@ -3,6 +3,7 @@ name: write-prfaq
 description: Use when defining a new product, feature, or service before committing resources to build it — especially for initiatives with unclear customer value, competing solution approaches, or significant investment required. Trigger before writing a PRD or technical spec for any initiative above a certain size threshold.
 source: Amazon Working Backwards process (Ian McAllister, former Amazon PM Director), "Working Backwards" by Colin Bryar and Bill Carr (2021), AWS product development culture
 tags: [product, amazon, working-backwards, press-release, customer-value, ideation, alignment, strategy]
+verified: true
 ---
 
 # Write PR/FAQ

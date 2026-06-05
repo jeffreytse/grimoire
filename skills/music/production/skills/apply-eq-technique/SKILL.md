@@ -3,6 +3,7 @@ name: apply-eq-technique
 description: Use when applying EQ to any audio track or bus to shape tone and reduce masking
 source: David Gibson "The Art of Mixing" (2005), Mike Senior "Mixing Secrets for the Small Studio" (2011), Roey Izhaki "Mixing Audio" (2017)
 tags: [music, production, eq, mixing, frequency, masking, subtractive-eq, additive-eq]
+verified: true
 ---
 
 # Apply EQ Technique

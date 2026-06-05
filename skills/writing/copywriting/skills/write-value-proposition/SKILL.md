@@ -3,6 +3,7 @@ name: write-value-proposition
 description: Use when crafting a positioning statement, product tagline, or core value proposition for a product or service
 source: "Crossing the Chasm (Geoffrey Moore, 1991); Strategyzer Value Proposition Canvas (Osterwalder et al., 2014)"
 tags: [copywriting, value-proposition, positioning, marketing, product, strategy]
+verified: true
 ---
 
 # Write Value Proposition

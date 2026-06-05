@@ -3,6 +3,7 @@ name: design-shot-list
 description: Use when planning a film shoot and need to organize every camera setup into a structured shot list before principal photography begins
 source: ASC (American Society of Cinematographers) manual; Blain Brown "Cinematography: Theory and Practice" (2011); DGA production standards
 tags: [cinematography, pre-production, shot-list, camera, film-production]
+verified: true
 ---
 
 # Design Shot List

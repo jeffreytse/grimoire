@@ -3,6 +3,7 @@ name: design-brand-identity
 description: Use when creating or repositioning a brand identity system from strategy through visual execution for a company, product, or organization
 source: Marty Neumeier "The Brand Gap" (2003); Carl Jung brand archetypes (as applied by Mark & Pearson "The Hero and the Outlaw", 2001)
 tags: [branding, brand-identity, positioning, visual-identity, brand-strategy, archetypes]
+verified: true
 ---
 
 # Design Brand Identity

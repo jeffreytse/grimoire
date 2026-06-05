@@ -3,6 +3,7 @@ name: apply-stress-inoculation-training
 description: Use when preparing someone to cope with predictable high-stress situations, trauma exposure, or when building resilience before anticipated stressors
 source: Donald Meichenbaum "Stress Inoculation Training" (1985); APA stress management guidelines; US Army Master Resilience Training (MRT)
 tags: [stress, resilience, coping, cognitive-behavioral, trauma-prevention]
+verified: true
 ---
 
 # Apply Stress Inoculation Training

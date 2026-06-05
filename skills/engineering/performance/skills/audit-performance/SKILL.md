@@ -3,6 +3,7 @@ name: audit-performance
 description: Use when a system is slow, latency has regressed, CPU or memory usage is unexpectedly high, or before optimizing any code — to measure first, identify real bottlenecks, and prioritize fixes by impact.
 source: Brendan Gregg "Systems Performance" (2020) USE Method, Google pprof profiling methodology, Chrome DevTools performance profiling documentation
 tags: [performance, profiling, bottleneck-analysis, latency, cpu, memory, observability, optimization]
+verified: true
 ---
 
 # Audit Performance

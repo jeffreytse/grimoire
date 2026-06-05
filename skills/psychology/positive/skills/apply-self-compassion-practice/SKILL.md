@@ -3,6 +3,7 @@ name: apply-self-compassion-practice
 description: Use when helping someone reduce self-criticism, shame, or harsh inner judgment — particularly when perfectionism, failure responses, or chronic self-blame are interfering with wellbeing, resilience, or motivation.
 source: Neff "Self-Compassion: The Proven Power of Being Kind to Yourself" (2011); Neff & Germer "The Mindful Self-Compassion Workbook" (2018); Center for Mindful Self-Compassion (CMSC); Journal of Clinical Psychology meta-analyses
 tags: [psychology, self-compassion, mindfulness, wellbeing, positive-psychology, resilience, shame]
+verified: true
 ---
 
 # Apply Self-Compassion Practice

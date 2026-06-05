@@ -3,6 +3,7 @@ name: run-cultural-preparation
 description: Use when preparing for travel to an unfamiliar culture, reducing culture shock risk, or training someone for cross-cultural immersion
 source: SIETAR (Society for Intercultural Education, Training and Research) cultural training standards; Peace Corps pre-departure cross-cultural training curriculum; Hofstede cultural dimensions framework
 tags: [travel, cultural, intercultural, preparation]
+verified: true
 ---
 
 # Run Cultural Preparation

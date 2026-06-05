@@ -3,6 +3,7 @@ name: design-microservices
 description: Use when decomposing a monolith or designing a new system using microservices architecture
 source: Sam Newman "Building Microservices" (2nd ed., O'Reilly 2021); Eric Evans "Domain-Driven Design" (Addison-Wesley 2003)
 tags: [microservices, architecture, ddd, bounded-context, decomposition, distributed-systems]
+verified: true
 ---
 
 # Design Microservices

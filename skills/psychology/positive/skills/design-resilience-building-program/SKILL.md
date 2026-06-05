@@ -3,6 +3,7 @@ name: design-resilience-building-program
 description: Use when designing a structured program to build psychological resilience in individuals or teams facing chronic stress, adversity, or high-risk environments
 source: APA "The Road to Resilience" guidelines; Bonanno "Loss, Trauma, and Human Resilience" American Psychologist (2004); Penn Resiliency Program (Seligman)
 tags: [resilience, stress, adversity, positive-psychology, wellbeing]
+verified: true
 ---
 
 # Design Resilience Building Program

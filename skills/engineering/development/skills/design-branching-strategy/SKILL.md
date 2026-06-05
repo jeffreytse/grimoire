@@ -3,6 +3,7 @@ name: design-branching-strategy
 description: Use when choosing or designing a Git branching model for a team or project
 source: Trunk-Based Development (trunkbaseddevelopment.com); "A successful Git branching model" — Vincent Driessen; GitHub Flow docs
 tags: [git, branching, trunk-based, gitflow, github-flow, devops]
+verified: true
 ---
 
 # Design Branching Strategy

@@ -3,6 +3,7 @@ name: design-sports-nutrition-periodization
 description: Use when an athlete or sports dietitian needs to align nutritional intake with training phases, competition schedule, and recovery demands to maximize performance and body composition outcomes
 source: ISSN position stand on nutrient timing; Burke et al. "Carbohydrates for Training and Competition" Journal of Sports Sciences (2011); Jeukendrup "Periodized Nutrition for Athletes" Sports Medicine (2017)
 tags: [sports-nutrition, periodization, carbohydrate, fueling, performance-nutrition]
+verified: true
 ---
 
 # Design Sports Nutrition Periodization

@@ -3,6 +3,7 @@ name: apply-socratic-questioning
 description: Use when facilitating discussion, coaching, or teaching that develops critical thinking through structured questions rather than direct instruction
 source: Paul & Elder "The Art of Socratic Questioning" (2007); Paul "Critical Thinking" (1993); Elder & Paul Foundation for Critical Thinking methodology
 tags: [socratic-questioning, critical-thinking, teaching, coaching, facilitation]
+verified: true
 ---
 
 # Apply Socratic Questioning

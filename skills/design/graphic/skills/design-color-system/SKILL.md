@@ -3,6 +3,7 @@ name: design-color-system
 description: Use when building a brand or product color system with semantic roles, accessible palette, and usage rules
 source: Itten "The Art of Color" (1961); CIECAM02 color appearance model (CIE); Material Design color system (Google 2018)
 tags: [color, design-system, branding, accessibility, palette]
+verified: true
 ---
 
 # Design Color System

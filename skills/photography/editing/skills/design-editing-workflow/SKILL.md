@@ -3,6 +3,7 @@ name: design-editing-workflow
 description: Use when establishing a repeatable post-processing workflow for photography from import to delivery
 source: Adobe Lightroom Classic Best Practices, ASMP Digital Imaging Workflow Guide, Trey Ratcliff "HDR Photography" workflow methodology
 tags: [photography, editing, lightroom, workflow, culling, export, color-grading, organization]
+verified: true
 ---
 
 # Design Editing Workflow

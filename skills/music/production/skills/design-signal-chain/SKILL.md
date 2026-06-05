@@ -3,6 +3,7 @@ name: design-signal-chain
 description: Use when routing audio through processing plugins or hardware and need to determine the optimal processing order
 source: Bob Katz "Mastering Audio: The Art and the Science" (2002), Mike Senior "Mixing Secrets for the Small Studio", Universal Audio signal chain methodology
 tags: [music, production, signal-chain, gain-staging, plugin-order, mastering, routing]
+verified: true
 ---
 
 # Design Signal Chain

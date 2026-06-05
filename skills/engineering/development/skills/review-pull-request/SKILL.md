@@ -3,6 +3,7 @@ name: review-pull-request
 description: Use when asked to review a pull request, diff, or code change — whether reviewing as an AI assistant or guiding a human reviewer on what to check and how to give feedback.
 source: Google Engineering Practices documentation (google.github.io/eng-practices)
 tags: [code-review, pull-request, feedback, reviewer, quality, collaboration]
+verified: true
 ---
 
 # Review Pull Request

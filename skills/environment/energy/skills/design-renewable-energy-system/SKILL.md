@@ -3,6 +3,7 @@ name: design-renewable-energy-system
 description: Use when planning, sizing, or evaluating a renewable energy system (solar, wind, storage, or hybrid) for a facility, campus, or organization.
 source: NREL (National Renewable Energy Laboratory) system sizing guidelines; IEA Renewable Energy guidelines; IEEE 1547-2018 interconnection standard
 tags: [renewable-energy, solar, wind, storage, grid]
+verified: true
 ---
 
 # Design Renewable Energy System

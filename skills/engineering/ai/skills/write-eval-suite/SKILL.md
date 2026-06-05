@@ -3,6 +3,7 @@ name: write-eval-suite
 description: Use when building a test suite to evaluate LLM model performance, prompt quality, or AI system behavior
 source: OpenAI Evals framework (github.com/openai/evals); HELM benchmark — Liang et al., Stanford CRFM (2022); BIG-bench (Google Brain, 2022)
 tags: [llm, evals, benchmarking, ai-quality, testing, helm, openai-evals]
+verified: true
 ---
 
 # Write Eval Suite

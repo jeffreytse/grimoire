@@ -3,6 +3,7 @@ name: design-proof-strategy
 description: Use when selecting an approach for constructing a mathematical proof or verifying a conjecture
 source: George Polya "How to Solve It" (1945), Daniel Solow "How to Read and Do Proofs" (2013), Paul Halmos "How to Write Mathematics" (1970)
 tags: [mathematics, proof, logic, induction, contradiction, direct-proof, problem-solving]
+verified: true
 ---
 
 # Design Proof Strategy

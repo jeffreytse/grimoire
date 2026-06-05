@@ -3,6 +3,7 @@ name: apply-convention-over-configuration
 description: Use when designing a project structure, framework, or tooling setup and deciding how much explicit configuration to require from developers.
 source: DHH/Rails, "Convention over Configuration", 2005 — Widely adopted at Spring Boot, Django, Laravel, Angular CLI, Next.js, NestJS
 tags: [configuration, project-structure, developer, boilerplate-reduction, onboarding-speed]
+verified: true
 ---
 
 # Apply Convention over Configuration

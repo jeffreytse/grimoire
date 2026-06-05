@@ -3,6 +3,7 @@ name: apply-scene-structure
 description: Use when writing or revising an individual scene to ensure it advances narrative momentum and earns its place in the story
 source: "Techniques of the Selling Writer (Dwight Swain, 1965); Scene & Structure (Jack Bickham, 1993)"
 tags: [scene, structure, fiction, pacing, conflict, sequel, narrative]
+verified: true
 ---
 
 # Apply Scene Structure

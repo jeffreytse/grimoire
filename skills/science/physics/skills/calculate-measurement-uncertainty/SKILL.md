@@ -3,6 +3,7 @@ name: calculate-measurement-uncertainty
 description: Use when reporting physical measurements that require quantified uncertainty estimates for scientific or metrological purposes
 source: NIST/SEMATECH "Guide to the Expression of Uncertainty in Measurement" (GUM, ISO/IEC Guide 98-3:2008); Taylor "An Introduction to Error Analysis" (1997); BIPM Joint Committee for Guides in Metrology
 tags: [physics, measurement, uncertainty, metrology]
+verified: true
 ---
 
 # Calculate Measurement Uncertainty

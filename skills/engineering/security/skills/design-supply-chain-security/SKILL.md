@@ -3,6 +3,7 @@ name: design-supply-chain-security
 description: Use when designing software supply chain security controls including SBOM generation, artifact signing, dependency management, and build pipeline integrity
 source: NIST SP 800-161r1 "Cybersecurity Supply Chain Risk Management" (2022); SLSA Framework v1.0 Google (2023); CISA "Software Bill of Materials" guidance (2023); US Executive Order 14028 on Improving the Nation's Cybersecurity (2021)
 tags: [security, supply-chain, sbom, signing, dependencies, slsa]
+verified: true
 ---
 
 # Design Supply Chain Security

@@ -3,6 +3,7 @@ name: apply-cognitive-reframing
 description: Use when a person holds distorted, unhelpful, or catastrophic thought patterns that fuel emotional distress, anxiety, or depression
 source: Aaron Beck "Cognitive Therapy and the Emotional Disorders" (1976); Beck Institute for Cognitive Behavior Therapy; NICE CBT guidelines (UK)
 tags: [cognitive-behavioral, cbt, thought-patterns, emotional-regulation, mental-health]
+verified: true
 ---
 
 # Apply Cognitive Reframing

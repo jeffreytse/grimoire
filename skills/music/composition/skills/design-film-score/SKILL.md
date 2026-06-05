@@ -3,6 +3,7 @@ name: design-film-score
 description: Use when composing or designing a film score, game soundtrack, or music for any visual media
 source: Davis "Complete Guide to Film Scoring" (2010); Berklee film scoring curriculum; Thomas Newman/John Williams compositional technique analysis (Grove Music Online)
 tags: [music-composition, film-scoring, soundtrack, media-music]
+verified: true
 ---
 
 # Design Film Score

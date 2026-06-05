@@ -3,6 +3,7 @@ name: calculate-unit-economics
 description: Use when evaluating the profitability and scalability of a business model at the per-customer or per-transaction level
 source: David Skok's SaaS Metrics 2.0 (forentrepreneurs.com); a16z SaaS metrics framework; Bessemer Venture Partners Cloud Index methodology
 tags: [finance, corporate, saas, unit-economics, ltv, cac, payback-period]
+verified: true
 ---
 
 # Calculate Unit Economics

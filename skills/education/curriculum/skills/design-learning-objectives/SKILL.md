@@ -3,6 +3,7 @@ name: design-learning-objectives
 description: Use when writing learning objectives for a course, lesson, or training program that are measurable and aligned to instructional activities
 source: Bloom's Taxonomy (Bloom et al. 1956, rev. Anderson & Krathwohl 2001); Mager "Preparing Instructional Objectives" (1962); OECD Education 2030 competency framework
 tags: [learning-objectives, bloom-taxonomy, curriculum, instructional-design, education]
+verified: true
 ---
 
 # Design Learning Objectives

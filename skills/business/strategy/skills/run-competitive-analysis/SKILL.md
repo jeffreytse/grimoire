@@ -3,6 +3,7 @@ name: run-competitive-analysis
 description: Use when evaluating market position, planning a product strategy, or preparing for a fundraise or board review
 source: Michael Porter "Competitive Strategy" (1980); Clayton Christensen "The Innovator's Dilemma" (1997)
 tags: [competitive-analysis, strategy, porter-five-forces, jobs-to-be-done, market-research, positioning]
+verified: true
 ---
 
 # Run Competitive Analysis

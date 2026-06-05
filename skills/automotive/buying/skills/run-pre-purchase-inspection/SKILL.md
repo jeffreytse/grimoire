@@ -3,6 +3,7 @@ name: run-pre-purchase-inspection
 description: Use when evaluating a used vehicle before purchase to identify hidden defects, safety issues, and negotiate from an informed position
 source: NHTSA vehicle safety checklist; ASE certified technician inspection standards; CarFax/AutoCheck pre-purchase checklist methodology
 tags: [automotive, buying, inspection, used-car]
+verified: true
 ---
 
 # Run Pre-Purchase Inspection

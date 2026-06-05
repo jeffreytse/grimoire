@@ -3,6 +3,7 @@ name: design-spaced-repetition-deck
 description: Use when a learner needs to build an optimized flashcard deck for long-term retention of vocabulary, grammar patterns, or phrases
 source: Hermann Ebbinghaus "Über das Gedächtnis" (1885); Sebastian Leitner spaced repetition system (1972); Anki algorithm (SM-2, Wozniak 1987)
 tags: [spaced-repetition, flashcards, retention, anki]
+verified: true
 ---
 
 # Design Spaced-Repetition Deck

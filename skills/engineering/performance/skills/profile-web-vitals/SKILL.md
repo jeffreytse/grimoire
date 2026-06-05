@@ -3,6 +3,7 @@ name: profile-web-vitals
 description: Use when diagnosing web performance problems or preparing a performance audit for a website or web application
 source: "Google web.dev Core Web Vitals; Chrome DevTools Performance panel documentation; CrUX (Chrome User Experience Report)"
 tags: [performance, web-vitals, lcp, cls, inp, chrome-devtools, lighthouse, profiling]
+verified: true
 ---
 
 # Profile Web Vitals

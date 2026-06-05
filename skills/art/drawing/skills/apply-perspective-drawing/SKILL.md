@@ -3,6 +3,7 @@ name: apply-perspective-drawing
 description: Use when constructing believable three-dimensional space, architecture, environments, or objects on a two-dimensional surface
 source: Ernest Norling "Perspective Made Easy" (1939); Scott Robertson "How to Draw" (2013); Art Center College of Design drawing curriculum
 tags: [drawing, perspective, architecture, spatial-reasoning]
+verified: true
 ---
 
 # Apply Perspective Drawing

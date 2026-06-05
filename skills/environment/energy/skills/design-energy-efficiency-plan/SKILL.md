@@ -3,6 +3,7 @@ name: design-energy-efficiency-plan
 description: Use when developing a systematic plan to reduce energy consumption, improve energy performance, and achieve measurable efficiency targets for a facility, organization, or portfolio.
 source: ASHRAE 90.1 Energy Standard for Buildings; DOE Better Buildings program; ISO 50001:2018 Energy Management Systems
 tags: [energy, efficiency, buildings, iso50001, operations]
+verified: true
 ---
 
 # Design Energy Efficiency Plan

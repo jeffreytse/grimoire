@@ -3,6 +3,7 @@ name: audit-textile-quality
 description: Use when evaluating fabric and construction quality before purchasing a garment or assessing existing wardrobe durability
 source: ASTM International textile testing standards (D1683, D5034); AATCC (American Association of Textile Chemists and Colorists) standards; ISO 105 colorfastness standards
 tags: [fashion, wardrobe, textiles, quality, durability]
+verified: true
 ---
 
 # Audit Textile Quality

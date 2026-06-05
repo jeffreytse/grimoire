@@ -3,6 +3,7 @@ name: apply-body-proportion-dressing
 description: Use when selecting or styling garments to create balanced visual proportions and a harmonious silhouette relative to individual body structure
 source: AICI image consultant curriculum; Trinny Woodall & Susannah Constantine "What Not to Wear" (2002); FIT (Fashion Institute of Technology) personal styling curriculum
 tags: [fashion, styling, body-proportion, silhouette, personal-styling]
+verified: true
 ---
 
 # Apply Body Proportion Dressing

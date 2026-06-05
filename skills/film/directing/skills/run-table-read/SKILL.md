@@ -3,6 +3,7 @@ name: run-table-read
 description: Use when preparing for or conducting a table read with cast and creative team to test screenplay dialogue, pacing, and performance dynamics before production begins
 source: DGA directing standards; Judith Weston "Directing Actors" (1996); SAG-AFTRA actor preparation guidelines
 tags: [directing, table-read, pre-production, actors, screenplay, rehearsal]
+verified: true
 ---
 
 # Run Table Read

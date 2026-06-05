@@ -3,6 +3,7 @@ name: design-differential-diagnosis
 description: Use when generating and systematically ranking the possible diagnoses for a patient's presenting symptoms and clinical findings
 source: Harrison's "Principles of Internal Medicine" (21st ed.); Kassirer & Kopelman "Learning Clinical Reasoning" (1991); Sackett "Evidence-Based Medicine" (2000) clinical decision-making
 tags: [medicine, diagnosis, clinical-reasoning, differential-diagnosis]
+verified: true
 ---
 
 # Design Differential Diagnosis

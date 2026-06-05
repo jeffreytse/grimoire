@@ -3,6 +3,7 @@ name: calculate-rental-yield
 description: Use when evaluating a residential or commercial rental property investment by calculating gross and net rental yield
 source: CCIM Institute investment analysis; RICS (Royal Institution of Chartered Surveyors) valuation standards; Geltner "Commercial Real Estate Analysis and Investments" (2018)
 tags: [real-estate, rental-property, investment-analysis, yield-calculation]
+verified: true
 ---
 
 # Calculate Rental Yield

@@ -3,6 +3,7 @@ name: diagnose-pet-health-symptoms
 description: Use when a pet owner describes symptoms and needs structured triage guidance, a differential list, and a recommendation on urgency of veterinary care
 source: AVMA client education guidelines; Merck Veterinary Manual symptom reference; ASPCA Animal Poison Control Center triage methodology
 tags: [symptom-triage, pet-health, veterinary, emergency-assessment]
+verified: true
 ---
 
 # Diagnose Pet Health Symptoms

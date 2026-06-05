@@ -3,6 +3,7 @@ name: design-trademark-strategy
 description: Use when selecting, clearing, and registering a trademark for a brand, product, or service
 source: USPTO Trademark Manual of Examining Procedure (TMEP); Lanham Act (15 U.S.C. §§ 1051–1127); INTA (International Trademark Association) best practices
 tags: [law, ip, trademark, brand, registration, USPTO, distinctiveness]
+verified: true
 ---
 
 # Design Trademark Strategy

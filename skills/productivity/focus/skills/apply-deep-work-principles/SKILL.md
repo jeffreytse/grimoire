@@ -3,6 +3,7 @@ name: apply-deep-work-principles
 description: Use when designing a work schedule, environment, or practice to enable sustained, distraction-free, cognitively demanding work
 source: Cal Newport "Deep Work: Rules for Focused Success in a Distracted World" (2016); Leroy "Why Is It So Hard to Do My Work?" OBHDP (2009) attention residue research; Ericsson deliberate practice research
 tags: [deep-work, focus, productivity, concentration, knowledge-work]
+verified: true
 ---
 
 # Apply Deep Work Principles

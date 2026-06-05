@@ -3,6 +3,7 @@ name: calculate-reaction-yield
 description: Use when determining the theoretical, actual, or percent yield of a chemical reaction from experimental data
 source: IUPAC nomenclature and yield calculation standards; March "Advanced Organic Chemistry" (2007); ACS Style Guide laboratory reporting
 tags: [chemistry, stoichiometry, yield, laboratory]
+verified: true
 ---
 
 # Calculate Reaction Yield

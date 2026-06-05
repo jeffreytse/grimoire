@@ -3,6 +3,7 @@ name: design-recovery-protocol
 description: Use when structuring post-training recovery strategies for athletes or active individuals to optimize adaptation and prevent overtraining
 source: NSCA recovery guidelines; Kellmann "Underrecovery and Overtraining" (2002); Halson "Monitoring Training Load to Understand Fatigue in Athletes" Sports Medicine (2014)
 tags: [fitness, recovery, sleep, overtraining]
+verified: true
 ---
 
 # Design Recovery Protocol

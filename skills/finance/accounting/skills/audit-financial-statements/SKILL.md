@@ -3,6 +3,7 @@ name: audit-financial-statements
 description: Use when planning or executing a financial statement audit or audit preparation process for an organization
 source: PCAOB (Public Company Accounting Oversight Board) auditing standards; AICPA generally accepted auditing standards (GAAS); ISA (International Standards on Auditing, IAASB)
 tags: [accounting, audit, financial-statements, compliance]
+verified: true
 ---
 
 # Audit Financial Statements

@@ -3,6 +3,7 @@ name: write-trademark-application
 description: Use when preparing or reviewing a trademark application for a brand, product name, logo, or slogan
 source: USPTO Trademark Manual of Examining Procedure (TMEP); WIPO Madrid System for international trademarks; INTA (International Trademark Association) filing guidelines
 tags: [ip-law, trademark, brand-protection, ip-strategy]
+verified: true
 ---
 
 # Write Trademark Application

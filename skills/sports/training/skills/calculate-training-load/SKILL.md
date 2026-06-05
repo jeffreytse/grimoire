@@ -3,6 +3,7 @@ name: calculate-training-load
 description: Use when a coach or athlete needs to quantify weekly training stress, monitor cumulative fatigue, and manage acute:chronic workload ratio to reduce injury risk
 source: Foster et al. RPE session-RPE method (2001) Medicine & Science in Sports & Exercise; Borresen & Lambert "The Quantification of Training Load" Sports Medicine (2009); Gabbett "Debunking the Myths About Training Load" BJSM (2020)
 tags: [training-load, RPE, ACWR, fatigue-management, sports-science]
+verified: true
 ---
 
 # Calculate Training Load

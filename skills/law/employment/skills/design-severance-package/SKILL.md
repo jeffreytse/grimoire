@@ -3,6 +3,7 @@ name: design-severance-package
 description: Use when designing a severance package for employee termination, reduction in force, or executive separation
 source: SHRM severance pay guidelines; WARN Act (Worker Adjustment and Retraining Notification Act) compliance; EEOC release agreement requirements
 tags: [employment-law, severance, hr-policy, workforce-management]
+verified: true
 ---
 
 # Design Severance Package

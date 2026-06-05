@@ -3,6 +3,7 @@ name: calculate-statistical-power
 description: Use when determining required sample size for a study, or evaluating whether a completed study had adequate power to detect its effect
 source: Cohen "Statistical Power Analysis for the Behavioral Sciences" (1988); Button et al. "Power Failure" Nature Reviews Neuroscience (2013); G*Power methodology (Faul et al. 2007)
 tags: [statistics, sample-size, power-analysis, experimental-design]
+verified: true
 ---
 
 # Calculate Statistical Power

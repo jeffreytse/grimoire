@@ -3,6 +3,7 @@ name: design-three-point-lighting
 description: Use when setting up artificial lighting for a portrait, interview, product, or video subject
 source: ASMP Professional Photography Standards, Strobist.com (David Hobby), Hollywood lighting tradition
 tags: [photography, lighting, three-point-lighting, key-light, fill-light, rim-light, portrait, studio]
+verified: true
 ---
 
 # Design Three-Point Lighting

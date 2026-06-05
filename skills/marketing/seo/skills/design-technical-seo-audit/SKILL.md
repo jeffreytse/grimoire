@@ -3,6 +3,7 @@ name: design-technical-seo-audit
 description: Use when auditing a website's technical SEO health to identify crawlability, indexation, Core Web Vitals, and structured data problems that suppress organic search rankings.
 source: Google Search Central documentation (2024); Moz "The Beginner's Guide to SEO" (2023); Ahrefs "Technical SEO Guide" (2024); John Mueller Google technical SEO guidance; Google Core Web Vitals documentation
 tags: [seo, technical-seo, audit, crawlability, core-web-vitals]
+verified: true
 ---
 
 # Design a Technical SEO Audit

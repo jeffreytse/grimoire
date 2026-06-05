@@ -3,6 +3,7 @@ name: apply-aida
 description: Use when structuring persuasive copy for emails, ads, sales pages, or any communication designed to move a reader to action
 source: "Elias St. Elmo Lewis (1898); Direct Marketing Association copywriting guidelines; Ogilvy on Advertising (David Ogilvy, 1983)"
 tags: [copywriting, aida, persuasion, email, advertising, framework]
+verified: true
 ---
 
 # Apply AIDA

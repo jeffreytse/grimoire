@@ -3,6 +3,7 @@ name: apply-counterpoint-principles
 description: Use when composing or analyzing music with multiple independent melodic voices, or when applying species counterpoint exercises
 source: Fux "Gradus ad Parnassum" (1725) species counterpoint; Schoenberg "Preliminary Exercises in Counterpoint" (1963); Jeppesen "Counterpoint" (1939)
 tags: [music-theory, counterpoint, polyphony, composition]
+verified: true
 ---
 
 # Apply Counterpoint Principles

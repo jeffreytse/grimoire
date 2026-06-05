@@ -3,6 +3,7 @@ name: review-light-quality
 description: Use when assessing the lighting conditions for a scene before shooting or planning a lighting setup
 source: Joe McNally "The Hot Shoe Diaries" (2009), Bryan Peterson "Understanding Exposure" (2004), NYIP lighting curriculum
 tags: [photography, lighting, light-quality, direction, color-temperature, hard-light, soft-light]
+verified: true
 ---
 
 # Review Light Quality

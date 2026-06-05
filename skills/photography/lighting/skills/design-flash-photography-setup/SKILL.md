@@ -3,6 +3,7 @@ name: design-flash-photography-setup
 description: Use when planning an off-camera flash setup for portraits, events, or editorial photography where you need to control light direction, quality, and power across one or more flash units
 source: McNally "The Hot Shoe Diaries" (2009); Hobby "Strobist" methodology (strobist.com, 2006–present); WPPI (Wedding & Portrait Photographers International) lighting standards; PPA (Professional Photographers of America) lighting certification curriculum
 tags: [flash-photography, off-camera-flash, lighting-setup, portrait-photography, strobist, modifiers]
+verified: true
 ---
 
 # Design Flash Photography Setup

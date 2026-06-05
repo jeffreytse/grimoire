@@ -3,6 +3,7 @@ name: apply-value-studies
 description: Use when planning or refining the light-and-dark structure of a painting or illustration before committing to color
 source: James Gurney "Color and Light" (2010); Richard Schmid "Alla Prima" (1998); atelier training tradition (Gammell, Juliette Aristides)
 tags: [painting, value, composition, light]
+verified: true
 ---
 
 # Apply Value Studies

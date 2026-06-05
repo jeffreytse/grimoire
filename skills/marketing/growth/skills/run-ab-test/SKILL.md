@@ -3,6 +3,7 @@ name: run-ab-test
 description: Use when designing and executing an A/B test on a webpage, email, app, or ad to validate a conversion or engagement hypothesis
 source: Optimizely "A/B Testing Guide"; VWO testing methodology; Kohavi et al. "Trustworthy Online Controlled Experiments" (2020, Cambridge)
 tags: [ab-testing, experimentation, growth, conversion, statistics]
+verified: true
 ---
 
 # Run A/B Test

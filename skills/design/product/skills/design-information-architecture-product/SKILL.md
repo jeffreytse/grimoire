@@ -3,6 +3,7 @@ name: design-information-architecture-product
 description: Use when structuring content, navigation, or feature hierarchies for a product so users can find information predictably and efficiently
 source: Morville & Rosenfeld "Information Architecture for the Web and Beyond" (2015, 4th ed.); IA Institute principles; Card sorting research (Spencer "Card Sorting" 2009)
 tags: [ia, navigation, ux, taxonomy, content-structure]
+verified: true
 ---
 
 # Design Information Architecture for Products

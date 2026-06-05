@@ -3,6 +3,7 @@ name: design-gtd-system
 description: Use when your personal productivity system feels unreliable, tasks are falling through cracks, or you are starting from scratch with a trusted external system
 source: David Allen, "Getting Things Done" (2001, revised 2015); adopted at Google, NASA, US military
 tags: [gtd, task-management, productivity-system, capture, organisation, trusted-system]
+verified: true
 ---
 
 # Design GTD System

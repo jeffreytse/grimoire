@@ -3,6 +3,7 @@ name: design-financial-literacy-education
 description: Use when a parent wants to systematically teach a teenager personal finance skills to prepare them for financial independence
 source: CFPB Youth Financial Education guidelines; JumpStart Coalition for Personal Financial Literacy standards; NFEC (National Financial Educators Council) curriculum
 tags: [financial-literacy, teen, money-management, independence, education]
+verified: true
 ---
 
 # Design Financial Literacy Education

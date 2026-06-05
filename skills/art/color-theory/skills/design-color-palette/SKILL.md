@@ -3,6 +3,7 @@ name: design-color-palette
 description: Use when creating a cohesive, purposeful color palette for a brand, illustration, UI, or fine-art project
 source: Itten "The Art of Color" (1961); Pantone Color Institute methodology; Adobe Color industry standard
 tags: [color, palette, branding, design]
+verified: true
 ---
 
 # Design Color Palette

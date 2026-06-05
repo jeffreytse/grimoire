@@ -3,6 +3,7 @@ name: design-stereo-field
 description: Use when placing elements in the stereo field or designing spatial depth in a mix
 source: David Gibson "The Art of Mixing" (2005), Bob Katz "Mastering Audio" (2002), Haas Effect research (Haas 1949)
 tags: [music, mixing, stereo, panning, mid-side, haas-effect, spatial-audio, depth]
+verified: true
 ---
 
 # Design Stereo Field

@@ -3,6 +3,7 @@ name: apply-mother-sauces
 description: Use when building classical French sauces, training on foundational sauce technique, or deriving secondary sauces from a base for a menu or recipe
 source: Auguste Escoffier "Le Guide Culinaire" (1903); Marie-Antoine Carême (originator of mother sauce classification); CIA French cuisine curriculum
 tags: [cooking, sauces, french-cuisine, classical-technique, flavor]
+verified: true
 ---
 
 # Apply Mother Sauces

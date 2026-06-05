@@ -3,6 +3,7 @@ name: design-packing-list-system
 description: Use when creating a packing list, optimizing luggage for a trip, or building a reusable packing system
 source: One Bag methodology (travel minimalism community); ASTA packing recommendations; travel blogger consensus methodology (Nomadic Matt, Rick Steves)
 tags: [travel, packing, minimalism, planning]
+verified: true
 ---
 
 # Design Packing List System

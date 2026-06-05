@@ -3,6 +3,7 @@ name: design-budget
 description: Use when creating or overhauling a personal or household budget to align spending with goals
 source: YNAB methodology (You Need A Budget); 50/30/20 rule (Elizabeth Warren "All Your Worth"); zero-based budgeting (Dave Ramsey, Peter Pyhrr)
 tags: [finance, personal-finance, budgeting, spending, savings, cash-flow]
+verified: true
 ---
 
 # Design Budget

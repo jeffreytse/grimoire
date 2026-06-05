@@ -3,6 +3,7 @@ name: calculate-recipe-scaling
 description: Use when scaling a recipe up or down, converting between batch sizes, or applying baker's percentages to adjust ingredient quantities proportionally.
 source: Culinary Institute of America "The Professional Chef" (2011); McGee "On Food and Cooking" (2004); King Arthur Flour Baking Guide; Amendola & Rees "Understanding Baking" (2003)
 tags: [cooking, baking, math, scaling, ratios, baker's-percentage]
+verified: true
 ---
 
 # Calculate Recipe Scaling

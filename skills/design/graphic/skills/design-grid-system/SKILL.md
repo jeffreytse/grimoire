@@ -3,6 +3,7 @@ name: design-grid-system
 description: Use when establishing a grid system for print, web, or mobile layouts to create visual order, alignment, and scalable composition rules
 source: Müller-Brockmann "Grid Systems in Graphic Design" (1981); Khoi Vinh "Ordering Disorder" (2011); Swiss Style grid theory
 tags: [grid, layout, graphic-design, typography, composition]
+verified: true
 ---
 
 # Design Grid System

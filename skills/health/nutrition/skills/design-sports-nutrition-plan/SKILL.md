@@ -3,6 +3,7 @@ name: design-sports-nutrition-plan
 description: Use when creating a performance nutrition plan for an athlete or active individual to support training, recovery, and competition
 source: ISSN position stand on nutrient timing (2008, updated 2017); Burke et al. "Carbohydrates for Training" JSS (2011); Thomas et al. "Nutrition and Athletic Performance" MSSE (2016)
 tags: [nutrition, sports-nutrition, athlete, performance]
+verified: true
 ---
 
 # Design Sports Nutrition Plan

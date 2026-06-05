@@ -3,6 +3,7 @@ name: run-flipped-classroom
 description: Use when redesigning a course so that content delivery happens outside class (video, readings) and class time is used for practice, discussion, and application
 source: Bergmann & Sams "Flip Your Classroom" (2012); Bishop & Verleger "The Flipped Classroom" ASEE (2013); Flipped Learning Network (FLN) Four Pillars of F-L-I-P
 tags: [flipped-classroom, blended-learning, instructional-design, teaching, active-learning]
+verified: true
 ---
 
 # Run Flipped Classroom

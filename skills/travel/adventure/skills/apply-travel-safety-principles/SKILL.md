@@ -3,6 +3,7 @@ name: apply-travel-safety-principles
 description: Use when assessing travel safety risks, preparing for travel to high-risk destinations, or establishing personal safety protocols for a trip
 source: US State Department STEP (Smart Traveler Enrollment Program); OSAC (Overseas Security Advisory Council) travel safety guidelines; ASIS International travel risk management standard
 tags: [travel, safety, risk-management, adventure]
+verified: true
 ---
 
 # Apply Travel Safety Principles

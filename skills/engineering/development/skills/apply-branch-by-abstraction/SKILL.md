@@ -3,6 +3,7 @@ name: apply-branch-by-abstraction
 description: Use when replacing a large or deeply integrated component of a system incrementally without creating a long-lived feature branch, by introducing an abstraction layer that allows old and new implementations to coexist.
 source: Fowler "BranchByAbstraction" (martinfowler.com/bliki/BranchByAbstraction.html, 2014); Hammant (trunkbaseddevelopment.com); Humble & Farley "Continuous Delivery" (2010)
 tags: [development, refactoring, continuous-delivery, trunk-based-development, patterns, abstraction, migration]
+verified: true
 ---
 
 # Apply Branch by Abstraction

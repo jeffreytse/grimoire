@@ -3,6 +3,7 @@ name: apply-positive-reinforcement-training
 description: Use when teaching a new behavior to any pet, modifying an existing behavior, or running a training session using reward-based methods
 source: B.F. Skinner operant conditioning theory; Karen Pryor "Don't Shoot the Dog" (1984); APDT LIMA principles; Yin "Low Stress Handling" (2009)
 tags: [positive-reinforcement, clicker-training, operant-conditioning, behavior-modification]
+verified: true
 ---
 
 # Apply Positive Reinforcement Training

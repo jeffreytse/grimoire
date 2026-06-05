@@ -3,6 +3,7 @@ name: design-organizational-structure
 description: Use when designing, restructuring, or evaluating an organization's reporting hierarchy, team topology, or division of responsibilities
 source: Mintzberg "The Structuring of Organizations" (1979); Galbraith "Designing Organizations" (2002); McKinsey organizational design methodology
 tags: [leadership, organizational-design, structure, management, strategy]
+verified: true
 ---
 
 # Design Organizational Structure

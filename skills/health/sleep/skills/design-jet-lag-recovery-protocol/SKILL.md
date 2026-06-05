@@ -3,6 +3,7 @@ name: design-jet-lag-recovery-protocol
 description: Use when preparing for or recovering from transmeridian travel across 3 or more time zones to minimize circadian disruption and restore performance.
 source: Walker "Why We Sleep" (2017); AASM (American Academy of Sleep Medicine) jet lag guidelines; Eastman & Burgess "How to Travel the World Without Jet Lag" (Sleep Medicine Clinics 2009); Harvard Medical School Division of Sleep Medicine
 tags: [sleep, jet-lag, travel, circadian, recovery, health, performance, chronobiology]
+verified: true
 ---
 
 # Design Jet Lag Recovery Protocol

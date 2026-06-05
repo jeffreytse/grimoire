@@ -3,6 +3,7 @@ name: write-thesis-statement
 description: Use when drafting or refining the central argument for an academic essay, research paper, or analytical piece
 source: "Purdue OWL Academic Writing Guidelines; They Say / I Say (Graff & Birkenstein, 2006); Harvard Writing Center thesis guidance"
 tags: [academic-writing, thesis, argument, essay, research, rhetoric]
+verified: true
 ---
 
 # Write Thesis Statement

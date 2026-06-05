@@ -3,6 +3,7 @@ name: design-strength-training-program
 description: Use when creating a resistance training program to build muscular strength, hypertrophy, or power for a specific individual
 source: NSCA "Essentials of Strength Training and Conditioning" (4th ed.); Zatsiorsky & Kraemer "Science and Practice of Strength Training" (2006); Schoenfeld "Science and Development of Muscle Hypertrophy" (2016)
 tags: [fitness, strength-training, programming, hypertrophy]
+verified: true
 ---
 
 # Design Strength Training Program

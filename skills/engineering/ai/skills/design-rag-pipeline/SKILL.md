@@ -3,6 +3,7 @@ name: design-rag-pipeline
 description: Use when designing a retrieval-augmented generation (RAG) pipeline for grounding LLM outputs in external knowledge
 source: Lewis et al. "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks" (Facebook AI, NeurIPS 2020); LangChain documentation; Pinecone "RAG best practices" guide
 tags: [rag, llm, embeddings, vector-database, ai, retrieval, langchain]
+verified: true
 ---
 
 # Design RAG Pipeline

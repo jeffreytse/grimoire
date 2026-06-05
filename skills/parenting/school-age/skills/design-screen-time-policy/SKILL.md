@@ -3,6 +3,7 @@ name: design-screen-time-policy
 description: Use when a family needs to establish clear, consistent rules around children's digital device and media use to balance benefits and risks
 source: AAP screen time guidelines (2016, updated 2020); WHO "Guidelines on Physical Activity, Sedentary Behaviour and Sleep" (2019); Common Sense Media research
 tags: [screen-time, media, digital-health, school-age, family-policy]
+verified: true
 ---
 
 # Design Screen Time Policy

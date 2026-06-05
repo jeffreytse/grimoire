@@ -3,6 +3,7 @@ name: design-product-photography
 description: Use when planning and executing product photography for e-commerce, advertising, or catalog use
 source: Commercial Photography standards (ASMP - American Society of Media Photographers); Amazon product image requirements; Kelby Training product photography curriculum
 tags: [product-photography, e-commerce, commercial, lighting, studio]
+verified: true
 ---
 
 # Design Product Photography

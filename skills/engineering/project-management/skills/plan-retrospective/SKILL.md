@@ -3,6 +3,7 @@ name: plan-retrospective
 description: Use when running a sprint retrospective — to surface what went well, what didn't, and produce a short list of actionable improvements with owners that the team commits to next sprint.
 source: "Agile Retrospectives: Making Good Teams Great" (Derby & Larsen, 2006), The Scrum Guide (Schwaber & Sutherland 2020), Spotify retrospective practices (Henrik Kniberg)
 tags: [retrospective, scrum, agile, continuous-improvement, team-health, action-items, facilitation, delivery]
+verified: true
 ---
 
 # Plan Retrospective

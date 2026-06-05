@@ -3,6 +3,7 @@ name: design-ev-charging-setup
 description: Use when planning or installing home EV charging equipment to select the right charger level, electrical requirements, and installation approach
 source: SAE J1772 EV charging connector standard; DOE EV Everywhere program; NEC Article 625 electric vehicle charging equipment code
 tags: [automotive, ev, charging, installation]
+verified: true
 ---
 
 # Design EV Charging Setup

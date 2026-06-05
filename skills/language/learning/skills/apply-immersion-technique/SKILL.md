@@ -3,6 +3,7 @@ name: apply-immersion-technique
 description: Use when a learner wants to accelerate acquisition by maximizing exposure to authentic target-language input across daily contexts
 source: Stephen Krashen comprehensible input hypothesis (1982); ACTFL immersion program research; Winitz & Reeds "Comprehension and Problem Solving as Strategies for Language Training" (1973)
 tags: [immersion, input, acquisition, listening]
+verified: true
 ---
 
 # Apply Immersion Technique

@@ -3,6 +3,7 @@ name: design-rag-system
 description: Use when building LLM applications that need to answer questions about proprietary, recent, or domain-specific knowledge that is not in the model's training data
 source: Lewis et al. "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks" NeurIPS (2020); LlamaIndex/LangChain architectural patterns; Anthropic RAG best practices
 tags: [ai, llm, rag, architecture]
+verified: true
 ---
 
 # Design RAG System

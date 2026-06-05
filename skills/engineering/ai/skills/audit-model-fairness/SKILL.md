@@ -3,6 +3,7 @@ name: audit-model-fairness
 description: Use when deploying ML models that make decisions affecting people (hiring, lending, healthcare, content moderation) or when required by regulation to assess algorithmic bias
 source: NIST AI Risk Management Framework (AI RMF 1.0, 2023); Barocas & Hardt "Fairness in Machine Learning" (2019); IEEE Ethically Aligned Design
 tags: [ai, fairness, ethics, compliance]
+verified: true
 ---
 
 # Audit Model Fairness

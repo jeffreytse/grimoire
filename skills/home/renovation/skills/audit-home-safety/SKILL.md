@@ -3,6 +3,7 @@ name: audit-home-safety
 description: Use when systematically checking a home for fire, fall, poison, and structural hazards to protect occupants
 source: NFPA "Home Safety Checklist" (2023); CPSC "Home Hazard Assessment Standards" (2023); CDC "Home and Recreational Safety Guidelines" (2022)
 tags: [home-safety, hazard-assessment, fire-safety, fall-prevention]
+verified: true
 ---
 
 # Audit Home Safety

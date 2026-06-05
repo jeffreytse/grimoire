@@ -3,6 +3,7 @@ name: calculate-one-rep-max
 description: Use when estimating maximal lifting capacity from sub-maximal performance data or when prescribing training loads based on percentage of 1RM
 source: Brzycki one-rep max formula (1993); Epley formula (1985); NSCA testing and evaluation protocols; Mayhew et al. validity research
 tags: [fitness, strength, one-rep-max, testing]
+verified: true
 ---
 
 # Calculate One-Rep Max

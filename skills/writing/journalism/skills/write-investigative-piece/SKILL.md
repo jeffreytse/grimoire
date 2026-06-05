@@ -3,6 +3,7 @@ name: write-investigative-piece
 description: Use when planning or writing a long-form investigative journalism piece that requires document analysis, source development, and multi-stage verification
 source: IRE (Investigative Reporters and Editors) tipsheets and methodology; Houston "Computer-Assisted Reporting" (2004); Kovach & Rosenstiel "Blur" (2010) verification standards
 tags: [journalism, investigative-reporting, verification, long-form]
+verified: true
 ---
 
 # Write Investigative Piece

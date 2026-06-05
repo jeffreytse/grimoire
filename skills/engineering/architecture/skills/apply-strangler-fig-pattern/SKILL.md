@@ -3,6 +3,7 @@ name: apply-strangler-fig-pattern
 description: Use when replacing a legacy system or component incrementally without a full rewrite, by routing traffic progressively from the old system to a new implementation.
 source: Fowler "StranglerFigApplication" (martinfowler.com, 2004); Thoughtworks Technology Radar; Newman "Monolith to Microservices" (2019); AWS Migration Whitepaper
 tags: [architecture, legacy, migration, refactoring, patterns, modernization, incremental]
+verified: true
 ---
 
 # Apply Strangler Fig Pattern

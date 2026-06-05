@@ -3,6 +3,7 @@ name: design-developmental-milestone-tracking
 description: Use when a parent or caregiver needs to monitor an infant's developmental progress and determine when to seek professional evaluation
 source: AAP Bright Futures (4th ed.); CDC "Learn the Signs. Act Early." milestones (2022 revision); ZERO TO THREE developmental research
 tags: [infant, development, milestones, pediatrics, early-intervention]
+verified: true
 ---
 
 # Design Developmental Milestone Tracking

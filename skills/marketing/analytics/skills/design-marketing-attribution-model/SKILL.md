@@ -3,6 +3,7 @@ name: design-marketing-attribution-model
 description: Use when selecting and implementing a marketing attribution model to understand which channels and touchpoints drive conversions
 source: Google Analytics attribution models documentation; Gartner marketing measurement research; Binet & Field "Media in Focus" (IPA 2017) marketing effectiveness research
 tags: [attribution, analytics, marketing, measurement, roi]
+verified: true
 ---
 
 # Design Marketing Attribution Model

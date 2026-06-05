@@ -3,6 +3,7 @@ name: write-database-migration
 description: Use when changing a database schema — adding or removing columns, creating tables, adding indexes, or altering constraints.
 source: Widely adopted at Rails, Django, Laravel, Flyway, Liquibase — codified in Fowler & Sadalage, "Evolutionary Database Design", 2016 (martinfowler.com/articles/evodb.html)
 tags: [database, schema-evolution, migrations, developer, deployment-safety, rollback]
+verified: true
 ---
 
 # Write Database Migration

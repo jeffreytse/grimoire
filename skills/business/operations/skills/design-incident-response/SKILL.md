@@ -3,6 +3,7 @@ name: design-incident-response
 description: Use when creating or improving an incident response process for a production system or operational team
 source: PagerDuty Incident Response Guide (2023); NIST SP 800-61r2 "Computer Security Incident Handling Guide"
 tags: [incident-response, operations, reliability, on-call, postmortem, sre]
+verified: true
 ---
 
 # Design Incident Response

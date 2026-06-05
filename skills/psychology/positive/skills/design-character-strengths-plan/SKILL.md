@@ -3,6 +3,7 @@ name: design-character-strengths-plan
 description: Use when helping someone identify their top character strengths and design a structured plan to apply them in new ways — particularly for improving engagement, wellbeing, resilience, or role satisfaction.
 source: Peterson & Seligman "Character Strengths and Virtues" (2004); VIA Institute on Character; Gallup StrengthsFinder Research; Journal of Positive Psychology VIA Studies
 tags: [positive-psychology, strengths, wellbeing, character, VIA, engagement, flourishing]
+verified: true
 ---
 
 # Design Character Strengths Plan

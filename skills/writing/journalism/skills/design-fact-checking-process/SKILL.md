@@ -3,6 +3,7 @@ name: design-fact-checking-process
 description: Use when establishing or executing a systematic fact-checking process for journalism, fact-checking organizations, or content verification workflows
 source: IFCN (International Fact-Checking Network) code of principles; Poynter "MediaWise" fact-checking curriculum; Craig Silverman "Verification Handbook" (2014)
 tags: [journalism, fact-checking, verification, misinformation]
+verified: true
 ---
 
 # Design Fact-Checking Process

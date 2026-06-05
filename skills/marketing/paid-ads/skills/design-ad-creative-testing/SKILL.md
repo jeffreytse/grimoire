@@ -3,6 +3,7 @@ name: design-ad-creative-testing
 description: Use when designing a structured testing plan for ad creatives including copy, imagery, and format variations to maximize performance
 source: Facebook/Meta Creative Testing best practices; Google Ads creative rotation methodology; Ogilvy "Confessions of an Advertising Man" (1963) testing principles
 tags: [creative-testing, paid-ads, a-b-testing, advertising, optimization]
+verified: true
 ---
 
 # Design Ad Creative Testing

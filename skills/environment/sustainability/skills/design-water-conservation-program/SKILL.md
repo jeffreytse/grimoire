@@ -3,6 +3,7 @@ name: design-water-conservation-program
 description: Use when designing a systematic water conservation program for an organization, facility, or household to reduce water consumption, achieve compliance, or earn sustainability certification.
 source: EPA WaterSense Program Guidelines; Alliance for Water Efficiency "Water Management Planning" (2012); ISO 14046:2014 Water Footprint; LEED v4.1 Water Efficiency Credits; ASHRAE 189.1 Standard
 tags: [water, sustainability, conservation, environment, efficiency, leed, epa]
+verified: true
 ---
 
 # Design Water Conservation Program

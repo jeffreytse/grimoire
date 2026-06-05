@@ -3,6 +3,7 @@ name: run-growth-experiment
 description: Use when designing and executing a structured growth experiment to improve a key metric
 source: Sean Ellis & Morgan Brown "Hacking Growth" (2017), AARRR Pirate Metrics (Dave McClure), ICE Scoring Model
 tags: [growth, experimentation, aarrr, ice-scoring, ab-testing, metrics, hypothesis]
+verified: true
 ---
 
 # Run Growth Experiment

@@ -3,6 +3,7 @@ name: design-estate-plan
 description: Use when designing a comprehensive estate plan to protect assets, minimize taxes, and ensure wealth transfers according to the individual's wishes
 source: CFP Board estate planning curriculum; American College of Financial Services (CHFC); IRS estate tax guidelines
 tags: [personal-finance, estate-planning, wills-trusts, tax-planning]
+verified: true
 ---
 
 # Design Estate Plan

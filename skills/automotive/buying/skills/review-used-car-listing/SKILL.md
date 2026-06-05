@@ -3,6 +3,7 @@ name: review-used-car-listing
 description: Use when evaluating an online or dealership used car listing to identify red flags, assess value, and decide whether to pursue further
 source: NHTSA VIN check standards; CarFax/AutoCheck history report methodology; Consumer Reports used car reliability guide
 tags: [automotive, buying, used-car, listing]
+verified: true
 ---
 
 # Review Used Car Listing

@@ -3,6 +3,7 @@ name: calculate-cost-per-wear
 description: Use when evaluating the true value of a clothing purchase or comparing two items to make a cost-effective buying decision
 source: Fashion Revolution "True Cost" analysis; Project 333 (Courtney Carver); Wrap UK "Valuing Our Clothes" report (2012)
 tags: [fashion, finance, wardrobe, cost-analysis, sustainability]
+verified: true
 ---
 
 # Calculate Cost Per Wear

@@ -3,6 +3,7 @@ name: design-dialogue-craft
 description: Use when writing fiction dialogue that sounds stilted, expository, or on-the-nose, and needs to feel authentic, subtext-driven, and purposeful.
 source: Lukeman "The Art of Fiction" (2000); McKee "Story" (1997); Leonard "10 Rules of Writing" (2001); Noble "Conflict, Action & Suspense" (1994)
 tags: [creative-writing, fiction, dialogue, craft, character]
+verified: true
 ---
 
 # Design Dialogue Craft

@@ -3,6 +3,7 @@ name: run-chaos-engineering
 description: Use when validating system reliability before a major launch, when SLO breach investigations reveal unknown failure modes, or when establishing a proactive reliability practice
 source: Rosenthal et al. "Chaos Engineering" (O'Reilly 2020); Nygard "Release It!" (2018); Netflix Chaos Monkey (Basiri et al. 2016)
 tags: [reliability, chaos-engineering, sre, testing]
+verified: true
 ---
 
 # Run Chaos Engineering

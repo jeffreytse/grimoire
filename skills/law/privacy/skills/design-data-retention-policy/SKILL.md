@@ -3,6 +3,7 @@ name: design-data-retention-policy
 description: Use when creating or auditing a data retention policy that balances legal obligations, business needs, and privacy requirements
 source: GDPR Article 5(1)(e) storage limitation; CCPA data retention requirements; ARMA International records management standards
 tags: [privacy-law, data-retention, records-management, compliance]
+verified: true
 ---
 
 # Design Data Retention Policy

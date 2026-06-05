@@ -3,6 +3,7 @@ name: calculate-roas-target
 description: Use when setting ROAS (Return on Ad Spend) targets for paid advertising campaigns based on business economics and margin requirements
 source: Google Ads Smart Bidding methodology; Meta advertising ROAS optimization guidelines; Marketing Science "Return on Advertising Spend" (IPA Databank research)
 tags: [roas, paid-ads, roi, bidding, performance-marketing]
+verified: true
 ---
 
 # Calculate ROAS Target

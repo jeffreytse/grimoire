@@ -3,6 +3,7 @@ name: write-rubric
 description: Use when designing an assessment rubric for a complex task, project, or performance where multiple criteria must be evaluated consistently
 source: Susan M. Brookhart "How to Create and Use Rubrics" (2013); Heidi Goodrich Andrade rubric research; Standards-Based Grading literature
 tags: [rubric, assessment, grading, curriculum-design, feedback, standards-based-grading]
+verified: true
 ---
 
 # Write Rubric

@@ -3,6 +3,7 @@ name: design-renovation-project-plan
 description: Use when planning a home renovation project and needing a structured timeline, contractor coordination strategy, and scope-of-work document
 source: NKBA "Kitchen and Bath Planning Guidelines" (2023); NAHB "Remodeling Guidelines for Contractors" (2022); HomeAdvisor "Project Planning Methodology" (2023)
 tags: [renovation, project-planning, contractor, home-improvement]
+verified: true
 ---
 
 # Design Renovation Project Plan

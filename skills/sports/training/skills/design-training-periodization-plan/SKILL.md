@@ -3,6 +3,7 @@ name: design-training-periodization-plan
 description: Use when an athlete or coach needs a structured, multi-phase training plan that peaks performance at the right time while preventing burnout and overtraining
 source: Tudor Bompa "Periodization Training for Sports" (2015, 3rd ed.); NSCA periodization guidelines; Issurin "New Horizons for the Methodology and Physiology of Training Periodization" Sports Medicine (2010)
 tags: [periodization, training-plan, strength, performance, sports-science]
+verified: true
 ---
 
 # Design Training Periodization Plan

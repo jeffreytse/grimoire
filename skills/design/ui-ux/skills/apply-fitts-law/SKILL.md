@@ -3,6 +3,7 @@ name: apply-fitts-law
 description: Use when designing interactive UI elements — buttons, links, menus, form controls — where target size, placement, and spacing affect the speed and accuracy of user interaction.
 source: Fitts "The Information Capacity of the Human Motor System" (1954); MacKenzie "Fitts' Law as a Research and Design Tool in Human-Computer Interaction" (1992); Nielsen Norman Group interaction design principles
 tags: [ui-ux, fitts-law, interaction-design, accessibility, performance]
+verified: true
 ---
 
 # Apply Fitts's Law to UI Design

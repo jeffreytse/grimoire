@@ -3,6 +3,7 @@ name: design-platform-engineering-model
 description: Use when designing an internal developer platform (IDP) to reduce cognitive load on product teams, standardize infrastructure access, and improve developer experience at scale
 source: CNCF "Platform Engineering Maturity Model" (2023); Skelton & Pais "Team Topologies" (2019); Gartner "Platform Engineering Will Become Essential for Cloud-Native" (2023); DORA "State of DevOps Report" (2023)
 tags: [devops, platform-engineering, idp, developer-experience, team-topologies, kubernetes]
+verified: true
 ---
 
 # Design Platform Engineering Model

@@ -3,6 +3,7 @@ name: apply-acceptance-commitment-therapy
 description: Use when helping someone reduce psychological suffering caused by rigid avoidance, fusion with unhelpful thoughts, or values-behavior disconnection — particularly for anxiety, depression, chronic pain, or stress.
 source: Hayes "Get Out of Your Mind and Into Your Life" (2005); Hayes, Strosahl & Wilson "Acceptance and Commitment Therapy" (2012); ACBS (Association for Contextual Behavioral Science); Journal of Consulting and Clinical Psychology ACT meta-analyses
 tags: [therapy, psychology, ACT, acceptance, mindfulness, values, flexibility, CBT]
+verified: true
 ---
 
 # Apply Acceptance and Commitment Therapy

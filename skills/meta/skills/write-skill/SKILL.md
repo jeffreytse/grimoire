@@ -3,6 +3,7 @@ name: write-skill
 description: Use when authoring a new SKILL.md to contribute to grimoire — whether starting from scratch, adapting existing knowledge, or encoding a domain best practice you know well.
 source: Wikipedia Manual of Style, MDN Web Docs Contributor Guide
 tags: [skill-authoring, structured-authoring, contributor, domain-expert, quality-contribution]
+verified: true
 ---
 
 # Write Skill
@@ -91,6 +92,7 @@ name: verb-first-kebab-case
 description: Use when <triggering conditions — NOT a summary of the steps>.
 source: <institution, standard body, or top-tier company list>
 tags: [problem-keyword-1, problem-keyword-2, problem-keyword-3]
+verified: true
 ---
 ```
 

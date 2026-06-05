@@ -3,6 +3,7 @@ name: run-peer-learning-session
 description: Use when facilitating a structured session where learners teach, review, or problem-solve together in pairs or small groups to deepen understanding and develop metacognitive skills
 source: Vygotsky "Mind in Society" (1978); Topping "Peer Assisted Learning" (2001); Johnson & Johnson "Cooperation and Competition" (1989); Prince "Does Active Learning Work?" (Journal of Engineering Education, 2004)
 tags: [peer-learning, collaborative-learning, active-learning, peer-teaching, cooperative-learning, metacognition]
+verified: true
 ---
 
 # Run Peer Learning Session

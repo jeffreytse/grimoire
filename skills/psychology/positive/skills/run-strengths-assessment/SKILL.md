@@ -3,6 +3,7 @@ name: run-strengths-assessment
 description: Use when helping someone identify their core strengths for career decisions, team composition, coaching, or building on existing assets rather than deficit remediation
 source: Gallup CliftonStrengths (Buckingham & Clifton "Now Discover Your Strengths" 2001); Peterson & Seligman VIA Character Strengths (2004); Linley "Strengths-Based Coaching" (2008)
 tags: [strengths, positive-psychology, coaching, career, self-awareness]
+verified: true
 ---
 
 # Run Strengths Assessment

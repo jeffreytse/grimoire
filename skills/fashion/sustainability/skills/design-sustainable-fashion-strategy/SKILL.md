@@ -3,6 +3,7 @@ name: design-sustainable-fashion-strategy
 description: Use when developing a personal or organizational approach to fashion consumption that minimizes environmental and social impact without sacrificing style
 source: Fashion Revolution "Fashion Transparency Index" (annual); Ellen MacArthur Foundation "A New Textiles Economy" (2017); GOTS (Global Organic Textile Standard)
 tags: [fashion, sustainability, environment, ethics, consumption]
+verified: true
 ---
 
 # Design Sustainable Fashion Strategy

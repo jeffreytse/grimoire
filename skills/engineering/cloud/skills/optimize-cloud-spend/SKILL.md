@@ -3,6 +3,7 @@ name: optimize-cloud-spend
 description: Use when cloud costs are growing faster than usage, when preparing for budget reviews, or when seeking to reduce infrastructure spend without degrading performance
 source: FinOps Foundation "Cloud FinOps" (Storment & Fuller 2019); CNCF FinOps whitepaper; Gartner cloud optimization research (2022)
 tags: [cloud, finops, cost-optimization, infrastructure]
+verified: true
 ---
 
 # Optimize Cloud Spend

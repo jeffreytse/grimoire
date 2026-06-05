@@ -3,6 +3,7 @@ name: apply-pair-programming
 description: Use when onboarding new engineers, tackling high-complexity problems, debugging subtle issues, or when code quality and knowledge sharing are priorities over individual throughput
 source: Kent Beck "Extreme Programming Explained" (1999); Laurie Williams "The Collaborative Software Process" PhD dissertation (2000); Williams et al. IEEE Software study
 tags: [development, collaboration, code-quality, xp]
+verified: true
 ---
 
 # Apply Pair Programming

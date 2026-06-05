@@ -3,6 +3,7 @@ name: audit-network-security
 description: Use when assessing network security posture before a production launch, after a security incident, during compliance assessment, or on a periodic security review cycle
 source: NIST SP 800-115 Technical Guide to Information Security Testing; CIS Controls v8; PCI DSS v4.0 assessment guidelines
 tags: [networking, security, audit, compliance]
+verified: true
 ---
 
 # Audit Network Security

@@ -3,6 +3,7 @@ name: plan-sprint
 description: Use when starting a new sprint — to review the backlog, set the sprint goal, select stories, estimate capacity, and assign work before the team begins execution.
 source: The Scrum Guide (Schwaber & Sutherland 2020), Atlassian Agile Coach documentation, Shape Up (Basecamp, 2019)
 tags: [sprint-planning, scrum, agile, capacity-planning, backlog, estimation, team-coordination, delivery]
+verified: true
 ---
 
 # Plan Sprint

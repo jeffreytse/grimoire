@@ -3,6 +3,7 @@ name: apply-phonetics-training
 description: Use when a learner needs to develop accurate pronunciation and phonological discrimination in a target language using IPA-grounded techniques
 source: IPA (International Phonetic Association) alphabet and transcription standards; Ladefoged "A Course in Phonetics" (2014); ACTFL pronunciation standards
 tags: [phonetics, pronunciation, IPA, articulation]
+verified: true
 ---
 
 # Apply Phonetics Training

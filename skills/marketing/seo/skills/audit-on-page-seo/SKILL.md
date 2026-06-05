@@ -3,6 +3,7 @@ name: audit-on-page-seo
 description: Use when auditing a webpage's on-page SEO factors to identify ranking gaps and technical issues
 source: Google Search Essentials, Moz On-Page Ranking Factors Study, Google Core Web Vitals documentation
 tags: [seo, on-page, audit, core-web-vitals, technical-seo, content-optimization]
+verified: true
 ---
 
 # Audit On-Page SEO

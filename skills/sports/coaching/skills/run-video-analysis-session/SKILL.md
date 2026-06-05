@@ -3,6 +3,7 @@ name: run-video-analysis-session
 description: Use when a coach needs to use recorded footage to identify tactical patterns, technical errors, or opponent tendencies and translate them into actionable coaching points
 source: NFHS coaching education; Franks & McGarry "The Science of Match Analysis" (1996); UEFA coaching license tactical curriculum
 tags: [video-analysis, performance-analysis, tactics, technique, coaching]
+verified: true
 ---
 
 # Run Video Analysis Session

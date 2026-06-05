@@ -3,6 +3,7 @@ name: apply-rule-of-thirds
 description: Use when composing a photograph and need to position subjects and horizon lines for visual impact
 source: Bryan Peterson "Understanding Composition" (2012), New York Institute of Photography curriculum, golden ratio photographic application studies
 tags: [photography, composition, rule-of-thirds, framing, visual-weight, golden-ratio, balance]
+verified: true
 ---
 
 # Apply Rule of Thirds

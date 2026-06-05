@@ -3,6 +3,7 @@ name: write-content-brief
 description: Use when briefing a writer or AI to produce a piece of content that must rank and convert
 source: HubSpot Content Marketing Certification, Clearscope Content Brief Methodology, Animalz Content Strategy
 tags: [content-marketing, content-brief, seo, search-intent, competitor-analysis, briefing]
+verified: true
 ---
 
 # Write Content Brief

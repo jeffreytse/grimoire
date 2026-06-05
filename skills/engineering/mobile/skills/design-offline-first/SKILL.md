@@ -3,6 +3,7 @@ name: design-offline-first
 description: Use when designing a mobile or web application that must function without a reliable network connection
 source: "Offline First (offlinefirst.org); CouchDB Guide (Apache); 'Designing Offline-First Web Applications' (A List Apart, Alex Feyerke, 2013)"
 tags: [mobile, offline-first, sync, conflict-resolution, service-worker, pwa, couchdb]
+verified: true
 ---
 
 # Design Offline-First

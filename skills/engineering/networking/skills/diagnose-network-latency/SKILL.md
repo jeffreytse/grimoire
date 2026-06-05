@@ -3,6 +3,7 @@ name: diagnose-network-latency
 description: Use when users report slow response times, when SLO latency budgets are breached, or when investigating the network layer as a performance bottleneck
 source: Brendan Gregg "Systems Performance" (2020, 2nd ed.); Google SRE Workbook latency chapter; RFC 6349 TCP throughput testing
 tags: [networking, performance, debugging, observability]
+verified: true
 ---
 
 # Diagnose Network Latency

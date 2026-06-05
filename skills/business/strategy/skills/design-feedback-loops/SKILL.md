@@ -3,6 +3,7 @@ name: design-feedback-loops
 description: Use when designing organizational processes, product iteration cycles, or performance systems and need to identify what feedback exists, what is missing, and how to make it faster or more accurate.
 source: Donella Meadows, "Thinking in Systems", 2008; Norbert Wiener, "Cybernetics", 1948; Peter Senge, "The Fifth Discipline", 1990
 tags: [systems-thinking, feedback, organizational-design, strategist, cycle-time, adaptation-speed]
+verified: true
 related: [apply-systems-iceberg]
 ---
 

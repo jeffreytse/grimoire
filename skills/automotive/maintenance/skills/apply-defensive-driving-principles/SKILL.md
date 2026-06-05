@@ -3,6 +3,7 @@ name: apply-defensive-driving-principles
 description: Use when coaching a driver, self-assessing driving habits, or building a safe-driving curriculum to reduce crash risk
 source: NSF "Defensive Driving" curriculum; AAA Foundation for Traffic Safety research; Smith System "5 Keys to Space Cushion Driving"
 tags: [automotive, driving, safety, defensive-driving]
+verified: true
 ---
 
 # Apply Defensive Driving Principles

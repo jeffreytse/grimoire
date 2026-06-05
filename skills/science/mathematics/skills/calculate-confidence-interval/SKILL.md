@@ -3,6 +3,7 @@ name: calculate-confidence-interval
 description: Use when reporting statistical estimates that require quantified uncertainty bounds for scientific, clinical, or policy decision-making
 source: Neyman "Outline of a Theory of Statistical Estimation" (1937); Fisher "Statistical Methods for Research Workers" (1925); APA statistical reporting guidelines
 tags: [statistics, confidence-interval, inference, reporting]
+verified: true
 ---
 
 # Calculate Confidence Interval

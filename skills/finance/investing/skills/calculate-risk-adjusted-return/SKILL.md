@@ -3,6 +3,7 @@ name: calculate-risk-adjusted-return
 description: Use when evaluating investment performance on a risk-adjusted basis using Sharpe ratio, Treynor ratio, Jensen's alpha, or Sortino ratio
 source: Sharpe ratio (Sharpe 1966); CFA Institute curriculum; Jensen's alpha and Treynor ratio methodology
 tags: [investing, risk-adjusted-return, portfolio-analysis, performance-evaluation]
+verified: true
 ---
 
 # Calculate Risk-Adjusted Return

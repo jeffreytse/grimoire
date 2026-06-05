@@ -3,6 +3,7 @@ name: apply-deep-work
 description: Use when planning sessions for cognitively demanding work that requires sustained uninterrupted concentration
 source: Cal Newport, "Deep Work" (2016); Gloria Mark, UC Irvine attention residue research (2008)
 tags: [focus, deep-work, concentration, cognitive-performance, scheduling, distraction-free]
+verified: true
 ---
 
 # Apply Deep Work

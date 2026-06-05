@@ -3,6 +3,7 @@ name: design-logo-system
 description: Use when designing a logo and its variants, usage rules, and application system across print, digital, and environmental contexts
 source: Airey "Logo Design Love" (2010); Pentagram design methodology; Neumeier "The Brand Gap" (2003) identity chapter
 tags: [logo, branding, identity, visual-design, brand-system]
+verified: true
 ---
 
 # Design Logo System

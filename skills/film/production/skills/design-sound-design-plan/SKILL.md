@@ -3,6 +3,7 @@ name: design-sound-design-plan
 description: Use when developing the sound approach for a film project and need a structured plan covering production audio, sound design, music, and mix strategy
 source: Cinema Audio Society (CAS) standards; Walter Murch "In the Blink of an Eye" (2001); SMPTE audio standards for film
 tags: [sound-design, audio, post-production, film-production, music, mixing]
+verified: true
 ---
 
 # Design Sound Design Plan

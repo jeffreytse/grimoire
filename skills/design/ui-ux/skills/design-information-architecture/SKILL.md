@@ -3,6 +3,7 @@ name: design-information-architecture
 description: Use when organizing content, navigation, or features in a product so users can find what they need without confusion
 source: Peter Morville & Louis Rosenfeld "Information Architecture" (4th ed., 2015); Nielsen Norman Group IA Guidelines
 tags: [information-architecture, navigation, ux, card-sorting, tree-testing, content-strategy]
+verified: true
 ---
 
 # Design Information Architecture

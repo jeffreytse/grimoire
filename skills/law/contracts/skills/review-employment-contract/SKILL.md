@@ -3,6 +3,7 @@ name: review-employment-contract
 description: Use when reviewing an employment agreement, offer letter, or independent contractor agreement before signing
 source: ABA Section of Labor and Employment Law employment contract guidance; NLRA (National Labor Relations Act); State-specific employment law (California, New York, Texas have material differences)
 tags: [law, employment, contracts, non-compete, ip-assignment, at-will]
+verified: true
 ---
 
 # Review Employment Contract

@@ -3,6 +3,7 @@ name: write-mix-notes
 description: Use when documenting mix revision requests, feedback sessions, or communicating changes between mixer and client
 source: AES (Audio Engineering Society) professional workflow standards, major label mix revision practices
 tags: [music, mixing, revision, feedback, workflow, communication, timestamped-notes]
+verified: true
 ---
 
 # Write Mix Notes

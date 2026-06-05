@@ -3,6 +3,7 @@ name: run-contract-due-diligence
 description: Use when reviewing contracts systematically for M&A transactions, investment rounds, vendor onboarding, or any situation requiring comprehensive risk identification across a contract portfolio
 source: ABA "Model Mergers & Acquisitions Due Diligence Checklist" (2022); IACCM/World Commerce & Contracting "Commitment Management Best Practices" (2021); Practical Law Contract Review Methodology; Adams "A Manual of Style for Contract Drafting" (4th ed., 2017)
 tags: [due-diligence, contracts, m-and-a, legal-review, risk-assessment, vendor-management]
+verified: true
 ---
 
 # Run Contract Due Diligence

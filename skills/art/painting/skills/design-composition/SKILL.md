@@ -3,6 +3,7 @@ name: design-composition
 description: Use when arranging visual elements within a picture plane to create unity, tension, movement, and focal hierarchy
 source: Edgar Payne "Composition of Outdoor Painting" (1941); Rudolf Arnheim "Art and Visual Perception" (1954); RISD/SVA composition curricula
 tags: [composition, painting, design, visual-hierarchy]
+verified: true
 ---
 
 # Design Composition

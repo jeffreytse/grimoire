@@ -3,6 +3,7 @@ name: design-brand-voice-guidelines
 description: Use when defining or documenting a brand's tone, vocabulary, and communication style for use across marketing, product, and customer touchpoints
 source: Neumeier "The Brand Gap" (2003); Aaker "Building Strong Brands" (1996); Mailchimp Voice and Tone guide (industry reference)
 tags: [branding, voice, tone, copywriting, communication]
+verified: true
 ---
 
 # Design Brand Voice Guidelines

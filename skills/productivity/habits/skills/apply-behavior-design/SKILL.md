@@ -3,6 +3,7 @@ name: apply-behavior-design
 description: Use when designing systems to create new habits, break existing ones, or change behavior using evidence-based behavior design principles
 source: BJ Fogg "Tiny Habits" (2019); Fogg Behavior Model (B=MAP); Duhigg "The Power of Habit" (2012) habit loop
 tags: [behavior-design, habits, behavior-change, motivation, psychology]
+verified: true
 ---
 
 # Apply Behavior Design

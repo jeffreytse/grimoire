@@ -3,6 +3,7 @@ name: design-ppc-campaign
 description: Use when building a pay-per-click search advertising campaign including keyword strategy, ad structure, bidding, and measurement
 source: Google Ads best practices guide; WordStream PPC research; Szetela & Kerschbaum "Pay-Per-Click Search Engine Marketing" (2010)
 tags: [ppc, paid-ads, google-ads, sem, advertising]
+verified: true
 ---
 
 # Design PPC Campaign

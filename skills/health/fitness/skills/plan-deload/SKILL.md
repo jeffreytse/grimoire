@@ -3,6 +3,7 @@ name: plan-deload
 description: Use when planning a recovery week to dissipate accumulated training fatigue and restore performance
 source: Mike Israetel "Renaissance Periodization" volume landmark research; Greg Nuckols' Stronger by Science deload research synthesis; NSCA CSCS curriculum on periodization
 tags: [health, fitness, deload, recovery, periodization, fatigue-management]
+verified: true
 ---
 
 # Plan Deload

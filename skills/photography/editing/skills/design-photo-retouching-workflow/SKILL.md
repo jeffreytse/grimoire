@@ -3,6 +3,7 @@ name: design-photo-retouching-workflow
 description: Use when establishing a systematic photo retouching workflow for portrait, product, or commercial image post-production
 source: NAPP (National Association of Photoshop Professionals) retouching standards; Scott Kelby "The Adobe Photoshop Book for Digital Photographers" (2020); ASMP digital imaging guidelines
 tags: [retouching, photoshop, post-production, editing, workflow]
+verified: true
 ---
 
 # Design Photo Retouching Workflow

@@ -3,6 +3,7 @@ name: apply-mise-en-place
 description: Use when preparing to cook any dish and need to organize ingredients, tools, and workspace before heat is applied
 source: Auguste Escoffier "Le Guide Culinaire" (1903); Culinary Institute of America curriculum; Jacques Pépin "La Technique" (1976)
 tags: [cooking, preparation, organization, professional, workflow]
+verified: true
 ---
 
 # Apply Mise en Place

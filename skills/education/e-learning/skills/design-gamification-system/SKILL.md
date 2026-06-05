@@ -3,6 +3,7 @@ name: design-gamification-system
 description: Use when adding gamification mechanics to a learning, product, or engagement system to increase motivation, participation, and completion
 source: Kapp "The Gamification of Learning and Instruction" (2012); Deterding et al. "From Game Design Elements to Gamefulness" (2011); Gartner gamification research
 tags: [gamification, engagement, learning, motivation, game-design]
+verified: true
 ---
 
 # Design Gamification System

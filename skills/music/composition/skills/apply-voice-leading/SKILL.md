@@ -3,6 +3,7 @@ name: apply-voice-leading
 description: Use when arranging chords for multiple voices or instruments and need smooth, musical part movement
 source: Arnold Schoenberg "Harmonielehre" (1911), Walter Piston "Harmony" (1941), Berklee Harmony IV curriculum
 tags: [music, composition, voice-leading, harmony, counterpoint, arrangement, four-part-writing]
+verified: true
 ---
 
 # Apply Voice Leading

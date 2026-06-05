@@ -3,6 +3,7 @@ name: apply-regenerative-agriculture
 description: Use when designing or transitioning agricultural land management to practices that restore soil health, sequester carbon, and enhance biodiversity while maintaining or improving productivity.
 source: Rodale Institute "Regenerative Organic Agriculture and Climate Change" (2014); USDA NRCS Soil Health principles; Land Institute (Wes Jackson research)
 tags: [agriculture, soil-health, carbon-sequestration, biodiversity, regenerative]
+verified: true
 ---
 
 # Apply Regenerative Agriculture

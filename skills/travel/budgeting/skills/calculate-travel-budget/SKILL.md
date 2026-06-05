@@ -3,6 +3,7 @@ name: calculate-travel-budget
 description: Use when estimating the total cost of a trip, setting a travel budget, or determining how long savings will last while traveling
 source: Nomadic Matt "How to Travel the World on $50 a Day" (2013); Lonely Planet budget travel methodology; ASTA travel cost estimation guidelines
 tags: [travel, budgeting, finance, planning]
+verified: true
 ---
 
 # Calculate Travel Budget

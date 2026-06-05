@@ -3,6 +3,7 @@ name: design-climate-risk-assessment
 description: Use when an organization or community needs to identify, assess, and prioritize physical and transition climate risks to assets, operations, and finances
 source: TCFD "Recommendations of the Task Force on Climate-related Financial Disclosures" (2017); IPCC AR6 Working Group II (2022); ISO 14090 Climate Change Adaptation (2019); GRI 201/305
 tags: [climate-risk, tcfd, sustainability, resilience, scenario-analysis, esg]
+verified: true
 ---
 
 # Design Climate Risk Assessment

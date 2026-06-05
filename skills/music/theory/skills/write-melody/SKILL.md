@@ -3,6 +3,7 @@ name: write-melody
 description: Use when composing an original melody for a song, theme, or melodic exercise
 source: Coker "Patterns for Jazz" (1970); Berklee melody writing curriculum; Schoenberg "Fundamentals of Musical Composition" (1967)
 tags: [music-theory, melody-writing, composition, songwriting]
+verified: true
 ---
 
 # Write Melody

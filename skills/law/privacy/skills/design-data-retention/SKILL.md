@@ -3,6 +3,7 @@ name: design-data-retention
 description: Use when establishing or reviewing a data retention and deletion policy for personal or business data
 source: GDPR Article 5(1)(e) storage limitation principle; ISO/IEC 27001:2022 Annex A 8.10 (Information deletion); NIST SP 800-188 De-identifying Government Datasets; legal hold requirements under FRCP Rule 37
 tags: [law, privacy, data-retention, gdpr, iso-27001, legal-hold, storage-limitation]
+verified: true
 ---
 
 # Design Data Retention

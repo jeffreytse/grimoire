@@ -3,6 +3,7 @@ name: design-multi-region-architecture
 description: Use when designing systems that must survive regional outages, minimize global latency, or meet geographic data residency requirements
 source: AWS Well-Architected Framework (Reliability Pillar); Google Cloud Architecture Framework; NIST SP 800-34 contingency planning
 tags: [cloud, reliability, architecture, disaster-recovery]
+verified: true
 ---
 
 # Design Multi-Region Architecture

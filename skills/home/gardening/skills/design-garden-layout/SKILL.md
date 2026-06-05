@@ -3,6 +3,7 @@ name: design-garden-layout
 description: Use when planning a new garden bed, redesigning an existing landscape, or laying out a vegetable, herb, or ornamental garden
 source: Royal Horticultural Society "Garden Design" (2021); ASLA "Residential Landscape Design Guidelines" (2022); Cornell Cooperative Extension "Master Gardener Curriculum" (2023)
 tags: [gardening, garden-design, landscape, planting]
+verified: true
 ---
 
 # Design Garden Layout

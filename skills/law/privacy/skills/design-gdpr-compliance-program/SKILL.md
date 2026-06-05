@@ -3,6 +3,7 @@ name: design-gdpr-compliance-program
 description: Use when designing or auditing a GDPR compliance program for an organization that processes personal data of EU/EEA residents
 source: EDPB (European Data Protection Board) guidelines; ICO (UK Information Commissioner's Office) GDPR guidance; GDPR Articles 5, 6, 25, 32
 tags: [privacy-law, gdpr, data-protection, compliance]
+verified: true
 ---
 
 # Design GDPR Compliance Program

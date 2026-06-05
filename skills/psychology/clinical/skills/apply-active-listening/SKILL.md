@@ -3,6 +3,7 @@ name: apply-active-listening
 description: Use when supporting someone through emotional difficulty, conducting a therapeutic conversation, or any context requiring deep comprehension and trust-building
 source: Carl Rogers "Client-Centered Therapy" (1951); Miller & Rollnick "Motivational Interviewing" (2013); Gordon "Parent Effectiveness Training" (1970)
 tags: [listening, empathy, therapeutic-alliance, communication, counseling]
+verified: true
 ---
 
 # Apply Active Listening

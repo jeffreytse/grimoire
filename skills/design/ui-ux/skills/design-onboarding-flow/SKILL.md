@@ -3,6 +3,7 @@ name: design-onboarding-flow
 description: Use when designing or redesigning a user onboarding flow for a SaaS or digital product where activation rate, time-to-value, or early churn are problems.
 source: Intercom "The Onboarding Manifesto" (2020); Bush "Product-Led Growth" (2019); Appcues "The State of Product Onboarding" (2023); Ramli John "Delete Your Drip" methodology; Samuel Hulick "The User Onboarding Academy"
 tags: [ux, onboarding, product-led-growth, activation, saas]
+verified: true
 ---
 
 # Design a User Onboarding Flow

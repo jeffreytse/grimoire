@@ -3,6 +3,7 @@ name: design-api-versioning-strategy
 description: Use when designing public or partner APIs that must evolve without breaking existing integrations, or when API changes are causing client disruption
 source: Microsoft REST API Guidelines versioning section; Stripe API versioning model (industry reference); Roy Fielding REST dissertation (2000)
 tags: [architecture, api, versioning, rest]
+verified: true
 ---
 
 # Design API Versioning Strategy

@@ -3,6 +3,7 @@ name: write-adr
 description: Use when a significant technical decision is being made or has just been made — including technology choices, architectural patterns, API contracts, data models, or security boundaries. Use before implementing a decision that would be costly to reverse.
 source: Michael Nygard "Documenting Architecture Decisions" (2011, cognitect.com/blog); ThoughtWorks Technology Radar; adopted at Amazon, Spotify, GitHub
 tags: [architecture, decision-record, documentation, technical-writing, governance, adr]
+verified: true
 ---
 
 # Write ADR

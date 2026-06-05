@@ -3,6 +3,7 @@ name: apply-systems-iceberg
 description: Use when a problem keeps recurring despite fixes, when a team is reacting to events without understanding why they happen, or when a decision needs structural rather than symptomatic treatment.
 source: Peter Senge, "The Fifth Discipline", 1990 (MIT Sloan); Donella Meadows, "Thinking in Systems", 2008
 tags: [systems-thinking, root-cause, organizational-learning, strategist, problem-recurrence, structural-diagnosis]
+verified: true
 ---
 
 # Apply Systems Iceberg

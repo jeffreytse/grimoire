@@ -3,6 +3,7 @@ name: design-social-influence-strategy
 description: Use when designing persuasive communication, ethical influence campaigns, or analyzing why a message is failing to shift attitudes or behavior
 source: Robert Cialdini "Influence: The Psychology of Persuasion" (1984); Milgram social influence research; Cialdini "Pre-Suasion" (2016)
 tags: [persuasion, influence, social-psychology, communication, ethics]
+verified: true
 ---
 
 # Design Social Influence Strategy

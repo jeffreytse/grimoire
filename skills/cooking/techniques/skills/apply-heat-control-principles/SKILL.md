@@ -3,6 +3,7 @@ name: apply-heat-control-principles
 description: Use when cooking proteins, vegetables, or sauces and need to select the correct heat level, transfer method, and timing to achieve target texture and flavor
 source: Harold McGee "On Food and Cooking" (1984, rev. 2004); CIA "The Professional Chef" (9th ed.); Maillard reaction science (Maillard 1912, applied by McGee)
 tags: [cooking, heat, technique, maillard-reaction, temperature]
+verified: true
 ---
 
 # Apply Heat Control Principles

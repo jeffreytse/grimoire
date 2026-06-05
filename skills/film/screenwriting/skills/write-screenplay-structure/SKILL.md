@@ -3,6 +3,7 @@ name: write-screenplay-structure
 description: Use when developing a screenplay and need to establish a sound dramatic structure before writing scenes or dialogue
 source: Robert McKee "Story" (1997); Syd Field "Screenplay" (1979); WGA (Writers Guild of America) format standards
 tags: [screenwriting, story-structure, screenplay, development, film-writing]
+verified: true
 ---
 
 # Write Screenplay Structure

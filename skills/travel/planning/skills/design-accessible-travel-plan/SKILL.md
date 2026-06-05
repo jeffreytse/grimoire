@@ -3,6 +3,7 @@ name: design-accessible-travel-plan
 description: Use when planning travel for people with disabilities, mobility limitations, sensory impairments, or chronic health conditions
 source: SATH (Society for Accessible Travel and Hospitality) standards; Open Doors Organization accessibility research; ADA accessibility travel guidelines
 tags: [travel, accessibility, disability, inclusive-design]
+verified: true
 ---
 
 # Design Accessible Travel Plan

@@ -3,6 +3,7 @@ name: write-character-arc
 description: Use when developing a protagonist or major character's internal transformation across a story
 source: "Creating Character Arcs (K.M. Weiland, 2016); The Emotional Craft of Fiction (Donald Maass, 2016)"
 tags: [character, arc, protagonist, transformation, storytelling, novel]
+verified: true
 ---
 
 # Write Character Arc

@@ -3,6 +3,7 @@ name: design-go-to-market-strategy
 description: Use when launching a new product, entering a new market, or planning the commercialization approach for a startup or new business unit
 source: Geoffrey Moore "Crossing the Chasm" (1991); Salesforce GTM framework; HBR go-to-market strategy research
 tags: [entrepreneurship, go-to-market, gtm, strategy, growth, product-launch]
+verified: true
 ---
 
 # Design Go-to-Market Strategy

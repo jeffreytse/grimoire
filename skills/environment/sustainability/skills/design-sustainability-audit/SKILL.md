@@ -3,6 +3,7 @@ name: design-sustainability-audit
 description: Use when assessing an organization's environmental management practices, compliance status, and sustainability performance against recognized standards.
 source: ISO 14001:2015 Environmental Management Systems; GRI Standards (Global Reporting Initiative, 2016); EMAS EU Eco-Management Audit Scheme
 tags: [audit, sustainability, iso14001, compliance, reporting]
+verified: true
 ---
 
 # Design Sustainability Audit

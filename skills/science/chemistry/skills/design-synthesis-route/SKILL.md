@@ -3,6 +3,7 @@ name: design-synthesis-route
 description: Use when planning a multi-step chemical synthesis from a target molecule back to available starting materials
 source: Corey & Cheng "The Logic of Chemical Synthesis" (1989); Warren & Wyatt "Organic Synthesis: The Disconnection Approach" (2008); SciFinder/Reaxys synthetic planning methodology
 tags: [chemistry, synthesis, retrosynthesis, organic-chemistry]
+verified: true
 ---
 
 # Design Synthesis Route

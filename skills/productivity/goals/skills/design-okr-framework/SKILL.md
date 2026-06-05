@@ -3,6 +3,7 @@ name: design-okr-framework
 description: Use when setting up an OKR (Objectives and Key Results) system for a team or organization to align goals and measure progress
 source: Doerr "Measure What Matters" (2018); Grove "High Output Management" (1983) MBO/OKR origin; Google OKR implementation (Patel & Lamorte methodology)
 tags: [okr, goals, strategy, measurement, alignment]
+verified: true
 ---
 
 # Design OKR Framework

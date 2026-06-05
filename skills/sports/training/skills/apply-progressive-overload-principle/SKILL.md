@@ -3,6 +3,7 @@ name: apply-progressive-overload-principle
 description: Use when designing resistance, endurance, or skill training programs that must produce continuous adaptation without plateauing or causing injury
 source: NSCA "Essentials of Strength Training and Conditioning" (4th ed.); DeLorme & Watkins progressive resistance exercise research (1948); Schoenfeld "The Mechanisms of Muscle Hypertrophy" JSCR (2010)
 tags: [progressive-overload, strength, hypertrophy, adaptation, training-design]
+verified: true
 ---
 
 # Apply Progressive Overload Principle

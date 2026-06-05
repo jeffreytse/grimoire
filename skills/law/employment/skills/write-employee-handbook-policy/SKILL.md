@@ -3,6 +3,7 @@ name: write-employee-handbook-policy
 description: Use when writing or updating an employee handbook policy on any employment matter including conduct, leave, compensation, or workplace practices
 source: SHRM employee handbook guidelines; NLRB (National Labor Relations Board) handbook policy compliance; Fisher & Phillips "Employment Law" handbook standards
 tags: [employment-law, hr-policy, employee-handbook, workplace-compliance]
+verified: true
 ---
 
 # Write Employee Handbook Policy

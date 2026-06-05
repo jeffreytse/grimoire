@@ -3,6 +3,7 @@ name: diagnose-sleep-issue
 description: Use when identifying the likely cause and type of a sleep problem to guide appropriate intervention or referral
 source: American Academy of Sleep Medicine (AASM) ICSD-3 classification; CBT-I (Cognitive Behavioral Therapy for Insomnia) protocol — Morin & Espie; NIH consensus on sleep disorders
 tags: [health, sleep, insomnia, sleep-disorder, cbt-i, diagnosis, sleep-diary]
+verified: true
 ---
 
 # Diagnose Sleep Issue

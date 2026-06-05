@@ -3,6 +3,7 @@ name: apply-sustainable-travel-principles
 description: Use when planning a trip with environmental and social responsibility goals, evaluating sustainable travel options, or reducing the negative impact of travel
 source: GSTC (Global Sustainable Tourism Criteria); UNWTO (UN World Tourism Organization) sustainable tourism guidelines; Responsible Travel Foundation principles
 tags: [travel, sustainability, environment, responsible-travel]
+verified: true
 ---
 
 # Apply Sustainable Travel Principles

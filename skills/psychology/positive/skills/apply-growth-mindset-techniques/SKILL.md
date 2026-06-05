@@ -3,6 +3,7 @@ name: apply-growth-mindset-techniques
 description: Use when someone is avoiding challenges, giving up after setbacks, or attributing ability rather than effort and strategy to performance outcomes
 source: Carol Dweck "Mindset: The New Psychology of Success" (2006); Blackwell, Trzesniewski & Dweck CDEP study (2007); PERTS growth mindset interventions
 tags: [growth-mindset, learning, effort, attribution, resilience]
+verified: true
 ---
 
 # Apply Growth Mindset Techniques

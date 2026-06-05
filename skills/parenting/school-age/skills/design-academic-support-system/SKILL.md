@@ -3,6 +3,7 @@ name: design-academic-support-system
 description: Use when a parent wants to build a structured home environment that supports a school-age child's academic success without creating dependency or conflict
 source: National PTA standards for family engagement; Joyce Epstein "School, Family, and Community Partnerships" (2009); Harvard Family Research Project
 tags: [academic, homework, school-engagement, school-age, family-involvement]
+verified: true
 ---
 
 # Design Academic Support System

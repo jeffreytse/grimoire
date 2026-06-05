@@ -3,6 +3,7 @@ name: design-online-course
 description: Use when designing an online course structure including learning objectives, module sequencing, assessment, and delivery format
 source: ADDIE instructional design model (US Army origins, 1975); Quality Matters rubric (MarylandOnline); Gagné "The Conditions of Learning" (1965) nine events
 tags: [online-course, instructional-design, e-learning, curriculum, assessment]
+verified: true
 ---
 
 # Design Online Course

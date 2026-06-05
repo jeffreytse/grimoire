@@ -3,6 +3,7 @@ name: design-slo
 description: Use when defining or reviewing service reliability targets, error budgets, or SLI/SLO/SLA structures for a service
 source: "Site Reliability Engineering (Google, 2016) Ch. 4; The Site Reliability Workbook (Google, 2018) Ch. 2; Alex Hidalgo 'Implementing Service Level Objectives' (2020)"
 tags: [sre, slo, reliability, error-budget, sli, availability, monitoring]
+verified: true
 ---
 
 # Design SLO

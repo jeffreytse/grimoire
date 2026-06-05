@@ -3,6 +3,7 @@ name: design-learning-objective
 description: Use when designing a course, lesson, module, or training program and need to define what learners will be able to do after instruction
 source: Benjamin Bloom et al. "Taxonomy of Educational Objectives" (1956); Anderson & Krathwohl revision (2001); Robert Mager "Preparing Instructional Objectives" (1962)
 tags: [learning-objectives, curriculum-design, blooms-taxonomy, instructional-design, education, assessment]
+verified: true
 ---
 
 # Design Learning Objective

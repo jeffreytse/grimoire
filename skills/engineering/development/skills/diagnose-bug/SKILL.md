@@ -3,6 +3,7 @@ name: diagnose-bug
 description: Use when a bug, test failure, crash, or unexpected behavior is reported — before proposing any fix. Use when behavior diverges from specification and the root cause is unknown.
 source: Systematic debugging methodology — rubber duck debugging (Pragmatic Programmer), git bisect (Linus Torvalds), scientific method applied to software (Mozilla Engineering, Google SRE)
 tags: [debugging, root-cause-analysis, bug-isolation, testing, reliability, developer]
+verified: true
 ---
 
 # Diagnose Bug

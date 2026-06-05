@@ -3,6 +3,7 @@ name: diagnose-memory-leak
 description: Use when a process shows continuously growing memory usage that doesn't stabilize, when OOM kills are occurring in production, or when heap dumps are needed to identify object accumulation
 source: Brendan Gregg "Systems Performance" (2020) memory chapter; Java/JVM GC analysis (Oracle docs); Gregg "BPF Performance Tools" (2019)
 tags: [performance, debugging, memory, reliability]
+verified: true
 ---
 
 # Diagnose Memory Leak

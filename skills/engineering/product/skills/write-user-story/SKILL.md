@@ -3,6 +3,7 @@ name: write-user-story
 description: Use when writing user stories, acceptance criteria, or backlog items for product features
 source: Mike Cohn "User Stories Applied" (Addison-Wesley 2004); INVEST criteria (Bill Wake, 2003); Gojko Adzic "Specification by Example" (Manning 2011)
 tags: [product, user-stories, agile, acceptance-criteria, invest, backlog]
+verified: true
 ---
 
 # Write User Story

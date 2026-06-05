@@ -3,6 +3,7 @@ name: run-design-sprint
 description: Use when a product team needs to answer a critical design or business question through rapid prototyping and user testing in one week
 source: Jake Knapp, John Zeratsky, Braden Kowitz "Sprint" (2016); Google Ventures Design Sprint methodology
 tags: [design-sprint, product-design, prototyping, user-research, innovation, team-facilitation]
+verified: true
 ---
 
 # Run Design Sprint

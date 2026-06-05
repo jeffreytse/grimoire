@@ -3,6 +3,7 @@ name: design-financial-reporting-system
 description: Use when designing or overhauling a financial reporting system for a company, including chart of accounts, reporting cadence, and management reporting structure
 source: GAAP (US Generally Accepted Accounting Principles, FASB); IFRS (International Financial Reporting Standards, IASB); SEC financial reporting requirements
 tags: [accounting, financial-reporting, gaap, ifrs]
+verified: true
 ---
 
 # Design Financial Reporting System

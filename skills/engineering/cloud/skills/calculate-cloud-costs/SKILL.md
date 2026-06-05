@@ -3,6 +3,7 @@ name: calculate-cloud-costs
 description: Use when estimating, forecasting, or auditing cloud infrastructure costs before provisioning, during architecture review, or at budget planning time
 source: FinOps Foundation "Cloud FinOps" (Storment & Fuller 2019); AWS Cost Explorer methodology; Google Cloud pricing calculator best practices
 tags: [cloud, finops, cost, budgeting]
+verified: true
 ---
 
 # Calculate Cloud Costs

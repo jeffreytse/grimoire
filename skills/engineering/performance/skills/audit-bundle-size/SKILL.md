@@ -3,6 +3,7 @@ name: audit-bundle-size
 description: Use when investigating JavaScript bundle size, slow Time to Interactive, or preparing a performance budget for a web application
 source: "web.dev 'Reduce JavaScript payloads' (Google); webpack-bundle-analyzer documentation; 'JavaScript Start-up Performance' (Addy Osmani, Google, 2017)"
 tags: [performance, bundle-size, javascript, webpack, tree-shaking, code-splitting, web-vitals]
+verified: true
 ---
 
 # Audit Bundle Size

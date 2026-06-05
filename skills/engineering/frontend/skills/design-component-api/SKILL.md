@@ -3,6 +3,7 @@ name: design-component-api
 description: Use when designing the props interface, composition model, or public API for a reusable React or UI component
 source: "Atomic Design (Brad Frost, 2013); 'Inversion of Control' pattern (Kent C. Dodds, 2020); React docs — Thinking in React"
 tags: [frontend, react, component-api, props, design-system, atomic-design, inversion-of-control]
+verified: true
 ---
 
 # Design Component API

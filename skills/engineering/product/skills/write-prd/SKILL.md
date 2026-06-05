@@ -3,6 +3,7 @@ name: write-prd
 description: Use when a new feature, product, or significant change needs to be defined before engineering begins — including greenfield features, major redesigns, API changes, or cross-team initiatives. Trigger when a problem or opportunity is validated and stakeholders need alignment before scoping work.
 source: Google PM spec format, Lenny Rachitsky PRD template (Lenny's Newsletter), productboard best practices, Shreyas Doshi product frameworks
 tags: [product, requirements, prd, alignment, user-stories, success-metrics, planning, stakeholders]
+verified: true
 ---
 
 # Write PRD

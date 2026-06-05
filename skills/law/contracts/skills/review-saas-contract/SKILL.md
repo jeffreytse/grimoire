@@ -3,6 +3,7 @@ name: review-saas-contract
 description: Use when reviewing a SaaS vendor or customer contract for legal and commercial risk
 source: American Bar Association (ABA) Model Cloud Computing Agreement; IACCM (International Association for Contract & Commercial Management) SaaS contract guidelines; NIST SP 800-146 Cloud Computing Synopsis
 tags: [law, contracts, saas, software, legal-review, sla, liability]
+verified: true
 ---
 
 # Review SaaS Contract

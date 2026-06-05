@@ -3,6 +3,7 @@ name: design-color-grading-workflow
 description: Use when establishing a color grading workflow for a film project that needs a consistent visual look from on-set monitoring through final deliverables
 source: SMPTE color standards; ASC CDL (Color Decision List) standard; Blackmagic Design DaVinci Resolve certification curriculum
 tags: [color-grading, post-production, color-science, workflow, DaVinci-Resolve, deliverables]
+verified: true
 ---
 
 # Design Color Grading Workflow

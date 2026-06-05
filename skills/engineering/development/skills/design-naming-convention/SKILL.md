@@ -3,6 +3,7 @@ name: design-naming-convention
 description: Use when establishing naming conventions for a new artifact type — APIs, database tables, files, functions, CLI commands, event names, skill libraries, or any identifier namespace that multiple contributors will add to over time.
 source: Google Style Guides (google.github.io/styleguide), Microsoft .NET Naming Guidelines, AWS API Design Guide, Linux kernel coding standards (kernel.org/doc/html/latest/process/coding-style.html)
 tags: [naming-inconsistency, style-guide, developer, architect, consistency, searchability, onboarding-speed]
+verified: true
 ---
 
 # Design Naming Convention

@@ -3,6 +3,7 @@ name: audit-marketing-funnel
 description: Use when diagnosing drop-off points, conversion bottlenecks, and performance gaps across marketing and sales funnel stages
 source: HubSpot "State of Marketing" annual report; Forrester customer journey research; Avinash Kaushik "Web Analytics 2.0" (2009)
 tags: [funnel, analytics, conversion, marketing, audit]
+verified: true
 ---
 
 # Audit Marketing Funnel

@@ -3,6 +3,7 @@ name: design-production-schedule
 description: Use when planning a film or commercial shoot and need to build a day-by-day production schedule that balances creative needs with crew, location, and budget constraints
 source: DGA (Directors Guild of America) production standards; PGA (Producers Guild of America) production management guidelines; AICP (Association of Independent Commercial Producers)
 tags: [production, scheduling, pre-production, film-management, budget, crew]
+verified: true
 ---
 
 # Design Production Schedule

@@ -3,6 +3,7 @@ name: design-pet-nutrition-plan
 description: Use when selecting food for a new pet, addressing weight issues, managing a diet-sensitive health condition, or reviewing an existing feeding regimen
 source: AAFCO "Official Publication" (2024); WSAVA Global Nutrition Guidelines (2011); NRC "Nutrient Requirements of Dogs and Cats" (2006)
 tags: [pet-nutrition, feeding, diet-planning, weight-management]
+verified: true
 ---
 
 # Design Pet Nutrition Plan

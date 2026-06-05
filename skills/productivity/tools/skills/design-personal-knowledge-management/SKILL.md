@@ -3,6 +3,7 @@ name: design-personal-knowledge-management
 description: Use when designing a personal knowledge management system to capture, organize, and retrieve notes, ideas, and information for future use
 source: Forte "Building a Second Brain" (2022); Tiago Forte CODE method (Capture, Organize, Distill, Express); Vannevar Bush "As We May Think" Atlantic (1945) memex concept
 tags: [pkm, knowledge-management, notes, second-brain, productivity]
+verified: true
 ---
 
 # Design Personal Knowledge Management System

@@ -3,6 +3,7 @@ name: write-scientific-abstract
 description: Use when drafting or revising a scientific abstract for a journal article, conference submission, or thesis
 source: IMRAD format — ANSI/NISO Z39.14; APA Publication Manual 7th ed.; CONSORT/PRISMA reporting standards
 tags: [biology, scientific-writing, abstract, IMRAD]
+verified: true
 ---
 
 # Write Scientific Abstract

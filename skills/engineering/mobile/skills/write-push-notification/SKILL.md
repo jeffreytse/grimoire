@@ -3,6 +3,7 @@ name: write-push-notification
 description: Use when writing copy for push notifications or designing a push notification permission and delivery strategy
 source: "Apple Human Interface Guidelines — Notifications; Google Material Design — Notifications; 'Mobile Push Notification Best Practices' (Urban Airship/Airship, 2023)"
 tags: [mobile, push-notification, copywriting, ux, permissions, engagement, ios, android]
+verified: true
 ---
 
 # Write Push Notification

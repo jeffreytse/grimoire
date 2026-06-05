@@ -3,6 +3,7 @@ name: audit-food-safety-practice
 description: Use when reviewing kitchen food safety practices, preparing for a health inspection, training staff on safe food handling, or investigating a foodborne illness incident
 source: ServSafe Manager Certification (National Restaurant Association); FDA Food Safety Modernization Act (FSMA 2011); HACCP principles (Pillsbury/NASA origin, FDA codified)
 tags: [food-safety, haccp, kitchen-management, health-compliance, audit]
+verified: true
 ---
 
 # Audit Food Safety Practice

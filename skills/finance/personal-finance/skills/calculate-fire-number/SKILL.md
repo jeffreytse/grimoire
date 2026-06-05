@@ -3,6 +3,7 @@ name: calculate-fire-number
 description: Use when determining the portfolio size needed to retire early and sustain spending indefinitely
 source: Trinity Study (Cooley, Hubbard, Walz 1998, updated 2011); William Bernstein "The Four Pillars of Investing"; ERN Safe Withdrawal Rate series
 tags: [finance, personal-finance, fire, retirement, safe-withdrawal-rate, financial-independence]
+verified: true
 ---
 
 # Calculate FIRE Number

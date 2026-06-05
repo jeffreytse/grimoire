@@ -3,6 +3,7 @@ name: calculate-npv-irr
 description: Use when evaluating capital investments, projects, or acquisitions using Net Present Value and Internal Rate of Return analysis
 source: CFA Institute curriculum; Brealey Myers "Principles of Corporate Finance"; Fisher "The Theory of Interest" (1930)
 tags: [corporate-finance, npv, irr, capital-budgeting]
+verified: true
 ---
 
 # Calculate NPV and IRR

@@ -3,6 +3,7 @@ name: design-professional-dress-code-policy
 description: Use when creating, updating, or auditing a workplace dress code policy that is legally compliant, inclusive, and clearly enforceable
 source: SHRM (Society for Human Resource Management) workplace policy guidelines; EEOC dress code compliance guidelines; HR professional standards (WorldatWork)
 tags: [fashion, policy, hr, workplace, compliance]
+verified: true
 ---
 
 # Design Professional Dress Code Policy

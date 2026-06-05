@@ -3,6 +3,7 @@ name: design-portrait-session
 description: Use when planning and executing a portrait photography session including lighting, posing, location, and client communication
 source: WPPI (Wedding and Portrait Photographers International) professional standards; Lindsey Adler "The Art of Seeing" (2015); PPA (Professional Photographers of America) portrait guidelines
 tags: [portrait, photography, lighting, posing, session-planning]
+verified: true
 ---
 
 # Design Portrait Session

@@ -3,6 +3,7 @@ name: design-documentation-structure
 description: Use when organizing or reorganizing documentation for a project, product, or knowledge base
 source: "Diátaxis framework (Daniele Procida, 2017); Google Developer Documentation Style Guide"
 tags: [documentation, information-architecture, diataxis, technical-writing, structure]
+verified: true
 ---
 
 # Design Documentation Structure

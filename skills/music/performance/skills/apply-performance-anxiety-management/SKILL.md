@@ -3,6 +3,7 @@ name: apply-performance-anxiety-management
 description: Use when managing music performance anxiety before, during, or after a performance, or when developing a systematic approach to stage fright
 source: Kenny "The Psychology of Music Performance Anxiety" (2011); ICSOM (International Conference of Symphony and Opera Musicians) health research; Nubé "Beta-Blockers: Effects on Performing Musicians" Medical Problems of Performing Artists (1994)
 tags: [music-performance, performance-anxiety, stage-fright, mental-skills]
+verified: true
 ---
 
 # Apply Performance Anxiety Management

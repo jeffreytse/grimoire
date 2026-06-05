@@ -3,6 +3,7 @@ name: audit-post-production-workflow
 description: Use when reviewing or troubleshooting a post-production pipeline to identify bottlenecks, technical risks, and compliance gaps before they cause delivery failures
 source: SMPTE post-production standards; DGA post-production supervision standards; Avid/Adobe Premiere industry workflow guidelines
 tags: [post-production, workflow, audit, editing, delivery, pipeline]
+verified: true
 ---
 
 # Audit Post-Production Workflow

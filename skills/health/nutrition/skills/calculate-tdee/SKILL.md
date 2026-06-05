@@ -3,6 +3,7 @@ name: calculate-tdee
 description: Use when estimating total daily energy expenditure to set caloric targets for weight management or performance
 source: Mifflin-St Jeor (1990) Journal of the American Dietetic Association; ACSM's Guidelines for Exercise Testing and Prescription (11th ed.); Harris-Benedict revised equation (Roza & Shizgal 1984)
 tags: [health, nutrition, tdee, calories, bmr, energy-expenditure]
+verified: true
 ---
 
 # Calculate TDEE

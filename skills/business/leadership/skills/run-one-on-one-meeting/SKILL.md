@@ -3,6 +3,7 @@ name: run-one-on-one-meeting
 description: Use when preparing for or facilitating a regular manager-to-direct-report one-on-one meeting to build trust, surface blockers, and develop the employee
 source: Manager Tools "One-on-One" podcast series (Horstman & Auzenne); Google re:Work "Manager Research" findings; Drucker "The Effective Executive" (1967)
 tags: [leadership, management, one-on-one, coaching, employee-development]
+verified: true
 ---
 
 # Run One-on-One Meeting

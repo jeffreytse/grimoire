@@ -3,6 +3,7 @@ name: design-biological-experiment
 description: Use when planning a biological experiment that requires controls, replication, and rigorous methodology to yield valid, reproducible results
 source: OECD Good Laboratory Practice (GLP) principles; Fisher "The Design of Experiments" (1935); Cold Spring Harbor Protocols experimental design guidelines
 tags: [biology, experiment-design, scientific-method, reproducibility]
+verified: true
 ---
 
 # Design Biological Experiment

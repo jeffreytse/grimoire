@@ -3,6 +3,7 @@ name: design-performance-review-system
 description: Use when building or redesigning an employee performance review process, evaluation framework, or feedback cadence for an organization
 source: Deloitte "Reinventing Performance Management" HBR (2015); Google re:Work performance management research; SHRM performance management guidelines
 tags: [hr, performance, feedback, talent-management, leadership]
+verified: true
 ---
 
 # Design Performance Review System

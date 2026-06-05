@@ -3,6 +3,7 @@ name: design-patent-strategy
 description: Use when developing an intellectual property patent strategy for a company, product line, or technology portfolio
 source: USPTO patent prosecution guidelines; WIPO "Making a Mark" IP strategy guide; IAM (Intellectual Asset Management) patent strategy framework
 tags: [ip-law, patents, ip-strategy, technology-law]
+verified: true
 ---
 
 # Design Patent Strategy

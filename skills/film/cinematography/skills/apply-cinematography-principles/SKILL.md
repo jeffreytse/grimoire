@@ -3,6 +3,7 @@ name: apply-cinematography-principles
 description: Use when making lens, exposure, lighting ratio, or camera movement decisions that must serve the story's emotional and narrative goals
 source: ASC (American Society of Cinematographers) manual; Blain Brown "Cinematography: Theory and Practice" (2011); AFI cinematography curriculum
 tags: [cinematography, lighting, lens, camera-movement, visual-storytelling, film]
+verified: true
 ---
 
 # Apply Cinematography Principles

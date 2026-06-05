@@ -3,6 +3,7 @@ name: design-data-quality-framework
 description: Use when designing a systematic data quality framework covering completeness, accuracy, consistency, timeliness, validity, and uniqueness across data pipelines and data warehouses
 source: DAMA International "DMBOK2: Data Management Body of Knowledge" 2nd ed. (2017); ISO 8000-8 "Data Quality" international standard; Redman T. "Data Quality: The Field Guide" (2001); Google "Data Quality Best Practices" (2022)
 tags: [data, data-quality, dmbok, data-engineering, pipelines, governance]
+verified: true
 ---
 
 # Design Data Quality Framework

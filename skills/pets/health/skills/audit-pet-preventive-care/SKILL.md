@@ -3,6 +3,7 @@ name: audit-pet-preventive-care
 description: Use when reviewing a pet's preventive care status, onboarding a new pet, preparing for an annual wellness visit, or identifying gaps in vaccination and parasite control
 source: AVMA wellness guidelines; AAHA "Preventive Healthcare Guidelines" (2019); WSAVA vaccination guidelines (2015)
 tags: [preventive-care, vaccination, parasite-control, wellness]
+verified: true
 ---
 
 # Audit Pet Preventive Care

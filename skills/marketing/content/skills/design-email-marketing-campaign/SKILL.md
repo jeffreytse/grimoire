@@ -3,6 +3,7 @@ name: design-email-marketing-campaign
 description: Use when planning or building an email marketing campaign including segmentation, sequencing, copy strategy, and performance measurement
 source: Mailchimp Email Marketing Benchmarks (annual); DMA (Data & Marketing Association) Email Marketing Guidelines; Litmus "State of Email" report
 tags: [email, marketing, campaign, automation, copywriting]
+verified: true
 ---
 
 # Design Email Marketing Campaign

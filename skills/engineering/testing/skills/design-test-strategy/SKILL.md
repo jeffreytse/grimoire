@@ -3,6 +3,7 @@ name: design-test-strategy
 description: Use when starting a new project, onboarding a codebase, auditing test coverage quality, or deciding where to invest testing effort across unit, integration, and end-to-end layers.
 source: Mike Cohn (Succeeding with Agile, 2009), Martin Fowler (martinfowler.com/bliki/TestPyramid), Google Testing Blog
 tags: [test-pyramid, test-strategy, coverage, integration-testing, e2e, developer, qa]
+verified: true
 ---
 
 # Design Test Strategy

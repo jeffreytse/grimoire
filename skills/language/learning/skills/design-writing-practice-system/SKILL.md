@@ -3,6 +3,7 @@ name: design-writing-practice-system
 description: Use when a learner needs a structured system to develop written accuracy, fluency, and register control in a target language
 source: CEFR writing descriptors (Council of Europe); Ferris "Treatment of Error in Second Language Student Writing" (2002); ACTFL writing proficiency guidelines
 tags: [writing, composition, error-correction, proficiency]
+verified: true
 ---
 
 # Design Writing Practice System

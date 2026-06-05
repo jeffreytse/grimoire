@@ -3,6 +3,7 @@ name: design-event-driven-system
 description: Use when designing systems that communicate through events, including event sourcing and CQRS architectures
 source: Martin Fowler "Event-Driven Architecture" (martinfowler.com); Greg Young "CQRS and Event Sourcing" talks; Vernon "Implementing Domain-Driven Design" (Addison-Wesley 2013)
 tags: [event-driven, event-sourcing, cqrs, architecture, messaging, kafka]
+verified: true
 ---
 
 # Design Event-Driven System

@@ -3,6 +3,7 @@ name: design-rubric
 description: Use when creating assessment rubrics for evaluating student work, projects, or performance with clear, objective criteria
 source: Wiggins & McTighe "Understanding by Design" (2005) UbD framework; Stevens & Levi "Introduction to Rubrics" (2012); Marzano "Designing and Teaching Learning Goals and Objectives" (2009)
 tags: [rubric, assessment, grading, education, evaluation]
+verified: true
 ---
 
 # Design Rubric

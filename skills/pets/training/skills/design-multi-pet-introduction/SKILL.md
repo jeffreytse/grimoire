@@ -3,6 +3,7 @@ name: design-multi-pet-introduction
 description: Use when introducing a new dog or cat to an existing pet household, managing inter-species or same-species introductions, or resolving inter-pet conflict
 source: ASPCA "Introducing a New Cat" and multi-pet guidelines; AAFP Multi-cat Household Guidelines (2013); APDT dog-to-dog introduction protocol
 tags: [multi-pet, pet-introduction, dog-cat, inter-pet-conflict]
+verified: true
 ---
 
 # Design Multi-Pet Introduction

@@ -3,6 +3,7 @@ name: apply-color-grading
 description: Use when color grading photographs to achieve a consistent look, mood, or brand aesthetic
 source: Adobe Color Methodology, VSCO Film emulation research, color theory application in photography (Itten "The Art of Color")
 tags: [photography, editing, color-grading, hsl, tone-curve, lightroom, color-theory, mood]
+verified: true
 ---
 
 # Apply Color Grading

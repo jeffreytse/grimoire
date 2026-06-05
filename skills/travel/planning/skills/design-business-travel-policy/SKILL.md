@@ -3,6 +3,7 @@ name: design-business-travel-policy
 description: Use when creating or revising a corporate travel policy, designing expense guidelines, or establishing travel management processes for an organization
 source: GBTA (Global Business Travel Association) policy guidelines; ACTE (Association of Corporate Travel Executives) best practices; Deloitte corporate travel management research
 tags: [travel, business, policy, corporate, expense-management]
+verified: true
 ---
 
 # Design Business Travel Policy

@@ -3,6 +3,7 @@ name: design-environmental-enrichment-plan
 description: Use when a dog shows boredom-related behaviors, destructive tendencies, excessive barking, or when setting up a new dog's living environment
 source: ASPCA Animal Behavior Center enrichment guidelines; IAABC "Behavioral Welfare Standards" (2019); Shepherdson "Tracing the Path of Environmental Enrichment" Zoo Biology (1998)
 tags: [enrichment, dog-welfare, behavioral-health, mental-stimulation]
+verified: true
 ---
 
 # Design Environmental Enrichment Plan

@@ -3,6 +3,7 @@ name: design-practice-routine
 description: Use when designing a structured music practice routine for skill development on any instrument or voice
 source: Ericsson "The Role of Deliberate Practice in the Acquisition of Expert Performance" PR (1993); Coyle "The Talent Code" (2009); Wristen "Adult Amateur Pianists" (2006) practice research
 tags: [music-performance, practice, skill-development, deliberate-practice]
+verified: true
 ---
 
 # Design Practice Routine

@@ -3,6 +3,7 @@ name: diagnose-brake-system-problem
 description: Use when experiencing brake warning signs such as noise, pulsation, pulling, soft pedal, or brake warning light to identify the fault before driving or seeking repair
 source: NHTSA brake safety standards; Federal Motor Vehicle Safety Standard 105 (FMVSS 105); ASE brake systems certification curriculum (A5)
 tags: [automotive, troubleshooting, brakes, safety]
+verified: true
 ---
 
 # Diagnose Brake System Problem

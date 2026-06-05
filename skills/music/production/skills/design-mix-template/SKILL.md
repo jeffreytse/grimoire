@@ -3,6 +3,7 @@ name: design-mix-template
 description: Use when setting up a DAW session template for mixing or starting a new production project
 source: Mike Senior "Mixing Secrets for the Small Studio" (2011), Pensado's Place mixing workflows, Pro Tools/Ableton session organization standards
 tags: [music, production, mixing, daw, template, gain-staging, bus-routing, organization]
+verified: true
 ---
 
 # Design Mix Template

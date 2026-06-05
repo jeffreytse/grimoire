@@ -3,6 +3,7 @@ name: apply-premortem
 description: Use when a plan is finalized but not yet launched, to surface failure modes the team hasn't acknowledged before commitment is locked in.
 source: Gary Klein, "Sources of Power" (1998); Klein "Performing a Project Premortem" Harvard Business Review (2007); adopted by Google Ventures and standard in decision-making research
 tags: [risk-analysis, decision-making, project-planning, strategy, cognitive-bias, mental-models, team-process]
+verified: true
 ---
 
 # Apply Premortem

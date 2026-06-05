@@ -3,6 +3,7 @@ name: design-landing-page-copy
 description: Use when writing or critiquing copy for a marketing landing page, product page, or conversion-focused web page
 source: "Copyhackers (Joanna Wiebe); Landing Page Optimization (Tim Ash, 2008); Nielsen Norman Group conversion research"
 tags: [copywriting, landing-page, conversion, marketing, headline, cta]
+verified: true
 ---
 
 # Design Landing Page Copy

@@ -3,6 +3,7 @@ name: design-stage-presence
 description: Use when developing stage presence, performance communication, and audience connection skills for any musical performance context
 source: Berklee performance curriculum; Lehmann et al. "Psychology for Musicians" (2007); Green & Gallwey "The Inner Game of Music" (1986)
 tags: [music-performance, stage-presence, performance-skills, audience-communication]
+verified: true
 ---
 
 # Design Stage Presence

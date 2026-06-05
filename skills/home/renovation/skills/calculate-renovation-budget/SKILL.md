@@ -3,6 +3,7 @@ name: calculate-renovation-budget
 description: Use when estimating the total cost of a home renovation project, allocating budget across trades, or stress-testing financial feasibility
 source: NKBA "Cost Guidelines for Kitchen and Bath" (2023); HomeAdvisor "True Cost Guide" (2023); Remodeling magazine "Cost vs. Value Report" (2024)
 tags: [renovation, budgeting, cost-estimation, home-improvement]
+verified: true
 ---
 
 # Calculate Renovation Budget

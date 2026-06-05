@@ -3,6 +3,7 @@ name: write-lab-report
 description: Use when writing a biology lab report in academic or research contexts following scientific reporting standards
 source: Nature Methods reporting standards, IMRaD format (ICMJE guidelines), APA Publication Manual 7th edition (biological sciences)
 tags: [science, biology, lab-report, imrad, scientific-writing, statistics, academic]
+verified: true
 ---
 
 # Write Lab Report

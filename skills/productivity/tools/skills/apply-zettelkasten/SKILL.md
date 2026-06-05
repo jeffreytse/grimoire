@@ -3,6 +3,7 @@ name: apply-zettelkasten
 description: Use when building a long-term knowledge base from reading, research, or learning that needs to generate new insights rather than just store information
 source: Niklas Luhmann, "Kommunikation mit Zettelkästen" (1981); Sönke Ahrens, "How to Take Smart Notes" (2017)
 tags: [knowledge-management, note-taking, zettelkasten, research, writing, learning]
+verified: true
 ---
 
 # Apply Zettelkasten

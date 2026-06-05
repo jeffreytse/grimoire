@@ -3,6 +3,7 @@ name: design-fermentation-process
 description: Use when developing a fermentation recipe or process for vegetables, dairy, grains, or beverages using controlled microbial activity.
 source: Katz "The Art of Fermentation" (2012); Caplice & Fitzgerald (1999) Food Microbiology; FDA Food Safety Modernization Act; USDA National Center for Home Food Preservation
 tags: [fermentation, cooking, food-science, world-cuisine, preservation, probiotics, microbiology]
+verified: true
 ---
 
 # Design Fermentation Process

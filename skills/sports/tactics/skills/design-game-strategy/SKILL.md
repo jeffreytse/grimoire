@@ -3,6 +3,7 @@ name: design-game-strategy
 description: Use when a coach needs to build a tactical game plan that exploits opponent weaknesses, leverages team strengths, and adapts to match context
 source: NFHS coaching education tactical framework; Hughes & Bartlett "The Use of Performance Indicators in Performance Analysis" Journal of Sports Sciences (2002); UEFA coaching license tactical curriculum
 tags: [tactics, game-strategy, performance-analysis, opponent-scouting, coaching]
+verified: true
 ---
 
 # Design Game Strategy

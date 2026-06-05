@@ -3,6 +3,7 @@ name: audit-domain
 description: Use when you need to assess the quality of all skills in a grimoire domain or sub-domain — before a release, after a bulk contribution, or when adopting a domain for the first time.
 source: Wikipedia Featured Article review criteria, npm package quality scoring, Apache project governance
 tags: [skill-quality, domain-health, bulk-review, maintainer, repo-health]
+verified: true
 ---
 
 # Audit Domain

@@ -3,6 +3,7 @@ name: design-casting-process
 description: Use when designing a casting process for a film or series that needs to be both creatively rigorous and professionally compliant with industry standards
 source: Casting Society of America (CSA) professional standards; Bonnie Gillespie "Self-Management for Actors" (2009); SAG-AFTRA casting guidelines
 tags: [casting, directing, pre-production, actors, audition, film-production]
+verified: true
 ---
 
 # Design Casting Process

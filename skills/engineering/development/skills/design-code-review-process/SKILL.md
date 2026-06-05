@@ -3,6 +3,7 @@ name: design-code-review-process
 description: Use when establishing or improving a team's code review workflow, when reviews are causing bottlenecks, or when quality issues are escaping review into production
 source: Google Engineering Practices Documentation (2019); Cohen et al. "Best Kept Secrets of Peer Code Review" SmartBear (2006); DORA State of DevOps Report (Forsgren et al. 2019)
 tags: [development, code-quality, process, team]
+verified: true
 ---
 
 # Design Code Review Process

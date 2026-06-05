@@ -3,6 +3,7 @@ name: run-game-day
 description: Use when validating incident response capabilities, onboarding new engineers to on-call, preparing for a major launch, or after significant architecture changes
 source: Google SRE Workbook disaster role playing chapter; Amazon Game Day methodology (Vogels 2011); Rosenthal "Chaos Engineering" failure injection
 tags: [reliability, sre, incident-response, training]
+verified: true
 ---
 
 # Run Game Day

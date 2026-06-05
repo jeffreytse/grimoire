@@ -3,6 +3,7 @@ name: calculate-life-cycle-assessment
 description: Use when evaluating the environmental impacts of a product, process, or service across its entire life cycle from raw material extraction to end of life.
 source: ISO 14040:2006 and ISO 14044:2006 LCA standards; PRé Sustainability SimaPro methodology; European Commission ILCD Handbook (JRC 2010)
 tags: [lca, life-cycle, environmental-impact, product, sustainability]
+verified: true
 ---
 
 # Calculate Life Cycle Assessment

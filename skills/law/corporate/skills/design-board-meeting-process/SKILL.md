@@ -3,6 +3,7 @@ name: design-board-meeting-process
 description: Use when designing or improving the process for preparing, conducting, and following up on board of directors meetings
 source: NACD Director Professionalism guidelines; Carver Policy Governance model; Robert's Rules of Order (parliamentary procedure standard)
 tags: [corporate-governance, board-meetings, meeting-management, directors]
+verified: true
 ---
 
 # Design Board Meeting Process

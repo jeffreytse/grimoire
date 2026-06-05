@@ -3,6 +3,7 @@ name: apply-five-whys
 description: Use when investigating the root cause of a defect, incident, or recurring failure and need to move beyond symptoms to the underlying systemic cause.
 source: Taiichi Ohno, "Toyota Production System" (1978); Sakichi Toyoda (original inventor); widely adopted in lean manufacturing, SRE, and quality engineering
 tags: [root-cause-analysis, incident-response, reliability, debugging, lean, quality, defect-reduction]
+verified: true
 ---
 
 # Apply Five Whys

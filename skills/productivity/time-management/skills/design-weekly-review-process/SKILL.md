@@ -3,6 +3,7 @@ name: design-weekly-review-process
 description: Use when designing a structured weekly review ritual to process tasks, plan the week, and maintain control of commitments and projects
 source: Allen "Getting Things Done" (2001) weekly review chapter; Newport "Deep Work" (2016) shutdown ritual; Covey "The 7 Habits of Highly Effective People" (1989) Habit 7 sharpen the saw
 tags: [weekly-review, gtd, time-management, planning, productivity]
+verified: true
 ---
 
 # Design Weekly Review Process

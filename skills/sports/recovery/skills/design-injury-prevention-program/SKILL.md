@@ -3,6 +3,7 @@ name: design-injury-prevention-program
 description: Use when a coach, strength trainer, or sports medicine professional needs to implement a structured warm-up and movement program that reduces injury incidence in athletes
 source: FIFA 11+ warm-up program (Soligard et al. BMJ 2008 — 30-32% injury reduction); NSCA injury prevention guidelines; van Mechelen et al. "Incidence, Severity, Aetiology and Prevention of Sports Injuries" Sports Medicine (1992)
 tags: [injury-prevention, warm-up, movement-quality, sports-medicine, rehabilitation]
+verified: true
 ---
 
 # Design Injury Prevention Program

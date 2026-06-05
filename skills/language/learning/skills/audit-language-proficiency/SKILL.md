@@ -3,6 +3,7 @@ name: audit-language-proficiency
 description: Use when a learner needs an objective assessment of their current proficiency level across all four skills to inform planning or certification decisions
 source: ACTFL Proficiency Guidelines (2012); CEFR self-assessment grid (Council of Europe); IELTS/TOEFL proficiency benchmarking methodology
 tags: [proficiency, assessment, CEFR, audit]
+verified: true
 ---
 
 # Audit Language Proficiency

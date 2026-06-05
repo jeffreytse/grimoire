@@ -3,6 +3,7 @@ name: design-active-recovery-protocol
 description: Use when an athlete needs a structured low-intensity recovery session between hard training blocks to accelerate adaptation without adding fatigue
 source: Bompa & Haff "Periodization" 5th ed. (2009); Kellmann "Enhancing Recovery in Sport" (2002); NSCA Recovery Guidelines; Kenttä & Hassmén "Overtraining and Recovery" Sports Medicine (1998)
 tags: [active-recovery, periodization, regeneration, training-load, fatigue-management, adaptation]
+verified: true
 ---
 
 # Design Active Recovery Protocol

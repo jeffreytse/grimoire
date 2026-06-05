@@ -3,6 +3,7 @@ name: run-six-thinking-hats
 description: Use when a team needs to make a decision, evaluate a proposal, or solve a problem and wants to avoid groupthink, emotional conflict, or one-dimensional analysis.
 source: Edward de Bono, "Six Thinking Hats", 1985 (Little, Brown and Company) — Widely adopted at IBM, Siemens, Federal Express, British Airways, ABB, Prudential
 tags: [decision-making, group-thinking, meetings, team, groupthink-reduction, problem-solving]
+verified: true
 ---
 
 # Run Six Thinking Hats

@@ -3,6 +3,7 @@ name: design-chord-progression
 description: Use when composing or analyzing chord progressions for a song, arrangement, or harmonic study
 source: Piston "Harmony" (1941, rev. 1978); Berklee Online harmony curriculum; Everett "The Foundations of Rock" (2009) harmonic analysis
 tags: [music-theory, harmony, chord-progression, composition]
+verified: true
 ---
 
 # Design Chord Progression

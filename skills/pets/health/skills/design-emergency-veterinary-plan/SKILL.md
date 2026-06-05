@@ -3,6 +3,7 @@ name: design-emergency-veterinary-plan
 description: Use when preparing a household emergency plan for a pet, creating a disaster preparedness kit, or building a response protocol for sudden pet health crises
 source: AVMA emergency preparedness for pets; ASPCA disaster preparedness guidelines; FEMA "Pets and Disaster" guidance
 tags: [emergency-preparedness, disaster-plan, pet-safety, first-aid]
+verified: true
 ---
 
 # Design Emergency Veterinary Plan

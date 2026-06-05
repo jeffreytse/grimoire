@@ -3,6 +3,7 @@ name: write-business-plan
 description: Use when creating a business plan for a startup, new venture, loan application, or investor pitch requiring a formal written document
 source: SBA (US Small Business Administration) business plan guide; Sahlman "How to Write a Great Business Plan" HBR (1997); Osterwalder "Business Model Generation" (2010)
 tags: [entrepreneurship, business-plan, strategy, fundraising, startups]
+verified: true
 ---
 
 # Write Business Plan

@@ -3,6 +3,7 @@ name: design-formative-assessment
 description: Use when designing in-lesson or mid-unit checks that help teachers adjust instruction and help learners self-correct before a summative assessment
 source: Dylan Wiliam "Embedded Formative Assessment" (2011); Black & Wiliam "Inside the Black Box" (1998); John Hattie "Visible Learning" (2009)
 tags: [formative-assessment, teaching, feedback, exit-tickets, hinge-questions, learning-science]
+verified: true
 ---
 
 # Design Formative Assessment

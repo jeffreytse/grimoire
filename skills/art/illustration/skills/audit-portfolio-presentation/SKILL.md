@@ -3,6 +3,7 @@ name: audit-portfolio-presentation
 description: Use when evaluating, curating, or restructuring an illustration portfolio for professional submission, client pitches, or gallery presentation
 source: AIGA professional practice; Society of Illustrators portfolio standards; Art Directors Club submission guidelines
 tags: [illustration, portfolio, professional-practice, presentation]
+verified: true
 ---
 
 # Audit Portfolio Presentation

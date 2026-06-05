@@ -3,6 +3,7 @@ name: run-conversation-practice-session
 description: Use when a learner needs structured speaking practice to develop fluency, accuracy, and pragmatic competence through guided interaction
 source: ACTFL Oral Proficiency Interview (OPI) guidelines; Swain "Output Hypothesis" (1985); Council of Europe CEFR B1-C2 speaking descriptors
 tags: [conversation, speaking, fluency, output]
+verified: true
 ---
 
 # Run Conversation Practice Session

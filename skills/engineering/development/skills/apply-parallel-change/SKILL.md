@@ -3,6 +3,7 @@ name: apply-parallel-change
 description: Use when evolving a public API, shared interface, or data schema in a way that must remain backward-compatible with existing consumers during the migration period.
 source: Fowler "ParallelChange" (martinfowler.com/bliki/ParallelChange.html, 2014); also known as Expand-Contract or Make-Then-Break pattern; Humble & Farley "Continuous Delivery" (2010)
 tags: [development, api-design, refactoring, backward-compatibility, continuous-delivery, patterns, migration, schema]
+verified: true
 ---
 
 # Apply Parallel Change

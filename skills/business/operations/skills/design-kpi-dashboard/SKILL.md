@@ -3,6 +3,7 @@ name: design-kpi-dashboard
 description: Use when building or redesigning a performance dashboard to track organizational, team, or product KPIs and support data-driven decisions
 source: Kaplan & Norton "The Balanced Scorecard" HBR (1992); Eckerson "Performance Dashboards" (2010); Doerr "Measure What Matters" (2018)
 tags: [operations, kpi, dashboard, metrics, data-driven, balanced-scorecard]
+verified: true
 ---
 
 # Design KPI Dashboard

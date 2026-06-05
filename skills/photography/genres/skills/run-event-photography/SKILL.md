@@ -3,6 +3,7 @@ name: run-event-photography
 description: Use when planning and executing photography coverage for corporate events, conferences, weddings, or live performances
 source: WPPI event photography standards; PPA event photography certification; Berne "The Snapshot and the Album" documentary photography tradition
 tags: [event-photography, documentary, corporate, wedding, coverage]
+verified: true
 ---
 
 # Run Event Photography

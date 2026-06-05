@@ -3,6 +3,7 @@ name: design-debt-payoff-plan
 description: Use when creating a structured debt payoff plan to eliminate consumer debt efficiently using snowball, avalanche, or hybrid methods
 source: Dave Ramsey "Total Money Makeover" debt snowball (2003); avalanche method academic research (Amar et al. "Winning the Battle but Losing the War" JMR 2011); CFP Board debt management curriculum
 tags: [personal-finance, debt-payoff, budgeting, financial-planning]
+verified: true
 ---
 
 # Design Debt Payoff Plan

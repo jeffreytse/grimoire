@@ -3,6 +3,7 @@ name: design-cat-enrichment-environment
 description: Use when setting up a home for a new cat, addressing boredom or stress behaviors, or improving welfare for an indoor-only cat
 source: AAFP "Feline Environmental Needs Guidelines" (2013); Ohio State University Indoor Pet Initiative; Jackson Galaxy "Cat Daddy" environmental methodology
 tags: [cat-enrichment, feline-welfare, indoor-cat, environmental-design]
+verified: true
 ---
 
 # Design Cat Enrichment Environment
