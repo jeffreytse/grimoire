@@ -1,6 +1,6 @@
 ---
 name: intercept-best-practice
-description: Use at the start of ANY user task, action, or request — before taking any other action. Proactively checks whether an applicable best practice exists and applies or offers it before proceeding.
+description: Use when starting any user task, action, or request — before taking any other action. Proactively checks whether an applicable best practice exists and applies or offers it before proceeding.
 source: Toyota Production System poka-yoke (Shingo, 1986) — error prevention before the action, not after
 tags: [proactive, interception, pre-action, best-practice-discovery, guardian, poka-yoke, quality-gate]
 ---

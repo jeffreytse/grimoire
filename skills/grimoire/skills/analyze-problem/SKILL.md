@@ -1,6 +1,6 @@
 ---
 name: analyze-problem
-description: Use when the user presents a problem that isn't well-defined — goal is unclear, scope is unstated, or what's described looks like a symptom rather than a root cause. Asks clarifying questions one at a time until the problem boundary is clear, then produces a problem statement, problem space map, and possible solution routes before handing off to solution skills. Also invoked automatically by suggest-best-practice and plan-best-practice-solution when a problem is too vague to score against practices.
+description: Use when the user presents a problem that isn't well-defined — goal is unclear, scope is unstated, or what's described looks like a symptom rather than a root cause. Asks clarifying questions one at a time until the problem boundary is clear, then produces a problem statement, problem space map, and possible solution routes before handing off to solution skills.
 source: Design Thinking problem framing (IDEO/Stanford d.school); McKinsey issue tree methodology (Rasiel, 1999); Meadows "Thinking in Systems" (2008) — system boundary definition; Toyota 5 Whys (Taiichi Ohno)
 tags: [problem-framing, analysis, clarification, scoping, root-cause, problem-definition, vague-problem]
 ---
