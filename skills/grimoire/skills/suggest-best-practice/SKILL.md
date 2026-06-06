@@ -1,6 +1,6 @@
 ---
 name: suggest-best-practice
-description: Use when the user describes any situation, problem, goal, complaint, or question — including when they want to browse available best practices for a topic, don't know which domain applies, or don't know a best practice exists for their situation.
+description: Use when the user describes any situation, problem, goal, complaint, or question — including when they want to browse available best practices for a topic, don't know which domain applies, or don't know a best practice exists for their situation. Also use when the user starts any task or action without explicitly asking for guidance.
 source: Information retrieval best practices (van Rijsbergen, 1979), Nielsen Norman Group search UX guidelines
 tags: [skill-discovery, auto-classify, problem-routing, problem-solver, situation-analysis, practice-recommendation]
 ---
@@ -32,6 +32,23 @@ UX guidelines, Google Search intent classification research
 
 ## Steps
 
+### Step 0: Check preferences (silent)
+
+Resolution order — first match wins:
+1. Session memory — pinned this session only; not written to disk (highest precedence)
+2. `<project-root>/.grimoire/preferences.md` — project-level
+3. `~/.config/grimoire/preferences.md` OR `~/.grimoire/preferences.md` — global-level
+4. `CLAUDE.md` `## Grimoire Preferences` section — legacy fallback
+
+For the relevant domain, check if a practice is already pinned:
+- **Pinned match (file)** → apply the pinned practice directly; skip scoring entirely. No further action needed — already persisted.
+- **Pinned match (session)** → apply the pinned practice directly; skip scoring. After applying, offer once per session per domain:
+  `"[practice] is pinned for this session only. Save it for future sessions? [y/n]"`
+  If yes, invoke `pin-best-practice-preference` to write it to project or global file.
+- **Pinned conflict** → warn before suggesting an alternative:
+  `"You have [X] pinned for [domain]. Suggest changing it? [y/n]"`
+- **No pin** → proceed to Step 1.
+
 ### 1. Extract intent signals (no clarifying questions yet)
 
 From the user's input, silently identify:
@@ -45,6 +62,14 @@ From the user's input, silently identify:
 | **Problem type** | Prevention / diagnosis / optimization / compliance / learning |
 
 Do not ask the user for any of this — infer it from what they wrote.
+
+**Problem clarity check:** After extracting signals, apply skill judgment: can a 1-2 sentence problem statement be written from what the user said? A problem is clear enough to proceed if:
+- Goal is inferable (what outcome they want)
+- At least the broad scope is known (what domain or area this is in)
+- What's described is a root cause or problem, not just a symptom with no surrounding context
+
+If NOT clear enough → invoke `analyze-problem` before scoring. Use the problem statement from its output as input to Step 2.
+If clear enough → proceed to Step 2.
 
 ### 2. Score candidate skills
 
@@ -77,7 +102,7 @@ Your situation spans multiple domains and requires coordinating several best pra
 Applying plan-best-practice-solution to build a sequenced action plan...
 ```
 
-**High confidence** — one skill scores ≥ 0.7 and clearly leads the rest:
+**Sole clear match** — exactly one skill scores ≥ 0.7 AND second-place score < 0.4:
 
 Load and apply the skill directly. Announce before applying:
 ```
@@ -85,20 +110,26 @@ Situation matches: [skill-name] ([domain/subdomain])
 Applying now...
 ```
 
-**Multiple plausible matches** — 2–5 skills with similar scores (top score < 0.7,
-or top 2 scores within 0.15 of each other), but from the SAME domain or the user
-only needs ONE of them:
+**Multiple matches** — 2+ skills score ≥ 0.4 (regardless of whether the top score reaches 0.7):
 
-Present a ranked list and wait for user selection:
+Present a ranked list with recommendation and wait for user selection:
 ```
-Your situation matches several best practices. Which fits best?
+Multiple best practices apply. Recommended: [top-skill-name]
 
-1. [skill-name] — [one sentence: what problem it solves]
-   Domain: [domain/subdomain]  |  Install: /plugins add github:jeffreytse/grimoire/[path]
+1. ★ [top-skill-name] — [one sentence: what problem it solves]  ← recommended
+   Domain: [domain/subdomain]  |  Score: [score]  |  Install: /plugins add github:jeffreytse/grimoire/[path]
 
-2. [skill-name] — [one sentence]
-   Domain: [domain/subdomain]  |  Install: /plugins add github:jeffreytse/grimoire/[path]
+2. [skill-name] — [one sentence: what problem it solves]
+   Domain: [domain/subdomain]  |  Score: [score]  |  Install: /plugins add github:jeffreytse/grimoire/[path]
+
+3. [skill-name] — [one sentence]
+   Domain: [domain/subdomain]  |  Score: [score]  |  Install: ...
+
+Which would you like to apply? (Enter number, "all" to apply in sequence, or "skip" to proceed without)
 ```
+
+The ★ recommendation is the highest-scoring match. If two skills score equally, recommend the one whose `Use when...` description is the closest literal match to the user's input.
+
 After user selects, load and apply the chosen skill.
 
 **Browse mode** — user explicitly says "show me options", "what practices exist for X",
@@ -141,8 +172,9 @@ Do not chain more than 2 skills without user confirmation. If 3+ skills are need
 ## Rules
 
 - Never ask the user which domain their problem belongs to — that's the skill's job to figure out
-- Auto-apply only when 1 skill clearly dominates (score ≥ 0.7, clear gap to second)
-- Never auto-apply when uncertain — present choices instead
+- Auto-apply only when exactly 1 skill ≥ 0.7 AND second place < 0.4 — truly unambiguous
+- Whenever 2+ skills score ≥ 0.4, always list with recommendation — never silently pick one
+- Always mark the recommended option with ★
 - Max 5 options in a ranked list; drop lower-scoring matches beyond 5
 - Never hallucinate skill names — only reference skills that exist in installed domains
 - Announce the matched skill before applying — don't silently load skills

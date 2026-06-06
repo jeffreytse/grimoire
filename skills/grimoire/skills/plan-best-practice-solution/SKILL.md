@@ -33,6 +33,8 @@ From the user's input, silently identify:
 
 Do not ask the user for any of this — infer from what they wrote.
 
+**Problem clarity check:** After extracting dimensions, apply skill judgment: can the goal and at least 2 domains be identified from what the user said? If the goal is completely uninferable, or what's described is clearly a symptom with no root cause context → invoke `analyze-problem` first. Use the problem space map from its output to populate the dimensions above, then continue to Step 2.
+
 **Complexity check:** If only one domain is involved and the problem maps cleanly to a single skill, delegate to `suggest-best-practice` instead. `plan-best-practice-solution` is for genuinely multi-domain or multi-step problems.
 
 ### 2. Decompose into MECE sub-problems
@@ -46,11 +48,19 @@ Maximum 7 sub-problems. If more emerge, group related ones under a shared theme.
 
 ### 3. Match skills to sub-problems
 
-For each sub-problem, identify the highest-confidence matching skill:
+For each sub-problem, score all candidate skills:
 
 ```
 score = (tag_overlap × 2) + (description_match × 3) + (domain_plausibility × 1)
 ```
+
+Classify the result per sub-problem:
+
+| Result | Condition | Action |
+|--------|-----------|--------|
+| **Clear match** | 1 skill ≥ 0.7, second < 0.4 | Assign directly — no user choice needed |
+| **Multiple candidates** | 2+ skills ≥ 0.4 | Mark for user choice — record all candidates, flag ★ recommendation (highest score) |
+| **No match** | All skills < 0.4 | Flag with ⚠ — manual research needed |
 
 If no installed skill covers a sub-problem, flag it explicitly:
 `⚠ [sub-problem description]: no installed skill — manual research needed`
@@ -71,25 +81,36 @@ Skills with no prerequisites go first. Skills whose output feeds another skill g
 
 ### 5. Present the solution plan
 
+Present the full sequenced plan. For sub-problems with a clear match, show directly. For sub-problems with multiple candidates, show all options inline with ★ recommendation and collect the user's choice before execution begins.
+
 ```
 Your situation spans [N] domains. Here is the solution plan:
 
 1. [skill-name] — [what sub-problem it solves]
    Domain: [domain/subdomain]
 
-2. [skill-name] — [what sub-problem it solves]
+2. Multiple practices apply — choose one:
+   ★ [top-skill] — [one sentence: what it solves]  ← recommended
+      [second-skill] — [one sentence: what it solves]
+      [third-skill] — [one sentence: what it solves]
+
+3. [skill-name] — [what sub-problem it solves]
    Domain: [domain/subdomain]
 
-...
-
 ⚠ [sub-problem]: no installed skill — manual research needed.
-
-Apply in order? I'll pause for your confirmation after each step.
 ```
+
+After presenting, if any steps have multiple candidates:
+```
+Step 2 has multiple options. Which practice would you like for that step?
+(Enter skill name or press Enter to use ★ [top-skill])
+```
+
+Collect all user choices before starting execution. Only proceed once every step has a decided skill.
 
 ### 6. Execute one skill at a time
 
-For each skill in the sequence:
+For each skill in the sequence (using user-decided skills from Step 5):
 1. Announce: `Applying step N: [skill-name]`
 2. Load and run the skill fully
 3. After completion, ask: `Step N done. Continue to step N+1 ([skill-name])?`

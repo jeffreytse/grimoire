@@ -39,13 +39,24 @@ Score all installed skills:
 score = (tag_overlap × 2) + (description_match × 3) + (domain_plausibility × 1)
 ```
 
-Identify the highest-scoring skill. Note its confidence level:
+Route by result:
 
-| Confidence | Range | Action |
-|------------|-------|--------|
-| Exact match | ≥ 0.7 | Apply the skill directly |
-| Fuzzy match | 0.4–0.69 | Apply with adaptation note |
-| No match | < 0.4 | Decompose manually → step 4 |
+| Result | Condition | Action |
+|--------|-----------|--------|
+| **Sole clear match** | 1 skill ≥ 0.7, second < 0.4 | Apply directly |
+| **Multiple candidates** | 2+ skills ≥ 0.4 | Present ranked list with ★ recommendation, wait for user choice |
+| **Fuzzy match** | 1 skill 0.4–0.69, no others ≥ 0.4 | Offer with adaptation note |
+| **No match** | All < 0.4 | Decompose manually → step 4 |
+
+When multiple candidates exist, present:
+```
+Multiple best practices match this problem:
+  ★ [top-skill] — [one sentence: what it solves]  ← recommended
+     [second-skill] — [one sentence: what it solves]
+     [third-skill] — [one sentence: what it solves]
+
+Which would you like to apply? (Enter number or press Enter for ★)
+```
 
 ### 3. Apply the skill and extract sub-problems
 
@@ -66,22 +77,30 @@ Matching best practices for each...
 
 For each sub-problem, apply the same matching logic:
 
-**Exact match (≥ 0.7)** — apply the skill directly:
+**Sole clear match (1 skill ≥ 0.7, second < 0.4)** — apply directly:
 ```
 Sub-problem A → [skill-name] (confidence 0.82). Applying now...
 ```
 
-**Fuzzy match (0.4–0.69)** — apply the closest skill with an explicit adaptation note:
+**Multiple candidates (2+ skills ≥ 0.4)** — present options with ★ recommendation, wait for choice:
 ```
-Sub-problem B → no exact match. Closest: [skill-name] (confidence 0.55).
+Sub-problem B → multiple practices apply:
+  ★ [top-skill] — [one sentence]  ← recommended
+     [second-skill] — [one sentence]
+Which would you like? (Enter number or press Enter for ★)
+```
+
+**Fuzzy match (1 skill 0.4–0.69, no others ≥ 0.4)** — apply with explicit adaptation note:
+```
+Sub-problem C → no exact match. Closest: [skill-name] (confidence 0.55).
 Applying with adaptation: step 3 maps to [your context] instead of [skill's default context].
 ```
 
 **No match (< 0.4)** — recurse: decompose the sub-problem into 2–4 smaller parts and repeat from step 2:
 ```
-Sub-problem C → no close match (best: 0.28). Decomposing further:
-  C1. [smaller problem]
-  C2. [smaller problem]
+Sub-problem D → no close match (best: 0.28). Decomposing further:
+  D1. [smaller problem]
+  D2. [smaller problem]
 ```
 
 **Max depth reached (depth = 3)** — flag for manual resolution:

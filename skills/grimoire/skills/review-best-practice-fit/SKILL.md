@@ -19,6 +19,23 @@ Sources: Google Engineering Practices; ISO 9001:2015 §9.2 internal audit requir
 
 ## Steps
 
+### Step 0: Check preferences (silent)
+
+Resolution order — first match wins:
+1. Session memory — pinned this session only; not written to disk (highest precedence)
+2. `<project-root>/.grimoire/preferences.md` — project-level
+3. `~/.config/grimoire/preferences.md` OR `~/.grimoire/preferences.md` — global-level
+4. `CLAUDE.md` `## Grimoire Preferences` section — legacy fallback
+
+For the relevant domain, check if a practice is already pinned:
+- **Pinned match (file)** → apply the pinned practice directly; skip scoring entirely. No further action needed — already persisted.
+- **Pinned match (session)** → apply the pinned practice directly; skip scoring. After applying, offer once per session per domain:
+  `"[practice] is pinned for this session only. Save it for future sessions? [y/n]"`
+  If yes, invoke `pin-best-practice-preference` to write it to project or global file.
+- **Pinned conflict** → warn before suggesting an alternative:
+  `"You have [X] pinned for [domain]. Suggest changing it? [y/n]"`
+- **No pin** → proceed to Step 1.
+
 ### 1. Extract the solution
 
 From the user's description, identify:
@@ -121,12 +138,24 @@ Domain: [domain/subdomain]
 
 ### 6. Offer to apply fixes
 
-After the report, ask:
+After the report, list PARTIAL and MISSING practices ranked by gap severity (Critical count first, then Significant), with a recommendation:
+
 ```
-Want me to apply any of the practices above to help close these gaps?
+To close these gaps, I can apply:
+
+  ★ [top-skill] (recommended — [N] Critical gap(s))
+    [one sentence: what this skill addresses]
+
+    [second-skill] ([N] Critical / [N] Significant gaps)
+    [one sentence: what this skill addresses]
+
+    [third-skill] ([N] Significant gaps)
+    [one sentence: what this skill addresses]
+
+Which would you like to apply? (Enter number, "all" to apply in sequence, or "skip")
 ```
 
-If yes, load the relevant skill and follow its steps to guide the improvement.
+After user selects, load the chosen skill and follow its steps. If user chooses "all", apply each in ranked order, confirming after each before proceeding to the next.
 
 ## Rules
 

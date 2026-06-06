@@ -90,6 +90,33 @@ skills/
           SKILL.md
 ```
 
+Example — the grimoire meta domain:
+
+```
+skills/
+│   ├── grimoire/                         # Meta skills (the framework's nervous system)
+│   │   └── skills/
+│   │       ├── analyze-problem/
+│   │       ├── discover-best-practices/
+│   │       ├── intercept-best-practice/
+│   │       ├── suggest-best-practice/
+│   │       ├── plan-best-practice-solution/
+│   │       ├── apply-best-practice-tree/
+│   │       ├── review-best-practice-fit/
+│   │       ├── compare-best-practices/
+│   │       ├── audit-applied-best-practices/
+│   │       ├── explain-best-practice/
+│   │       ├── adapt-best-practice/
+│   │       ├── teach-best-practice/
+│   │       ├── pin-best-practice-preference/
+│   │       ├── write-best-practice-skill/
+│   │       ├── review-best-practice-skill/  # Quality gate
+│   │       ├── revise-best-practice-skill/
+│   │       ├── audit-best-practice-domain/
+│   │       ├── deprecate-best-practice-skill/
+│   │       └── design-best-practice-domain/
+```
+
 Example — the reference skill:
 
 ```
@@ -198,9 +225,19 @@ grimoire is self-managing. The meta skills in `skills/grimoire/` run the framewo
 
 | Skill | What it does |
 |-------|-------------|
+| `analyze-problem` | Clarifies an ill-defined problem through structured questioning, then maps the problem space and surfaces possible routes |
+| `discover-best-practices` | Surfaces available practices for a domain before the user has a specific problem — grouped by subdomain, framed as gaps |
+| `intercept-best-practice` | Proactively fires before a task starts — matches the most relevant practice and offers to apply it before gaps emerge |
 | `suggest-best-practice` | Universal entry point — classifies any situation and routes to the matching skill or install command |
 | `plan-best-practice-solution` | Decomposes multi-domain problems into sequenced skill applications (MECE methodology) |
+| `apply-best-practice-tree` | Recursively decomposes a complex single-domain problem into sub-problems, matching each to the best installed skill |
 | `review-best-practice-fit` | Evaluates an existing solution against best practices — ALIGNED/PARTIAL/MISSING per practice, prioritized fix list |
+| `compare-best-practices` | Side-by-side comparison when multiple practices apply — produces a table and a clear recommendation |
+| `audit-applied-best-practices` | Audits existing work for which practices were applied, which are missing, and what gaps to close |
+| `explain-best-practice` | Educational deep-dive: problem → origin → evidence → mechanism → failure modes → misconceptions |
+| `adapt-best-practice` | Adapts a practice for specific constraints, classifying each step as Core/Adjustable/Optional |
+| `teach-best-practice` | Produces audience-tailored talking points, brief, or slide outline for sharing a practice with others |
+| `pin-best-practice-preference` | Saves a practice preference at session, project, or global level for a domain or subdomain |
 
 **Contributor meta skills** — manage the library itself:
 
