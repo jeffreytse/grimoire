@@ -88,11 +88,9 @@
 
 ## 🎬 Demo
 
-> "I'm 42, AI just took my job, I have a mortgage. What do I do?" — one question. Four grimoire skills. A plan.
+> "I'm 42, AI just took my job, I have a mortgage. What do I do?"
 
 ![grimoire demo — natural language problem solved with grimoire best practices](./assets/demo.gif)
-
-*Describe any problem in plain language. Claude reads your grimoire, surfaces the matching practices, and guides you through them: `apply-first-principles` → `calculate-fire-number` → `design-pricing-strategy` → `write-value-proposition`*
 
 ---
 
@@ -409,6 +407,7 @@ Claude: Top match: design-incident-response-process (confidence 0.81). Applying.
 | Don't know what practices exist for a topic | `/discover-best-practices` |
 | About to start a task — want to catch gaps before you begin | `/intercept-best-practice` |
 | Problem isn't clear yet — need to define it before solving | `/analyze-problem` |
+| Two practices conflict (e.g., Google vs IBM) | `/pin-best-practice-preference` |
 
 **6. Don't know what practices exist — use `discover-best-practices`**
 
@@ -475,6 +474,47 @@ Claude: Problem statement: Team output is below expectations and morale is low.
 
   Which route fits best? I can find the applicable best practices.
 ```
+
+**Prefer a specific org's practices — use `pin-best-practice-preference`**
+
+When top-tier orgs disagree (Google vs IBM, startup vs enterprise), pin which approach you prefer once — grimoire applies it automatically from then on.
+
+```
+User: I follow Google's engineering practices when there's a conflict.
+
+Claude: Pinning preference: Google Engineering Practices → engineering domain.
+        Save to: session / project / global?
+
+User: global
+
+Claude: Saved to ~/.grimoire/preferences.md.
+        Future engineering conflicts resolve toward Google's approach automatically.
+```
+
+**Override priority** — grimoire checks preferences in this order, first match wins:
+
+| Priority | Level | Stored in | Scope |
+|----------|-------|-----------|-------|
+| 1st | Session | In-memory | Current session only — resets when session ends |
+| 2nd | Project | `.grimoire/preferences.md` in project root | Current project only |
+| 3rd | Global | `~/.grimoire/preferences.md` | All projects on this machine |
+| 4th | Legacy | `CLAUDE.md` under `## Grimoire Preferences` | Fallback |
+
+**Configure manually** — edit the preference files directly without going through the AI:
+
+```markdown
+# ~/.grimoire/preferences.md  (global — applies everywhere)
+engineering: Google Engineering Practices
+finance: CFA Institute standards
+law: ABA Model Rules
+```
+
+```markdown
+# <project-root>/.grimoire/preferences.md  (project — overrides global for this repo)
+engineering: startup  # this project moves fast; override the global Google preference
+```
+
+Project preferences override global. Session pins override both. Teams can share a global standard while individual projects deviate where needed.
 
 ---
 
@@ -611,7 +651,16 @@ The "textbook" objection gets it backwards. Established practices are *ideal* fo
 
 **Does grimoire conflict with my team's existing conventions?**
 
-Skills describe what the world's top institutions do. Your team may do things differently — and be right to. A skill is a starting point, not a mandate. Fork, adapt, or ignore any skill that doesn't fit your context. The format is plain Markdown and the license is MIT.
+Skills describe what the world's top institutions do. Your team may do things differently — and be right to. Two ways to handle it:
+
+**Pin your preference.** Tell grimoire which approach to follow when practices conflict:
+
+```
+User: We follow Google's engineering practices, not IBM's.
+→ Claude pins this via `pin-best-practice-preference` — applies automatically from now on.
+```
+
+**Override or fork.** A skill is a starting point, not a mandate. Adapt any skill to your context, or ignore it entirely. The format is plain Markdown and the license is MIT.
 
 ---
 
