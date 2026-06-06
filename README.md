@@ -3,14 +3,14 @@
     <img alt="grimoire" src="./assets/banner.svg" width="700">
   </a>
 
-  <p>📖 The world's professional best practices — your expert consultant, anywhere, anytime.</p>
+  <p>The world's knowledge is in your AI. The world's practice is not.<br>Most people don't know which best practice applies — and AI won't enforce one unless guided. Grimoire closes both gaps.</p>
 
   <br><h1>📖 Grimoire 📖</h1>
 
 </div>
 
 <h4 align="center">
-  Multi-domain skill collection for <a href="#-agent-support">AI assistants</a>.
+  Promotes the expert standard you didn't know applied. Guides your <a href="#-agent-support">AI</a> through applying it — automatically, across every field.
 </h4>
 
 <p align="center">
@@ -60,7 +60,7 @@
   </a>
 
   <a href="./skills/">
-    <img src="https://img.shields.io/badge/skills-514-blue"
+    <img src="https://img.shields.io/badge/skills-500%2B-blue"
       alt="505 Skills" />
   </a>
 </p>
@@ -92,18 +92,20 @@
 
 ![grimoire demo — natural language problem solved with grimoire best practices](./assets/demo.gif)
 
-*Describe any problem in plain language. Claude reads your grimoire and auto-routes: `apply-first-principles` → `calculate-fire-number` → `design-pricing-strategy` → `write-value-proposition`*
+*Describe any problem in plain language. Claude reads your grimoire, surfaces the matching practices, and guides you through them: `apply-first-principles` → `calculate-fire-number` → `design-pricing-strategy` → `write-value-proposition`*
 
 ---
 
 ## 🤔 Why Grimoire?
 
-> The world's knowledge is in your AI. The world's practice is not.
-
 AI assistants have ingested every textbook, every paper, every article ever written. They
 understand fields. They do not practice them. Practice is what happens after 10,000 hours.
 Practice is what a senior surgeon does without thinking. Practice is what a staff engineer
 knows not to do. Practice is what grimoire encodes.
+
+- 🔍 **Most people don't know the right practice exists.** When you face a problem, you search for a solution — not for the standard that governs it. The ISO certification process, the ABA clause audit, the NSCA periodization model — these exist. Most people solving those problems have never heard of them. Grimoire closes the discovery gap.
+
+- 🤖 **LLMs know the practice. They won't apply it.** Ask an AI to help with a contract and it gives general advice. Ask it to review an architecture and it summarizes what it sees. The model knows ISO, ABA, Google SRE — but without explicit guidance, it won't enforce any of them. Grimoire provides that guidance.
 
 - 🌍 **The world's best practices belong to everyone.** A McKinsey engagement costs $1M. A senior lawyer bills $800/hr. A structural engineer isn't available at 2am. The practices they follow — proven at the highest levels — are not proprietary. They belong to the world. Grimoire makes them free.
 
@@ -202,7 +204,7 @@ You don't need to know which skill applies. Just describe the problem:
 User: I signed a vendor contract and now they're saying they own my data.
 
 Claude: Situation matches: review-saas-contract (law/contracts)
-        Applying review-practice-fit...
+        Applying review-best-practice-fit...
 
         🔴 CRITICAL Data ownership clause absent — defaults to vendor jurisdiction
         → Escalate to legal counsel immediately. Request amendment to §8.2.
@@ -220,7 +222,7 @@ Claude: Situation matches: plan-retrospective (engineering/project-management)
         → /plan-retrospective to run the session now
 ```
 
-`suggest-practice` auto-classifies any situation, routes to the matching skill,
+`suggest-best-practice` auto-classifies any situation, routes to the matching skill,
 or tells you exactly what to install if the skill isn't in your library yet.
 
 ---
@@ -300,21 +302,200 @@ Or search "grimoire" in the plugin marketplace.
 User: I need to raise a Series A but don't know how to pitch investors.
 
 Claude: Situation matches: write-value-proposition + design-go-to-market + apply-pyramid-principle
-        Applying suggest-practice...
+        Applying suggest-best-practice...
         → Start with your value prop. /write-value-proposition
 ```
 
 Or invoke a skill directly:
 
 ```bash
-/suggest-practice          # describe any problem — auto-routes to the right skill
+/suggest-best-practice     # describe any problem — auto-routes to the right skill
 /review-pull-request       # engineering code review
 /calculate-fire-number     # how much do I need to retire?
 /review-saas-contract      # flag dangerous clauses before signing
 /design-training-program   # build a training program
 ```
 
-**New to grimoire?** Start with `/suggest-practice`. Describe any professional or life situation — it reads your context and routes you to the matching skill, or tells you exactly what to install if the skill isn't in your library yet.
+**New to grimoire?** Start with `/suggest-best-practice`. Describe any professional or life situation — it reads your context and routes you to the matching skill, or tells you exactly what to install if the skill isn't in your library yet.
+
+---
+
+## 🔄 Workflows
+
+### User workflows
+
+**1. Know the skill — invoke directly**
+
+```
+/propose-conventional-commit
+/calculate-fire-number
+/review-saas-contract
+```
+
+**2. Have a problem — use `suggest-best-practice`**
+
+Describe any situation. `suggest-best-practice` reads it, finds the best-matching skill(s), and routes you there.
+
+```
+User: My senior engineer just quit and the team is losing confidence.
+
+Claude: Situation matches: design-onboarding-program + write-leadership-principles
+        → /design-onboarding-program to rebuild team structure
+        → /write-leadership-principles to establish decision-making clarity
+```
+
+**3. Have a solution — use `review-best-practice-fit`**
+
+Already have a plan or approach? `review-best-practice-fit` checks it against best practices and surfaces gaps.
+
+```
+User: I'm planning to run weekly 1:1s with each engineer, 30 min, no agenda.
+      Is this a good approach?
+
+Claude: Applying review-best-practice-fit (engineering/project-management)...
+
+        🟡 CAUTION No agenda → likely drifts to status updates
+        → Best practice: structured 1:1 (Lencioni format) with 3 fixed topics
+        🟢 PASS Frequency and duration align with Google re:Work research
+```
+
+**4. Problem spans multiple domains — use `plan-best-practice-solution`**
+
+When a problem involves 3+ independent fields (legal, financial, technical, marketing), `plan-best-practice-solution` decomposes it with MECE methodology and sequences skills by dependency.
+
+```
+User: I want to leave my job and launch a SaaS startup.
+
+Claude: Situation spans 4 domains. Solution plan:
+        1. design-business-model    — validate the idea before building
+        2. calculate-unit-economics — confirm revenue model is viable
+        3. review-saas-contract     — legal structure before hiring
+        4. design-go-to-market      — growth strategy before launch
+
+        Apply in order? I'll pause for confirmation after each step.
+```
+
+**5. Complex problem, one domain — use `apply-best-practice-tree`**
+
+When a problem is deeply complex but stays within one field, `apply-best-practice-tree` uses skills as the decomposition engine — recursively matching sub-problems to best practices until each is covered.
+
+```
+User: Our production incident response is a mess — we have no process.
+
+Claude: Top match: design-incident-response-process (confidence 0.81). Applying...
+
+        Sub-problems surfaced:
+          A. Detection    → apply-alerting-strategy
+          B. Escalation   → design-on-call-rotation
+          C. Communication → write-status-page-update
+          D. Post-incident → apply-five-whys
+
+        Ready to apply A: apply-alerting-strategy. Continue?
+```
+
+> `plan-best-practice-solution` handles **breadth** (multiple domains, sequenced). `apply-best-practice-tree` handles **depth** (one domain, recursive).
+
+---
+
+### Decision guide
+
+| Your situation | Start here |
+|----------------|------------|
+| Know exactly which skill you need | `/skill-name` directly |
+| Have a problem, unsure which skill | `/suggest-best-practice` |
+| Already have a plan, want gaps checked | `/review-best-practice-fit` |
+| Problem spans 3+ independent domains | `/plan-best-practice-solution` |
+| Complex problem within one domain | `/apply-best-practice-tree` |
+| Don't know what practices exist for a topic | `/discover-best-practices` |
+| About to start a task — want to catch gaps before you begin | `/intercept-best-practice` |
+| Problem isn't clear yet — need to define it before solving | `/analyze-problem` |
+
+**6. Don't know what practices exist — use `discover-best-practices`**
+
+Browse what's available for a domain before you have a specific problem.
+
+```
+User: What best practices exist for software architecture?
+
+Claude: Best practices available for software architecture:
+
+  Design
+    design-api-architecture — most APIs are built without versioning until a
+      breaking change forces it; this closes that gap
+    design-observability — teams discover they can't debug incidents after the
+      first production outage
+
+  Security
+    review-security-posture — security reviews done after a breach cost 10× more than before
+
+Most commonly discovered too late:
+  ★ review-security-posture — applied after a breach, not before
+  ★ design-observability — discovered when the first incident is uninvestigable
+
+Want to apply any of these now, or learn more about one?
+```
+
+**7. About to start a task — use `intercept-best-practice`**
+
+Proactively catches applicable practices before you begin, not after problems emerge.
+
+```
+User: I'm going to refactor our authentication module.
+
+Claude: Before you start: design-api-security applies to authentication refactors.
+
+  Common gaps caught at this stage:
+  • Token expiry and refresh strategy (most teams omit this until a session bug)
+  • Rate limiting on auth endpoints
+  • Audit logging for authentication events
+
+  Apply design-api-security now, or continue without? [y/n]
+```
+
+**8. Problem needs defining first — use `analyze-problem`**
+
+When the problem is vague, define it before routing to a solution skill.
+
+```
+User: My team isn't performing well.
+
+Claude: Before finding the right practice, I need to understand the problem.
+  What outcome are you trying to achieve — better output, faster delivery, or fewer conflicts?
+
+User: Better output, but also morale is low.
+
+Claude: Problem statement: Team output is below expectations and morale is low.
+
+  Scope: In — team performance and culture. Out — individual skill gaps (separate problem).
+
+  Possible routes:
+  A. Fix root cause — run a structured retrospective to surface what's blocking the team
+  B. Workaround — redistribute workload while root cause is investigated
+  C. Prevent recurrence — establish team health rituals to catch issues earlier
+
+  Which route fits best? I can find the applicable best practices.
+```
+
+---
+
+### Contributor workflows
+
+**9. Adding a skill**
+
+```
+/write-best-practice-skill    # author the skill
+/review-best-practice-skill   # validate against STANDARD.md (5 criteria)
+/revise-best-practice-skill   # fix any review findings
+→ open PR
+```
+
+**10. Maintaining a domain**
+
+```
+/audit-best-practice-domain    # batch health check — surfaces outdated or weak-sourced skills
+/revise-best-practice-skill    # update stale or under-sourced skills
+/deprecate-best-practice-skill # retire skills superseded by newer practices
+```
 
 ---
 
@@ -333,7 +514,7 @@ Or invoke a skill directly:
 | [`write-value-proposition`](./skills/writing/copywriting/skills/write-value-proposition/) | writing/copywriting | Osterwalder "Value Proposition Design" | ✓ |
 | [`design-training-periodization-plan`](./skills/sports/training/skills/design-training-periodization-plan/) | sports/training | Bompa "Periodization" / NSCA | ✓ |
 
-→ [Browse all 514 skills by domain](./SKILLS.md)
+→ [Browse all 500+ skills by domain](./SKILLS.md)
 
 ---
 
@@ -341,7 +522,7 @@ Or invoke a skill directly:
 
 grimoire maintains an open standard for AI agent skill quality — freely adoptable by any skill library.
 
-Every skill must pass `review-skill` before merge:
+Every skill must pass `review-best-practice-skill` before merge:
 
 | Criterion | Requirement | Rejection example |
 |-----------|-------------|-------------------|
@@ -363,7 +544,7 @@ grimoire is a framework + reference skills. The domain structure is ready — co
 
 | Domain | Sub-domains |
 | ------ | ----------- |
-| [meta](./skills/meta/) | **User-facing:** [suggest-practice](./skills/meta/skills/suggest-practice/) · [plan-solution](./skills/meta/skills/plan-solution/) · [review-practice-fit](./skills/meta/skills/review-practice-fit/) · **Contributors:** [write-skill](./skills/meta/skills/write-skill/) · [review-skill](./skills/meta/skills/review-skill/) · [revise-skill](./skills/meta/skills/revise-skill/) · [audit-domain](./skills/meta/skills/audit-domain/) · [deprecate-skill](./skills/meta/skills/deprecate-skill/) · [design-domain](./skills/meta/skills/design-domain/) |
+| [grimoire](./skills/grimoire/) | **Problem analysis:** [analyze-problem](./skills/grimoire/skills/analyze-problem/) · [discover-best-practices](./skills/grimoire/skills/discover-best-practices/) · **Routing:** [suggest-best-practice](./skills/grimoire/skills/suggest-best-practice/) · [intercept-best-practice](./skills/grimoire/skills/intercept-best-practice/) · **Solution planning:** [plan-best-practice-solution](./skills/grimoire/skills/plan-best-practice-solution/) · [apply-best-practice-tree](./skills/grimoire/skills/apply-best-practice-tree/) · **Practice evaluation:** [review-best-practice-fit](./skills/grimoire/skills/review-best-practice-fit/) · [compare-best-practices](./skills/grimoire/skills/compare-best-practices/) · [audit-applied-best-practices](./skills/grimoire/skills/audit-applied-best-practices/) · **Practice understanding:** [explain-best-practice](./skills/grimoire/skills/explain-best-practice/) · [adapt-best-practice](./skills/grimoire/skills/adapt-best-practice/) · [teach-best-practice](./skills/grimoire/skills/teach-best-practice/) · **Preferences:** [pin-best-practice-preference](./skills/grimoire/skills/pin-best-practice-preference/) · **Contributors:** [write-best-practice-skill](./skills/grimoire/skills/write-best-practice-skill/) · [review-best-practice-skill](./skills/grimoire/skills/review-best-practice-skill/) · [revise-best-practice-skill](./skills/grimoire/skills/revise-best-practice-skill/) · [audit-best-practice-domain](./skills/grimoire/skills/audit-best-practice-domain/) · [deprecate-best-practice-skill](./skills/grimoire/skills/deprecate-best-practice-skill/) · [design-best-practice-domain](./skills/grimoire/skills/design-best-practice-domain/) |
 | [engineering](./skills/engineering/) | [development](./skills/engineering/development/skills/), [frontend](./skills/engineering/frontend/skills/), [architecture](./skills/engineering/architecture/skills/), [testing](./skills/engineering/testing/skills/), [reliability](./skills/engineering/reliability/skills/), [devops](./skills/engineering/devops/skills/), [cloud](./skills/engineering/cloud/skills/), [networking](./skills/engineering/networking/skills/), [security](./skills/engineering/security/skills/), [data](./skills/engineering/data/skills/), [ai](./skills/engineering/ai/skills/), [hardware](./skills/engineering/hardware/skills/), [mobile](./skills/engineering/mobile/skills/), [performance](./skills/engineering/performance/skills/), [project-management](./skills/engineering/project-management/skills/), [product](./skills/engineering/product/skills/), [documentation](./skills/engineering/documentation/skills/) |
 | [writing](./skills/writing/) | [creative](./skills/writing/creative/skills/), [technical](./skills/writing/technical/skills/), [copywriting](./skills/writing/copywriting/skills/), [academic](./skills/writing/academic/skills/), [journalism](./skills/writing/journalism/skills/) |
 | [design](./skills/design/) | [ui-ux](./skills/design/ui-ux/skills/), [graphic](./skills/design/graphic/skills/), [branding](./skills/design/branding/skills/), [motion](./skills/design/motion/skills/), [product](./skills/design/product/skills/) |
@@ -405,31 +586,60 @@ grimoire is a framework + reference skills. The domain structure is ready — co
 
 ---
 
+## ❓ FAQ
+
+**Isn't this already in the model's training data?**
+
+Yes — and no. Models know *about* best practices. Skills make models *do* them, reliably.
+
+The difference:
+
+| Without a skill | With a skill |
+|-----------------|--------------|
+| Model improvises a version of the practice | Model follows the exact steps from the source institution |
+| Output varies every run | Same process, same structure, every time |
+| Practice applied only if you know to ask | Skill triggers automatically when the situation matches |
+| Generic advice | Specific: the right gate, the right question, the right output format |
+
+For simple tasks (write a test, fix a bug), the skeptic is right — the model doesn't need a skill. For complex, multi-step workflows — an SLO design, a post-mortem, an incident response — skills measurably change what you get. The model knows Google's engineering review process exists. It does not reliably know which question to ask first, what the output format is, or when to stop. That's what a skill encodes.
+
+**These are just textbook practices the model already knows. Why bother?**
+
+Knowing a practice and reliably executing it are different things. Ask any model "I just had a production incident" — you'll get a generic write-up. Run `write-post-mortem` and you get: blameless framing, 5-whys, timeline, contributing factors, action items with owners, and a detection section. The model *knew* all of that before the skill existed. The skill is what makes it happen consistently, in the right format, every time.
+
+The "textbook" objection gets it backwards. Established practices are *ideal* for skills precisely because they're falsifiable — you can verify whether the output matches what Google's SRE book, Amazon's mechanisms, or the WHO protocol actually prescribes. If you find a skill that adds nothing over a bare prompt, that's a quality failure. [File an issue.](https://github.com/jeffreytse/grimoire/issues)
+
+**Does grimoire conflict with my team's existing conventions?**
+
+Skills describe what the world's top institutions do. Your team may do things differently — and be right to. A skill is a starting point, not a mandate. Fork, adapt, or ignore any skill that doesn't fit your context. The format is plain Markdown and the license is MIT.
+
+---
+
 ## 🤝 Contributing
 
-**grimoire has 514 skills. It needs 1000. Pick a domain.**
+**grimoire has 500+ skills. It needs 1000. Pick a domain.**
 
 Every domain has empty sub-domains waiting for skills. If you know a field — engineering, law, finance, music, cooking, anything — add the practices you've seen work at the highest level.
 
 **Your first skill in ~30 minutes:**
 1. Pick a practice you've used at the highest level in your field
-2. Run `/write-skill` — it guides you through the format step by step
-3. Open a PR — `/review-skill` runs automatically and flags any gaps
+2. Run `/write-best-practice-skill` — it guides you through the format step by step
+3. Open a PR — `/review-best-practice-skill` runs automatically and flags any gaps
 4. Merge after review passes
 
 Not sure where to start? Browse [open issues](https://github.com/jeffreytse/grimoire/issues) for requested skills, or pick any empty sub-domain from the table below.
 
-Skills must pass [`review-skill`](./skills/meta/skills/review-skill/) before merge.
+Skills must pass [`review-best-practice-skill`](./skills/grimoire/skills/review-best-practice-skill/) before merge.
 The meta skills guide the full contribution workflow:
 
 | Task | Skill |
 |------|-------|
-| Write a new skill | [`write-skill`](./skills/meta/skills/write-skill/) |
-| Review a skill PR | [`review-skill`](./skills/meta/skills/review-skill/) |
-| Fix review findings | [`revise-skill`](./skills/meta/skills/revise-skill/) |
-| Add a new domain | [`design-domain`](./skills/meta/skills/design-domain/) |
-| Audit a domain's health | [`audit-domain`](./skills/meta/skills/audit-domain/) |
-| Retire an outdated skill | [`deprecate-skill`](./skills/meta/skills/deprecate-skill/) |
+| Write a new skill | [`write-best-practice-skill`](./skills/grimoire/skills/write-best-practice-skill/) |
+| Review a skill PR | [`review-best-practice-skill`](./skills/grimoire/skills/review-best-practice-skill/) |
+| Fix review findings | [`revise-best-practice-skill`](./skills/grimoire/skills/revise-best-practice-skill/) |
+| Add a new domain | [`design-best-practice-domain`](./skills/grimoire/skills/design-best-practice-domain/) |
+| Audit a domain's health | [`audit-best-practice-domain`](./skills/grimoire/skills/audit-best-practice-domain/) |
+| Retire an outdated skill | [`deprecate-best-practice-skill`](./skills/grimoire/skills/deprecate-best-practice-skill/) |
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md) for the full standard and [GOVERNANCE.md](./GOVERNANCE.md) for how the project and standard evolve.
 
@@ -445,8 +655,6 @@ If it saved you time, money, or a bad decision:
 - **[☕ Ko-fi](https://ko-fi.com/jeffreytse)** · **[Patreon](https://patreon.com/jeffreytse)** · **[Liberapay](https://liberapay.com/jeffreytse)** — one-time or recurring
 
 Every star makes grimoire more visible. Every sponsorship funds one more domain.
-
-[![Star History Chart](https://api.star-history.com/svg?repos=jeffreytse/grimoire&type=Date)](https://star-history.com/#jeffreytse/grimoire&Date)
 
 ---
 
