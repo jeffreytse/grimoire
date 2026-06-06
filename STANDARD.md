@@ -10,6 +10,16 @@ This standard is maintained by the [grimoire project](https://github.com/jeffrey
 
 ---
 
+## Purpose
+
+A grimoire skill exists for one reason: to promote a practice people wouldn't otherwise know to apply, and to guide them through applying it correctly.
+
+Most people solving a problem don't know which expert standard governs it. LLMs that know those standards won't enforce them without explicit guidance. A skill closes both gaps: it tells the AI **when** to apply a practice (trigger condition in `description`) and **how** to apply it (structured steps from a verified source).
+
+Skills are not documentation. They are instructions that change what an AI does.
+
+---
+
 ## Changelog
 
 | Version | Change |
@@ -489,6 +499,47 @@ Covers failure modes, edge cases, and the non-obvious constraints — not just t
 ✅ Steps that include: "If X fails, do Y. If the output is ambiguous, ask
    for clarification before proceeding."
 ```
+
+---
+
+## User Agency: Multiple Matching Practices
+
+Any skill that scores, matches, or routes to best practices MUST follow this rule:
+
+**When multiple practices could apply, always present a ranked list with a recommendation and let the user decide. Never silently pick one.**
+
+### Decision rule
+
+| Result | Condition | Required behavior |
+|--------|-----------|------------------|
+| **Sole clear match** | 1 practice scores ≥ 0.7 AND second place < 0.4 | Apply directly — no list needed |
+| **Multiple candidates** | 2+ practices score ≥ 0.4 | Present ranked list, mark ★ recommendation, wait for user choice |
+| **No match** | All practices score < 0.4 | State no match found; ask one clarifying question or flag for manual research |
+
+### List format (required when multiple candidates)
+
+```
+Multiple best practices apply. Recommended: [top-practice-name]
+
+1. ★ [top-practice] — [one sentence: what problem it solves]  ← recommended
+   Domain: [domain/subdomain]
+
+2. [second-practice] — [one sentence: what problem it solves]
+   Domain: [domain/subdomain]
+
+3. [third-practice] — [one sentence]
+   Domain: [domain/subdomain]
+
+Which would you like to apply? (Enter number, or press Enter for ★ recommended)
+```
+
+### Rules
+
+- ★ marks the highest-scoring match. If two score equally, ★ goes to the one whose `Use when...` description is the closest literal match to the user's input.
+- Max 5 options in a ranked list — drop lower-scoring matches beyond 5.
+- Never hallucinate practice names — only list practices that exist in installed domains.
+- If a practice is not installed, include the install command alongside its entry.
+- This rule applies to every skill that performs scoring/matching: `suggest-best-practice`, `intercept-best-practice`, `review-best-practice-fit`, `plan-best-practice-solution`, `apply-best-practice-tree`, and any future skill that routes to other skills.
 
 ---
 
