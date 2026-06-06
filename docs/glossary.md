@@ -90,13 +90,13 @@ Required in law skills: the legal system or geographic scope the skill applies t
 A project contributor with merge access. Maintainers review PRs using `review-skill`, run periodic domain audits, and execute deprecation removals. Contributors write skills; maintainers gate quality and merge.
 
 **Majority adoption**
-The threshold a practice must clear to qualify for grimoire: used by MOST top-tier organizations or credentialed professionals in the domain, not just a few notable ones. "Most" means you could name 5+ organizations without straining. See also: *top-tier*.
+The threshold a practice must clear to qualify for  used by MOST top-tier organizations or credentialed professionals in the domain, not just a few notable ones. "Most" means you could name 5+ organizations without straining. See also: *top-tier*.
 
 **MECE**
 Mutually Exclusive, Collectively Exhaustive. A decomposition method where sub-problems don't overlap and together cover the whole problem. Used by `plan-solution` to break complex multi-domain problems into skill-sized pieces.
 
 **Meta skill**
-A skill that operates on the grimoire framework itself rather than on a domain subject. There are 9 meta skills in `skills/meta/`: three user-facing (suggest-practice, plan-solution, review-practice-fit) and six contributor/maintainer skills (write-skill, review-skill, revise-skill, audit-domain, deprecate-skill, design-domain). See [meta-skills.md](./meta-skills.md).
+A skill that operates on the grimoire framework itself rather than on a domain subject. There are 9 meta skills in `skills/grimoire/`: three user-facing (suggest-practice, plan-solution, review-practice-fit) and six contributor/maintainer skills (write-skill, review-skill, revise-skill, audit-domain, deprecate-skill, design-domain). See [grimoire-skills.md](./grimoire-skills.md).
 
 ---
 

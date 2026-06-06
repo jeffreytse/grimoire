@@ -118,6 +118,7 @@ Continue?
 - Flag sub-problems with no matching skill explicitly — don't skip them silently
 - State the reason for sequencing decisions — don't just present an order without explaining why
 - Maximum 7 sub-problems — group if more emerge
+- If a sub-problem is itself complex and single-domain, delegate to `apply-skill-tree` for recursive drill-down rather than forcing it into the flat sequence
 
 ## Examples
 

@@ -24,7 +24,7 @@
 - [Language (11)](#language)
 - [Law (25)](#law)
 - [Marketing (20)](#marketing)
-- [Meta (9)](#meta)
+- [Grimoire (9)](#grimoire)
 - [Music (18)](#music)
 - [Parenting (10)](#parenting)
 - [Pets (10)](#pets)
@@ -713,17 +713,17 @@
 
 ---
 
-## Meta (9) <a name="meta"></a>
+## Grimoire (9) <a name="grimoire"></a>
 
-- [`audit-domain`](./skills/meta/skills/audit-domain/) — Use when you need to assess the quality of all skills in a grimoire domain or sub-domain — before a release, after a bulk contribution, or when adopting a domain for the first time.
-- [`deprecate-skill`](./skills/meta/skills/deprecate-skill/) — Use when a grimoire skill has become outdated — the referenced tool no longer exists at scale, the source institution revised its position, a newer practice has achieved majority top-tier adoption that supersedes it, or the skill fails review-skill criteria it once passed.
-- [`design-domain`](./skills/meta/skills/design-domain/) — Use when adding a new domain or sub-domain to grimoire — whether starting a brand-new domain (health, finance, law), adding a new sub-domain to an existing domain, or deciding whether a new sub-domain is needed at all.
-- [`plan-solution`](./skills/meta/skills/plan-solution/) — Use when the user's problem spans multiple domains, requires coordinating several best practices, or is too complex for a single skill — e.g. "launch a startup", "handle a workplace medical emergency", "going through a divorce while buying a house."
-- [`review-practice-fit`](./skills/meta/skills/review-practice-fit/) — Use when the user already has a solution, plan, approach, or design and wants to know how well it aligns with best practices — including gaps, what's missing, and what to fix.
-- [`review-skill`](./skills/meta/skills/review-skill/) — Use when evaluating whether a SKILL.md meets grimoire standards — for PR review, self-review before submitting, or auditing existing skills in the repo.
-- [`revise-skill`](./skills/meta/skills/revise-skill/) — Use when an existing SKILL.md has review-skill findings to address, a citation has become inaccurate, steps reference an outdated tool, or scope needs adjusting — splitting a skill that covers two concepts, or expanding one that is too shallow.
-- [`suggest-practice`](./skills/meta/skills/suggest-practice/) — Use when the user describes any situation, problem, goal, complaint, or question — including when they want to browse available best practices for a topic, don't know which domain applies, or don't know a best practice exists for their situation.
-- [`write-skill`](./skills/meta/skills/write-skill/) — Use when authoring a new SKILL.md to contribute to grimoire — whether starting from scratch, adapting existing knowledge, or encoding a domain best practice you know well.
+- [`audit-domain`](./skills/grimoire/skills/audit-domain/) — Use when you need to assess the quality of all skills in a grimoire domain or sub-domain — before a release, after a bulk contribution, or when adopting a domain for the first time.
+- [`deprecate-skill`](./skills/grimoire/skills/deprecate-skill/) — Use when a grimoire skill has become outdated — the referenced tool no longer exists at scale, the source institution revised its position, a newer practice has achieved majority top-tier adoption that supersedes it, or the skill fails review-skill criteria it once passed.
+- [`design-domain`](./skills/grimoire/skills/design-domain/) — Use when adding a new domain or sub-domain to grimoire — whether starting a brand-new domain (health, finance, law), adding a new sub-domain to an existing domain, or deciding whether a new sub-domain is needed at all.
+- [`plan-solution`](./skills/grimoire/skills/plan-solution/) — Use when the user's problem spans multiple domains, requires coordinating several best practices, or is too complex for a single skill — e.g. "launch a startup", "handle a workplace medical emergency", "going through a divorce while buying a house."
+- [`review-practice-fit`](./skills/grimoire/skills/review-practice-fit/) — Use when the user already has a solution, plan, approach, or design and wants to know how well it aligns with best practices — including gaps, what's missing, and what to fix.
+- [`review-skill`](./skills/grimoire/skills/review-skill/) — Use when evaluating whether a SKILL.md meets grimoire standards — for PR review, self-review before submitting, or auditing existing skills in the repo.
+- [`revise-skill`](./skills/grimoire/skills/revise-skill/) — Use when an existing SKILL.md has review-skill findings to address, a citation has become inaccurate, steps reference an outdated tool, or scope needs adjusting — splitting a skill that covers two concepts, or expanding one that is too shallow.
+- [`suggest-practice`](./skills/grimoire/skills/suggest-practice/) — Use when the user describes any situation, problem, goal, complaint, or question — including when they want to browse available best practices for a topic, don't know which domain applies, or don't know a best practice exists for their situation.
+- [`write-skill`](./skills/grimoire/skills/write-skill/) — Use when authoring a new SKILL.md to contribute to grimoire — whether starting from scratch, adapting existing knowledge, or encoding a domain best practice you know well.
 
 ---
 

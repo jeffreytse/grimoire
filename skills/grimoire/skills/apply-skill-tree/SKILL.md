@@ -13,7 +13,7 @@ Recursively apply the best-matching skill to a problem, match each resulting sub
 
 **Adopted by:** Divide-and-conquer is foundational in computer science (Knuth, 1968) and is the basis of virtually every structured problem-solving system — used by Google's SRE incident analysis, McKinsey's issue-tree methodology, and NASA's fault-tree analysis. Case-Based Reasoning (CBR), the formal basis for "use the most similar practice when no exact match exists," is deployed in IBM's Watson, medical diagnosis systems (Aamodt & Plaza, 1994), and legal precedent reasoning.
 **Impact:** Aamodt & Plaza (1994) demonstrated that CBR reduces problem-solving time by 40–60% in domains with partial-match knowledge bases, by reusing prior solutions rather than solving from scratch. Divide-and-conquer reduces cognitive load by bounding each decision to a tractable sub-problem — the primary mechanism behind McKinsey's documented success with MECE issue trees (Rasiel, *The McKinsey Way*, 1999).
-**Why best:** Flat skill matching — "find one skill for the whole problem" — fails on complex problems because no single skill covers all dimensions. MECE decomposition (the alternative in `grimoire:plan-solution`) requires full domain expertise upfront before any skill is applied, which is unavailable when the problem space is new. Recursive skill decomposition uses the skills themselves as the decomposition engine, allowing the knowledge base to guide the breakdown without requiring prior expertise. It also degrades gracefully: when no exact skill exists, it applies the closest match with an explicit adaptation note rather than halting.
+**Why best:** Flat skill matching — "find one skill for the whole problem" — fails on complex problems because no single skill covers all dimensions. MECE decomposition (the alternative in `plan-solution`) requires full domain expertise upfront before any skill is applied, which is unavailable when the problem space is new. Recursive skill decomposition uses the skills themselves as the decomposition engine, allowing the knowledge base to guide the breakdown without requiring prior expertise. It also degrades gracefully: when no exact skill exists, it applies the closest match with an explicit adaptation note rather than halting.
 
 Sources: Knuth, *The Art of Computer Programming* (1968); Aamodt & Plaza, "Case-Based Reasoning: Foundational Issues" (1994); Rasiel, *The McKinsey Way* (1999)
 
@@ -25,8 +25,8 @@ Before matching any skill, silently determine:
 
 | Check | Action |
 |-------|--------|
-| Single skill matches clearly (confidence ≥ 0.7, no decomposition needed) | Defer to `grimoire:suggest-practice` |
-| Problem spans 3+ independent domains requiring cross-domain sequencing | Defer to `grimoire:plan-solution` (which may call back into this skill for complex sub-problems) |
+| Single skill matches clearly (confidence ≥ 0.7, no decomposition needed) | Defer to `suggest-practice` |
+| Problem spans 3+ independent domains requiring cross-domain sequencing | Defer to `plan-solution` (which may call back into this skill for complex sub-problems) |
 | Complex, single-domain, needs recursive drill-down | Proceed with this skill |
 
 Do not announce this check — just route correctly.
@@ -127,13 +127,13 @@ Needs manual research:
 
 ## Rules
 
-- Defer to `grimoire:suggest-practice` if one skill clearly covers the full problem (≥ 0.7, no decomposition needed)
-- Defer to `grimoire:plan-solution` if the problem spans 3+ independent domains
+- Defer to `suggest-practice` if one skill clearly covers the full problem (≥ 0.7, no decomposition needed)
+- Defer to `plan-solution` if the problem spans 3+ independent domains
 - Never apply two skills back-to-back without user confirmation
 - Never hallucinate skill names — only reference skills that exist in installed domains
 - State the confidence level when applying a fuzzy match — never silently adapt
 - Maximum recursion depth: 3 — flag anything deeper as needing manual research
-- When called from within `grimoire:plan-solution` for a deep sub-problem, treat the sub-problem as the top-level input — do not re-classify at the multi-domain level
+- When called from within `plan-solution` for a deep sub-problem, treat the sub-problem as the top-level input — do not re-classify at the multi-domain level
 - When decomposing manually (no match), limit to 2–4 sub-problems — more indicates a domain boundary, not depth
 
 ## Common Mistakes

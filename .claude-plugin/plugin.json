@@ -10,7 +10,7 @@
   "repository": "https://github.com/jeffreytse/grimoire",
   "license": "MIT",
   "domains": [
-    "./skills/meta",
+    "./skills/grimoire",
     "./skills/engineering",
     "./skills/writing",
     "./skills/design",
