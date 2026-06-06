@@ -1,5 +1,5 @@
 ---
-name: plan-solution
+name: plan-best-practice-solution
 description: Use when the user's problem spans multiple domains, requires coordinating several best practices, or is too complex for a single skill — e.g. "launch a startup", "handle a workplace medical emergency", "going through a divorce while buying a house."
 source: McKinsey Problem Solving (MECE methodology, Rasiel 1999), Kepner-Tregoe problem analysis, Design Thinking (IDEO/Stanford d.school)
 tags: [complex-problem, multi-domain, problem-decomposition, mece, skill-orchestration, problem-solver, structured-solution, cross-domain]
@@ -33,7 +33,7 @@ From the user's input, silently identify:
 
 Do not ask the user for any of this — infer from what they wrote.
 
-**Complexity check:** If only one domain is involved and the problem maps cleanly to a single skill, delegate to `suggest-practice` instead. `plan-solution` is for genuinely multi-domain or multi-step problems.
+**Complexity check:** If only one domain is involved and the problem maps cleanly to a single skill, delegate to `suggest-best-practice` instead. `plan-best-practice-solution` is for genuinely multi-domain or multi-step problems.
 
 ### 2. Decompose into MECE sub-problems
 
@@ -112,17 +112,17 @@ Continue?
 
 ## Rules
 
-- If the problem is single-domain and maps to one skill, defer to `suggest-practice` — don't over-engineer
+- If the problem is single-domain and maps to one skill, defer to `suggest-best-practice` — don't over-engineer
 - Never apply more than one skill without user confirmation between each
 - Never hallucinate skill names — only reference skills that exist in installed grimoire domains
 - Flag sub-problems with no matching skill explicitly — don't skip them silently
 - State the reason for sequencing decisions — don't just present an order without explaining why
 - Maximum 7 sub-problems — group if more emerge
-- If a sub-problem is itself complex and single-domain, delegate to `apply-skill-tree` for recursive drill-down rather than forcing it into the flat sequence
+- If a sub-problem is itself complex and single-domain, delegate to `apply-best-practice-tree` for recursive drill-down rather than forcing it into the flat sequence
 
 ## Examples
 
-> Skill names in examples are illustrative — actual skills depend on what domains are installed. If a skill is not installed, `plan-solution` flags it with ⚠ and notes manual research is needed.
+> Skill names in examples are illustrative — actual skills depend on what domains are installed. If a skill is not installed, `plan-best-practice-solution` flags it with ⚠ and notes manual research is needed.
 
 **Example 1 — Startup launch**
 > "I want to launch a SaaS startup"
@@ -145,11 +145,11 @@ Reason: understand current position before negotiating; negotiate role before st
 **Example 3 — Single domain → delegate**
 > "My pull requests keep getting rejected"
 
-One domain, one clear skill match — delegate: "Single-domain problem. Applying `suggest-practice`..."
+One domain, one clear skill match — delegate: "Single-domain problem. Applying `suggest-best-practice`..."
 
 ## Common Mistakes
 
-**Over-applying to simple problems**: one domain, one clear skill → use `suggest-practice`. Reserve this skill for problems that genuinely span multiple fields.
+**Over-applying to simple problems**: one domain, one clear skill → use `suggest-best-practice`. Reserve this skill for problems that genuinely span multiple fields.
 
 **Ignoring dependencies**: a flat unsequenced list creates rework. Always explain the order.
 

@@ -2,7 +2,7 @@
 
 Skills in health, law, finance, and psychology domains can influence decisions with real consequences. grimoire encodes best practices, not personalized advice — that distinction must be explicit in every skill in these domains.
 
-Missing a required disclaimer is a **REJECT finding** in `review-skill`. This is not optional.
+Missing a required disclaimer is a **REJECT finding** in `review-best-practice-skill`. This is not optional.
 
 ---
 
@@ -219,7 +219,7 @@ This is exact required text. Do not paraphrase.
 
 ## Quick checklist for regulated domain skills
 
-Before running `review-skill`:
+Before running `review-best-practice-skill`:
 
 - [ ] Health: all factual claims carry `[RCT]`, `[SR]`, `[Consensus]`, or `[Practical]` tags
 - [ ] Health: no medication doses, diagnoses, or personalized treatment protocols

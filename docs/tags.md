@@ -1,6 +1,6 @@
 # Tag Vocabulary
 
-Tags are how `suggest-practice` routes any situation to the right skill. Every skill requires tags covering all four axes. Inconsistent tags silently break routing — two skills covering the same role tagged differently won't both surface when they should.
+Tags are how `suggest-best-practice` routes any situation to the right skill. Every skill requires tags covering all four axes. Inconsistent tags silently break routing — two skills covering the same role tagged differently won't both surface when they should.
 
 This document defines accepted values per axis and explains how to choose.
 

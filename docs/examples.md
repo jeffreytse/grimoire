@@ -1,12 +1,12 @@
 # Skill Examples
 
-Three annotated examples showing what PASS, NEEDS-REVISION, and REJECT look like in practice. Use these to calibrate before running `review-skill` on your own file.
+Three annotated examples showing what PASS, NEEDS-REVISION, and REJECT look like in practice. Use these to calibrate before running `review-best-practice-skill` on your own file.
 
 ---
 
 ## Example 1: PASS
 
-A complete skill that passes all review-skill criteria. Annotations in `<!-- -->` comments explain what each section does right — remove them in your actual skill files.
+A complete skill that passes all review-best-practice-skill criteria. Annotations in `<!-- -->` comments explain what each section does right — remove them in your actual skill files.
 
 ```markdown
 ---
@@ -163,7 +163,7 @@ committed action item, not just discussion.
 Sources: Scrum Guide 2020, Atlassian State of Agile 2023
 ```
 
-**review-skill verdict:**
+**review-best-practice-skill verdict:**
 
 ```
 ## Skill Review: design-sprint-retrospective
@@ -203,7 +203,7 @@ tags: [communication, status-update, engineering, clarity]
 ---
 ```
 
-**review-skill verdict:**
+**review-best-practice-skill verdict:**
 
 ```
 ## Skill Review: write-status-update
@@ -220,10 +220,10 @@ tags: [communication, status-update, engineering, clarity]
 1. Rewrite description: must start with "Use when" and describe triggering conditions only.
    Example: "Use when writing a weekly or sprint status update for engineering stakeholders —
    covers what to include, how to frame for executives vs. peers, and when to escalate."
-2. After fixing description, re-run review-skill — tags will also need outcome and role axes.
+2. After fixing description, re-run review-best-practice-skill — tags will also need outcome and role axes.
 ```
 
-**Why REJECT blocks everything else:** A REJECT finding on any required frontmatter field means the skill cannot be routed correctly by `suggest-practice` and fails the basic contract of the skill format. Fix the REJECT finding first, then re-run `review-skill` to see if any NEEDS-REVISION findings remain.
+**Why REJECT blocks everything else:** A REJECT finding on any required frontmatter field means the skill cannot be routed correctly by `suggest-best-practice` and fails the basic contract of the skill format. Fix the REJECT finding first, then re-run `review-best-practice-skill` to see if any NEEDS-REVISION findings remain.
 
 ---
 
@@ -232,5 +232,5 @@ tags: [communication, status-update, engineering, clarity]
 | Verdict | Meaning | Action |
 |---------|---------|--------|
 | PASS | All criteria ✅ | Open PR |
-| NEEDS-REVISION | Specific criteria ⚠️ — fixable without rewrite | Use `revise-skill`, fix flagged sections only |
-| REJECT | Required field missing or core criterion failed ❌ | Fix blocking issue, re-run review-skill |
+| NEEDS-REVISION | Specific criteria ⚠️ — fixable without rewrite | Use `revise-best-practice-skill`, fix flagged sections only |
+| REJECT | Required field missing or core criterion failed ❌ | Fix blocking issue, re-run review-best-practice-skill |

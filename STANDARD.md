@@ -35,7 +35,7 @@ adopted at scale by Wikipedia (100M+ edits), npm (2M+ packages), Apple App Store
 The framework does not claim to be a majority-adopted pattern in AI skill library
 design — that category is new. It claims to correctly apply a majority-adopted
 contribution-standards methodology to a new domain. Reviewers can verify this claim
-by running `review-skill` on any meta skill in `meta/`.
+by running `review-best-practice-skill` on any meta skill in `meta/`.
 
 ---
 
@@ -151,7 +151,7 @@ Verbs not in this table are allowed if none of the above fit — but vague verbs
 ❌ commit                      → no verb
 ✅ propose-conventional-commit
 
-❌ contract-review-skill       → noun-first, redundant suffix
+❌ contract-review-best-practice-skill       → noun-first, redundant suffix
 ✅ review-saas-contract
 ```
 
@@ -176,7 +176,7 @@ Verbs not in this table are allowed if none of the above fit — but vague verbs
   - `Widely adopted at Google, Netflix, Stripe, Airbnb` — acceptable when no single document exists
 
 **`tags`** (required)
-- Used by `suggest-practice` to match skills to user situations — cover all four axes:
+- Used by `suggest-best-practice` to match skills to user situations — cover all four axes:
   - **Problem**: what problem does this skill solve? (`code-quality`, `muscle-gain`, `debt-reduction`)
   - **Tool/method**: what technique or tool is involved? (`git`, `progressive-overload`, `dcf`, `sql`)
   - **Role/context**: who uses this / in what context? (`developer`, `athlete`, `startup`, `manager`)
@@ -391,7 +391,7 @@ Emerging skills **must** carry `emerging: true` in frontmatter and a status note
 **Status:** Emerging — adopted by [org1, org2, org3] with early evidence. Not yet majority top-tier adoption. Review for promotion or deprecation by [YYYY].
 ```
 
-**Auto-deprecation rule:** If an emerging skill has not achieved majority top-tier adoption within 2 years of addition, run `audit-domain` and either promote it (upgrade to best practice) or deprecate it.
+**Auto-deprecation rule:** If an emerging skill has not achieved majority top-tier adoption within 2 years of addition, run `audit-best-practice-domain` and either promote it (upgrade to best practice) or deprecate it.
 
 ```
 ❌ "AI agents will replace all software engineers" — contested, speculative, no evidence
@@ -577,7 +577,7 @@ Skills become outdated when:
 | Tool referenced is outdated but practice is sound | Fix — update tool reference only |
 | A newer practice supersedes this one at majority top-tier | Deprecate — point to replacement |
 | Skill never qualified (Adopted by was always inaccurate) | Deprecate — no replacement needed |
-| Skill is correct but scope was wrong (too broad or narrow) | Fix — adjust scope, re-run review-skill |
+| Skill is correct but scope was wrong (too broad or narrow) | Fix — adjust scope, re-run review-best-practice-skill |
 | 50/50 controversy has resolved to a clear consensus | Fix — update to reflect new consensus |
 
 When submitting a PR that supersedes an existing skill, mark the old skill for
@@ -634,16 +634,16 @@ Skills marked `verified: true` in frontmatter receive a `✓ Verified` badge in 
 
 1. **Attributed** — `source` names a specific institution, company, or published methodology (not vague "widely adopted")
 2. **Tested** — contributor has used this practice in production or a real engagement; noted in PR description
-3. **Reviewed** — a maintainer has run `review-skill` and approved without major findings
+3. **Reviewed** — a maintainer has run `review-best-practice-skill` and approved without major findings
 
 **How to request verification:**
 - Add `verified: true` to your skill's frontmatter
 - In your PR, write one sentence: "I have used this in production at [context]."
-- A maintainer will run `review-skill` and either approve or return findings via `revise-skill`
+- A maintainer will run `review-best-practice-skill` and either approve or return findings via `revise-best-practice-skill`
 
 **Revoking verification:**
-- If `audit-domain` or `review-skill` finds the skill outdated or inaccurate, `verified` is removed pending a fix
-- Run `revise-skill` to restore it
+- If `audit-best-practice-domain` or `review-best-practice-skill` finds the skill outdated or inaccurate, `verified` is removed pending a fix
+- Run `revise-best-practice-skill` to restore it
 
 ---
 

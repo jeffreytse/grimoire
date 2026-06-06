@@ -70,15 +70,15 @@ The skill reads `git diff --cached`, extracts scope and intent from the diff, an
 
 ---
 
-## Find the right skill: suggest-practice
+## Find the right skill: suggest-best-practice
 
 You don't need to know which skill applies. Describe your situation:
 
 ```
-User: /suggest-practice
+User: /suggest-best-practice
 ```
 
-Then describe the problem in natural language. `suggest-practice` auto-classifies the situation and routes to the best match:
+Then describe the problem in natural language. `suggest-best-practice` auto-classifies the situation and routes to the best match:
 
 ```
 User: My pull requests always take 3 days to get reviewed and then get rejected.
@@ -102,13 +102,13 @@ Claude: Best practices for: database performance
      Domain: engineering/data  |  Install: /plugins add ...
 ```
 
-If a skill isn't installed, `suggest-practice` tells you exactly what to install. It never pretends a skill exists when it doesn't.
+If a skill isn't installed, `suggest-best-practice` tells you exactly what to install. It never pretends a skill exists when it doesn't.
 
 ---
 
-## Multi-domain problems: plan-solution
+## Multi-domain problems: plan-best-practice-solution
 
-Some problems span multiple disciplines. `plan-solution` decomposes them using MECE (Mutually Exclusive, Collectively Exhaustive) analysis and sequences the applicable skills in dependency order.
+Some problems span multiple disciplines. `plan-best-practice-solution` decomposes them using MECE (Mutually Exclusive, Collectively Exhaustive) analysis and sequences the applicable skills in dependency order.
 
 ```
 User: I want to launch a SaaS startup.
@@ -135,11 +135,11 @@ Claude: Your situation spans 5 domains. Here is the solution plan:
 
 Skills run one at a time, with your confirmation between each. The plan adapts if an earlier step reveals new constraints.
 
-`suggest-practice` routes to `plan-solution` automatically when it detects a multi-domain problem. You can also invoke it directly.
+`suggest-best-practice` routes to `plan-best-practice-solution` automatically when it detects a multi-domain problem. You can also invoke it directly.
 
 ---
 
-## Evaluate your existing solution: review-practice-fit
+## Evaluate your existing solution: review-best-practice-fit
 
 If you already have a design, plan, or process and want to know how well it aligns with best practices:
 
@@ -147,7 +147,7 @@ If you already have a design, plan, or process and want to know how well it alig
 User: I have an API design: REST endpoints, JWT auth, PostgreSQL, no rate limiting,
       logs to console only.
 
-Claude: You have an existing solution. Applying review-practice-fit...
+Claude: You have an existing solution. Applying review-best-practice-fit...
 
         ### design-api-architecture — PARTIAL
         ✓ REST endpoints, stateless auth
@@ -166,15 +166,15 @@ Claude: You have an existing solution. Applying review-practice-fit...
         Verdict: NEEDS WORK — address rate limiting and structured logging first.
 ```
 
-`review-practice-fit` evaluates your solution against each applicable best practice — ALIGNED, PARTIAL, or MISSING — and produces a prioritized fix list.
+`review-best-practice-fit` evaluates your solution against each applicable best practice — ALIGNED, PARTIAL, or MISSING — and produces a prioritized fix list.
 
-`suggest-practice` routes to `review-practice-fit` automatically when it detects you're describing an existing solution ("is this good?", "what am I missing?").
+`suggest-best-practice` routes to `review-best-practice-fit` automatically when it detects you're describing an existing solution ("is this good?", "what am I missing?").
 
 ---
 
 ## When a skill isn't installed
 
-`suggest-practice` always tells you what to install:
+`suggest-best-practice` always tells you what to install:
 
 ```
 Claude: Situation matches: review-saas-contract (law/contracts)
@@ -182,9 +182,9 @@ Claude: Situation matches: review-saas-contract (law/contracts)
         /plugins add github:jeffreytse/grimoire/skills/law/contracts
 ```
 
-After installing, invoke `suggest-practice` again or call the skill directly.
+After installing, invoke `suggest-best-practice` again or call the skill directly.
 
-If no skill in grimoire covers your situation yet, `suggest-practice` says so and asks a clarifying question to narrow the domain. You can then request the skill via a [GitHub issue](../.github/ISSUE_TEMPLATE/new-skill.md).
+If no skill in grimoire covers your situation yet, `suggest-best-practice` says so and asks a clarifying question to narrow the domain. You can then request the skill via a [GitHub issue](../.github/ISSUE_TEMPLATE/new-skill.md).
 
 ---
 

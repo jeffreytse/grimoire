@@ -1,5 +1,5 @@
 ---
-name: review-practice-fit
+name: review-best-practice-fit
 description: Use when the user already has a solution, plan, approach, or design and wants to know how well it aligns with best practices — including gaps, what's missing, and what to fix.
 source: McKinsey as-is/to-be gap analysis methodology, Google Engineering Practices design review, ISO 9001 gap audit standards
 tags: [gap-analysis, solution-review, practice-alignment, quality-audit, practitioner, decision-maker, solution-improvement, practice-compliance]
@@ -39,7 +39,7 @@ Can you describe [that element] in more detail?
 
 ### 2. Identify applicable practices
 
-Score candidate practices using the `suggest-practice` scoring model:
+Score candidate practices using the `suggest-best-practice` scoring model:
 
 ```
 score = (tag_overlap × 2) + (description_match × 3) + (domain_plausibility × 1)
@@ -139,7 +139,7 @@ If yes, load the relevant skill and follow its steps to guide the improvement.
 
 ## Examples
 
-> Skill names in examples are illustrative — actual matches depend on what domains are installed. If a skill is not installed, `review-practice-fit` names it and gives the install command.
+> Skill names in examples are illustrative — actual matches depend on what domains are installed. If a skill is not installed, `review-best-practice-fit` names it and gives the install command.
 
 **Example 1 — Engineering architecture review**
 > "Our API: REST endpoints, JWT auth, PostgreSQL, deployed on Heroku, no rate limiting, logs to console only."

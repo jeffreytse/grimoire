@@ -10,22 +10,22 @@ A skill needs two passes before it's ready for PR review:
 
 | Type | What it checks | How to run |
 |------|---------------|------------|
-| **Checklist verification** | Does the file satisfy all required format criteria? | Invoke `review-skill` on the file |
+| **Checklist verification** | Does the file satisfy all required format criteria? | Invoke `review-best-practice-skill` on the file |
 | **Behavioral testing** | Does the skill actually change agent behavior? | Invoke the skill in a live agent session and test it |
 
-Both are required. A skill that passes `review-skill` but produces wrong agent behavior isn't ready. A skill that an agent follows correctly but fails `review-skill` can't be merged.
+Both are required. A skill that passes `review-best-practice-skill` but produces wrong agent behavior isn't ready. A skill that an agent follows correctly but fails `review-best-practice-skill` can't be merged.
 
 ---
 
-## Checklist verification: review-skill
+## Checklist verification: review-best-practice-skill
 
-Invoke `review-skill` on your file before opening a PR:
+Invoke `review-best-practice-skill` on your file before opening a PR:
 
 ```
-Applying review-skill to skills/<domain>/<subdomain>/skills/<name>/SKILL.md
+Applying review-best-practice-skill to skills/<domain>/<subdomain>/skills/<name>/SKILL.md
 ```
 
-`review-skill` runs the full STANDARD.md checklist and produces a structured verdict:
+`review-best-practice-skill` runs the full STANDARD.md checklist and produces a structured verdict:
 
 ```
 ## Skill Review: <skill-name>
@@ -47,12 +47,12 @@ Applying review-skill to skills/<domain>/<subdomain>/skills/<name>/SKILL.md
 **What each verdict means:**
 
 - **PASS** — file is ready to open a PR
-- **NEEDS-REVISION** — specific findings flagged; use `revise-skill` to fix each one, then re-run `review-skill`
+- **NEEDS-REVISION** — specific findings flagged; use `revise-best-practice-skill` to fix each one, then re-run `review-best-practice-skill`
 - **REJECT** — a required field is missing or a core criterion fails; fix the blocking issue before anything else
 
-A REJECT on any required frontmatter field (name, description, source, tags) means `suggest-practice` can't route the skill correctly. Fix it before testing behavior.
+A REJECT on any required frontmatter field (name, description, source, tags) means `suggest-best-practice` can't route the skill correctly. Fix it before testing behavior.
 
-Fix every finding. Re-run `review-skill` after each round of fixes. Don't open a PR until you get PASS.
+Fix every finding. Re-run `review-best-practice-skill` after each round of fixes. Don't open a PR until you get PASS.
 
 ---
 
@@ -161,7 +161,7 @@ If the footer is missing or paraphrased, the skill's Steps section is incomplete
 
 Before opening a PR:
 
-- [ ] `review-skill` produces PASS verdict
+- [ ] `review-best-practice-skill` produces PASS verdict
 - [ ] Skill tested in a fresh agent session (not the session where you wrote it)
 - [ ] Triggering condition produces correct routing
 - [ ] All Steps executed in order

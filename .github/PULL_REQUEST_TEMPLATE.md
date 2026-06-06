@@ -4,7 +4,7 @@
 
 ## Self-check
 
-Run `review-skill` on every SKILL.md in this PR, then check each box.
+Run `review-best-practice-skill` on every SKILL.md in this PR, then check each box.
 
 ### Frontmatter
 

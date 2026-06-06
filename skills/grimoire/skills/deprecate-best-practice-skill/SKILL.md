@@ -1,6 +1,6 @@
 ---
-name: deprecate-skill
-description: Use when a grimoire skill has become outdated — the referenced tool no longer exists at scale, the source institution revised its position, a newer practice has achieved majority top-tier adoption that supersedes it, or the skill fails review-skill criteria it once passed.
+name: deprecate-best-practice-skill
+description: Use when a grimoire skill has become outdated — the referenced tool no longer exists at scale, the source institution revised its position, a newer practice has achieved majority top-tier adoption that supersedes it, or the skill fails review-best-practice-skill criteria it once passed.
 source: npm deprecation guidelines, IETF RFC obsolescence process (BCP 9), Semantic Versioning (semver.org)
 tags: [skill-maintenance, staleness, deprecation, outdated-practice, maintainer, knowledge-freshness]
 ---
@@ -38,10 +38,10 @@ A skill qualifies for deprecation if ANY of the following are true:
 - A newer practice has achieved majority top-tier adoption that directly supersedes this one
 - The tool or API referenced in the skill no longer exists at scale (abandoned, renamed,
   or replaced by something with 10× adoption)
-- The skill now fails `review-skill` criteria it once passed (e.g., the "Adopted by"
+- The skill now fails `review-best-practice-skill` criteria it once passed (e.g., the "Adopted by"
   claim is no longer accurate)
 
-If none apply, the skill needs updating — not deprecating. Use `write-skill` to
+If none apply, the skill needs updating — not deprecating. Use `write-best-practice-skill` to
 revise it instead.
 
 ### 2. Identify the replacement (if one exists)
@@ -110,7 +110,7 @@ Removal steps:
 - Deprecation PR and removal are two separate steps — never delete in the same PR as
   the deprecation notice
 - If a skill is wrong but not stale (e.g., always had incorrect "Adopted by" claims),
-  use `review-skill` + a fix PR instead of deprecation
+  use `review-best-practice-skill` + a fix PR instead of deprecation
 - Only maintainers perform step 6 (removal)
 
 ## Common Mistakes

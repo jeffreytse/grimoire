@@ -1,5 +1,5 @@
 ---
-name: suggest-practice
+name: suggest-best-practice
 description: Use when the user describes any situation, problem, goal, complaint, or question — including when they want to browse available best practices for a topic, don't know which domain applies, or don't know a best practice exists for their situation.
 source: Information retrieval best practices (van Rijsbergen, 1979), Nielsen Norman Group search UX guidelines
 tags: [skill-discovery, auto-classify, problem-routing, problem-solver, situation-analysis, practice-recommendation]
@@ -25,7 +25,7 @@ adoption than systems that accepted natural language and routed automatically.
 **Why best:** A single entry point — vs. domain-specific skills that require users to
 already know which domain and practice applies to their situation — eliminates the
 "which skill do I use?" confusion. Users don't need to pre-classify their problem;
-`suggest-practice` infers domain and intent automatically.
+`suggest-best-practice` infers domain and intent automatically.
 
 Sources: Prerau (1990) expert system usability research, Nielsen Norman Group search
 UX guidelines, Google Search intent classification research
@@ -64,17 +64,17 @@ Normalize final scores to 0–1.
 
 **Existing solution** — user describes something they already built, planned, or decided and wants evaluation ("is this good?", "what am I missing?", "does this follow best practices?"):
 
-Delegate to `review-practice-fit`. Announce:
+Delegate to `review-best-practice-fit`. Announce:
 ```
-You have an existing solution. Applying review-practice-fit to evaluate it against best practices...
+You have an existing solution. Applying review-best-practice-fit to evaluate it against best practices...
 ```
 
 **Multi-domain** — user has a new problem that spans 3+ domains and requires applying ALL of them (not just one):
 
-Delegate to `plan-solution`. Announce:
+Delegate to `plan-best-practice-solution`. Announce:
 ```
 Your situation spans multiple domains and requires coordinating several best practices.
-Applying plan-solution to build a sequenced action plan...
+Applying plan-best-practice-solution to build a sequenced action plan...
 ```
 
 **High confidence** — one skill scores ≥ 0.7 and clearly leads the rest:
@@ -134,9 +134,9 @@ After applying the primary skill, check: does the user's situation span addition
 domains with independent high-confidence matches?
 
 - **1 additional domain**: ask once: "This situation also touches [domain] — [skill-name] applies to that aspect. Want me to apply it?"
-- **2+ additional domains**: delegate to `plan-solution` — "This situation spans multiple domains. Want me to build a full solution plan?"
+- **2+ additional domains**: delegate to `plan-best-practice-solution` — "This situation spans multiple domains. Want me to build a full solution plan?"
 
-Do not chain more than 2 skills without user confirmation. If 3+ skills are needed, use `plan-solution`.
+Do not chain more than 2 skills without user confirmation. If 3+ skills are needed, use `plan-best-practice-solution`.
 
 ## Rules
 

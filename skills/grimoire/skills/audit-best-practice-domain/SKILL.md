@@ -1,5 +1,5 @@
 ---
-name: audit-domain
+name: audit-best-practice-domain
 description: Use when you need to assess the quality of all skills in a grimoire domain or sub-domain — before a release, after a bulk contribution, or when adopting a domain for the first time.
 source: Wikipedia Featured Article review criteria, npm package quality scoring, Apache project governance
 tags: [skill-quality, domain-health, bulk-review, maintainer, repo-health]
@@ -50,9 +50,9 @@ find <target-path> -name "SKILL.md" | sort
 
 If zero files found: report "Domain has no skills yet" and stop.
 
-### 3. Apply `review-skill` to each file
+### 3. Apply `review-best-practice-skill` to each file
 
-For each SKILL.md, run the full `review-skill` evaluation:
+For each SKILL.md, run the full `review-best-practice-skill` evaluation:
 - Check frontmatter (name, description, source, tags)
 - Check required sections (`## Why This Is Best Practice`, `## Steps`)
 - Evaluate "Why This Is Best Practice" sub-fields
@@ -106,7 +106,7 @@ After the report:
 ## Rules
 
 - Never modify skill files during an audit — read-only
-- Apply the same `review-skill` criteria to every file — no exceptions for "almost passing"
+- Apply the same `review-best-practice-skill` criteria to every file — no exceptions for "almost passing"
 - If a domain has 0 skills, report that; don't invent findings
 - A REJECT in one skill does not block reporting other skills — complete the full sweep
 - Report counts at the top so maintainers can assess at a glance without reading every row

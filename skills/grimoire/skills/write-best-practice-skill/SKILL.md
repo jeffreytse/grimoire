@@ -1,5 +1,5 @@
 ---
-name: write-skill
+name: write-best-practice-skill
 description: Use when authoring a new SKILL.md to contribute to grimoire — whether starting from scratch, adapting existing knowledge, or encoding a domain best practice you know well.
 source: Wikipedia Manual of Style, MDN Web Docs Contributor Guide
 tags: [skill-authoring, structured-authoring, contributor, domain-expert, quality-contribution]
@@ -7,7 +7,7 @@ tags: [skill-authoring, structured-authoring, contributor, domain-expert, qualit
 
 # Write Skill
 
-Author a new grimoire SKILL.md that encodes a domain best practice and passes `review-skill`.
+Author a new grimoire SKILL.md that encodes a domain best practice and passes `review-best-practice-skill`.
 
 ## Why This Is Best Practice
 
@@ -38,7 +38,7 @@ Before writing a single line, confirm all four gates:
   — not just a few notable ones, not your team's approach
 - **Measurable impact**: strong demonstrated outcome (%, time saved, defect reduction,
   risk reduction) — "helps" or "improves" without numbers fails this gate
-- **No duplicate**: run `suggest-practice` with your topic first — if a skill already
+- **No duplicate**: run `suggest-best-practice` with your topic first — if a skill already
   covers it, extend that skill instead of creating a duplicate
 - **No genuine controversy**: if credible top-tier professionals are split ~50/50,
   there is no consensus and therefore no best practice — skip it
@@ -87,7 +87,7 @@ Failing source examples: "industry standard", "widely known", "common practice".
 
 ```yaml
 ---
-name: verb-first-kebab-case
+name: write-best-practice-skill
 description: Use when <triggering conditions — NOT a summary of the steps>.
 source: <institution, standard body, or top-tier company list>
 tags: [problem-keyword-1, problem-keyword-2, problem-keyword-3]
@@ -151,9 +151,9 @@ Size check: 50–300 lines total. Under 50 = too shallow. Over 300 = split into 
 | Finance / Investing | `> This is educational content, not financial advice. Consult a licensed financial advisor for personal decisions.` |
 | Psychology / Mental Health | `> For mental health concerns, consult a qualified mental health professional.` |
 
-### 8. Run `review-skill`
+### 8. Run `review-best-practice-skill`
 
-Before opening a PR, invoke `review-skill` on your file. Fix every REJECT and
+Before opening a PR, invoke `review-best-practice-skill` on your file. Fix every REJECT and
 NEEDS-REVISION finding until the verdict is PASS.
 
 Common first-draft failures:
@@ -164,10 +164,10 @@ Common first-draft failures:
 
 ## Rules
 
-- Run `suggest-practice` first — never create a duplicate
+- Run `suggest-best-practice` first — never create a duplicate
 - Verify majority top-tier adoption before writing anything
 - `description` field describes triggering conditions ONLY — no workflow summary
-- Must pass `review-skill` before opening a PR
+- Must pass `review-best-practice-skill` before opening a PR
 - If contested 50/50 among top-tier, do not write the skill
 
 ## Common Mistakes

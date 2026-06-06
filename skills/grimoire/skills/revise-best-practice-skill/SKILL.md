@@ -1,6 +1,6 @@
 ---
-name: revise-skill
-description: Use when an existing SKILL.md has review-skill findings to address, a citation has become inaccurate, steps reference an outdated tool, or scope needs adjusting — splitting a skill that covers two concepts, or expanding one that is too shallow.
+name: revise-best-practice-skill
+description: Use when an existing SKILL.md has review-best-practice-skill findings to address, a citation has become inaccurate, steps reference an outdated tool, or scope needs adjusting — splitting a skill that covers two concepts, or expanding one that is too shallow.
 source: IETF RFC errata process (BCP 9), MDN Web Docs contribution guidelines, Wikipedia article improvement process
 tags: [skill-revision, quality-debt, targeted-fix, contributor, maintainer, review-pass]
 ---
@@ -22,9 +22,9 @@ Sources: IETF RFC errata process (BCP 9), MDN Web Docs contribution guidelines, 
 ### 1. Load findings
 
 Get the finding set:
-- review-skill already run → use its structured output directly
-- No findings yet → run `review-skill` on the file first; use its output
-- Findings from user report (not review-skill format) → map each to a review-skill criterion name before proceeding
+- review-best-practice-skill already run → use its structured output directly
+- No findings yet → run `review-best-practice-skill` on the file first; use its output
+- Findings from user report (not review-best-practice-skill format) → map each to a review-best-practice-skill criterion name before proceeding
 
 ### 2. Classify each finding by type
 
@@ -62,14 +62,14 @@ If the finding is "skill covers two separable concepts":
 1. Identify concept A (primary — stays in this file) and concept B (extract)
 2. Remove concept B content from the current skill
 3. Create a new directory for concept B's skill
-4. Run `write-skill` to author the extracted skill from scratch — do not copy the removed content verbatim; the extracted skill needs its own Why section, sources, and steps
-5. Run `review-skill` on both resulting skills
+4. Run `write-best-practice-skill` to author the extracted skill from scratch — do not copy the removed content verbatim; the extracted skill needs its own Why section, sources, and steps
+5. Run `review-best-practice-skill` on both resulting skills
 
 This is a scope reduction, not a deprecation. Do not add a deprecation notice to the concept A skill.
 
-### 5. Verify: re-run review-skill
+### 5. Verify: re-run review-best-practice-skill
 
-After all fixes are applied, run `review-skill` on the updated file:
+After all fixes are applied, run `review-best-practice-skill` on the updated file:
 
 - All previously flagged criteria now ✅ → proceed to PR
 - New ❌ introduced by the fix → resolve before opening PR
@@ -85,16 +85,16 @@ PR description: one line per finding, stating what it was and how it was resolve
 
 - Never fix what wasn't flagged — scope creep in revision introduces regressions
 - One PR per skill — if multiple skills need revision, open separate PRs
-- Always re-run `review-skill` after revision — don't assume the fix resolved the finding
+- Always re-run `review-best-practice-skill` after revision — don't assume the fix resolved the finding
 - Splitting is a revision, not a deprecation — do not mark the original skill as deprecated
-- If a finding cannot be resolved without invalidating the skill's core claim, use `deprecate-skill` instead
+- If a finding cannot be resolved without invalidating the skill's core claim, use `deprecate-best-practice-skill` instead
 
 ## Common Mistakes
 
 **Rewriting the whole skill for one citation**: fix the citation sentence; leave everything else.
 
-**"Improving" unflagged sections**: if review-skill didn't flag it, don't touch it — even if you'd write it differently.
+**"Improving" unflagged sections**: if review-best-practice-skill didn't flag it, don't touch it — even if you'd write it differently.
 
-**Skipping re-verification**: a fix can introduce a new failure. Always re-run review-skill after editing.
+**Skipping re-verification**: a fix can introduce a new failure. Always re-run review-best-practice-skill after editing.
 
 **Treating scope reduction as deprecation**: splitting a skill that was too broad is a fix. Both resulting skills live on — neither is retired.

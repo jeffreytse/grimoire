@@ -26,8 +26,8 @@ grimoire has three layers: **skills** (content), **meta skills** (framework logi
                        │ managed by
 ┌──────────────────────▼──────────────────────────┐
 │               Meta Skills                       │
-│   suggest-practice · review-skill · write-skill │
-│   plan-solution · review-practice-fit · ...     │
+│   suggest-best-practice · review-best-practice-skill · write-best-practice-skill │
+│   plan-best-practice-solution · review-best-practice-fit · ...     │
 └─────────────────────────────────────────────────┘
 ```
 
@@ -65,7 +65,7 @@ Sources: [verifiable citations]
 ...
 ```
 
-**Frontmatter fields** are used by `suggest-practice` for automatic routing. The `tags` field is the primary matching signal — it must cover all four axes: problem keyword, tool/method, role/context, and outcome.
+**Frontmatter fields** are used by `suggest-best-practice` for automatic routing. The `tags` field is the primary matching signal — it must cover all four axes: problem keyword, tool/method, role/context, and outcome.
 
 **"Why This Is Best Practice"** is grimoire's quality signal. Every skill must prove it belongs: named adopters, measurable impact with evidence, and an explicit comparison to alternatives. Vague claims ("many companies use this", "significantly improves quality") are rejected at review.
 
@@ -198,22 +198,22 @@ grimoire is self-managing. The meta skills in `skills/grimoire/` run the framewo
 
 | Skill | What it does |
 |-------|-------------|
-| `suggest-practice` | Universal entry point — classifies any situation and routes to the matching skill or install command |
-| `plan-solution` | Decomposes multi-domain problems into sequenced skill applications (MECE methodology) |
-| `review-practice-fit` | Evaluates an existing solution against best practices — ALIGNED/PARTIAL/MISSING per practice, prioritized fix list |
+| `suggest-best-practice` | Universal entry point — classifies any situation and routes to the matching skill or install command |
+| `plan-best-practice-solution` | Decomposes multi-domain problems into sequenced skill applications (MECE methodology) |
+| `review-best-practice-fit` | Evaluates an existing solution against best practices — ALIGNED/PARTIAL/MISSING per practice, prioritized fix list |
 
 **Contributor meta skills** — manage the library itself:
 
 | Skill | What it does |
 |-------|-------------|
-| `write-skill` | Guides authoring a new SKILL.md from scratch |
-| `review-skill` | Evaluates a SKILL.md — PASS/NEEDS-REVISION/REJECT with specific findings |
-| `revise-skill` | Applies review findings to an existing skill without touching passing sections |
-| `audit-domain` | Batch-evaluates all skills in a domain, calls review-skill per file |
-| `deprecate-skill` | Marks an outdated skill for removal with migration guidance |
-| `design-domain` | Architects a new domain: directory structure, plugin files, marketplace entries, seed skills |
+| `write-best-practice-skill` | Guides authoring a new SKILL.md from scratch |
+| `review-best-practice-skill` | Evaluates a SKILL.md — PASS/NEEDS-REVISION/REJECT with specific findings |
+| `revise-best-practice-skill` | Applies review findings to an existing skill without touching passing sections |
+| `audit-best-practice-domain` | Batch-evaluates all skills in a domain, calls review-best-practice-skill per file |
+| `deprecate-best-practice-skill` | Marks an outdated skill for removal with migration guidance |
+| `design-best-practice-domain` | Architects a new domain: directory structure, plugin files, marketplace entries, seed skills |
 
-**Why this matters:** `review-skill` runs the exact same criteria as `STANDARD.md`. As long as both are maintained together, the quality standard is self-enforcing — it cannot drift between the written standard and what's actually checked. Any agent using grimoire's meta skills applies the same bar every time.
+**Why this matters:** `review-best-practice-skill` runs the exact same criteria as `STANDARD.md`. As long as both are maintained together, the quality standard is self-enforcing — it cannot drift between the written standard and what's actually checked. Any agent using grimoire's meta skills applies the same bar every time.
 
 ---
 
@@ -222,7 +222,7 @@ grimoire is self-managing. The meta skills in `skills/grimoire/` run the framewo
 The contribution pipeline is:
 
 ```
-write-skill  →  review-skill  →  revise-skill  →  review-skill  →  PR merge
+write-best-practice-skill  →  review-best-practice-skill  →  revise-best-practice-skill  →  review-best-practice-skill  →  PR merge
                     ↑                                    |
                     └────────────── loop ────────────────┘
 ```
@@ -230,9 +230,9 @@ write-skill  →  review-skill  →  revise-skill  →  review-skill  →  PR me
 For new domains:
 
 ```
-design-domain  →  write-skill (seed skills)  →  audit-domain  →  PR merge
+design-best-practice-domain  →  write-best-practice-skill (seed skills)  →  audit-best-practice-domain  →  PR merge
 ```
 
-`review-skill` uses the Fagan Inspection method (IBM 1976) — a deterministic checklist that produces consistent verdicts regardless of which agent applies it. PASS requires all criteria to be ✅. A REJECT on any frontmatter field blocks merge.
+`review-best-practice-skill` uses the Fagan Inspection method (IBM 1976) — a deterministic checklist that produces consistent verdicts regardless of which agent applies it. PASS requires all criteria to be ✅. A REJECT on any frontmatter field blocks merge.
 
 The full criteria and checklist are in [STANDARD.md](../STANDARD.md).

@@ -1,5 +1,5 @@
 ---
-name: design-domain
+name: design-best-practice-domain
 description: Use when adding a new domain or sub-domain to grimoire — whether starting a brand-new domain (health, finance, law), adding a new sub-domain to an existing domain, or deciding whether a new sub-domain is needed at all.
 source: Apache Software Foundation project governance, npm package organization standards, Library of Congress classification system
 tags: [domain-creation, knowledge-architecture, subdomain-design, contributor, maintainer, domain-release]
@@ -23,7 +23,7 @@ Sources: Apache Software Foundation incubation policy, npm scoped packages docum
 
 A new top-level domain qualifies if ALL three are true:
 
-- **Distinct**: not a sub-domain of an existing grimoire domain — run `suggest-practice` with your topic first; if it maps to an existing domain, add a sub-domain there instead
+- **Distinct**: not a sub-domain of an existing grimoire domain — run `suggest-best-practice` with your topic first; if it maps to an existing domain, add a sub-domain there instead
 - **Broad enough**: covers at least 3 separable sub-domains (e.g., `health/` → `fitness/`, `nutrition/`, `medicine/`)
 - **Has majority-adopted best practices**: credentialed professionals in this domain follow structured practices with demonstrated, measurable outcomes
 
@@ -105,7 +105,7 @@ One file per sub-domain at `<subdomain>/.claude-plugin/plugin.json`:
 
 ### 6. Write seed skills
 
-Minimum 2 seed skills before opening a PR. Use `write-skill` for each.
+Minimum 2 seed skills before opening a PR. Use `write-best-practice-skill` for each.
 
 One skill per sub-domain for hierarchical; two directly for flat. A domain with 1 skill signals an abandoned stub — 2 skills demonstrates real coverage depth and gives contributors a pattern to follow.
 
@@ -134,9 +134,9 @@ Add a row to the domains table in `README.md`:
 | [Domain](./skills/<domain>/) | Subdomain 1, Subdomain 2, ... | `/plugins add github:jeffreytse/grimoire/skills/<domain>` |
 ```
 
-### 9. Run audit-domain
+### 9. Run audit-best-practice-domain
 
-Invoke `audit-domain` on the new domain path. All seed skills must PASS before opening a PR. A NEEDS-REVISION or REJECT on any seed skill blocks the domain PR.
+Invoke `audit-best-practice-domain` on the new domain path. All seed skills must PASS before opening a PR. A NEEDS-REVISION or REJECT on any seed skill blocks the domain PR.
 
 ### 10. Open a PR
 
@@ -145,13 +145,13 @@ PR title: `feat(<domain>): add <domain> domain with <N> seed skills`
 PR description must include:
 - Sub-domains created
 - Seed skills written (names + one-line purpose each)
-- audit-domain output (all PASS)
+- audit-best-practice-domain output (all PASS)
 - Install command for users: `/plugins add github:jeffreytse/grimoire/skills/<domain>`
 
 ## Rules
 
 - Never release with 0 seed skills — stub domains block contributors who try to install
-- Always run audit-domain before opening a PR — seed skills must pass review-skill
+- Always run audit-best-practice-domain before opening a PR — seed skills must pass review-best-practice-skill
 - Sub-domain names: lowercase, hyphen-separated, 1–2 words (`nutrition`, `contract-law`, not `about-nutrition`)
 - Domain names: single noun, lowercase (`health`, `finance`, `law`)
 - If the topic fits under an existing domain, create a sub-domain — don't create a parallel top-level domain
@@ -164,6 +164,6 @@ PR description must include:
 
 **Missing marketplace.json entries**: users cannot install sub-domains individually without them.
 
-**Skipping audit-domain**: seed skills that don't pass review-skill undermine the domain's quality signal from day one.
+**Skipping audit-best-practice-domain**: seed skills that don't pass review-best-practice-skill undermine the domain's quality signal from day one.
 
 **Subdomain too granular**: `fitness/running/skills/` is too deep — keep it `fitness/skills/` and scope skills within it.

@@ -30,12 +30,12 @@ Loads all domains listed in the `domains` array. Claude Code reads each domain's
 
 **Using skills:**
 ```
-/suggest-practice
-/write-skill
-/review-skill
+/suggest-best-practice
+/write-best-practice-skill
+/review-best-practice-skill
 ```
 
-Invoke any meta skill by name with a leading slash. For domain skills, describe your situation and `suggest-practice` routes automatically.
+Invoke any meta skill by name with a leading slash. For domain skills, describe your situation and `suggest-best-practice` routes automatically.
 
 **Tool names:** Use native Claude Code tool names (Read, Write, Edit, Bash, Skill, TodoWrite).
 
@@ -178,7 +178,7 @@ If you're integrating grimoire with an agent not listed here:
 
 ## Keeping plugins in sync
 
-When a new domain is added to grimoire (via `design-domain`), the following files must be updated:
+When a new domain is added to grimoire (via `design-best-practice-domain`), the following files must be updated:
 
 | File | What to update |
 |------|----------------|

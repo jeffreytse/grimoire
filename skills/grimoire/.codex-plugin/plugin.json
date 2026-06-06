@@ -16,15 +16,15 @@
     "grimoire"
   ],
   "skills": [
-    "./skills/review-skill/SKILL.md",
-    "./skills/write-skill/SKILL.md",
-    "./skills/audit-domain/SKILL.md",
-    "./skills/deprecate-skill/SKILL.md",
-    "./skills/suggest-practice/SKILL.md",
-    "./skills/plan-solution/SKILL.md",
-    "./skills/review-practice-fit/SKILL.md",
-    "./skills/revise-skill/SKILL.md",
-    "./skills/design-domain/SKILL.md"
+    "./skills/review-best-practice-skill/SKILL.md",
+    "./skills/write-best-practice-skill/SKILL.md",
+    "./skills/audit-best-practice-domain/SKILL.md",
+    "./skills/deprecate-best-practice-skill/SKILL.md",
+    "./skills/suggest-best-practice/SKILL.md",
+    "./skills/plan-best-practice-solution/SKILL.md",
+    "./skills/review-best-practice-fit/SKILL.md",
+    "./skills/revise-best-practice-skill/SKILL.md",
+    "./skills/design-best-practice-domain/SKILL.md"
   ],
   "interface": {
     "displayName": "meta",

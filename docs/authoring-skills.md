@@ -9,12 +9,12 @@ For the formal quality checklist, see [STANDARD.md](../STANDARD.md). For the ski
 ## The contribution lifecycle
 
 ```
-suggest-practice          ← check no duplicate exists
-  └→ design-domain        ← if adding a new domain first
-       └→ write-skill     ← author the SKILL.md
-            └→ review-skill    ← self-review before PR
-                 └→ revise-skill   ← fix findings
-                      └→ review-skill   ← re-verify
+suggest-best-practice          ← check no duplicate exists
+  └→ design-best-practice-domain        ← if adding a new domain first
+       └→ write-best-practice-skill     ← author the SKILL.md
+            └→ review-best-practice-skill    ← self-review before PR
+                 └→ revise-best-practice-skill   ← fix findings
+                      └→ review-best-practice-skill   ← re-verify
                            └→ open PR
 ```
 
@@ -46,7 +46,7 @@ There must be a number or a named study. "Helps" or "improves" without data fail
 ```
 
 **Gate 3 — No duplicate**
-Run `suggest-practice` with your topic first. If an existing skill already covers it, extend that skill via [revise-skill](../skills/grimoire/skills/revise-skill/SKILL.md) instead of creating a duplicate.
+Run `suggest-best-practice` with your topic first. If an existing skill already covers it, extend that skill via [revise-best-practice-skill](../skills/grimoire/skills/revise-best-practice-skill/SKILL.md) instead of creating a duplicate.
 
 **Gate 4 — No genuine controversy**
 If credible top-tier professionals are split ~50/50, there is no consensus and therefore no best practice. Encode the majority position; if genuinely split, skip it.
@@ -57,7 +57,7 @@ If credible top-tier professionals are split ~50/50, there is no consensus and t
 
 If your skill belongs under an existing domain and subdomain, skip to Step 3.
 
-If you need a new domain or subdomain, invoke `design-domain` first. It covers:
+If you need a new domain or subdomain, invoke `design-best-practice-domain` first. It covers:
 - Qualifying the domain (3+ separable subdomains required for a top-level domain)
 - Directory structure and plugin.json templates
 - Marketplace.json entries
@@ -130,7 +130,7 @@ description: Use when committing — inspects staged files, drafts conventional 
 description: Use when the user asks to commit, wants a commit message, or invokes /propose-commit.
 ```
 
-**`tags`** — must cover all four axes. These are the signals `suggest-practice` uses to route problems.
+**`tags`** — must cover all four axes. These are the signals `suggest-best-practice` uses to route problems.
 
 ```yaml
 # Bad — only problem keywords, missing role and outcome
@@ -219,23 +219,23 @@ Steps must be immediately executable — the reader can follow them right now.
 
 ---
 
-## Step 8: Self-review with review-skill
+## Step 8: Self-review with review-best-practice-skill
 
-Before opening a PR, invoke `review-skill` on your file:
+Before opening a PR, invoke `review-best-practice-skill` on your file:
 
 ```
-Applying review-skill to skills/<domain>/<subdomain>/skills/<name>/SKILL.md
+Applying review-best-practice-skill to skills/<domain>/<subdomain>/skills/<name>/SKILL.md
 ```
 
-`review-skill` runs the full [STANDARD.md](../STANDARD.md) checklist and produces a verdict:
+`review-best-practice-skill` runs the full [STANDARD.md](../STANDARD.md) checklist and produces a verdict:
 
 - **PASS** — ready to open a PR
 - **NEEDS-REVISION** — specific fixes required before merge
 - **REJECT** — a required field is missing or a core criterion fails; fix and re-run
 
-Fix every NEEDS-REVISION and REJECT finding. Use `revise-skill` to apply changes to specific sections without touching passing content. Re-run `review-skill` after each round of fixes.
+Fix every NEEDS-REVISION and REJECT finding. Use `revise-best-practice-skill` to apply changes to specific sections without touching passing content. Re-run `review-best-practice-skill` after each round of fixes.
 
-A skill that fails `review-skill` will be rejected in the PR review. Run it yourself first.
+A skill that fails `review-best-practice-skill` will be rejected in the PR review. Run it yourself first.
 
 ---
 
@@ -263,6 +263,6 @@ If your skill introduces a new subdomain, follow the sub-domain setup steps in [
 | "Adopted by" says "many companies" | Name Google, Netflix, Mayo Clinic, CFA Institute — specific |
 | "Impact" says "significantly improves" | Find the study or the number; if you can't, keep the causal argument without a number |
 | Steps describe concepts instead of actions | Rewrite each step as a command the reader can execute immediately |
-| Skill covers two separable concepts | Split into two skills; run `write-skill` for each |
+| Skill covers two separable concepts | Split into two skills; run `write-best-practice-skill` for each |
 | `description` summarizes what the skill does | Replace with triggering conditions only — starts with "Use when" |
 | Tags don't cover all four axes | Add tags until problem / tool / role / outcome are all represented |

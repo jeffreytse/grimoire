@@ -1,5 +1,5 @@
 ---
-name: review-skill
+name: review-best-practice-skill
 description: Use when evaluating whether a SKILL.md meets grimoire standards — for PR review, self-review before submitting, or auditing existing skills in the repo.
 source: Linux kernel patch review process, CPython PEP review guidelines, Apache Software Foundation governance
 tags: [skill-review, quality-gate, checklist, reviewer, maintainer, defect-prevention, consistency]
