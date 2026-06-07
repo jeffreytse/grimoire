@@ -13,4 +13,4 @@ Type "bash assets/demo-sim.sh"
 Enter
 Sleep 0.5s
 Show
-Sleep 55.5s
+Sleep 75s

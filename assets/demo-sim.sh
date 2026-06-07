@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Simulated Claude Code TUI demo — no actual commands executed
+# Simulated Claude Code TUI demo — analyze-problem → plan → 3 skills → outcome
 
 ORANGE='\033[38;5;174m'
 AMBER='\033[38;5;172m'
@@ -19,13 +19,44 @@ type_cmd() {
   local cmd="$1" i char
   printf "${BOLD}❯${NC} "
   for (( i=0; i<${#cmd}; i++ )); do
-    char="${cmd:$i:1}"
-    printf "%s" "$char"
-    sleep 0.055
+    char="${cmd:$i:1}"; printf "%s" "$char"; sleep 0.055
   done
 }
 
+type_at_bottom() {
+  local msg="$1"
+  local term_h; term_h=$(tput lines)
+  local r=$(( term_h - 2 ))
+  printf "\0337"  # save cursor (content position)
+  # Redraw full box then type into input row
+  printf "\033[${r};1H${DIM}${DLINE}${NC}"
+  printf "\033[$(( r + 2 ));1H${DIM}${DLINE}${NC}"
+  printf "\033[$(( r + 1 ));1H\033[2K${BOLD}❯${NC} "
+  local i char
+  for (( i=0; i<${#msg}; i++ )); do
+    char="${msg:$i:1}"; printf "%s" "$char"; sleep 0.055
+  done
+  pause 0.4
+  # Clear bottom input box (simulate send)
+  printf "\033[$(( r + 1 ));1H\033[2K${DIM}❯${NC} "
+  pause 0.2
+  # Restore cursor, print message in history pane
+  printf "\0338"
+  printf "${DIM}❯ %s${NC}\n\n" "$msg"
+}
+
+repin_box() {
+  printf "\0337"
+  local term_h; term_h=$(tput lines)
+  local r=$(( term_h - 2 ))
+  printf "\033[${r};1H${DIM}${DLINE}${NC}"
+  printf "\033[$(( r + 1 ));1H${DIM}❯${NC} "
+  printf "\033[$(( r + 2 ));1H${DIM}${DLINE}${NC}"
+  printf "\0338"
+}
+
 header() {
+  printf "\033[r"
   printf " ${ORANGE}▐▛███▜▌${NC}   ${BOLD}Claude Code${NC} ${DIM}v2.1.137${NC}\n"
   printf "${ORANGE}▝▜█████▛▘${NC}  ${DIM}Sonnet 4.6 · grimoire${NC}\n"
   printf "  ${ORANGE}▘▘ ▝▝${NC}    ${DIM}~/Projects/grimoire${NC}\n"
@@ -40,11 +71,9 @@ think() {
   pause 0.3
 }
 
-# User types question at bottom with animation (Phase 1: idle view)
 prompt_at_bottom() {
   local cmd="$1"
-  local term_h
-  term_h=$(tput lines)
+  local term_h; term_h=$(tput lines)
   local r=$(( term_h - 2 ))
   printf "\033[${r};1H${DIM}${DLINE}${NC}"
   printf "\033[$(( r + 2 ));1H${DIM}${DLINE}${NC}"
@@ -52,11 +81,9 @@ prompt_at_bottom() {
   type_cmd "$cmd"
 }
 
-# Pin question at bottom instantly, return cursor to row 5 (Phase 2: response view)
 pin_prompt() {
   local cmd="$1"
-  local term_h
-  term_h=$(tput lines)
+  local term_h; term_h=$(tput lines)
   local r=$(( term_h - 2 ))
   printf "\033[${r};1H${DIM}${DLINE}${NC}"
   printf "\033[$(( r + 1 ));1H${BOLD}❯${NC} ${cmd}"
@@ -64,127 +91,175 @@ pin_prompt() {
   printf "\033[5;1H"
 }
 
-intro() {
-  # User types the natural language problem at bottom
-  prompt_at_bottom "$QUESTION"
-  pause 1.5
+pin_empty() {
+  local term_h; term_h=$(tput lines)
+  local r=$(( term_h - 2 ))
+  printf "\033[${r};1H${DIM}${DLINE}${NC}"
+  printf "\033[$(( r + 1 ));1H${DIM}❯${NC} "
+  printf "\033[$(( r + 2 ));1H${DIM}${DLINE}${NC}"
+  printf "\033[5;$(( r - 1 ))r"
+  printf "\033[5;1H"
+}
 
-  # Claude identifies which grimoire skills to apply
-  clear
-  header
-  pin_prompt "$QUESTION"
-  echo ""
-  pause 0.5
-  think "Analyzing your situation" 3
-  echo ""
-  printf "${AMBER}⏺${NC} ${BOLD}Breaking this down with grimoire best practices${NC}\n"
-  echo ""
+history_line() {
+  printf "${DIM}❯ %s${NC}\n\n" "$1"
+}
+
+analyze() {
+  local ans1="Both. I need income fast but I also can't lose the house."
+  local ans2="Still current — I have maybe 3 months of savings."
+
+  clear; header
+  pin_empty
+  history_line "$QUESTION"
   pause 0.4
-  printf "  ${AMBER}⎿${NC}  ${DIM}Step 1${NC}  apply-first-principles    ${DIM}— question the core assumption${NC}\n";   pause 0.4
-  printf "  ${AMBER}⎿${NC}  ${DIM}Step 2${NC}  calculate-fire-number     ${DIM}— your real financial target${NC}\n";     pause 0.4
-  printf "  ${AMBER}⎿${NC}  ${DIM}Step 3${NC}  design-pricing-strategy   ${DIM}— what to charge as a consultant${NC}\n"; pause 0.4
-  printf "  ${AMBER}⎿${NC}  ${DIM}Step 4${NC}  write-value-proposition   ${DIM}— pitch to land the first client${NC}\n"
+  think "Routing" 2
+  echo ""
+
+  # Q1 — accumulates on screen, user types at bottom
+  printf "${AMBER}⏺${NC} ${BOLD}analyze-problem${NC}\n\n"; pause 0.5
+  printf "  What outcome are you trying to achieve — stabilize finances,\n"
+  printf "  find new income, or both at once?\n\n"
+  pause 1.8
+  type_at_bottom "$ans1"
+
+  # Q2 — continues below Q1 + user message in history
+  printf "${AMBER}⏺${NC} ${BOLD}analyze-problem${NC}\n\n"; pause 0.4
+  printf "  Is the mortgage currently in arrears, or are you still\n"
+  printf "  current with payments?\n\n"
+  pause 1.8
+  type_at_bottom "$ans2"
+
+  # Scoping — continues below Q2 + user message in history
+  think "Scoping" 1.5
+  echo ""
+  printf "${AMBER}⏺${NC} ${BOLD}Problem statement${NC}\n\n"; pause 0.4
+  printf "  ${AMBER}⎿${NC}  Situation   Sudden job loss at 42, 3-month cash runway, active mortgage\n"; pause 0.35
+  printf "  ${AMBER}⎿${NC}  Goal        Secure income and protect housing simultaneously\n";            pause 0.35
+  printf "  ${AMBER}⎿${NC}  Root cause  External (AI displacement), not performance\n"
+  pause 2.2
+}
+
+plan_route() {
+  echo ""; pause 0.4
+  think "Matching skills" 2
+  echo ""
+  printf "${AMBER}⏺${NC} ${BOLD}plan-best-practice-solution${NC}  ${DIM}— 3 domains detected${NC}\n\n"; pause 0.5
+  printf "  ${AMBER}⎿${NC}  Step 1  ${BOLD}design-budget${NC}            ${DIM}finance/personal-finance${NC}  ${GREEN}✓${NC}\n"; pause 0.4
+  printf "  ${AMBER}⎿${NC}  Step 2  ${BOLD}design-debt-payoff-plan${NC}  ${DIM}finance/personal-finance${NC}  ${GREEN}✓${NC}\n"; pause 0.4
+  printf "  ${AMBER}⎿${NC}  Step 3  Career path — ${YELLOW}multiple practices apply${NC}\n"
+  pause 0.5; echo ""
+  repin_box
+  printf "\0337"
+  printf "  ${AMBER}?${NC} ${BOLD}Which practice for step 3?${NC}\n\n"
+  printf "  ${AMBER}❯${NC} ${AMBER}★${NC} ${BOLD}run-scenario-planning${NC}    ${DIM}map career paths by speed to income  ← recommended${NC}\n"
+  printf "        ${DIM}design-go-to-market      build a freelance/consulting pipeline${NC}\n"
+  pause 2.2
+  printf "\0338\033[J"
+  printf "  ${GREEN}✔${NC} Step 3  ${BOLD}run-scenario-planning${NC}  ${GREEN}← selected${NC}\n"
+  printf "\0337"
+  local _th; _th=$(tput lines)
+  printf "\033[$(( _th - 2 ));1H${DIM}${DLINE}${NC}"
+  printf "\033[$(( _th - 1 ));1H${DIM}❯${NC} "
+  printf "\033[${_th};1H${DIM}${DLINE}${NC}"
+  printf "\0338"
+  pause 0.6; echo ""
+  printf "${AMBER}⏺${NC} ${BOLD}Plan confirmed${NC}\n\n"
+  printf "  ${AMBER}⎿${NC}  design-budget  ${DIM}→${NC}  design-debt-payoff-plan  ${DIM}→${NC}  run-scenario-planning\n"
+  echo ""; pause 0.5
+  printf "  Apply step 1 now?\n"
+  pause 1.5
+  type_at_bottom "yes"
+  pause 0.4
+}
+
+skill_budget() {
+  echo ""; pause 0.4
+  think "Running design-budget" 3
+  echo ""
+  printf "${AMBER}⏺${NC} ${BOLD}design-budget${NC}  ${DIM}finance/personal-finance${NC}\n\n"; pause 0.4
+  printf "  ${AMBER}⎿${NC}  Mortgage     \$2,100  ${DIM}·${NC}  Utilities  \$280  ${DIM}·${NC}  Insurance  \$420\n"; pause 0.35
+  printf "  ${AMBER}⎿${NC}  Fixed total  ${BOLD}\$2,895/mo${NC}\n"
+  pause 0.5; echo ""
+  printf "  ${AMBER}⎿${NC}  Cut dining   \$600 ${DIM}→${NC} \$150  ${DIM}·${NC}  Streaming \$120 ${DIM}→${NC} \$40  ${DIM}·${NC}  Gym ${DIM}→${NC} pause\n"; pause 0.35
+  printf "  ${AMBER}⎿${NC}  Saves        \$610/mo\n"
+  pause 0.5; echo ""
+  printf "  ${AMBER}⎿${NC}  Savings  \$18,000  ${DIM}·${NC}  Burn  \$2,285/mo  ${DIM}·${NC}  Runway  ${YELLOW}7.9 months${NC}\n"
+  pause 0.5; echo ""
+  printf "  ${YELLOW}⚠${NC}  Target 12-month runway. Gap: \$9,370 — forbearance closes this in step 2.\n"
+  pause 0.7; echo ""
+  printf "  Step 1 done. Continue to step 2 ${DIM}(design-debt-payoff-plan)${NC}?\n"
+  pause 1.5
+  type_at_bottom "yes"
+  pause 0.4
+}
+
+skill_debt() {
+  echo ""; pause 0.4
+  think "Running design-debt-payoff-plan" 2
+  echo ""
+  printf "${AMBER}⏺${NC} ${BOLD}design-debt-payoff-plan${NC}  ${DIM}finance/personal-finance${NC}\n\n"; pause 0.4
+  printf "  ${AMBER}⎿${NC}  1. Forbearance  pause 3–12 months, no credit penalty  ${GREEN}← do this now${NC}\n"; pause 0.35
+  printf "  ${AMBER}⎿${NC}  2. Refinance    lower rate if equity > 20%%  ${DIM}— 30–45 days${NC}\n";              pause 0.35
+  printf "  ${AMBER}⎿${NC}  3. HELOC        equity to credit line  ${DIM}— last resort only${NC}\n"
+  pause 0.5; echo ""
+  printf "  Call lender today. Cite involuntary job loss.\n"
+  printf "  Federal law requires forbearance offer. Get it in writing.\n"
+  pause 0.5; echo ""
+  printf "  ${AMBER}⎿${NC}  Runway after forbearance  ${GREEN}7.9 + 5.5 = 13.4 months${NC}\n"
+  pause 0.7; echo ""
+  printf "  Step 2 done. Continue to step 3 ${DIM}(run-scenario-planning)${NC}?\n"
+  pause 1.5
+  type_at_bottom "yes"
+  pause 0.4
+}
+
+skill_career() {
+  echo ""; pause 0.4
+  think "Running run-scenario-planning" 3
+  echo ""
+  printf "${AMBER}⏺${NC} ${BOLD}run-scenario-planning${NC}  ${DIM}business/strategy${NC}\n\n"; pause 0.4
+  printf "  ${AMBER}⎿${NC}  A. Freelance on current skills    ${GREEN}60–90 days    ← fastest${NC}\n"
+  printf "        2–3 retainers at \$8–12k/mo  ${DIM}·${NC}  warm outreach this week\n"; pause 0.5; echo ""
+  printf "  ${AMBER}⎿${NC}  B. Same field, new employer       ${YELLOW}90–120 days${NC}\n"
+  printf "        Risk: AI follows you  ${DIM}·${NC}  hedge toward judgment/strategy work\n"; pause 0.5; echo ""
+  printf "  ${AMBER}⎿${NC}  C. Adjacent field pivot           ${DIM}6–12 months${NC}\n"
+  printf "        Domain expertise in AI-augmented fields\n"; pause 0.5; echo ""
+  printf "  ${AMBER}⎿${NC}  D. Reskill for AI-resistant role  ${DIM}12–24 months${NC}\n"
+  printf "        Only viable with 13+ months secured\n"
+  pause 0.6; echo ""
+  printf "  Recommended: A + B in parallel. First retainer closes the gap fastest.\n"
   pause 2.5
 }
 
-skill1() {
-  clear
-  header
-  pin_prompt "$QUESTION"
+final_outcome() {
+  repin_box
   echo ""
-  pause 0.4
-  think "Running apply-first-principles" 2
-  echo ""
-  printf "${AMBER}⏺${NC} ${BOLD}First Principles${NC}  ${DIM}Aristotle · Descartes · Musk (TED 2013)${NC}\n"
-  echo ""
-  pause 0.4
-  printf "  Assumption  ${DIM}\"I need a coding job for income security\"${NC}\n"
-  echo ""
-  pause 0.35
-  printf "  ${AMBER}⎿${NC}  Is income tied to employment?  ${GREEN}No${NC} ${DIM}— retainers give same predictability${NC}\n"; pause 0.35
-  printf "  ${AMBER}⎿${NC}  Is my value in writing syntax?  ${GREEN}No${NC} ${DIM}— judgment, domain depth, trust${NC}\n";    pause 0.35
-  printf "  ${AMBER}⎿${NC}  Can AI replace those?           ${GREEN}No${NC} ${DIM}— not for years${NC}\n"
-  pause 0.5
-  echo ""
-  printf "  Rebuilt  ${BOLD}AI removed the junior work.  You are now 3× more valuable.${NC}\n"
-  pause 2.2
-}
-
-skill2() {
-  clear
-  header
-  pin_prompt "$QUESTION"
-  echo ""
-  pause 0.4
-  think "Running calculate-fire-number" 2
-  echo ""
-  printf "${AMBER}⏺${NC} ${BOLD}FIRE Number${NC}  ${DIM}Trinity Study · Cooley, Hubbard, Walz 1998${NC}\n"
-  echo ""
-  pause 0.4
-  printf "  ${AMBER}⎿${NC}  Monthly burn     \$5,400  ${DIM}(mortgage + living)${NC}\n";                  pause 0.35
-  printf "  ${AMBER}⎿${NC}  FIRE number      ${BOLD}\$1,620,000${NC}  ${DIM}(4.0%% safe withdrawal rate)${NC}\n"; pause 0.35
-  printf "  ${AMBER}⎿${NC}  Current savings  \$67,000  ${DIM}(4.1%% of target)${NC}\n";                   pause 0.35
-  printf "  ${AMBER}⎿${NC}  Bare runway      ${YELLOW}12.4 months${NC}  ${DIM}then mortgage at risk${NC}\n"
-  pause 0.5
-  echo ""
-  printf "  At \$12k/mo consulting → infinite runway + ${GREEN}${BOLD}FIRE at 51${NC}\n"
-  pause 2.2
-}
-
-skill3() {
-  clear
-  header
-  pin_prompt "$QUESTION"
-  echo ""
-  pause 0.4
-  think "Running design-pricing-strategy" 2
-  echo ""
-  printf "${AMBER}⏺${NC} ${BOLD}Pricing Strategy${NC}  ${DIM}Simon-Kucher & Partners · value-based model${NC}\n"
-  echo ""
-  pause 0.4
-  printf "  ${AMBER}⎿${NC}  Hourly contractor  \$90/hr   ${RED}← AI will compress this to zero${NC}\n"; pause 0.35
-  printf "  ${AMBER}⎿${NC}  AI-augmented rate  \$150/hr  ${DIM}(still anchors you to time)${NC}\n";     pause 0.35
-  printf "  ${AMBER}⎿${NC}  Outcome retainer   ${BOLD}\$12,000/mo${NC}  ${GREEN}← recommended${NC}\n"
-  pause 0.5
-  echo ""
-  printf "  Logic   deliver in 2wks what 3 devs took 2mo — charge for that\n"; pause 0.35
-  printf "  Never   hourly on long engagements — AI makes hours irrelevant\n"
-  pause 0.5
-  echo ""
-  printf "  ${BOLD}\$12k/mo${NC} = \$144k/yr  ${DIM}· same salary, no boss, own the IP${NC}\n"
-  pause 2.2
-}
-
-skill4() {
-  clear
-  header
-  pin_prompt "$QUESTION"
-  echo ""
-  pause 0.4
-  think "Running write-value-proposition" 2
-  echo ""
-  printf "${AMBER}⏺${NC} ${BOLD}Value Proposition${NC}  ${DIM}Geoffrey Moore \"Crossing the Chasm\" (1991)${NC}\n"
-  echo ""
-  pause 0.4
-  printf "  ${AMBER}⎿${NC}  For     Series A startups that can't afford a 3-person dev team\n"; pause 0.35
-  printf "  ${AMBER}⎿${NC}  Who     need senior engineering + AI-accelerated delivery\n";       pause 0.35
-  printf "  ${AMBER}⎿${NC}  Unlike  dev shops, offshore teams, or a 6-month hire\n";           pause 0.35
-  printf "  ${AMBER}⎿${NC}  Ours    ${BOLD}15yr expertise + AI → 1 engineer, 3× output${NC}\n"
-  pause 0.5
-  echo ""
-  printf "  Proof  ${DIM}\"Shipped in 6 weeks what their team quoted 6 months\"${NC}\n"; pause 0.35
-  printf "  CTA    ${DIM}\"30-min discovery call → proposal in 48hrs\"${NC}\n"
-  pause 0.6
-  echo ""
-  printf "${AMBER}⏺${NC}  First \$12,000 retainer in 60 days.  FIRE at 51.  ${BOLD}AI is the superpower.${NC}  ${AMBER}✓${NC}\n"
-  pause 3.5
+  printf "${DIM}${DLINE}${NC}\n\n"
+  printf "${AMBER}⏺${NC} ${BOLD}Final outcome${NC}\n\n"; pause 0.4
+  printf "  ${GREEN}⎿  Budget locked${NC}    \$2,285/mo burn  ${DIM}·${NC}  \$610/mo freed\n";                 pause 0.4
+  printf "  ${GREEN}⎿  Housing secured${NC}  forbearance call scheduled  ${DIM}—${NC}  6 months protected\n"; pause 0.4
+  printf "  ${GREEN}⎿  Runway${NC}           ${YELLOW}7.9${NC}  ${DIM}→${NC}  ${GREEN}13.4 months${NC}\n";        pause 0.4
+  printf "  ${GREEN}⎿  Career path${NC}      freelance outreach starts today  ${DIM}·${NC}  job search parallel\n"
+  pause 0.8; echo ""
+  printf "  You have ${GREEN}${BOLD}13 months${NC} and a plan. First action: 5 warm messages today.  ${AMBER}✓${NC}\n"
+  repin_box
+  pause 4.0
 }
 
 clear
 header
 pause 1.2
-intro
-skill1
-skill2
-skill3
-skill4
+prompt_at_bottom "$QUESTION"
+pause 1.5
+# Send animation: clear bottom input box
+term_h=$(tput lines)
+printf "\033[$(( term_h - 1 ));1H\033[2K${DIM}❯${NC} "
+pause 0.3
+analyze
+plan_route
+skill_budget
+skill_debt
+skill_career
+final_outcome
+sleep 9999
