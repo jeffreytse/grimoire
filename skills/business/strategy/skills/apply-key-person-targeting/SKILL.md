@@ -2,7 +2,7 @@
 name: apply-key-person-targeting
 description: Use when the competitive outcome — a sale, a hire, a partnership, a policy decision — is controlled by a single decision-maker or gatekeeper, and engaging the broader organisation is slower and more expensive than influencing the key person directly
 source: Thirty-Six Stratagems #18 擒賊擒王 "Capture the Ringleader to Nab the Bandits" (三十六計, Sawyer trans. 1994); Verstappen "The 36 Strategies of Ancient China" (2007); Rackham "SPIN Selling" (1988); Dixon & Adamson "The Challenger Sale" (2011)
-tags: [business, strategy, thirty-six-stratagems, key-person, decision-maker, b2b-sales, talent, influence, capture-ringleader]
+tags: [thirty-six-stratagems, key-person, decision-maker, b2b-sales, talent, influence, capture-ringleader]
 verified: true
 ---
 

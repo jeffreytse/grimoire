@@ -2,7 +2,7 @@
 name: apply-strategic-endurance
 description: Use when facing severe competitive defeat — forced exit, punishing terms, or subjugation by a stronger opponent — where survival requires accepting humiliation in the short term, to systematically rebuild capability over years while maintaining the motivation and discipline for eventual reversal
 source: 卧薪尝胆 (Wò xīn cháng dǎn) "Sleep on Brushwood, Taste Gall" — King Goujian of Yue's 20-year rebuilding after defeat by King Fuchai of Wu (496–473 BC); Sima Qian "Records of the Grand Historian" 史記 "Goujian Shijia" 句踐世家 (~100 BC); Christensen "The Innovator's Dilemma" (1997); Bezos Letters to Shareholders (1997–2021)
-tags: [business, strategy, strategic-endurance, goujian, long-game, recovery, resilience, competitive-setback, wo-xin-chang-dan]
+tags: [strategic-endurance, goujian, long-game, recovery, resilience, competitive-setback, wo-xin-chang-dan]
 verified: true
 ---
 

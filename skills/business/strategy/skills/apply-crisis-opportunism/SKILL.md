@@ -2,7 +2,7 @@
 name: apply-crisis-opportunism
 description: Use when a competitor is distracted by an internal or external crisis that has left key positions temporarily undefended — to pre-position in advance and move decisively into undefended territory when the crisis window opens
 source: Thirty-Six Stratagems #5 趁火打劫 "Loot a Burning House" (三十六計, Sawyer trans. 1994); Verstappen "The 36 Strategies of Ancient China" (2007); Grove "Only the Paranoid Survive" (1997)
-tags: [business, strategy, thirty-six-stratagems, crisis-opportunism, timing, competitive-strategy, loot-burning-house]
+tags: [thirty-six-stratagems, crisis-opportunism, timing, competitive-strategy, loot-burning-house]
 verified: true
 ---
 

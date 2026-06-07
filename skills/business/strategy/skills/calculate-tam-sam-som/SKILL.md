@@ -2,7 +2,7 @@
 name: calculate-tam-sam-som
 description: Use when sizing a market for a pitch deck, business plan, investment thesis, or strategic planning exercise
 source: VC pitch methodology (Sequoia, a16z); Gartner market sizing methodology; Moore "Crossing the Chasm" market sizing chapter
-tags: [strategy, market-sizing, tam, sam, som, entrepreneurship, fundraising]
+tags: [market-sizing, tam, sam, som, entrepreneurship, fundraising]
 verified: true
 ---
 

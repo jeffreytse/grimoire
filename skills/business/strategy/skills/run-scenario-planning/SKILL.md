@@ -2,7 +2,7 @@
 name: run-scenario-planning
 description: Use when developing long-range strategic plans, preparing for major uncertainty, or stress-testing decisions against multiple possible futures
 source: Peter Schwartz "The Art of the Long View" (1991); Shell Oil scenario planning methodology (De Geus); Schoemaker "Scenario Planning: A Tool for Strategic Thinking" SMR (1995)
-tags: [strategy, scenario-planning, strategic-planning, risk, foresight]
+tags: [scenario-planning, strategic-planning, risk, foresight]
 verified: true
 ---
 

@@ -2,7 +2,7 @@
 name: apply-borrowed-force
 description: Use when you need to attack a target — competitor, policy, incumbent — that you cannot attack directly due to political, legal, reputational, or resource constraints, by enlisting third parties with their own genuine aligned interest
 source: Thirty-Six Stratagems #3 借刀殺人 "Kill with a Borrowed Knife" (三十六計, Sawyer trans. 1994); Verstappen "The 36 Strategies of Ancient China" (2007); Cialdini "Influence" (1984); Moore "Crossing the Chasm" (1991)
-tags: [business, strategy, thirty-six-stratagems, borrowed-force, proxy, third-party, coalition, regulatory, kill-borrowed-knife]
+tags: [thirty-six-stratagems, borrowed-force, proxy, third-party, coalition, regulatory, kill-borrowed-knife]
 verified: true
 ---
 

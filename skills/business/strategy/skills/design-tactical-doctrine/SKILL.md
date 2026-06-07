@@ -104,19 +104,6 @@ The Eight Formation Arrays maintained their effectiveness for decades because th
 
 ## Examples
 
-**Historical case — Zhuge Liang's stone formation stops Lu Xun's pursuit (222 AD):**
-After the Battle of Yiling (222 AD), Liu Bei's forces were routed and retreating. Wu's
-general Lu Xun pursued. His vanguard entered a stone formation at the mouth of the Kui
-River — an arrangement of boulders Zhuge Liang had designed before the campaign as a
-rear-guard obstacle. The formation's internal paths were non-intuitive: every corridor
-appeared to lead through, but the exits were structured so that forces moving through it
-could not find the way out without a guide. Lu Xun's experienced commanders spent time
-and exposure trying to navigate it. Zhuge Liang's uncle Huang Chengyan eventually guided
-Lu Xun's force out. The formation had held without soldiers. Zhuge Liang had codified
-terrain-based defensive doctrine into a replicable system — a "tactical doctrine" that
-operated independently of the troops who had just been defeated.
-Source: Sanguozhi (三國志), Zhuge Liang biography; Pei Songzhi annotation.
-
 **McDonald's Operations and Training Manual (1958):**
 Ray Kroc's insight was that the McDonald brothers' Speedee Service System — a kitchen layout, preparation sequence, and customer interaction protocol that produced a consistent product in 30 seconds — could be codified and transmitted to any operator. The manual specified everything: fryer temperature (335°F for fries), portion sizes (1.6 oz patty), cleaning schedules, greeting scripts. By encoding the McDonald brothers' judgment into doctrine, McDonald's could hire ordinary people and train them to produce the McDonald brothers' results. The doctrine was the business — not the food, not the brand, but the system. McDonald's scaled to 40,000 locations on the strength of a manual that any franchisee could learn.
 

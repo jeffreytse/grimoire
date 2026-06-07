@@ -2,7 +2,7 @@
 name: apply-market-creation
 description: Use when no established market exists for what you are building, or when you want to redefine an existing market on your own terms — to invent the category before competing for it, becoming the reference rather than a competitor
 source: Thirty-Six Stratagems #7 無中生有 "Create Something from Nothing" (三十六計, Sawyer trans. 1994); Verstappen "The 36 Strategies of Ancient China" (2007); Ries "The Category Design Playbook" (2021); Moore "Crossing the Chasm" (1991); Kim & Mauborgne "Blue Ocean Strategy" (2005)
-tags: [business, strategy, thirty-six-stratagems, market-creation, category-design, positioning, go-to-market, create-from-nothing]
+tags: [thirty-six-stratagems, market-creation, category-design, positioning, go-to-market, create-from-nothing]
 verified: true
 ---
 

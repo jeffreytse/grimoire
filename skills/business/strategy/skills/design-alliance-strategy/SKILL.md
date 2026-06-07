@@ -2,7 +2,7 @@
 name: design-alliance-strategy
 description: Use when competing in a market where third-party relationships — partners, distributors, platforms, standards bodies, or key suppliers — determine who wins, to build your own coalition while preventing the opponent from forming theirs
 source: Sun Tzu "The Art of War" Ch.3, 11 (Giles trans. 1910; Griffith trans. 1963); Brandenburger & Nalebuff "Co-opetition" (1996); Doz & Hamel "Alliance Advantage" (1998)
-tags: [business, strategy, alliances, partnerships, coalition, ecosystem, co-opetition, sun-tzu, art-of-war, intersecting-ground]
+tags: [alliances, partnerships, coalition, ecosystem, co-opetition, sun-tzu, art-of-war, intersecting-ground]
 verified: true
 ---
 

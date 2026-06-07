@@ -2,7 +2,7 @@
 name: apply-terrain-strategy
 description: Use when choosing where to compete or commit resources — to classify the competitive terrain, avoid fighting on ground that advantages the opponent, and create or occupy terrain that structurally favours your position
 source: Sun Tzu "The Art of War" Ch.4, 10 (Giles trans. 1910; Griffith trans. 1963); Porter "Competitive Advantage" (1985); Moore "Crossing the Chasm" (1991)
-tags: [business, strategy, terrain, market-positioning, competitive-advantage, market-selection, sun-tzu, art-of-war, di-xing, high-ground]
+tags: [terrain, market-positioning, competitive-advantage, market-selection, sun-tzu, art-of-war, di-xing, high-ground]
 verified: true
 ---
 

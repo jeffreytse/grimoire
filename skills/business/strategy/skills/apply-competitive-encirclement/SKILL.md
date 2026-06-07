@@ -1,8 +1,8 @@
 ---
 name: apply-competitive-encirclement
-description: Use before committing to a major competitive move — to pre-emptively secure distribution, talent, supply, regulatory, or ecosystem position so that when you strike, the opponent's countermoves are already foreclosed
+description: Use when planning a major competitive move — to pre-emptively secure distribution, talent, supply, regulatory, or ecosystem position so that when you strike, the opponent's countermoves are already foreclosed
 source: Thirty-Six Stratagems #22 關門捉賊 "Shut the Door to Catch the Thief" (三十六計, Sawyer trans. 1994); Verstappen "The 36 Strategies of Ancient China" (2007); Porter "Competitive Advantage" (1985) — mobility barriers; Moore "Crossing the Chasm" (1991)
-tags: [business, strategy, thirty-six-stratagems, encirclement, exclusivity, distribution, pre-emption, lock-out, shut-door]
+tags: [thirty-six-stratagems, encirclement, exclusivity, distribution, pre-emption, lock-out, shut-door]
 verified: true
 ---
 

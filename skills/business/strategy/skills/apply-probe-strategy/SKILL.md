@@ -2,7 +2,7 @@
 name: apply-probe-strategy
 description: Use when uncertain about hidden opposition, competitive response, regulatory posture, or customer reaction before committing to a major strategic move — to design a low-cost probe that reveals the real landscape before full resource commitment
 source: Thirty-Six Stratagems #13 打草驚蛇 "Beat the Grass to Startle the Snake" (三十六計, Sawyer trans. 1994); Verstappen "The 36 Strategies of Ancient China" (2007); Ries "The Lean Startup" (2011); Klein "Sources of Power" (1998)
-tags: [business, strategy, thirty-six-stratagems, probe, testing, pre-commitment, risk-reduction, beat-grass-snake]
+tags: [thirty-six-stratagems, probe, testing, pre-commitment, risk-reduction, beat-grass-snake]
 verified: true
 ---
 

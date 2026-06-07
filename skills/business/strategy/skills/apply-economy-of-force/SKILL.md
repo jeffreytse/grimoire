@@ -2,7 +2,7 @@
 name: apply-economy-of-force
 description: Use when planning a competitive campaign to ensure the means of winning do not destroy what you are competing for — avoiding pyrrhic victories, preserving resources for follow-on engagements, and using proportionate force at each stage
 source: Sun Tzu "The Art of War" Ch.2, 3 (Giles trans. 1910; Griffith trans. 1963); Clausewitz "On War" (Howard & Paret trans., 1976) — economy of force as military principle; Grove "Only the Paranoid Survive" (1997)
-tags: [business, strategy, economy-of-force, pyrrhic-victory, resource-preservation, proportionality, price-war, acquisition, sun-tzu, art-of-war]
+tags: [economy-of-force, pyrrhic-victory, resource-preservation, proportionality, price-war, acquisition, sun-tzu, art-of-war]
 verified: true
 ---
 

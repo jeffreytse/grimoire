@@ -2,7 +2,7 @@
 name: apply-competitive-patience
 description: Use when rivals are fighting each other or exhausting themselves through overreach, and the most valuable action is deliberate non-engagement — to pre-position while they deplete each other, then enter when the winner is weakened
 source: Thirty-Six Stratagems #4 以逸待勞 "Wait at Ease for the Enemy Labored" + #9 隔岸觀火 "Watch the Fires from the Opposite Bank" (三十六計, Sawyer trans. 1994); Verstappen "The 36 Strategies of Ancient China" (2007); Kim & Mauborgne "Blue Ocean Strategy" (2005)
-tags: [business, strategy, thirty-six-stratagems, competitive-patience, timing, abstention, format-war, blue-ocean, wait-at-ease, watch-fires]
+tags: [thirty-six-stratagems, competitive-patience, timing, abstention, format-war, blue-ocean, wait-at-ease, watch-fires]
 verified: true
 ---
 

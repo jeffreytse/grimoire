@@ -2,7 +2,7 @@
 name: apply-second-front-strategy
 description: Use when competing for contested territory against a stronger opponent who outguns you in direct confrontation — to relieve pressure on the primary front by creating a genuine crisis at the opponent's rear or home base
 source: Thirty-Six Stratagems #2 圍魏救趙 "Besiege Wei to Rescue Zhao" (三十六計, Sawyer trans. 1994); Verstappen "The 36 Strategies of Ancient China" (2007); Grove "Only the Paranoid Survive" (1997); Christensen "The Innovator's Dilemma" (1997)
-tags: [business, strategy, thirty-six-stratagems, second-front, flanking, competitive-strategy, besiege-wei]
+tags: [thirty-six-stratagems, second-front, flanking, competitive-strategy, besiege-wei]
 verified: true
 ---
 

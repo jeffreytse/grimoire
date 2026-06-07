@@ -2,7 +2,7 @@
 name: apply-dormant-asset-revival
 description: Use when a dormant or discredited asset — brand, regulatory license, platform, entity, or abandoned standard — retains residual value that can serve as a vehicle for something new, enabling access, legitimacy, or market entry that would be slower or more expensive to build from scratch
 source: Thirty-Six Stratagems #14 借屍還魂 "Borrow a Corpse to Resurrect the Soul" (三十六計, Sawyer trans. 1994); Verstappen "The 36 Strategies of Ancient China" (2007); Christensen "The Innovator's Dilemma" (1997)
-tags: [business, strategy, thirty-six-stratagems, dormant-assets, acqui-hire, brand-acquisition, regulatory, revival, borrow-corpse]
+tags: [thirty-six-stratagems, dormant-assets, acqui-hire, brand-acquisition, regulatory, revival, borrow-corpse]
 verified: true
 ---
 

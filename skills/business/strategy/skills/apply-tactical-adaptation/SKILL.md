@@ -2,7 +2,7 @@
 name: apply-tactical-adaptation
 description: Use when circumstances change mid-engagement and tactics must adapt — diagnosing which of the nine strategic situations you occupy, applying the situation-specific response, and avoiding the five commander faults that cause strategic failure
 source: Sun Tzu "The Art of War" Ch.8, 11 (Giles trans. 1910; Griffith trans. 1963); Eisenhower "Crusade in Europe" (1948); Weick "Sensemaking in Organizations" (1995)
-tags: [business, strategy, tactical-adaptation, nine-situations, nine-variations, commander-faults, pivoting, crisis-response, sun-tzu, art-of-war, jiu-bian]
+tags: [tactical-adaptation, nine-situations, nine-variations, commander-faults, pivoting, crisis-response, sun-tzu, art-of-war]
 verified: true
 ---
 

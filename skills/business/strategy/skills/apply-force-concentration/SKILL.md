@@ -2,7 +2,7 @@
 name: apply-force-concentration
 description: Use when outmatched overall but able to choose where to engage — concentrating all available resources on the opponent's weakest or most exposed point while avoiding their strength, maintaining initiative, and remaining formless to prevent counter-concentration
 source: Sun Tzu "The Art of War" Ch.6, 12 (Giles trans. 1910; Griffith trans. 1963); Moltke the Elder "Instructions for Superior Commanders" (1869); Thiel "Zero to One" (2014) — last-mover advantage
-tags: [business, strategy, force-concentration, competitive-advantage, initiative, formlessness, sun-tzu, art-of-war, xu-shi, resource-allocation]
+tags: [force-concentration, competitive-advantage, initiative, formlessness, sun-tzu, art-of-war, xu-shi, resource-allocation]
 verified: true
 ---
 

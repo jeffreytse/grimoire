@@ -2,7 +2,7 @@
 name: apply-asymmetric-matching-strategy
 description: Use when competing with limited resources against a stronger opponent across multiple simultaneous contests — deliberately sacrificing the unwinnable match to concentrate strength where it produces a winning majority
 source: Sima Qian "Shiji" (史记, Records of the Grand Historian, ~94 BC) — account of Sun Bin's advice to Tian Ji; Von Neumann & Morgenstern "Theory of Games and Economic Behavior" (1944) — assignment problem foundations; Kuhn "The Hungarian Method for the Assignment Problem" (Naval Research Logistics, 1955)
-tags: [business, strategy, game-theory, resource-allocation, competition, asymmetric, matching, tian-ji, sun-bin, assignment-problem]
+tags: [game-theory, resource-allocation, competition, asymmetric-strategy, matching, tian-ji, sun-bin, assignment-problem]
 verified: true
 ---
 

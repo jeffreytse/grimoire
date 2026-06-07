@@ -1,6 +1,6 @@
 ---
 name: apply-win-without-fighting
-description: Use before committing to direct competitive confrontation — to exhaust higher-level strategic options first (disrupting the opponent's plans, neutralising their alliances, establishing deterrence through positioning) so that the opponent yields position without direct engagement, because every escalation to direct confrontation increases cost, destruction, and outcome uncertainty
+description: Use when considering direct competitive confrontation — to exhaust higher-level strategic options first (disrupting the opponent's plans, neutralising their alliances, establishing deterrence through positioning) so that the opponent yields position without direct engagement, because every escalation to direct confrontation increases cost, destruction, and outcome uncertainty
 source: 不战而屈人之兵，善之善者也 (Bù zhàn ér qū rén zhī bīng, shàn zhī shàn zhě yě) "To subdue the enemy without fighting is the acme of skill" — Sun Tzu "Art of War" 孙子兵法 Chapter 3 "Attack by Stratagem" (~500 BC); Sun Tzu Ch.3 "上兵伐谋，其次伐交，其次伐兵，其下攻城" (Best attacks plans; next attacks alliances; next attacks troops; worst attacks cities); Schelling "The Strategy of Conflict" (1960); Kissinger "World Order" (2014)
 tags: [sun-tzu, art-of-war, deterrence, positioning, win-without-fighting, pre-conflict, strategic-hierarchy, competitive-strategy]
 verified: true

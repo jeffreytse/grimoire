@@ -2,7 +2,7 @@
 name: apply-hearts-and-minds
 description: Use when you have the power to enforce compliance but enforcement without genuine buy-in will fail over time — to win voluntary commitment from a resistant counterpart through repeated demonstration and release, rather than coercion
 source: 七擒孟获 (Qī qín Mèng Huò) "Seven Captures of Meng Huo" — Zhuge Liang's southern campaign (225 AD); Chen Shou "Records of the Three Kingdoms" 三国志 "Shu Shu" (280–290 AD); Luo Guanzhong "Romance of the Three Kingdoms" 三国演义 (~1400 AD); Cialdini "Influence" (1984) — commitment and consistency; Pink "Drive" (2009) — intrinsic motivation
-tags: [business, strategy, three-kingdoms, hearts-and-minds, zhuge-liang, meng-huo, genuine-commitment, post-acquisition, organizational-change, community, compliance]
+tags: [three-kingdoms, hearts-and-minds, zhuge-liang, genuine-commitment, post-acquisition, organizational-change, community, compliance]
 verified: true
 ---
 

@@ -2,7 +2,7 @@
 name: apply-strategic-sacrifice
 description: Use when preserving something of high strategic value requires giving up something of lower value, or when offering something valuable will attract something of greater value in return — to make deliberate, asymmetric trades rather than defending everything equally
 source: Thirty-Six Stratagems #11 李代桃僵 "Sacrifice the Plum for the Peach" + #17 拋磚引玉 "Cast a Brick to Attract Jade" (三十六計, Sawyer trans. 1994); Verstappen "The 36 Strategies of Ancient China" (2007); Collins "Good to Great" (2001); Drucker "The Effective Executive" (1967)
-tags: [business, strategy, thirty-six-stratagems, strategic-sacrifice, loss-leader, trade-off, portfolio, sacrifice-plum, brick-for-jade]
+tags: [thirty-six-stratagems, strategic-sacrifice, loss-leader, trade-off, portfolio, sacrifice-plum, brick-for-jade]
 verified: true
 ---
 

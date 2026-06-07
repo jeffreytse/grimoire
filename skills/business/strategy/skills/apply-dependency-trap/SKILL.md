@@ -2,7 +2,7 @@
 name: apply-dependency-trap
 description: Use when customer or partner adoption at scale requires removing upfront barriers — to offer genuine value freely, let switching costs accumulate naturally, then shift to monetisation once the dependency is established
 source: Thirty-Six Stratagems #16 欲擒故縱 "In Order to Capture, First Let It Go" (三十六計, Sawyer trans. 1994); Verstappen "The 36 Strategies of Ancient China" (2007); Parker et al. "Platform Revolution" (2016); Shapiro & Varian "Information Rules" (1999)
-tags: [business, strategy, thirty-six-stratagems, dependency, freemium, platform, switching-costs, lock-in, let-go-to-capture]
+tags: [thirty-six-stratagems, dependency, freemium, platform, switching-costs, lock-in, let-go-to-capture]
 verified: true
 ---
 

@@ -2,7 +2,7 @@
 name: design-go-to-market
 description: Use when launching a product, entering a new market, or repositioning an existing offering to reach paying customers
 source: Geoffrey Moore "Crossing the Chasm" (1991); Steve Blank "The Four Steps to the Epiphany"
-tags: [go-to-market, strategy, product-launch, distribution, market-segmentation, positioning]
+tags: [go-to-market, product-launch, distribution, market-segmentation, positioning]
 verified: true
 ---
 

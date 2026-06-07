@@ -2,7 +2,7 @@
 name: apply-five-factors-assessment
 description: Use when preparing for any competitive engagement — product launch, market entry, negotiation, or campaign — to audit your position across the five strategic dimensions before committing resources
 source: Sun Tzu "The Art of War" Ch.1 (Giles trans. 1910; Griffith trans. 1963); Porter "Competitive Strategy" (1980); US Army Field Manual FM 3-0 "Operations" (2022)
-tags: [business, strategy, assessment, competitive-analysis, five-factors, sun-tzu, art-of-war, market-entry, decision-making]
+tags: [assessment, competitive-analysis, five-factors, sun-tzu, art-of-war, market-entry, decision-making]
 verified: true
 ---
 

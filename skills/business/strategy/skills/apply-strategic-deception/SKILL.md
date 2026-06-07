@@ -2,7 +2,7 @@
 name: apply-strategic-deception
 description: Use when operating in competitive environments where revealing your intentions, timing, or concentration point would allow the opponent to pre-empt, counter-concentrate, or deny you the element of surprise
 source: Sun Tzu "The Art of War" Ch.1, 7 (Giles trans. 1910; Griffith trans. 1963); Cialdini "Influence: The Psychology of Persuasion" (1984); Shell "Bargaining for Advantage" (2006)
-tags: [business, strategy, deception, misdirection, competitive-positioning, surprise, timing, sun-tzu, art-of-war, negotiation]
+tags: [deception, misdirection, competitive-positioning, surprise, timing, sun-tzu, art-of-war, negotiation]
 verified: true
 ---
 

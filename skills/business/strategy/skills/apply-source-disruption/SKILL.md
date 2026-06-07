@@ -2,7 +2,7 @@
 name: apply-source-disruption
 description: Use when a competitor's apparent strength is sustained by a specific underlying resource, relationship, or capability — to attack the source directly rather than competing against its surface manifestations
 source: Thirty-Six Stratagems #19 釜底抽薪 "Remove the Firewood from Under the Pot" (三十六計, Sawyer trans. 1994); Verstappen "The 36 Strategies of Ancient China" (2007); Porter "Competitive Advantage" (1985); Christensen "The Innovator's Dilemma" (1997)
-tags: [business, strategy, thirty-six-stratagems, source-disruption, competitive-strategy, dependency, remove-firewood, supply-chain]
+tags: [thirty-six-stratagems, source-disruption, competitive-strategy, dependency, remove-firewood, supply-chain]
 verified: true
 ---
 

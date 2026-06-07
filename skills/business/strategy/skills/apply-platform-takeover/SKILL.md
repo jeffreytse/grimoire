@@ -2,7 +2,7 @@
 name: apply-platform-takeover
 description: Use when participating in someone else's ecosystem or platform — to enter as a value-adding participant, become indispensable to the ecosystem's participants, and gradually shift the power dynamic until the platform depends on you rather than you on it
 source: Thirty-Six Stratagems #30 反客為主 "Turn the Guest into the Host" + #25 偷梁換柱 "Replace the Beams with Rotten Timbers" (三十六計, Sawyer trans. 1994); Verstappen "The 36 Strategies of Ancient China" (2007); Parker et al. "Platform Revolution" (2016); Eisenmann et al. "Strategies for Two-Sided Markets" (HBR 2006)
-tags: [business, strategy, thirty-six-stratagems, platform, ecosystem, power-inversion, indispensability, turn-guest-host, replace-beams]
+tags: [thirty-six-stratagems, platform, ecosystem, power-inversion, indispensability, turn-guest-host, replace-beams]
 verified: true
 ---
 

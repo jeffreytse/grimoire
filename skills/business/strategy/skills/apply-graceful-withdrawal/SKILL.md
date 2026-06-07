@@ -2,7 +2,7 @@
 name: apply-graceful-withdrawal
 description: Use when a current position is deteriorating or no longer worth defending — to exit cleanly while preserving key assets, reputation, and relationships for the next engagement, rather than fighting to exhaustion or withdrawing in disarray
 source: Thirty-Six Stratagems #21 金蟬脫殼 "Shed the Golden Cicada's Shell" + #36 走為上 "If All Else Fails, Retreat" (三十六計, Sawyer trans. 1994); Verstappen "The 36 Strategies of Ancient China" (2007); Collins "Good to Great" (2001); Grove "Only the Paranoid Survive" (1997)
-tags: [business, strategy, thirty-six-stratagems, withdrawal, pivot, exit, strategic-retreat, portfolio, shed-cicada-shell, walk-away]
+tags: [thirty-six-stratagems, withdrawal, pivot, exit, strategic-retreat, portfolio, shed-cicada-shell, walk-away]
 verified: true
 ---
 

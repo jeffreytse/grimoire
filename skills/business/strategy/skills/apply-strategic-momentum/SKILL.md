@@ -2,7 +2,7 @@
 name: apply-strategic-momentum
 description: Use when planning a campaign, product launch, or competitive push — to build strategic potential before committing, combine direct and indirect forces simultaneously, and strike at the moment of maximum advantage rather than at the earliest opportunity
 source: Sun Tzu "The Art of War" Ch.2, 5 (Giles trans. 1910; Griffith trans. 1963); Bezos "Amazon Shareholder Letters" (1997–2020); Collins "Good to Great" (2001) — flywheel concept
-tags: [business, strategy, momentum, potential-energy, orthodox-unorthodox, timing, campaign-planning, sun-tzu, art-of-war, shi]
+tags: [momentum, potential-energy, orthodox-unorthodox, timing, campaign-planning, sun-tzu, art-of-war, shi]
 verified: true
 ---
 

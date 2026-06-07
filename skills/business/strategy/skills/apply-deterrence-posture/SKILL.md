@@ -2,7 +2,7 @@
 name: apply-deterrence-posture
 description: Use when in a weak or vulnerable position that cannot be immediately strengthened — to project credible strength and signal the cost of engagement so that opponents reconsider attacking while you rebuild actual capability
 source: Thirty-Six Stratagems #32 空城計 "The Empty City Stratagem" (三十六計, Sawyer trans. 1994); Verstappen "The 36 Strategies of Ancient China" (2007); Schelling "The Strategy of Conflict" (1960); Jervis "The Logic of Images in International Relations" (1970)
-tags: [business, strategy, thirty-six-stratagems, deterrence, posture, bluff, credibility, commitment-device, empty-city]
+tags: [thirty-six-stratagems, deterrence, posture, bluff, credibility, commitment-device, empty-city]
 verified: true
 ---
 

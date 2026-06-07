@@ -2,7 +2,7 @@
 name: apply-five-commander-virtues
 description: Use when assessing, developing, or hiring for leadership capability — to evaluate a leader against the five virtues that Sun Tzu identifies as determinants of strategic success and diagnose which virtue deficits are causing organisational or competitive failures
 source: Sun Tzu "The Art of War" Ch.1 (Giles trans. 1910; Griffith trans. 1963); Greenleaf "Servant Leadership" (1977); Edmondson "The Fearless Organization" (2018); Collins "Good to Great" (2001) — Level 5 Leadership
-tags: [business, strategy, leadership, commander-virtues, wisdom, integrity, courage, discipline, sun-tzu, art-of-war, zhi-xin-ren-yong-yan]
+tags: [leadership, commander-virtues, wisdom, integrity, courage, discipline, sun-tzu, art-of-war]
 verified: true
 ---
 

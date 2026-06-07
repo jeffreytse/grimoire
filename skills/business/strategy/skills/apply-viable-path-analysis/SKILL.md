@@ -2,7 +2,7 @@
 name: apply-viable-path-analysis
 description: Use when facing dominant incumbents on multiple fronts where direct competition is impossible — to identify the one viable sequence of achievable positions that creates a platform for reaching the ultimate objective, rather than attacking what cannot be won
 source: 隆中对 (Lóng zhōng duì) "The Longzhong Plan" — Zhuge Liang's strategic analysis for Liu Bei (207 AD); Chen Shou "Records of the Three Kingdoms" 三国志 "Zhuge Liang Zhuan" (280–290 AD); Luo Guanzhong "Romance of the Three Kingdoms" 三国演义 (~1400 AD); Moore "Crossing the Chasm" (1991) — beachhead strategy; Christensen "The Innovator's Dilemma" (1997) — foothold markets
-tags: [business, strategy, three-kingdoms, viable-path, zhuge-liang, longzhong, bridgehead, sequencing, incumbents, startup, beachhead, three-kingdoms]
+tags: [three-kingdoms, viable-path, zhuge-liang, bridgehead, sequencing, incumbents, startup, beachhead]
 verified: true
 ---
 

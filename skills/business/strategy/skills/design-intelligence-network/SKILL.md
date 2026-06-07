@@ -2,7 +2,7 @@
 name: design-intelligence-network
 description: Use when preparing for a major competitive engagement — product launch, market entry, key negotiation, or strategic partnership — to systematically gather intelligence from multiple source types and convert it into decision-relevant insight
 source: Sun Tzu "The Art of War" Ch.9, 13 (Giles trans. 1910; Griffith trans. 1963); US Intelligence Community "Intelligence Cycle" doctrine; Gilad "Early Warning" (2004); Fuld "The Secret Language of Competitive Intelligence" (2006)
-tags: [business, strategy, intelligence, competitive-intelligence, win-loss, spies, information-gathering, sun-tzu, art-of-war, yong-jian]
+tags: [intelligence, competitive-intelligence, win-loss, spies, information-gathering, sun-tzu, art-of-war, yong-jian]
 verified: true
 ---
 

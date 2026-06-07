@@ -2,7 +2,7 @@
 name: apply-legitimacy-control
 description: Use when seeking durable market authority without direct confrontation — to control or heavily influence the existing source of legitimacy in a market (standards body, regulatory definition, platform API, analyst category) so that competitors must conform to your terms while appearing to follow a neutral authority
 source: 奉天子以令诸侯 (Fèng tiānzǐ yǐ lìng zhūhóu) "Hold the Emperor, Command the Vassals" — Cao Cao's strategy after seizing control of Emperor Xian of Han (196 AD); Chen Shou "Records of the Three Kingdoms" 三国志 "Wu Di Ji" (280–290 AD); Luo Guanzhong "Romance of the Three Kingdoms" 三国演义 (~1400 AD); Porter "Competitive Advantage" (1985) — standard-setting; Shapiro & Varian "Information Rules" (1999) — standards wars
-tags: [business, strategy, three-kingdoms, legitimacy-control, cao-cao, standards, platform, regulatory, authority, three-kingdoms]
+tags: [three-kingdoms, legitimacy-control, cao-cao, standards, platform, regulatory, authority]
 verified: true
 ---
 

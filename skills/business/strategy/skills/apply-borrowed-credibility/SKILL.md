@@ -2,7 +2,7 @@
 name: apply-borrowed-credibility
 description: Use when building early-stage credibility to attract investors, customers, or partners — to strategically deploy genuine associations, endorsements, and early relationships to signal capability and scale that you have not yet built directly
 source: Thirty-Six Stratagems #29 樹上開花 "Deck the Tree with False Blossoms" (三十六計, Sawyer trans. 1994); Verstappen "The 36 Strategies of Ancient China" (2007); Cialdini "Influence" (1984) — social proof; Moore "Crossing the Chasm" (1991) — reference customers
-tags: [business, strategy, thirty-six-stratagems, credibility, social-proof, signaling, early-stage, partnerships, endorsement, borrow-credibility, false-blossoms]
+tags: [thirty-six-stratagems, credibility, social-proof, signaling, early-stage, partnerships, endorsement, borrow-credibility]
 verified: true
 ---
 

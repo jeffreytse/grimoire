@@ -2,7 +2,7 @@
 name: apply-mece
 description: Use when structuring a problem, organizing findings, or building an analysis where you need to ensure no gaps and no overlaps in your categories.
 source: Barbara Minto, "The Pyramid Principle" (1987); McKinsey & Company internal methodology; widely taught at McKinsey, BCG, Bain, and in MBA curricula globally
-tags: [problem-solving, structured-thinking, strategy, analysis, consulting, communication, frameworks]
+tags: [problem-solving, structured-thinking, analysis, consulting, communication, frameworks]
 verified: true
 ---
 

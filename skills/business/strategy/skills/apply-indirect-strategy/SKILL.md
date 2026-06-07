@@ -2,7 +2,7 @@
 name: apply-indirect-strategy
 description: Use when direct confrontation with a stronger or entrenched opponent would be costly, slow, or unwinnable — to win by undermining their strategy, dependencies, or position rather than attacking their strength directly
 source: Sun Tzu "The Art of War" Ch.3 (Giles trans. 1910; Griffith trans. 1963); Liddell Hart "Strategy" (2nd ed., 1967); Kim & Mauborgne "Blue Ocean Strategy" (2005)
-tags: [business, strategy, indirect-strategy, competitive-advantage, disruption, sun-tzu, art-of-war, flanking, positioning]
+tags: [indirect-strategy, competitive-advantage, disruption, sun-tzu, art-of-war, flanking, positioning]
 verified: true
 ---
 
