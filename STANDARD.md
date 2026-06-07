@@ -267,6 +267,17 @@ fixed-volume alternatives plateau within 4–6 weeks.
 Sources: NSCA CSCS Exam Content, ACSM Position Stand on Resistance Training
 ```
 
+### Examples (recommended)
+
+Short, concrete cases showing the skill applied in practice. Each example should:
+- Name the actor and situation (1 sentence)
+- Show the specific decision or action taken (1 sentence)
+- State the outcome (1 sentence)
+
+Examples are NOT historical background or theoretical explanation — those belong in
+`## Why This Is Best Practice`. Examples show a reader: "if I were in this situation,
+this is how I would apply the skill."
+
 ---
 
 ## 5 Quality Criteria
