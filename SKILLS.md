@@ -93,7 +93,7 @@
 
 ---
 
-## Business (33) <a name="business"></a>
+## Business (45) <a name="business"></a>
 
 ### entrepreneurship
 
@@ -130,14 +130,26 @@
 
 ### strategy
 
+- [`apply-asymmetric-matching-strategy`](./skills/business/strategy/skills/apply-asymmetric-matching-strategy/) — Use when competing with limited resources against a stronger opponent across multiple simultaneous contests — deliberately sacrificing the unwinnable match to concentrate strength where it produces a winning majority
+- [`apply-economy-of-force`](./skills/business/strategy/skills/apply-economy-of-force/) — Use when planning a competitive campaign to ensure the means of winning do not destroy what you are competing for — avoiding pyrrhic victories, preserving resources for follow-on engagements, and using proportionate force at each stage
+- [`apply-five-commander-virtues`](./skills/business/strategy/skills/apply-five-commander-virtues/) — Use when assessing, developing, or hiring for leadership capability — to evaluate a leader against the five virtues that Sun Tzu identifies as determinants of strategic success and diagnose which virtue deficits are causing organisational or competitive failures
+- [`apply-five-factors-assessment`](./skills/business/strategy/skills/apply-five-factors-assessment/) — Use when preparing for any competitive engagement — product launch, market entry, negotiation, or campaign — to audit your position across the five strategic dimensions before committing resources
+- [`apply-force-concentration`](./skills/business/strategy/skills/apply-force-concentration/) — Use when outmatched overall but able to choose where to engage — concentrating all available resources on the opponent's weakest or most exposed point while avoiding their strength, maintaining initiative, and remaining formless to prevent counter-concentration
+- [`apply-indirect-strategy`](./skills/business/strategy/skills/apply-indirect-strategy/) — Use when direct confrontation with a stronger or entrenched opponent would be costly, slow, or unwinnable — to win by undermining their strategy, dependencies, or position rather than attacking their strength directly
 - [`apply-inversion`](./skills/business/strategy/skills/apply-inversion/) — Use when solving a hard problem, stress-testing a plan, or identifying risks by reasoning backwards from failure instead of forwards from goals.
 - [`apply-mece`](./skills/business/strategy/skills/apply-mece/) — Use when structuring a problem, organizing findings, or building an analysis where you need to ensure no gaps and no overlaps in your categories.
 - [`apply-premortem`](./skills/business/strategy/skills/apply-premortem/) — Use when a plan is finalized but not yet launched, to surface failure modes the team hasn't acknowledged before commitment is locked in.
+- [`apply-strategic-deception`](./skills/business/strategy/skills/apply-strategic-deception/) — Use when operating in competitive environments where revealing your intentions, timing, or concentration point would allow the opponent to pre-empt, counter-concentrate, or deny you the element of surprise
+- [`apply-strategic-momentum`](./skills/business/strategy/skills/apply-strategic-momentum/) — Use when planning a campaign, product launch, or competitive push — to build strategic potential before committing, combine direct and indirect forces simultaneously, and strike at the moment of maximum advantage rather than at the earliest opportunity
 - [`apply-systems-iceberg`](./skills/business/strategy/skills/apply-systems-iceberg/) — Use when a problem keeps recurring despite fixes, when a team is reacting to events without understanding why they happen, or when a decision needs structural rather than symptomatic treatment.
+- [`apply-tactical-adaptation`](./skills/business/strategy/skills/apply-tactical-adaptation/) — Use when circumstances change mid-engagement and tactics must adapt — diagnosing which of the nine strategic situations you occupy, applying the situation-specific response, and avoiding the five commander faults that cause strategic failure
+- [`apply-terrain-strategy`](./skills/business/strategy/skills/apply-terrain-strategy/) — Use when choosing where to compete or commit resources — to classify the competitive terrain, avoid fighting on ground that advantages the opponent, and create or occupy terrain that structurally favours your position
 - [`calculate-tam-sam-som`](./skills/business/strategy/skills/calculate-tam-sam-som/) — Use when sizing a market for a pitch deck, business plan, investment thesis, or strategic planning exercise
+- [`design-alliance-strategy`](./skills/business/strategy/skills/design-alliance-strategy/) — Use when competing in a market where third-party relationships — partners, distributors, platforms, standards bodies, or key suppliers — determine who wins, to build your own coalition while preventing the opponent from forming theirs
 - [`design-competitive-analysis`](./skills/business/strategy/skills/design-competitive-analysis/) — Use when building a structured framework to assess a competitive landscape, evaluate market position, or inform strategic decisions about differentiation
 - [`design-feedback-loops`](./skills/business/strategy/skills/design-feedback-loops/) — Use when designing organizational processes, product iteration cycles, or performance systems and need to identify what feedback exists, what is missing, and how to make it faster or more accurate.
 - [`design-go-to-market`](./skills/business/strategy/skills/design-go-to-market/) — Use when launching a product, entering a new market, or repositioning an existing offering to reach paying customers
+- [`design-intelligence-network`](./skills/business/strategy/skills/design-intelligence-network/) — Use when preparing for a major competitive engagement — product launch, market entry, key negotiation, or strategic partnership — to systematically gather intelligence from multiple source types and convert it into decision-relevant insight
 - [`run-competitive-analysis`](./skills/business/strategy/skills/run-competitive-analysis/) — Use when evaluating market position, planning a product strategy, or preparing for a fundraise or board review
 - [`run-scenario-planning`](./skills/business/strategy/skills/run-scenario-planning/) — Use when developing long-range strategic plans, preparing for major uncertainty, or stress-testing decisions against multiple possible futures
 - [`run-six-thinking-hats`](./skills/business/strategy/skills/run-six-thinking-hats/) — Use when a team needs to make a decision, evaluate a proposal, or solve a problem and wants to avoid groupthink, emotional conflict, or one-dimensional analysis.
@@ -145,11 +157,12 @@
 
 ---
 
-## Cooking (11) <a name="cooking"></a>
+## Cooking (15) <a name="cooking"></a>
 
 ### baking
 
 - [`calculate-baker-percentage`](./skills/cooking/baking/skills/calculate-baker-percentage/) — Use when scaling a bread or baked good recipe, comparing hydration ratios between doughs, or converting a volume-based recipe to weight for professional or repeatable baking
+- [`design-sourdough-process`](./skills/cooking/baking/skills/design-sourdough-process/) — Use when making sourdough bread from scratch — maintaining a starter, mixing dough, managing fermentation, shaping, and baking — to produce an open-crumb, well-flavoured loaf with a crackly crust
 
 ### flavor
 
@@ -162,9 +175,12 @@
 
 ### techniques
 
+- [`apply-braising-technique`](./skills/cooking/techniques/skills/apply-braising-technique/) — Use when cooking tough, collagen-rich cuts of meat (short ribs, pork shoulder, lamb shank, brisket, oxtail) or dense vegetables that benefit from long, moist, low-heat cooking to convert connective tissue into gelatin and build deep flavour
+- [`apply-emulsification`](./skills/cooking/techniques/skills/apply-emulsification/) — Use when making sauces, dressings, or condiments that require a stable oil-water suspension — mayonnaise, hollandaise, aioli, vinaigrette, pan sauces — where fat and water must be combined without breaking
 - [`apply-heat-control-principles`](./skills/cooking/techniques/skills/apply-heat-control-principles/) — Use when cooking proteins, vegetables, or sauces and need to select the correct heat level, transfer method, and timing to achieve target texture and flavor
 - [`apply-mise-en-place`](./skills/cooking/techniques/skills/apply-mise-en-place/) — Use when preparing to cook any dish and need to organize ingredients, tools, and workspace before heat is applied
 - [`apply-mother-sauces`](./skills/cooking/techniques/skills/apply-mother-sauces/) — Use when building classical French sauces, training on foundational sauce technique, or deriving secondary sauces from a base for a menu or recipe
+- [`apply-pasta-from-scratch`](./skills/cooking/techniques/skills/apply-pasta-from-scratch/) — Use when making fresh egg pasta from scratch — mixing, kneading, resting, rolling, and cutting — to produce silky, tender pasta that holds sauce better than dried pasta for dishes like tagliatelle, pappardelle, fettuccine, or lasagne sheets
 - [`audit-food-safety-practice`](./skills/cooking/techniques/skills/audit-food-safety-practice/) — Use when reviewing kitchen food safety practices, preparing for a health inspection, training staff on safe food handling, or investigating a foodborne illness incident
 - [`calculate-recipe-scaling`](./skills/cooking/techniques/skills/calculate-recipe-scaling/) — Use when scaling a recipe up or down, converting between batch sizes, or applying baker's percentages to adjust ingredient quantities proportionally.
 - [`design-knife-skills-progression`](./skills/cooking/techniques/skills/design-knife-skills-progression/) — Use when teaching knife skills to a beginner cook, designing a culinary curriculum, or systematically improving personal knife technique from unsafe to professional level
@@ -488,7 +504,7 @@
 
 ---
 
-## Finance (22) <a name="finance"></a>
+## Finance (25) <a name="finance"></a>
 
 ### accounting
 
@@ -517,9 +533,12 @@
 
 - [`audit-tax-efficiency`](./skills/finance/personal-finance/skills/audit-tax-efficiency/) — Use when reviewing an investment portfolio or financial plan for unnecessary tax drag
 - [`calculate-fire-number`](./skills/finance/personal-finance/skills/calculate-fire-number/) — Use when determining the portfolio size needed to retire early and sustain spending indefinitely
+- [`calculate-mortgage-affordability`](./skills/finance/personal-finance/skills/calculate-mortgage-affordability/) — Use when determining how much house you can actually afford — applying the 28/36 rule, stress-testing at higher rates, and calculating required down payment and cash reserves to avoid becoming house-poor
 - [`design-budget`](./skills/finance/personal-finance/skills/design-budget/) — Use when creating or overhauling a personal or household budget to align spending with goals
 - [`design-debt-payoff-plan`](./skills/finance/personal-finance/skills/design-debt-payoff-plan/) — Use when creating a structured debt payoff plan to eliminate consumer debt efficiently using snowball, avalanche, or hybrid methods
 - [`design-estate-plan`](./skills/finance/personal-finance/skills/design-estate-plan/) — Use when designing a comprehensive estate plan to protect assets, minimize taxes, and ensure wealth transfers according to the individual's wishes
+- [`design-tax-optimization-plan`](./skills/finance/personal-finance/skills/design-tax-optimization-plan/) — Use when planning year-round strategies to legally minimise your tax burden — maximising pre-tax accounts, harvesting losses, locating assets correctly, and timing deductions to reduce what you owe without avoiding legal obligations
+- [`negotiate-salary`](./skills/finance/personal-finance/skills/negotiate-salary/) — Use when receiving a job offer or preparing for a compensation review — researching market rate, anchoring high, and negotiating total compensation to avoid leaving money on the table
 
 ### real-estate
 
@@ -627,22 +646,25 @@
 
 ---
 
-## Law (25) <a name="law"></a>
+## Law (28) <a name="law"></a>
 
 ### contracts
 
 - [`design-contract-negotiation-strategy`](./skills/law/contracts/skills/design-contract-negotiation-strategy/) — Use when planning or executing a contract negotiation for commercial agreements, partnerships, or high-stakes deals
 - [`design-vendor-agreement-template`](./skills/law/contracts/skills/design-vendor-agreement-template/) — Use when creating a reusable vendor agreement template that covers SLAs, liability, data handling, termination, and exit provisions for recurring supplier or service provider relationships
+- [`negotiate-lease`](./skills/law/contracts/skills/negotiate-lease/) — Use when reviewing or negotiating a residential or commercial lease before signing — identifying risky clauses, requesting amendments, and reaching a written agreement that protects your interests
 - [`negotiate-nda`](./skills/law/contracts/skills/negotiate-nda/) — Use when reviewing, drafting, or negotiating a non-disclosure agreement
 - [`review-employment-contract`](./skills/law/contracts/skills/review-employment-contract/) — Use when reviewing an employment agreement, offer letter, or independent contractor agreement before signing
 - [`review-saas-contract`](./skills/law/contracts/skills/review-saas-contract/) — Use when reviewing a SaaS vendor or customer contract for legal and commercial risk
 - [`run-contract-due-diligence`](./skills/law/contracts/skills/run-contract-due-diligence/) — Use when reviewing contracts systematically for M&A transactions, investment rounds, vendor onboarding, or any situation requiring comprehensive risk identification across a contract portfolio
+- [`write-demand-letter`](./skills/law/contracts/skills/write-demand-letter/) — Use when asserting a legal claim — unpaid invoices, breach of contract, property damage, or security deposit disputes — and needing a formal written notice that states the claim clearly, sets a deadline, and establishes a paper trail before litigation
 - [`write-software-license-agreement`](./skills/law/contracts/skills/write-software-license-agreement/) — Use when drafting or reviewing a software license agreement, EULA, or open-source license for software products
 
 ### corporate
 
 - [`design-board-meeting-process`](./skills/law/corporate/skills/design-board-meeting-process/) — Use when designing or improving the process for preparing, conducting, and following up on board of directors meetings
 - [`design-corporate-governance-structure`](./skills/law/corporate/skills/design-corporate-governance-structure/) — Use when designing or evaluating a corporate governance framework for a company, including board structure, oversight mechanisms, and accountability systems
+- [`design-entity-structure`](./skills/law/corporate/skills/design-entity-structure/) — Use when a founder, freelancer, or small business owner needs to choose and set up the right legal entity — deciding between sole proprietorship, LLC, S-corp, or C-corp based on liability, tax treatment, and funding plans
 - [`design-equity-compensation-plan`](./skills/law/corporate/skills/design-equity-compensation-plan/) — Use when designing or auditing an equity compensation plan covering stock options, RSUs, or other equity awards for startups or growth-stage companies
 - [`write-board-resolution`](./skills/law/corporate/skills/write-board-resolution/) — Use when drafting a formal board resolution to authorize corporate actions, approve transactions, appoint officers, or document board decisions with legal effect
 - [`write-shareholder-agreement`](./skills/law/corporate/skills/write-shareholder-agreement/) — Use when drafting or reviewing a shareholder agreement for a startup, private company, or joint venture
