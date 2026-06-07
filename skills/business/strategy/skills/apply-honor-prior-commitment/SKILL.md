@@ -1,8 +1,8 @@
 ---
-name: honor-prior-commitment
+name: apply-honor-prior-commitment
 description: Use when you have made a prior public commitment that has become costly to honour — to honour it visibly and completely, using the demonstrated trustworthiness to build moral authority with your own organisation and observing third parties, because the reputation for keeping commitments under cost cannot be acquired any other way and is worth more than the short-term gain from breaking the commitment
 source: 退避三舍 (Tuì bì sān shě) "Retreat three days' march" — Duke Wen of Jin (晋文公 Chong'er) at Battle of Chengpu (632 BC); Zuo Zhuan 左传 "Chengpu Zhi Zhan" 城濮之战 (~4th century BC); Kreps "Corporate Culture and Economic Theory" (1990) — reputation and repeated games; Cialdini "Influence" (1984) — commitment and consistency; Axelrod "The Evolution of Cooperation" (1984) — reciprocity and reputation
-tags: [business, strategy, commitment, reputation, moral-authority, trust, chong-er, zuo-zhuan, spring-autumn, honoring-commitment, reciprocity]
+tags: [commitment, reputation, moral-authority, trust, zuo-zhuan, spring-autumn, honoring-commitment, reciprocity]
 verified: true
 ---
 
@@ -98,9 +98,6 @@ The key: renegotiation is legitimate when done transparently, before the commitm
 - Make fewer commitments, keep them unconditionally. The strategic value comes from the unconditional track record. An organisation that makes many commitments and keeps most of them is less trusted than one that makes few commitments and keeps them all — because the many-and-most-kept signal leaves observers uncertain about which future commitments will be the exceptions.
 
 ## Examples
-
-**Duke Wen of Jin at the Battle of Chengpu (632 BC):**
-Duke Wen (Chong'er) had promised to retreat three days' march if Jin and Chu ever met in battle — a promise made sixteen years earlier when Chu's king had sheltered him during his exile. His commanders argued against the retreat: it was tactically unnecessary, it risked demoralising their own troops, and the opposing Chu forces might interpret it as weakness. Duke Wen honoured the commitment completely, retreating the full three days. The effect on his own forces was the opposite of demoralisation — they observed that their leader was a person whose word was unconditional, and that moral obligation held even when military advantage argued against it. The subsequent victory at Chengpu was the foundation of Jin's hegemony for the next two generations. The military outcome was won in part by the moral outcome achieved by the retreat.
 
 **Warren Buffett's refusal to invest in technology stocks (1998–2001):**
 Buffett had publicly committed to investing only in businesses he understood, and he publicly stated that he did not understand technology companies' business models well enough to invest in them. As the technology bubble inflated in 1998–2000, Berkshire Hathaway significantly underperformed the S&P 500 — Buffett's commitment was costing him (and his shareholders) real money in opportunity cost. Shareholder pressure to change strategy was significant. Buffett maintained the commitment, explicitly. When the bubble burst in 2000–2001, Buffett's underperformance reversed dramatically and the commitment — having been honoured at demonstrable cost — proved definitively that his investment discipline was genuine and not merely post-hoc rationalisation. The trust built by keeping the commitment under financial and reputational pressure became a cornerstone of Berkshire's subsequent ability to attract long-term investors who genuinely believed in Buffett's stated principles.

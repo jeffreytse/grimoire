@@ -1,8 +1,8 @@
 ---
-name: deploy-to-strength
+name: apply-deploy-to-strength
 description: Use when assigning people to high-stakes roles — to match the specific capability profile the role actually requires against what each candidate specifically has, rather than deploying overall excellence or seniority as a proxy for fit, because mismatching specific capability profiles to specific role requirements produces catastrophic failure even with exceptional overall talent
 source: 将苑·智用 (Jiāng yuàn — Zhì yòng) "Way of the General — Intelligent Use" — Zhuge Liang's doctrine of capability-matched deployment (~220–234 AD); Chen Shou "Records of the Three Kingdoms" 三国志 "Zhuge Liang Zhuan" (280–290 AD); Drucker "The Effective Executive" (1967) — making strength productive; Buckingham & Clifton "Now Discover Your Strengths" (2001); Collins "Good to Great" (2001) — right people in right seats
-tags: [business, strategy, zhuge-liang, deployment, capability-matching, role-fit, talent, three-kingdoms, generalship]
+tags: [zhuge-liang, deployment, capability-matching, role-fit, talent, three-kingdoms, generalship]
 verified: true
 ---
 

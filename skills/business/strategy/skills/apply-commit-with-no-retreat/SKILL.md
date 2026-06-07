@@ -1,8 +1,8 @@
 ---
-name: commit-with-no-retreat
+name: apply-commit-with-no-retreat
 description: Use when a team or individual is hedging — preserving a comfortable exit rather than committing fully to the objective — to deliberately create an irreversible position that removes the retreat option and forces total effort, because humans perform significantly better when escape is impossible than when a tolerable fallback exists
 source: 背水一战 (Bèi shuǐ yī zhàn) "Battle with backs to the water" — Han Xin at the Battle of Jingxing (205 BC); Sima Qian "Records of the Grand Historian" 史记 "Huaiyin Hou Liezhuan" 淮阴侯列传 (~94 BC); Hernán Cortés burning ships at Veracruz (1519); Cialdini "Influence" (1984) — commitment and consistency; Ariely "Predictably Irrational" (2008) — commitment devices
-tags: [business, strategy, commitment-device, irreversibility, force-multiplier, han-xin, records-of-grand-historian, three-kingdoms, warring-states]
+tags: [commitment-device, irreversibility, force-multiplier, han-xin, records-of-grand-historian, three-kingdoms, warring-states]
 verified: true
 ---
 

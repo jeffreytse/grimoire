@@ -1,8 +1,8 @@
 ---
-name: remove-binding-constraint
+name: apply-binding-constraint-removal
 description: Use when your strategic goal is blocked by an operational limit that the entire industry has accepted as fixed — to identify that specific constraint, verify it is genuinely the binding limit, and invest to solve it as an engineering problem, gaining durable structural advantage over competitors who have optimised around it rather than through it
 source: 木牛流马 (Mù niú liú mǎ) "Wooden Ox and Gliding Horse" and 连弩 (Lián nǔ) "Repeating Crossbow" — Zhuge Liang's logistics and firepower inventions during the Northern Expeditions (~228–234 AD); Chen Shou "Records of the Three Kingdoms" 三国志 "Zhuge Liang Zhuan" (280–290 AD); Goldratt "The Goal" (1984) — Theory of Constraints; Christensen "The Innovator's Dilemma" (1997) — performance trajectories
-tags: [business, strategy, zhuge-liang, constraint-removal, innovation, bottleneck, logistics, theory-of-constraints, strategic-investment, three-kingdoms]
+tags: [zhuge-liang, constraint-removal, innovation, bottleneck, logistics, theory-of-constraints, strategic-investment, three-kingdoms]
 verified: true
 ---
 

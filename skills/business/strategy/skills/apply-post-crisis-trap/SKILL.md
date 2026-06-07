@@ -1,8 +1,8 @@
 ---
-name: navigate-post-crisis-trap
+name: apply-post-crisis-trap
 description: Use when you are a crisis contributor whose exceptional capability made you indispensable during an emergency — to recognise that the same capability which made you irreplaceable during the crisis becomes a structural threat to the principal once the crisis resolves, and to navigate the transition before the principal acts rather than after
 source: 飞鸟尽，良弓藏；狡兔死，走狗烹 (Fēi niǎo jìn, liáng gōng cáng; jiǎo tù sǐ, zǒu gǒu pēng) "When birds are gone, the good bow is stored; when the clever hare dies, the hound is cooked" — Fan Li (范蠡) warning to Wen Zhong (~473 BC); Liu Bang eliminating Han Xin (~196 BC); Sima Qian "Records of the Grand Historian" 史记 "Huaiyin Hou Liezhuan" 淮阴侯列传 + "Yue Wang Goujian Shijia" (~94 BC); Hirschman "Exit, Voice, and Loyalty" (1970); principal-agent theory
-tags: [business, strategy, career, post-crisis, capability-trap, fan-li, han-xin, records-of-grand-historian, warring-states, principal-agent, transition]
+tags: [career, post-crisis, capability-trap, fan-li, han-xin, warring-states, principal-agent, transition]
 verified: true
 ---
 
@@ -101,9 +101,6 @@ Liu Bang's execution of Han Xin became famous precisely because it illustrated t
 - For principals: the trap is a solvable design problem. The structural incentives exist, but they can be overridden by explicit governance — retention frameworks, role design, and active commitment to using crisis contributors' capabilities rather than eliminating them. The cost of designing against the trap is much lower than the reputational cost of acting on it.
 
 ## Examples
-
-**Fan Li and Wen Zhong (473 BC):**
-After Goujian's defeat of Wu and the completion of the twenty-year revenge strategy, Fan Li and Wen Zhong were the two most critical contributors to the victory. Fan Li understood the structural reality immediately — Goujian had survived humiliation by being ruthless; he would not share power in peacetime. Fan Li exited immediately, taking nothing but his own person, and disappeared to become a successful merchant. Wen Zhong stayed, believing his loyal service and deep contribution would protect him. Goujian sent him a sword and the implicit instruction to use it. The divergent outcomes of the two advisors — one of the wealthiest men in China, one dead — were determined by whether they understood that the post-crisis threat calculus had inverted at the moment of victory.
 
 **Turnaround specialist and post-turnaround CEO:**
 A struggling technology company brings in a turnaround specialist with a reputation for radical restructuring. The turnaround specialist lays off 30% of staff, replaces leadership, renegotiates supplier contracts, and within 18 months has the company profitable. The board then hires a new CEO — a "scaling and process" executive — to manage the recovery phase. The turnaround specialist is still in the organisation, with deep relationships across all functions and detailed knowledge of every restructuring decision, including the reasons behind each termination. The new CEO, whose mandate is to build a stable culture, feels genuinely threatened by the turnaround specialist's presence and institutional knowledge. If the turnaround specialist has not negotiated a clear post-turnaround role or exit before the new CEO's appointment, they will face the transition on terms the new CEO sets — typically marginalisation, attribution of the painful aspects of the turnaround to the specialist, and eventual departure with a diminished reputation.

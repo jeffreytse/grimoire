@@ -1,8 +1,8 @@
 ---
-name: convert-hostile-room
+name: apply-hostile-room-conversion
 description: Use when facing a group of pre-committed objectors in a high-stakes setting — board meeting, investor Q&A, regulatory hearing, buying committee, or resistant town hall — where collective opposition would defeat your proposal unless each objector's position is individually dismantled before the group
 source: 舌战群儒 (Shé zhàn qún rú) "Debate the Confucian Scholars" — Zhuge Liang's conversion of Sun Quan's hostile court (208 AD); Luo Guanzhong "Romance of the Three Kingdoms" 三国演义 (~1400 AD); Chen Shou "Records of the Three Kingdoms" 三国志 "Sun Quan Zhuan" (280–290 AD); Cialdini "Influence" (1984) — social proof and commitment; Kahneman "Thinking, Fast and Slow" (2011) — cognitive consistency
-tags: [business, strategy, three-kingdoms, hostile-room, persuasion, zhuge-liang, debate, committee, board, objection-handling, group-dynamics, three-kingdoms]
+tags: [three-kingdoms, hostile-room, persuasion, debate, committee, board, objection-handling, group-dynamics]
 verified: true
 ---
 

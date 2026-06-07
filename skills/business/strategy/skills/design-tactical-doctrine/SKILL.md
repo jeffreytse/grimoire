@@ -1,8 +1,8 @@
 ---
-name: build-tactical-doctrine
+name: design-tactical-doctrine
 description: Use when your organisation's performance depends on the judgment of a few exceptional individuals — to encode that expert judgment into systematic, teachable doctrine that average practitioners can execute, decoupling performance from individual talent and scaling excellence across the organisation
 source: 八阵图 (Bā zhèn tú) "Eight Formation Arrays" — Zhuge Liang's systematic battle formation doctrine (~220–234 AD); Chen Shou "Records of the Three Kingdoms" 三国志 "Zhuge Liang Zhuan" (280–290 AD); Du Fu poem "八阵图" (~766 AD); McDonald's "Operations and Training Manual" (1958 — Ray Kroc); Goldratt "The Goal" (1984) — throughput and constraint; Rackham "SPIN Selling" (1988) — sales doctrine from research
-tags: [business, strategy, zhuge-liang, tactical-doctrine, playbook, force-multiplier, scaling, systematisation, knowledge-management, three-kingdoms]
+tags: [tactical-doctrine, playbook, force-multiplier, scaling, systematisation, knowledge-management, three-kingdoms, zhuge-liang]
 verified: true
 ---
 
@@ -103,6 +103,19 @@ The Eight Formation Arrays maintained their effectiveness for decades because th
 - Protect the doctrine from HiPPO override. High-status individuals often override doctrine based on intuition rather than evidence. Doctrine updated by authority rather than performance data ceases to encode field-validated knowledge and begins to encode the HiPPO's preferences. Changes to doctrine require performance evidence, regardless of who proposes them.
 
 ## Examples
+
+**Historical case — Zhuge Liang's stone formation stops Lu Xun's pursuit (222 AD):**
+After the Battle of Yiling (222 AD), Liu Bei's forces were routed and retreating. Wu's
+general Lu Xun pursued. His vanguard entered a stone formation at the mouth of the Kui
+River — an arrangement of boulders Zhuge Liang had designed before the campaign as a
+rear-guard obstacle. The formation's internal paths were non-intuitive: every corridor
+appeared to lead through, but the exits were structured so that forces moving through it
+could not find the way out without a guide. Lu Xun's experienced commanders spent time
+and exposure trying to navigate it. Zhuge Liang's uncle Huang Chengyan eventually guided
+Lu Xun's force out. The formation had held without soldiers. Zhuge Liang had codified
+terrain-based defensive doctrine into a replicable system — a "tactical doctrine" that
+operated independently of the troops who had just been defeated.
+Source: Sanguozhi (三國志), Zhuge Liang biography; Pei Songzhi annotation.
 
 **McDonald's Operations and Training Manual (1958):**
 Ray Kroc's insight was that the McDonald brothers' Speedee Service System — a kitchen layout, preparation sequence, and customer interaction protocol that produced a consistent product in 30 seconds — could be codified and transmitted to any operator. The manual specified everything: fryer temperature (335°F for fries), portion sizes (1.6 oz patty), cleaning schedules, greeting scripts. By encoding the McDonald brothers' judgment into doctrine, McDonald's could hire ordinary people and train them to produce the McDonald brothers' results. The doctrine was the business — not the food, not the brand, but the system. McDonald's scaled to 40,000 locations on the strength of a manual that any franchisee could learn.

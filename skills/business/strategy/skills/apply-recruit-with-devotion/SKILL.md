@@ -1,8 +1,8 @@
 ---
-name: recruit-with-devotion
+name: apply-recruit-with-devotion
 description: Use when you need to attract an extraordinary person — a key hire, co-founder, advisor, or critical partner — who has alternatives, won't respond to standard incentives, and screens candidates by how much they genuinely understand and need them
 source: 三顾茅庐 (Sān gù máolú) "Three Visits to the Thatched Cottage" — Liu Bei's recruitment of Zhuge Liang (207 AD); Chen Shou "Records of the Three Kingdoms" 三国志 "Zhuge Liang Zhuan" (280–290 AD); Luo Guanzhong "Romance of the Three Kingdoms" 三国演义 (~1400 AD); Cable & Judge "Firm-Level Hiring Decisions and Organizational Staffing" (1994); Pink "Drive" (2009) — autonomy and purpose as motivators
-tags: [business, strategy, three-kingdoms, recruiting, talent, liu-bei, zhuge-liang, three-visits, co-founder, advisor, exceptional-talent]
+tags: [three-kingdoms, recruiting, talent, liu-bei, zhuge-liang, co-founder, advisor, exceptional-talent]
 verified: true
 ---
 

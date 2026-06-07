@@ -1,8 +1,8 @@
 ---
-name: enforce-institutional-integrity
+name: apply-institutional-integrity
 description: Use when a rule, standard, or process you have established is visibly violated by someone with significant personal relationship, exceptional talent, or high status — where the temptation to make an exception is strongest and the cost of making it is highest
 source: 挥泪斩马谡 (Huī lèi zhǎn Mǎ Sù) "Weeping While Executing Ma Su" — Zhuge Liang's enforcement of military command after the loss of Jieting (228 AD); Chen Shou "Records of the Three Kingdoms" 三国志 "Zhuge Liang Zhuan" (280–290 AD); Luo Guanzhong "Romance of the Three Kingdoms" 三国演义 (~1400 AD); Dalio "Principles" (2017) — rule-based meritocracy; Cialdini "Influence" (1984) — consistency principle
-tags: [business, strategy, three-kingdoms, institutional-integrity, zhuge-liang, ma-su, enforcement, standards, rule-of-law, consistency, governance, three-kingdoms]
+tags: [three-kingdoms, institutional-integrity, zhuge-liang, enforcement, standards, rule-of-law, consistency, governance]
 verified: true
 ---
 

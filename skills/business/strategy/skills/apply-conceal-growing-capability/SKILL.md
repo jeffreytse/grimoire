@@ -1,8 +1,8 @@
 ---
-name: conceal-growing-capability
+name: apply-conceal-growing-capability
 description: Use when you are in a growth or capability-building phase where a dominant incumbent would act to suppress, acquire, or preemptively compete against you if they became aware of your development trajectory — to proactively manage your visibility and apparent capability level so that the dominant player does not perceive you as a threat until you are positioned to withstand their response
 source: 韬光养晦 (Tāo guāng yǎng huì) "Conceal brightness, nurture capacity" — ancient Chinese strategic principle formalised by Deng Xiaoping in 28-character foreign policy doctrine 1989–1990; Sun Tzu "Art of War" 孙子兵法 Chapter 6 "Weakness and Strength" (~500 BC); Porter "Competitive Strategy" (1980) — market entry and competitive response; Christensen "The Innovator's Dilemma" (1997) — disruptive entry below incumbent radar
-tags: [business, strategy, competitive-strategy, capability-concealment, deng-xiaoping, sun-tzu, market-entry, disruptive-innovation, incumbent-response, warring-states]
+tags: [competitive-strategy, capability-concealment, deng-xiaoping, sun-tzu, market-entry, disruptive-innovation, incumbent-response, warring-states]
 verified: true
 ---
 
