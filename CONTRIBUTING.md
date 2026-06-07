@@ -22,6 +22,7 @@ skills/law/contracts/skills/review-saas-agreement/SKILL.md
 ```
 
 Steps:
+0. Run `suggest-best-practice` with your topic — if any result scores ≥ 0.7, extend that skill instead of creating a new one.
 1. Copy `SKILL_TEMPLATE.md` → `skills/<domain>/<subdomain>/skills/<skill-name>/SKILL.md`
 2. Fill in all frontmatter fields: `name`, `description`, `source`, `tags`
 3. Write content following [STANDARD.md](./STANDARD.md)
@@ -74,6 +75,9 @@ Steps:
 ## Self-Check Before Submitting
 
 Run this checklist against your SKILL.md before opening a PR:
+
+### Deduplication
+- [ ] No near-duplicate: ran `suggest-best-practice`, top similarity < 0.7 — or added `duplicate-reviewed: true` to frontmatter with justification in PR body
 
 ### Frontmatter
 - [ ] `name` passes naming standard: verb-first, specific subject, 2–4 words, no rejected verbs (`handle-`, `manage-`, `improve-`, `get-`, `use-`, `help-`)

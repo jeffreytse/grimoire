@@ -19,3 +19,16 @@ jobs:
       - uses: actions/checkout@v4
       - name: Run conformance test suite
         run: bash scripts/test-schema.sh
+
+  check-duplicates:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Check for near-duplicate skills
+        run: bash scripts/check-duplicates.sh

@@ -6,6 +6,10 @@
 
 Run `review-best-practice-skill` on every SKILL.md in this PR, then check each box.
 
+### Deduplication
+
+- [ ] No near-duplicate: ran `suggest-best-practice`, top similarity < 0.7 — or added `duplicate-reviewed: true` to frontmatter with justification below
+
 ### Frontmatter
 
 - [ ] `name` passes naming standard: verb-first, specific subject, 2–4 words, no rejected verbs (`handle-`, `manage-`, `improve-`, `get-`, `use-`, `help-`)
