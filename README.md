@@ -252,9 +252,10 @@ Invoke-WebRequest https://raw.githubusercontent.com/jeffreytse/grimoire/main/scr
 /plugin marketplace add jeffreytse/grimoire
 
 # Step 2: install (skills are namespaced, e.g. /grimoire-engineering:propose-conventional-commit)
-/plugin install grimoire@grimoire                               # all domains (latest)
-/plugin install grimoire-engineering@grimoire                   # one domain
-/plugin install grimoire-engineering-development@grimoire       # one sub-domain
+/plugin install grimoire@grimoire                   # all domains (latest)
+/plugin install grimoire-engineering@grimoire       # one domain
+
+# For subdomain-level installs, use install.sh
 ```
 
 ---

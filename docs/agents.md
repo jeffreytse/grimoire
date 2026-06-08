@@ -194,7 +194,7 @@ When a new domain is added to grimoire (via `design-best-practice-domain`), the 
 | File | What to update |
 |------|----------------|
 | `.claude-plugin/plugin.json` | Add subdomain path to `skills` array |
-| `.claude-plugin/marketplace.json` | Add domain and subdomain entries |
+| `.claude-plugin/marketplace.json` | Add domain entry (subdomain entries not needed) |
 | `GEMINI.md` | Add domain row to domains table |
 | `AGENTS.md` | Same update as GEMINI.md |
 

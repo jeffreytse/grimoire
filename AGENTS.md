@@ -69,9 +69,10 @@ Or via Claude Code plugin system:
 /plugin marketplace add jeffreytse/grimoire
 
 # Step 2: install (skills are namespaced, e.g. /grimoire:skill-name)
-/plugin install grimoire@grimoire                               # all domains
-/plugin install grimoire-engineering@grimoire                   # one domain
-/plugin install grimoire-engineering-development@grimoire       # one sub-domain
+/plugin install grimoire@grimoire                   # all domains
+/plugin install grimoire-engineering@grimoire       # one domain
+
+# For subdomain-level installs, use install.sh
 ```
 
 ## Skill Format
