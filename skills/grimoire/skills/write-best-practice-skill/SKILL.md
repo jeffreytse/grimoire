@@ -162,6 +162,24 @@ Common first-draft failures:
 - Steps describe concepts instead of actions → rewrite as commands
 - Skill covers two separable concepts → split into two skills
 
+### 9. Register in `SKILLS.md`
+
+Add a one-line entry to `SKILLS.md` in the correct domain section and subsection,
+in alphabetical order among peers:
+
+```markdown
+- [`skill-name`](./skills/<domain>/<subdomain>/skills/<skill-name>/) — <description field verbatim>
+```
+
+Then increment the domain count in the section header:
+
+```markdown
+## Domain (N) → ## Domain (N+1)
+```
+
+If the subdomain does not yet exist in `SKILLS.md`, add a `### subdomain` header in
+alphabetical order within the domain section before the entry.
+
 ## Rules
 
 - Run `suggest-best-practice` first — never create a duplicate
