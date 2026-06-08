@@ -1,6 +1,6 @@
 # Skills Directory
 
-514 skills across 27 domains.
+559 skills across 27 domains.
 
 [Install](./README.md#%EF%B8%8F-install) · [Contribute](./CONTRIBUTING.md) · [Standard](./STANDARD.md)
 
@@ -10,7 +10,7 @@
 
 - [Art (10)](#art)
 - [Automotive (10)](#automotive)
-- [Business (33)](#business)
+- [Business (105)](#business)
 - [Cooking (11)](#cooking)
 - [Design (23)](#design)
 - [Education (20)](#education)
@@ -29,7 +29,7 @@
 - [Parenting (10)](#parenting)
 - [Pets (10)](#pets)
 - [Photography (16)](#photography)
-- [Productivity (17)](#productivity)
+- [Productivity (19)](#productivity)
 - [Psychology (16)](#psychology)
 - [Science (16)](#science)
 - [Sports (15)](#sports)
@@ -93,7 +93,7 @@
 
 ---
 
-## Business (61) <a name="business"></a>
+## Business (106) <a name="business"></a>
 
 ### entrepreneurship
 
@@ -112,6 +112,9 @@
 
 ### leadership
 
+- [`apply-constructive-dissent`](./skills/business/leadership/skills/apply-constructive-dissent/) — Use when building or assessing a team, decision process, or organizational culture where you need genuine diverse thinking to surface before commitment — not after — and where the risk is false consensus rather than open conflict
+- [`apply-enabling-structure`](./skills/business/leadership/skills/apply-enabling-structure/) — Use when building or leading a team, organization, or system — to create the conditions, remove the obstacles, and design the structures that let people execute with high autonomy, rather than directing through control
+- [`apply-merit-selection`](./skills/business/leadership/skills/apply-merit-selection/) — Use when making any talent selection, promotion, or recommendation decision — to test your evaluation against the reversed-relationship check, because evaluator relationship bias systematically corrupts talent decisions even in well-intentioned evaluators
 - [`design-hiring-process`](./skills/business/leadership/skills/design-hiring-process/) — Use when building or overhauling a hiring process for a role to reduce bias and improve quality-of-hire
 - [`design-organizational-structure`](./skills/business/leadership/skills/design-organizational-structure/) — Use when designing, restructuring, or evaluating an organization's reporting hierarchy, team topology, or division of responsibilities
 - [`run-difficult-conversation`](./skills/business/leadership/skills/run-difficult-conversation/) — Use when preparing for or facilitating a high-stakes conversation involving conflict, feedback, performance issues, or sensitive interpersonal topics
@@ -121,54 +124,96 @@
 
 ### operations
 
+- [`apply-enforcement-timing`](./skills/business/operations/skills/apply-enforcement-timing/) — Use when misconduct, policy violation, or serious wrongdoing has been detected — to determine whether to act immediately or delay enforcement until the case is overwhelming and legally unassailable, because premature enforcement against powerful bad actors weakens the case, creates procedural exposure, and enables the subject to claim overreach
 - [`apply-pdca`](./skills/business/operations/skills/apply-pdca/) — Use when implementing a process improvement, resolving a recurring operational problem, or running a controlled experiment where you need to learn and standardize before scaling.
 - [`audit-process-efficiency`](./skills/business/operations/skills/audit-process-efficiency/) — Use when identifying waste, bottlenecks, or inefficiencies in a repeatable business or operational workflow
+- [`design-honest-record-keeping`](./skills/business/operations/skills/design-honest-record-keeping/) — Use when designing or auditing your organization's documentation practices — to establish institutional norms for recording events, failures, and decisions accurately and without euphemism
 - [`design-incident-response`](./skills/business/operations/skills/design-incident-response/) — Use when creating or improving an incident response process for a production system or operational team
 - [`design-kpi-dashboard`](./skills/business/operations/skills/design-kpi-dashboard/) — Use when building or redesigning a performance dashboard to track organizational, team, or product KPIs and support data-driven decisions
+- [`design-speak-up-framework`](./skills/business/operations/skills/design-speak-up-framework/) — Use when building or auditing your organization's ability to surface ethical violations, compliance breaches, safety issues, and misconduct — to design the channels, protections, and culture that make reporting wrongdoing possible and expected
 - [`run-operational-review`](./skills/business/operations/skills/run-operational-review/) — Use when facilitating a recurring business review meeting to assess operational performance, address blockers, and align leadership on priorities
 - [`write-runbook`](./skills/business/operations/skills/write-runbook/) — Use when documenting a repeatable operational procedure that on-call engineers or operators must execute under pressure
 
 ### strategy
 
+- [`apply-adversarial-verification`](./skills/business/strategy/skills/apply-adversarial-verification/) — Use when you have received information from a party that has motivation to mislead you — to verify claims under adversarial conditions using designed tests, inconsistency detection, and independent corroboration rather than accepting stated information at face value
+- [`apply-ally-far-attack-near`](./skills/business/strategy/skills/apply-ally-far-attack-near/) — Use when expanding sequentially against multiple competitors or markets — to ally with distant actors who would otherwise rescue your near targets, neutralising their intervention before you attack, so that each near target falls without outside reinforcement
 - [`apply-asymmetric-matching-strategy`](./skills/business/strategy/skills/apply-asymmetric-matching-strategy/) — Use when competing with limited resources against a stronger opponent across multiple simultaneous contests — deliberately sacrificing the unwinnable match to concentrate strength where it produces a winning majority
 - [`apply-borrowed-credibility`](./skills/business/strategy/skills/apply-borrowed-credibility/) — Use when building early-stage credibility to attract investors, customers, or partners — to strategically deploy genuine associations, endorsements, and early relationships to signal capability and scale that you have not yet built directly
 - [`apply-borrowed-force`](./skills/business/strategy/skills/apply-borrowed-force/) — Use when you need to attack a competitor or incumbent that you cannot attack directly — by enlisting third parties with their own genuine aligned interest to act as proxies against the target
+- [`apply-chestertons-fence`](./skills/business/strategy/skills/apply-chestertons-fence/) — Use when taking over an inherited system, process, or organization — or when evaluating a proposed change to a working system — to establish whether you understand why each element exists before making any modifications
+- [`apply-command-presence`](./skills/business/strategy/skills/apply-command-presence/) — Use when entering a high-stakes interaction — board meeting, negotiation opening, crisis briefing, new executive role introduction — where the authority frame will be set in the first minutes and you need to establish it deliberately rather than let others set it
 - [`apply-competitive-encirclement`](./skills/business/strategy/skills/apply-competitive-encirclement/) — Use before committing to a major competitive move — to pre-emptively secure distribution, talent, supply, regulatory, or ecosystem position so that when you strike, the opponent's countermoves are already foreclosed
 - [`apply-competitive-patience`](./skills/business/strategy/skills/apply-competitive-patience/) — Use when rivals are fighting each other or exhausting themselves through overreach — to deliberately abstain, pre-position capability, and enter after the battle has weakened the winner
+- [`apply-consequence-clarity`](./skills/business/strategy/skills/apply-consequence-clarity/) — Use when designing behavioral feedback systems — performance management, compliance mechanisms, software quality loops, or habit formation — to ensure consequences are clear, certain, and swift, because certainty and timing determine behavior modification more than magnitude
+- [`apply-consequence-framing`](./skills/business/strategy/skills/apply-consequence-framing/) — Use when a more powerful actor has already announced a decision you need to reverse — to enumerate what that decision costs them in terms of their own stated goals, rather than expressing opposition
+- [`apply-contagion-risk-mapping`](./skills/business/strategy/skills/apply-contagion-risk-mapping/) — Use when assessing organizational risk exposure — to map how cascade failures propagate through implicit network proximity, shared infrastructure, and correlated dependencies, because organizations that assess only direct relationships systematically underestimate their exposure to others' failures
+- [`apply-credibility-demonstration`](./skills/business/strategy/skills/apply-credibility-demonstration/) — Use when preparing to announce a major organizational change, reform program, or new commitment — when the audience has reason to doubt that announced commitments will be honored
 - [`apply-crisis-opportunism`](./skills/business/strategy/skills/apply-crisis-opportunism/) — Use when a competitor is distracted by an internal or external crisis that has left key positions temporarily undefended — to move decisively into undefended territory during the crisis window
+- [`apply-criticism-intelligence`](./skills/business/strategy/skills/apply-criticism-intelligence/) — Use when your organization receives external criticism, complaints, or negative feedback — to institutionalize collection and learning from adverse signals rather than defending against or suppressing them, because negative feedback is the highest-signal intelligence available about product and policy failures
 - [`apply-dependency-trap`](./skills/business/strategy/skills/apply-dependency-trap/) — Use when customer or partner adoption at scale requires removing upfront barriers — offering genuine value freely so switching costs accumulate naturally, then shifting to monetisation once dependency is established
 - [`apply-deterrence-posture`](./skills/business/strategy/skills/apply-deterrence-posture/) — Use when in a vulnerable position that cannot be immediately strengthened — to project calm confidence and signal credible engagement cost so opponents reconsider attacking while you rebuild actual capability
 - [`apply-dormant-asset-revival`](./skills/business/strategy/skills/apply-dormant-asset-revival/) — Use when a dormant or discredited asset — brand, regulatory licence, platform, or abandoned standard — retains residual value that can serve as a vehicle for something new, enabling access or legitimacy faster than building from scratch
+- [`apply-early-intervention`](./skills/business/strategy/skills/apply-early-intervention/) — Use when you detect early warning signals — technical debt accumulating, customer relationship cooling, team friction forming, process degrading — to intervene while the problem is still small and cheap, because intervention cost increases nonlinearly with delay
 - [`apply-economy-of-force`](./skills/business/strategy/skills/apply-economy-of-force/) — Use when planning a competitive campaign to ensure the means of winning do not destroy what you are competing for — avoiding pyrrhic victories, preserving resources for follow-on engagements, and using proportionate force at each stage
 - [`apply-five-commander-virtues`](./skills/business/strategy/skills/apply-five-commander-virtues/) — Use when assessing, developing, or hiring for leadership capability — to evaluate a leader against the five virtues that Sun Tzu identifies as determinants of strategic success and diagnose which virtue deficits are causing organisational or competitive failures
 - [`apply-five-factors-assessment`](./skills/business/strategy/skills/apply-five-factors-assessment/) — Use when preparing for any competitive engagement — product launch, market entry, negotiation, or campaign — to audit your position across the five strategic dimensions before committing resources
+- [`apply-force-alignment`](./skills/business/strategy/skills/apply-force-alignment/) — Use when evaluating a strategy or major initiative — to categorize major external forces as tailwinds or headwinds, and systematically prefer strategies that work WITH dominant forces rather than against them
 - [`apply-force-concentration`](./skills/business/strategy/skills/apply-force-concentration/) — Use when outmatched overall but able to choose where to engage — concentrating all available resources on the opponent's weakest or most exposed point while avoiding their strength, maintaining initiative, and remaining formless to prevent counter-concentration
 - [`apply-graceful-withdrawal`](./skills/business/strategy/skills/apply-graceful-withdrawal/) — Use when a current position is deteriorating or no longer worth defending — to exit cleanly while preserving key assets, reputation, and relationships for the next engagement
+- [`apply-hearts-and-minds`](./skills/business/strategy/skills/apply-hearts-and-minds/) — Use when you have the power to enforce compliance but enforcement without genuine buy-in will fail over time — to win voluntary commitment from a resistant counterpart through repeated demonstration and release, rather than coercion
 - [`apply-indirect-strategy`](./skills/business/strategy/skills/apply-indirect-strategy/) — Use when direct confrontation with a stronger or entrenched opponent would be costly, slow, or unwinnable — to win by undermining their strategy, dependencies, or position rather than attacking their strength directly
+- [`apply-interest-alignment`](./skills/business/strategy/skills/apply-interest-alignment/) — Use when entering a negotiation, sales conversation, or persuasion effort where the other party's stated position may not reflect what they actually need — discover the underlying interest before presenting your proposal
 - [`apply-inversion`](./skills/business/strategy/skills/apply-inversion/) — Use when solving a hard problem, stress-testing a plan, or identifying risks by reasoning backwards from failure instead of forwards from goals.
 - [`apply-key-person-targeting`](./skills/business/strategy/skills/apply-key-person-targeting/) — Use when the competitive outcome is controlled by a single decision-maker, gatekeeper, or linchpin — and engaging the broader organisation is slower and more expensive than influencing the key person directly
+- [`apply-legitimacy-control`](./skills/business/strategy/skills/apply-legitimacy-control/) — Use when seeking durable market authority without direct confrontation — to control or heavily influence the existing source of legitimacy in a market so that competitors must conform to your terms while appearing to follow a neutral authority
 - [`apply-market-creation`](./skills/business/strategy/skills/apply-market-creation/) — Use when no established market exists for what you are building — to invent the category, define the buying criteria, and establish yourself as the authority before competing for market share
 - [`apply-mece`](./skills/business/strategy/skills/apply-mece/) — Use when structuring a problem, organizing findings, or building an analysis where you need to ensure no gaps and no overlaps in your categories.
+- [`apply-morale-timing`](./skills/business/strategy/skills/apply-morale-timing/) — Use when facing an aggressive opening demand, threat, hostile objection, or competitive move — to determine whether to respond immediately or wait out the initial emotional peak before engaging
+- [`apply-nash-equilibrium`](./skills/business/strategy/skills/apply-nash-equilibrium/) — Use when designing a competitive strategy, pricing policy, auction, contract, or negotiation where multiple rational parties make interdependent decisions — to identify stable strategy combinations, predict where unstable strategies will drift, and design rules that make your desired outcome the equilibrium
+- [`apply-non-transactional-giving`](./skills/business/strategy/skills/apply-non-transactional-giving/) — Use when building long-term relationships, networks, or organizational loyalty — to give help, information, introductions, and resources without explicit expectation of return, because non-transactional generosity creates more durable social capital than tracked exchanges
+- [`apply-open-close-dialogue`](./skills/business/strategy/skills/apply-open-close-dialogue/) — Use when managing a high-stakes live conversation where you need to control information flow — negotiation, sales, intelligence gathering, or any dialogue where you must draw out the other party's true position without prematurely telegraphing your own
+- [`apply-peak-exit`](./skills/business/strategy/skills/apply-peak-exit/) — Use when you hold a position, initiative, or advantage that is still producing positive results — to identify whether you are at or approaching the optimal stopping point, and exit before the peak rather than after
 - [`apply-platform-takeover`](./skills/business/strategy/skills/apply-platform-takeover/) — Use when participating in someone else's ecosystem — to enter as a value-adding participant, become indispensable to the ecosystem's participants, and gradually shift power until the platform depends on you rather than you on it
+- [`apply-power-mapping`](./skills/business/strategy/skills/apply-power-mapping/) — Use when engaging with any organization — customer, partner, regulator, acquirer, or internal — to map actual decision authority and influence separately from the formal org chart, because nominal titles and actual power routinely diverge
 - [`apply-premortem`](./skills/business/strategy/skills/apply-premortem/) — Use when a plan is finalized but not yet launched, to surface failure modes the team hasn't acknowledged before commitment is locked in.
 - [`apply-probe-strategy`](./skills/business/strategy/skills/apply-probe-strategy/) — Use when uncertain about hidden opposition, competitive response, regulatory posture, or customer reaction — to design a low-cost probe that reveals the real landscape before committing full resources
+- [`apply-reversal-probe`](./skills/business/strategy/skills/apply-reversal-probe/) — Use when you need to discover another party's true position, interest, or timeline and direct questioning would produce diplomatic or socially expected answers rather than genuine disclosure
 - [`apply-second-front-strategy`](./skills/business/strategy/skills/apply-second-front-strategy/) — Use when a stronger opponent outguns you in direct confrontation — to relieve pressure on the primary front by opening a credible second front at the opponent's rear or home base
 - [`apply-source-disruption`](./skills/business/strategy/skills/apply-source-disruption/) — Use when a competitor's surface strength is sustained by a specific underlying resource, relationship, or capability — to attack the source directly rather than competing against their products or market position
 - [`apply-strategic-deception`](./skills/business/strategy/skills/apply-strategic-deception/) — Use when operating in competitive environments where revealing your intentions, timing, or concentration point would allow the opponent to pre-empt, counter-concentrate, or deny you the element of surprise
+- [`apply-strategic-endurance`](./skills/business/strategy/skills/apply-strategic-endurance/) — Use when facing severe competitive defeat — forced exit, punishing terms, or subjugation — where survival requires accepting humiliation in the short term to systematically rebuild capability over years for eventual reversal
 - [`apply-strategic-momentum`](./skills/business/strategy/skills/apply-strategic-momentum/) — Use when planning a campaign, product launch, or competitive push — to build strategic potential before committing, combine direct and indirect forces simultaneously, and strike at the moment of maximum advantage rather than at the earliest opportunity
 - [`apply-strategic-sacrifice`](./skills/business/strategy/skills/apply-strategic-sacrifice/) — Use when preserving something of high strategic value requires giving up something of lower value, or when offering something valuable will attract something of greater value — to make deliberate asymmetric trades rather than defending everything equally
+- [`apply-surplus-reallocation`](./skills/business/strategy/skills/apply-surplus-reallocation/) — Use when managing a portfolio of initiatives, products, teams, or investments — to identify areas generating surplus above their optimal level and actively redirect those resources to deficit areas
 - [`apply-systems-iceberg`](./skills/business/strategy/skills/apply-systems-iceberg/) — Use when a problem keeps recurring despite fixes, when a team is reacting to events without understanding why they happen, or when a decision needs structural rather than symptomatic treatment.
 - [`apply-tactical-adaptation`](./skills/business/strategy/skills/apply-tactical-adaptation/) — Use when circumstances change mid-engagement and tactics must adapt — diagnosing which of the nine strategic situations you occupy, applying the situation-specific response, and avoiding the five commander faults that cause strategic failure
 - [`apply-terrain-strategy`](./skills/business/strategy/skills/apply-terrain-strategy/) — Use when choosing where to compete or commit resources — to classify the competitive terrain, avoid fighting on ground that advantages the opponent, and create or occupy terrain that structurally favours your position
+- [`apply-via-negativa`](./skills/business/strategy/skills/apply-via-negativa/) — Use when improving a system, product, process, or decision framework — to identify and remove non-essential elements, fragilities, and complexity rather than adding features or capabilities, because subtraction produces more durable improvement than addition
+- [`apply-viable-path-analysis`](./skills/business/strategy/skills/apply-viable-path-analysis/) — Use when facing dominant incumbents on multiple fronts where direct competition is impossible — to identify the one viable sequence of achievable positions that creates a platform for reaching the ultimate objective, rather than attacking what cannot be won
+- [`design-tactical-doctrine`](./skills/business/strategy/skills/design-tactical-doctrine/) — Use when your organisation's performance depends on the judgment of a few exceptional individuals — to encode that expert judgment into systematic, teachable doctrine that average practitioners can execute, decoupling performance from individual talent and scaling excellence across the organisation
 - [`calculate-tam-sam-som`](./skills/business/strategy/skills/calculate-tam-sam-som/) — Use when sizing a market for a pitch deck, business plan, investment thesis, or strategic planning exercise
+- [`apply-commit-with-no-retreat`](./skills/business/strategy/skills/apply-commit-with-no-retreat/) — Use when a team or individual is hedging — preserving a comfortable exit rather than committing fully to the objective — to deliberately create an irreversible position that removes the retreat option and forces total effort
+- [`apply-conceal-growing-capability`](./skills/business/strategy/skills/apply-conceal-growing-capability/) — Use when you are in a growth or capability-building phase where a dominant incumbent would act to suppress or preemptively compete against you if they became aware of your development trajectory — to proactively manage your visibility and apparent capability level so that the dominant player does not perceive you as a threat until you are positioned to withstand their response
+- [`apply-hostile-room-conversion`](./skills/business/strategy/skills/apply-hostile-room-conversion/) — Use when facing a group of pre-committed objectors in a high-stakes setting — board meeting, investor Q&A, regulatory hearing, buying committee, or resistant town hall — where collective opposition would defeat your proposal unless each objector's position is individually dismantled before the group
+- [`apply-deploy-to-strength`](./skills/business/strategy/skills/apply-deploy-to-strength/) — Use when assigning people to high-stakes roles — to match the specific capability profile the role actually requires against what each candidate specifically has, rather than deploying overall excellence or seniority as a proxy for fit
 - [`design-alliance-strategy`](./skills/business/strategy/skills/design-alliance-strategy/) — Use when competing in a market where third-party relationships — partners, distributors, platforms, standards bodies, or key suppliers — determine who wins, to build your own coalition while preventing the opponent from forming theirs
 - [`design-competitive-analysis`](./skills/business/strategy/skills/design-competitive-analysis/) — Use when building a structured framework to assess a competitive landscape, evaluate market position, or inform strategic decisions about differentiation
 - [`design-feedback-loops`](./skills/business/strategy/skills/design-feedback-loops/) — Use when designing organizational processes, product iteration cycles, or performance systems and need to identify what feedback exists, what is missing, and how to make it faster or more accurate.
 - [`design-go-to-market`](./skills/business/strategy/skills/design-go-to-market/) — Use when launching a product, entering a new market, or repositioning an existing offering to reach paying customers
+- [`design-incentive-systems`](./skills/business/strategy/skills/design-incentive-systems/) — Use when designing governance, organizational processes, or operational controls — to audit whether each desired outcome requires individual virtue to produce, and replace virtue-reliance with structural mechanisms that make good behavior the rational self-interested choice
 - [`design-intelligence-network`](./skills/business/strategy/skills/design-intelligence-network/) — Use when preparing for a major competitive engagement — product launch, market entry, key negotiation, or strategic partnership — to systematically gather intelligence from multiple source types and convert it into decision-relevant insight
+- [`apply-institutional-integrity`](./skills/business/strategy/skills/apply-institutional-integrity/) — Use when a rule, standard, or process you have established is visibly violated by someone with significant personal relationship, exceptional talent, or high status — where the temptation to make an exception is strongest and the cost of making it is highest
+- [`apply-honor-prior-commitment`](./skills/business/strategy/skills/apply-honor-prior-commitment/) — Use when you have made a prior public commitment that has become costly to honour — to honour it visibly and completely, using the demonstrated trustworthiness to build moral authority with your own organisation and observing third parties
+- [`apply-post-crisis-trap`](./skills/business/strategy/skills/apply-post-crisis-trap/) — Use when you are a crisis contributor whose exceptional capability made you indispensable during an emergency — to recognise that the same capability which made you irreplaceable during the crisis becomes a structural threat to the principal once the crisis resolves, and to navigate the transition before the principal acts
+- [`apply-recruit-with-devotion`](./skills/business/strategy/skills/apply-recruit-with-devotion/) — Use when you need to attract an extraordinary person — a key hire, co-founder, advisor, or critical partner — who has alternatives, won't respond to standard incentives, and screens candidates by how much they genuinely understand and need them
+- [`apply-binding-constraint-removal`](./skills/business/strategy/skills/apply-binding-constraint-removal/) — Use when your strategic goal is blocked by an operational limit that the entire industry has accepted as fixed — to identify that specific constraint, verify it is genuinely the binding limit, and invest to solve it as an engineering problem, gaining durable structural advantage over competitors who have optimised around it rather than through it
 - [`run-competitive-analysis`](./skills/business/strategy/skills/run-competitive-analysis/) — Use when evaluating market position, planning a product strategy, or preparing for a fundraise or board review
 - [`run-scenario-planning`](./skills/business/strategy/skills/run-scenario-planning/) — Use when developing long-range strategic plans, preparing for major uncertainty, or stress-testing decisions against multiple possible futures
 - [`run-six-thinking-hats`](./skills/business/strategy/skills/run-six-thinking-hats/) — Use when a team needs to make a decision, evaluate a proposal, or solve a problem and wants to avoid groupthink, emotional conflict, or one-dimensional analysis.
+- [`apply-talent-value-signaling`](./skills/business/strategy/skills/apply-talent-value-signaling/) — Use when direct recruiting for a specific type of talent or partner is failing — to make a single visible, costly, and seemingly disproportionate investment in a specific instance of what you want to attract, demonstrating credibly to the market that you are willing to pay for that category
+- [`apply-transparent-rules`](./skills/business/strategy/skills/apply-transparent-rules/) — Use when designing governance, organizational policy, or team operating standards — to publish rules explicitly, permanently, and publicly before situations arise, so that enforcement is predictable and independent of the enforcer's discretion
+- [`apply-win-without-fighting`](./skills/business/strategy/skills/apply-win-without-fighting/) — Use before committing to direct competitive confrontation — to exhaust higher-level strategic options first (disrupting the opponent's plans, neutralising their alliances, establishing deterrence through positioning) so that the opponent yields position without direct engagement
 - [`write-okrs`](./skills/business/strategy/skills/write-okrs/) — Use when setting quarterly or annual goals for a team, department, or company to align effort with strategy
 
 ---
@@ -249,7 +294,7 @@
 
 ---
 
-## Education (20) <a name="education"></a>
+## Education (21) <a name="education"></a>
 
 ### assessment
 
@@ -272,6 +317,10 @@
 - [`design-gamification-system`](./skills/education/e-learning/skills/design-gamification-system/) — Use when adding gamification mechanics to a learning, product, or engagement system to increase motivation, participation, and completion
 - [`design-microlearning-module`](./skills/education/e-learning/skills/design-microlearning-module/) — Use when designing a short, focused learning module (3–10 minutes) targeting a single skill or knowledge application
 - [`design-online-course`](./skills/education/e-learning/skills/design-online-course/) — Use when designing an online course structure including learning objectives, module sequencing, assessment, and delivery format
+
+### learning-science
+
+- [`apply-feynman-technique`](./skills/education/learning-science/skills/apply-feynman-technique/) — Use when learning a new concept, diagnosing why understanding feels shallow, or preparing to explain complex material — to verify genuine comprehension by explaining the topic in plain language, identify exactly where the explanation breaks down, and fill those gaps until the explanation is clear and jargon-free
 
 ### teaching
 
@@ -899,7 +948,7 @@
 
 ---
 
-## Productivity (17) <a name="productivity"></a>
+## Productivity (19) <a name="productivity"></a>
 
 ### focus
 
@@ -912,12 +961,14 @@
 ### goals
 
 - [`apply-smart-goals`](./skills/productivity/goals/skills/apply-smart-goals/) — Use when setting any goal — personal, team, or organisational — to ensure it is precise enough to drive execution and measure success
+- [`apply-sufficiency-threshold`](./skills/productivity/goals/skills/apply-sufficiency-threshold/) — Use when deciding whether to continue optimizing, pursuing, or acquiring — to define "enough" as an explicit target before you start, and treat reaching that threshold as success rather than continuing to maximize
 - [`design-okr-framework`](./skills/productivity/goals/skills/design-okr-framework/) — Use when setting up an OKR (Objectives and Key Results) system for a team or organization to align goals and measure progress
 - [`design-weekly-review`](./skills/productivity/goals/skills/design-weekly-review/) — Use when closing out a work week to clear cognitive load, review progress, and prepare the next week for intentional execution
 
 ### habits
 
 - [`apply-behavior-design`](./skills/productivity/habits/skills/apply-behavior-design/) — Use when designing systems to create new habits, break existing ones, or change behavior using evidence-based behavior design principles
+- [`apply-marginal-accumulation`](./skills/productivity/habits/skills/apply-marginal-accumulation/) — Use when building a new capability, closing a performance gap, or sustaining long-term improvement — to replace intensity-and-breakthrough thinking with consistent small efforts that compound
 - [`apply-two-minute-rule`](./skills/productivity/habits/skills/apply-two-minute-rule/) — Use when processing any inbox, task list, or request to decide whether to act immediately or schedule
 - [`design-habit-stack`](./skills/productivity/habits/skills/design-habit-stack/) — Use when introducing a new habit and needing a reliable cue to trigger it consistently
 
