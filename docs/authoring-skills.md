@@ -46,7 +46,7 @@ There must be a number or a named study. "Helps" or "improves" without data fail
 ```
 
 **Gate 3 — No duplicate**
-Run `suggest-best-practice` with your topic first. If an existing skill already covers it, extend that skill via [revise-best-practice-skill](../skills/grimoire/skills/revise-best-practice-skill/SKILL.md) instead of creating a duplicate.
+Run `suggest-best-practice` with your topic first. If an existing skill already covers it, extend that skill via [revise-best-practice-skill](../skills/meta/skills/revise-best-practice-skill/SKILL.md) instead of creating a duplicate.
 
 **Gate 4 — No genuine controversy**
 If credible top-tier professionals are split ~50/50, there is no consensus and therefore no best practice. Encode the majority position; if genuinely split, skip it.

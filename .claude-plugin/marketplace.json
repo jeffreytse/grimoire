@@ -5,7 +5,7 @@
     "email": "jeffreytse.mail@gmail.com"
   },
   "metadata": {
-    "description": "Every field's professional best practices \u2014 your expert consultant in engineering, medicine, law, finance, and more. Anywhere, anytime."
+    "description": "Every field's professional best practices — your expert consultant in engineering, medicine, law, finance, and more. Anywhere, anytime."
   },
   "plugins": [
     {
@@ -79,7 +79,7 @@
         "./skills/finance/investing/skills",
         "./skills/finance/personal-finance/skills",
         "./skills/finance/real-estate/skills",
-        "./skills/grimoire/skills",
+        "./skills/meta/skills",
         "./skills/health/fitness/skills",
         "./skills/health/medicine/skills",
         "./skills/health/mental-health/skills",

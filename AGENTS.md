@@ -16,7 +16,7 @@ If a task matches a skill, invoke it. Never implement directly when a skill appl
 
 | Domain | Sub-domains |
 |--------|-------------|
-| `grimoire` | *(flat — no sub-domains)* |
+| `meta` | *(flat — no sub-domains)* |
 | `engineering` | development, frontend, architecture, testing, reliability, devops, cloud, networking, security, data, ai, hardware, mobile, performance, project-management, product, documentation |
 | `business` | strategy, operations, leadership, entrepreneurship, hr |
 | `science` | biology, physics, chemistry, mathematics, earth-science, astronomy |

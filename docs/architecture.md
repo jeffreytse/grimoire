@@ -223,7 +223,7 @@ All agent-facing content (CLAUDE.md, AGENTS.md, GEMINI.md) describes grimoire's 
 
 ## Meta skills: the framework's nervous system
 
-grimoire is self-managing. The meta skills in `skills/grimoire/` run the framework itself:
+grimoire is self-managing. The meta skills in `skills/meta/` run the framework itself:
 
 **User-facing meta skills** — help users find and apply practices:
 
