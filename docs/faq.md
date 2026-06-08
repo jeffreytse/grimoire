@@ -14,7 +14,7 @@ The test: "Would this skill make an AI agent perform like a domain expert?" If n
 
 | Agent | How it loads |
 |-------|-------------|
-| Claude Code | `/plugins add github:jeffreytse/grimoire` reads `.claude-plugin/plugin.json` |
+| Claude Code | `/plugin marketplace add jeffreytse/grimoire` then `/plugin install grimoire@grimoire` |
 | Codex | Same — uses `.codex-plugin/plugin.json` |
 | Cursor | Same — uses `.cursor-plugin/plugin.json` |
 | OpenCode | `.opencode/plugins/grimoire.js` ESM plugin |

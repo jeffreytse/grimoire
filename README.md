@@ -245,13 +245,16 @@ Invoke-WebRequest https://raw.githubusercontent.com/jeffreytse/grimoire/main/scr
 
 ---
 
-**Native plugin shortcuts (Claude Code / Codex):**
+**Native plugin shortcuts (Claude Code):**
 
 ```bash
-/plugins add github:jeffreytse/grimoire                         # all skills (latest)
-/plugins add github:jeffreytse/grimoire@v1.0.0                  # pin to a release
-/plugins add github:jeffreytse/grimoire/skills/engineering      # one domain
-/plugins add github:jeffreytse/grimoire/skills/engineering/development  # one sub-domain
+# Step 1: add the marketplace
+/plugin marketplace add jeffreytse/grimoire
+
+# Step 2: install (skills are namespaced, e.g. /grimoire-engineering:propose-conventional-commit)
+/plugin install grimoire@grimoire                               # all domains (latest)
+/plugin install grimoire-engineering@grimoire                   # one domain
+/plugin install grimoire-engineering-development@grimoire       # one sub-domain
 ```
 
 ---
@@ -275,19 +278,17 @@ gemini extensions update grimoire                                         # upda
 
 ---
 
-**Cursor** — in Agent chat:
+**Cursor:**
 
+```bash
+./scripts/install.sh --target cursor
 ```
-/add-plugin grimoire
-```
-
-Or search "grimoire" in the plugin marketplace.
 
 ---
 
 **OpenCode:** add to `opencode.json`:
 ```json
-{ "plugins": ["grimoire@git+https://github.com/jeffreytse/grimoire.git"] }
+{ "plugin": ["grimoire@git+https://github.com/jeffreytse/grimoire.git"] }
 ```
 
 ---
@@ -618,11 +619,12 @@ grimoire is a framework + reference skills. The domain structure is ready — co
 
 | Agent | Plugin install | Script install |
 | ----- | -------------- | -------------- |
-| Claude Code | `/plugins add github:jeffreytse/grimoire` | `--target claude` |
-| Codex | `/plugins add github:jeffreytse/grimoire` | `--target codex` |
-| Cursor | `/add-plugin grimoire` (in Agent chat) | `--target all` |
-| OpenCode | See [`.opencode/INSTALL.md`](./.opencode/INSTALL.md) | `--target all` |
+| Claude Code | `/plugin marketplace add jeffreytse/grimoire` then `/plugin install grimoire@grimoire` | `--target claude` |
+| GitHub Copilot CLI | `copilot plugin marketplace add jeffreytse/grimoire` then `copilot plugin install grimoire@grimoire` | `--target all` |
 | Gemini CLI | `gemini extensions install https://github.com/jeffreytse/grimoire` | `--target gemini` |
+| OpenCode | See [`.opencode/INSTALL.md`](./.opencode/INSTALL.md) | `--target all` |
+| Codex CLI | `AGENTS.md` auto-loaded; browse `/plugins` in CLI | `--target codex` |
+| Cursor | `AGENTS.md` context injection | `--target cursor` |
 
 ---
 

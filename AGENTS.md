@@ -65,9 +65,13 @@ If a task matches a skill, invoke it. Never implement directly when a skill appl
 
 Or via Claude Code plugin system:
 ```bash
-/plugins add github:jeffreytse/grimoire                         # all
-/plugins add github:jeffreytse/grimoire/engineering             # one domain
-/plugins add github:jeffreytse/grimoire/engineering/development # one sub-domain
+# Step 1: add the marketplace
+/plugin marketplace add jeffreytse/grimoire
+
+# Step 2: install (skills are namespaced, e.g. /grimoire:skill-name)
+/plugin install grimoire@grimoire                               # all domains
+/plugin install grimoire-engineering@grimoire                   # one domain
+/plugin install grimoire-engineering-development@grimoire       # one sub-domain
 ```
 
 ## Skill Format

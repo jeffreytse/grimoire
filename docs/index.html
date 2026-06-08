@@ -247,12 +247,12 @@
     <div class="flex items-center justify-between max-w-xl p-4 mx-auto mb-8 install-block gap-4">
       <span class="text-sm" style="color:#8b949e">
         <span style="color:#c9933a">$</span>
-        <span class="ml-2" style="color:#e2e8f0">/plugins add github:jeffreytse/grimoire</span>
+        <span class="ml-2" style="color:#e2e8f0">/plugin marketplace add jeffreytse/grimoire</span>
       </span>
       <button
         id="hero-copy"
         class="copy-btn flex-shrink-0 px-3 py-1.5 rounded text-xs font-medium transition-all text-slate-400 border border-night-border"
-        onclick="copyText('/plugins add github:jeffreytse/grimoire', 'hero-copy')"
+        onclick="copyText('/plugin marketplace add jeffreytse/grimoire', 'hero-copy')"
         title="Copy"
       >
         Copy
@@ -657,10 +657,10 @@
     <div id="tab-claude" class="tab-content">
       <div class="p-5 install-block">
         <div class="flex items-start justify-between mb-3 gap-4">
-          <pre class="flex-1 overflow-x-auto text-sm text-slate-300">/plugins add github:jeffreytse/grimoire</pre>
-          <button class="copy-btn px-3 py-1.5 rounded text-xs font-medium text-slate-400 border border-night-border shrink-0 transition-all" onclick="copyText('/plugins add github:jeffreytse/grimoire', 'btn-claude')">Copy</button>
+          <pre class="flex-1 overflow-x-auto text-sm text-slate-300">/plugin marketplace add jeffreytse/grimoire</pre>
+          <button class="copy-btn px-3 py-1.5 rounded text-xs font-medium text-slate-400 border border-night-border shrink-0 transition-all" onclick="copyText('/plugin marketplace add jeffreytse/grimoire', 'btn-claude')">Copy</button>
         </div>
-        <p class="text-xs text-slate-500">Run inside Claude Code. Installs all 500+ skills from the official plugin registry.</p>
+        <p class="text-xs text-slate-500">Step 1: register the marketplace. Then run <code>/plugin install grimoire@grimoire</code> to install all 500+ skills.</p>
       </div>
     </div>
 

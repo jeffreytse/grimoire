@@ -8,12 +8,12 @@ grimoire works across six AI agents. Each has its own plugin format and installa
 
 | Agent | Plugin file | Install method |
 |-------|------------|----------------|
-| Claude Code | `.claude-plugin/plugin.json` | `/plugins add github:jeffreytse/grimoire` |
-| Codex | `.codex-plugin/plugin.json` | `codex plugin add github:jeffreytse/grimoire` |
-| Cursor | `.cursor-plugin/plugin.json` | Cursor plugin marketplace |
-| OpenCode | `.opencode/plugins/grimoire.js` | `opencode.json` plugin array |
-| Gemini CLI | `gemini-extension.json` + `GEMINI.md` | `gemini extension install github:jeffreytse/grimoire` |
-| Agents CLI | `AGENTS.md` | `agents install github:jeffreytse/grimoire` |
+| Claude Code | `.claude-plugin/plugin.json` | `/plugin marketplace add jeffreytse/grimoire` then `/plugin install grimoire@grimoire` |
+| GitHub Copilot CLI | `.claude-plugin/plugin.json` (shared) | `copilot plugin marketplace add jeffreytse/grimoire` then `copilot plugin install grimoire@grimoire` |
+| Gemini CLI | `gemini-extension.json` + `GEMINI.md` | `gemini extensions install https://github.com/jeffreytse/grimoire` |
+| OpenCode | `.opencode/plugins/grimoire.js` | `.opencode/plugins/` auto-load or `opencode.json` plugin array |
+| Codex CLI | `AGENTS.md` (auto-loaded) | `install.sh --target codex` for skills |
+| Cursor | `AGENTS.md` (context injection) | `install.sh --target cursor` |
 
 ---
 
@@ -21,12 +21,13 @@ grimoire works across six AI agents. Each has its own plugin format and installa
 
 **Install:**
 ```
-/plugins add github:jeffreytse/grimoire
+/plugin marketplace add jeffreytse/grimoire
+/plugin install grimoire@grimoire
 ```
 
 **Plugin file:** `.claude-plugin/plugin.json`
 
-Loads all domains listed in the `domains` array. Claude Code reads each domain's `plugin.json` to discover skills.
+Loads all skill paths listed in the `skills` array. Skills are namespaced by plugin name, e.g. `/grimoire-engineering:propose-conventional-commit`.
 
 **Using skills:**
 ```
@@ -41,32 +42,45 @@ Invoke any meta skill by name with a leading slash. For domain skills, describe 
 
 ---
 
-## Codex
+## GitHub Copilot CLI
 
 **Install:**
 ```
-codex plugin add github:jeffreytse/grimoire
+copilot plugin marketplace add jeffreytse/grimoire
+copilot plugin install grimoire@grimoire
 ```
 
-**Plugin file:** `.codex-plugin/plugin.json`
+**Plugin files:** `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` (Copilot CLI checks `.claude-plugin/` automatically — shared with Claude Code)
 
-Uses the `skills` field pointing to `./skills/` — Codex discovers all SKILL.md files recursively from that path.
+Skills are namespaced by plugin name, e.g. `grimoire-engineering:propose-conventional-commit`.
 
 **Using skills:**
-Invoke skills by name. Codex loads skill content on demand when a skill matches the current task.
+Describe your task. Copilot CLI activates the matching skill based on its `description` triggering conditions.
 
-**Tool mapping:** See `references/codex-tools.md` in the skills directory for Codex-specific tool name equivalents.
+---
+
+## Codex CLI
+
+**Install:**
+```bash
+./scripts/install.sh --target codex
+```
+
+Codex CLI supports `AGENTS.md` natively — grimoire's `AGENTS.md` is auto-loaded at session start, providing skill path conventions and domain routing. For the full skill library, run `install.sh` to copy skills to the Codex skills directory.
+
+**Using skills:**
+Codex CLI has an interactive plugin browser: run `codex` then type `/plugins` to browse and install marketplace plugins. For grimoire skills installed via `install.sh`, describe your task and Codex routes to the matching skill via `AGENTS.md` context.
 
 ---
 
 ## Cursor
 
 **Install:**
-Install via the Cursor plugin marketplace, or add manually to your Cursor configuration pointing to `github:jeffreytse/grimoire`.
+```bash
+./scripts/install.sh --target cursor
+```
 
-**Plugin file:** `.cursor-plugin/plugin.json`
-
-Uses the `skills` field pointing to `./skills/` — Cursor discovers skills from that path.
+No official Cursor CLI plugin install command exists. Skills installed via `install.sh` are available through AGENTS.md context injection. Cursor reads `AGENTS.md` from the project root automatically in Agent mode.
 
 **Using skills:**
 Describe your situation in the Cursor chat or Composer panel. Skills activate when the task matches a skill's triggering conditions.
@@ -123,9 +137,11 @@ opencode run --print-logs "hello" 2>&1 | grep -i grimoire
 
 ## Gemini CLI
 
+> **Note (June 2026):** Gemini CLI is being replaced by Antigravity CLI on June 18, 2026 for unpaid/Google One users. Extension format may change — check the [migration announcement](https://developers.googleblog.com/an-important-update-transitioning-gemini-cli-to-antigravity-cli) for updates.
+
 **Install:**
 ```
-gemini extension install github:jeffreytse/grimoire
+gemini extensions install https://github.com/jeffreytse/grimoire
 ```
 
 **Plugin files:** `gemini-extension.json` (extension metadata) + `GEMINI.md` (context injected at session start)
@@ -144,19 +160,14 @@ activate skill: engineering/development/propose-conventional-commit
 
 ---
 
-## Agents CLI
+## Other agents
+
+Any agent that reads `AGENTS.md` from the project root gets grimoire's bootstrap context automatically — skill path convention, domain list, and routing instructions.
 
 **Install:**
+```bash
+./scripts/install.sh --target all
 ```
-agents install github:jeffreytse/grimoire
-```
-
-**Plugin file:** `AGENTS.md` (at repo root)
-
-`AGENTS.md` provides the same bootstrap context as `GEMINI.md` — skill path convention, domain list, and routing instructions. Agents CLI reads it at session start.
-
-**Using skills:**
-Same as Gemini CLI — describe your task and the agent routes to the best skill. `AGENTS.md` contains the context needed for auto-routing.
 
 ---
 
@@ -182,9 +193,9 @@ When a new domain is added to grimoire (via `design-best-practice-domain`), the 
 
 | File | What to update |
 |------|----------------|
-| `.claude-plugin/plugin.json` | Add domain path to `domains` array |
+| `.claude-plugin/plugin.json` | Add subdomain path to `skills` array |
 | `.claude-plugin/marketplace.json` | Add domain and subdomain entries |
 | `GEMINI.md` | Add domain row to domains table |
 | `AGENTS.md` | Same update as GEMINI.md |
 
-`.codex-plugin/plugin.json`, `.cursor-plugin/plugin.json`, and `.opencode/plugins/grimoire.js` discover skills from `./skills/` recursively — no update needed when adding domains.
+`.opencode/plugins/grimoire.js` discovers skills from `./skills/` recursively — no update needed when adding domains.

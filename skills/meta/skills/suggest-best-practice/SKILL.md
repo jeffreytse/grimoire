@@ -117,10 +117,10 @@ Present a ranked list with recommendation and wait for user selection:
 Multiple best practices apply. Recommended: [top-skill-name]
 
 1. ★ [top-skill-name] — [one sentence: what problem it solves]  ← recommended
-   Domain: [domain/subdomain]  |  Score: [score]  |  Install: /plugins add github:jeffreytse/grimoire/[path]
+   Domain: [domain/subdomain]  |  Score: [score]  |  Install: /plugin install grimoire-[subdomain]@grimoire
 
 2. [skill-name] — [one sentence: what problem it solves]
-   Domain: [domain/subdomain]  |  Score: [score]  |  Install: /plugins add github:jeffreytse/grimoire/[path]
+   Domain: [domain/subdomain]  |  Score: [score]  |  Install: /plugin install grimoire-[subdomain]@grimoire
 
 3. [skill-name] — [one sentence]
    Domain: [domain/subdomain]  |  Score: [score]  |  Install: ...
@@ -147,7 +147,7 @@ Present the ranked list only, do not apply any skill:
 Best practices for: [topic]
 
 1. [skill-name] — [one sentence: what it solves]
-   Domain: [domain/subdomain]  |  Install: /plugins add github:jeffreytse/grimoire/[path]
+   Domain: [domain/subdomain]  |  Install: /plugin install grimoire-[subdomain]@grimoire
 
 2. ...
 ```

@@ -131,7 +131,7 @@ For each new installable unit (domain + each sub-domain), add an entry to `.clau
 Add a row to the domains table in `README.md`:
 
 ```markdown
-| [Domain](./skills/<domain>/) | Subdomain 1, Subdomain 2, ... | `/plugins add github:jeffreytse/grimoire/skills/<domain>` |
+| [Domain](./skills/<domain>/) | Subdomain 1, Subdomain 2, ... | `/plugin install grimoire-<domain>@grimoire` |
 ```
 
 ### 9. Run audit-best-practice-domain
@@ -146,7 +146,7 @@ PR description must include:
 - Sub-domains created
 - Seed skills written (names + one-line purpose each)
 - audit-best-practice-domain output (all PASS)
-- Install command for users: `/plugins add github:jeffreytse/grimoire/skills/<domain>`
+- Install command for users: `/plugin install grimoire-<domain>@grimoire`
 
 ## Rules
 

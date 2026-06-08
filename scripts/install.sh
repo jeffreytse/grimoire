@@ -821,10 +821,10 @@ _c_cyan=$'\033[0;36m'
 _c_reset=$'\033[0m'
 printf '\n'
 printf '%s💡 Also available via marketplace:%s\n' "${_c_bold}" "${_c_reset}"
-printf '   %s🖱️  Cursor%s   %s/add-plugin grimoire%s  %s(in Agent chat)%s\n' \
-  "${_c_gold}" "${_c_reset}" "${_c_cyan}" "${_c_reset}" "${_c_dim}" "${_c_reset}"
-printf '   %s🐙 Copilot%s  %scopilot plugin install grimoire%s\n' \
+printf '   %s🐙 Copilot%s  %scopilot plugin marketplace add jeffreytse/grimoire%s\n' \
   "${_c_gold}" "${_c_reset}" "${_c_cyan}" "${_c_reset}"
+printf '              %scopilot plugin install grimoire@grimoire%s\n' \
+  "${_c_cyan}" "${_c_reset}"
 printf '   %s📖 Docs%s     %shttps://github.com/jeffreytse/grimoire#-install%s\n' \
   "${_c_gold}" "${_c_reset}" "${_c_dim}" "${_c_reset}"
 printf '\n'

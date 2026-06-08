@@ -174,25 +174,29 @@ skills/
 
 ### Claude Code
 
-Claude Code reads `.claude-plugin/plugin.json` when you run `/plugins add`. The `skills` field tells it where to look for `SKILL.md` files. Skills are loaded into context and become available as slash commands (if the skill name matches a command pattern) or as background knowledge the agent applies when relevant.
+Claude Code uses the marketplace system. First add the marketplace catalog, then install individual plugins. Skills installed via plugins are **namespaced** (e.g., `/grimoire-engineering:propose-conventional-commit`); skills installed via `install.sh` are not.
 
 Install commands:
 ```bash
-/plugins add github:jeffreytse/grimoire                              # all domains
-/plugins add github:jeffreytse/grimoire/skills/engineering           # one domain
-/plugins add github:jeffreytse/grimoire/skills/engineering/development  # one subdomain
+# Step 1: register the catalog
+/plugin marketplace add jeffreytse/grimoire
+
+# Step 2: install
+/plugin install grimoire@grimoire                               # all domains
+/plugin install grimoire-engineering@grimoire                   # one domain
+/plugin install grimoire-engineering-development@grimoire       # one subdomain
 ```
 
 ### Marketplace
 
-`.claude-plugin/marketplace.json` is the registry of all installable units. Each entry has a `name`, `source` (with GitHub path), and `description`. This is what powers the install command resolution.
+`.claude-plugin/marketplace.json` is the registry of all installable units. Each entry has a `name`, `source`, and `description`. Subdirectory plugins use the `git-subdir` source type for sparse checkout:
 
 ```json
 {
   "name": "grimoire-engineering-development",
   "source": {
-    "source": "github",
-    "repo": "jeffreytse/grimoire",
+    "source": "git-subdir",
+    "url": "jeffreytse/grimoire",
     "path": "skills/engineering/development"
   },
   "description": "Software development: coding, implementation, review, debugging"
@@ -207,7 +211,7 @@ grimoire ships plugin configurations for five AI agents:
 
 | Agent | Config file | Loading mechanism |
 |-------|-------------|-------------------|
-| Claude Code | `.claude-plugin/plugin.json` | `/plugins add` reads plugin.json, auto-discovers SKILL.md |
+| Claude Code | `.claude-plugin/plugin.json` | `/plugin marketplace add` + `/plugin install` |
 | Codex | `.codex-plugin/plugin.json` | Same structure as Claude Code |
 | Cursor | `.cursor-plugin/plugin.json` | Same structure |
 | OpenCode | `.opencode/plugins/grimoire.js` | ESM module — injects AGENTS.md into first user message via transform hook; registers skills paths via config hook |

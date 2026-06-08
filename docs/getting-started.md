@@ -9,21 +9,17 @@ grimoire delivers professional best practices from every field directly into you
 ### Claude Code
 
 ```bash
-# All skills across all domains
-/plugins add github:jeffreytse/grimoire
+# Step 1: add the marketplace
+/plugin marketplace add jeffreytse/grimoire
 
-# One domain
-/plugins add github:jeffreytse/grimoire/skills/engineering
-
-# One sub-domain
-/plugins add github:jeffreytse/grimoire/skills/engineering/development
+# Step 2: install plugins
+# Skills are namespaced: /grimoire-engineering:propose-conventional-commit
+/plugin install grimoire@grimoire                               # all domains
+/plugin install grimoire-engineering@grimoire                   # one domain
+/plugin install grimoire-engineering-development@grimoire       # one sub-domain
 ```
 
 ### Codex / Cursor
-
-```bash
-/plugins add github:jeffreytse/grimoire
-```
 
 ### OpenCode
 
@@ -85,7 +81,7 @@ User: My pull requests always take 3 days to get reviewed and then get rejected.
 
 Claude: Situation matches: review-pull-request (engineering/development)
         Not installed — get it with:
-        /plugins add github:jeffreytse/grimoire/skills/engineering/development
+        /plugin install grimoire-engineering-development@grimoire
 ```
 
 **Browse mode** — if you want to see what's available without applying anything:
@@ -96,10 +92,10 @@ User: What practices exist for database performance?
 Claude: Best practices for: database performance
 
   1. optimize-query-latency — eliminate slow queries before they reach production
-     Domain: engineering/data  |  Install: /plugins add ...
+     Domain: engineering/data  |  Install: /plugin install grimoire-engineering-data@grimoire
 
   2. design-schema-indexing — index strategy for high-read workloads
-     Domain: engineering/data  |  Install: /plugins add ...
+     Domain: engineering/data  |  Install: /plugin install grimoire-engineering-data@grimoire
 ```
 
 If a skill isn't installed, `suggest-best-practice` tells you exactly what to install. It never pretends a skill exists when it doesn't.
@@ -220,7 +216,7 @@ Claude: You have an existing solution. Applying review-best-practice-fit...
 ```
 Claude: Situation matches: review-saas-contract (law/contracts)
         Not installed — get it with:
-        /plugins add github:jeffreytse/grimoire/skills/law/contracts
+        /plugin install grimoire-law-contracts@grimoire
 ```
 
 After installing, invoke `suggest-best-practice` again or call the skill directly.

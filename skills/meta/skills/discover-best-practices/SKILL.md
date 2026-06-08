@@ -88,7 +88,7 @@ If user says "skip" or does not engage: end gracefully — awareness was the goa
 ## Rules
 
 - Never block, enforce, or pressure — this skill promotes awareness only
-- If no skills are installed for the detected domain, say so and offer the install command: `/plugins add github:jeffreytse/grimoire/[domain]`
+- If no skills are installed for the detected domain, say so and offer the install command: `/plugin install grimoire-[domain]@grimoire`
 - If the user already has practices pinned in preferences for a subdomain, note them without re-promoting: "You already have [skill] pinned for [subdomain] — skipping that one."
 - Cap the list at 15 practices; if more are installed, group remainder as: "…and N more in [subdomain] — say 'more' to see them"
 - The "most commonly missed" highlight requires editorial judgment — prefer irreversible-consequence practices over optimization practices
