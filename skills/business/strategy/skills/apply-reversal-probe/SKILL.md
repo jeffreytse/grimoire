@@ -16,6 +16,10 @@ Guiguzi (~4th century BC) formulated this as "反以知彼" — use reversal to 
 
 **Distinct from `convert-hostile-room`:** convert-hostile-room dismantles objections reactively — after the other party has already stated a position. apply-reversal-probe proactively induces disclosure by asserting the opposite *before* the other party has stated their position, causing them to correct you rather than respond to a question.
 
+**Adopted by:** FBI hostage negotiators (Voss's accusation audit and no-oriented question methodology, documented in "Never Split the Difference" 2016); clinical practitioners using Miller & Rollnick's Motivational Interviewing (3rd ed., 2012) — standard in addiction counseling, health behavior change, and executive coaching globally.
+
+**Impact:** Voss documented that accusation audit (naming the worst thing the counterpart might be thinking) consistently clears the air and produces genuine disclosure before negotiation begins; Miller & Rollnick's Motivational Interviewing meta-analyses show that rolling with resistance and exploring the other side produces significantly more change talk than direct persuasion attempts.
+
 ## Steps
 
 1. **Identify the position you need to discover.** What do you actually need to know — their real budget, timeline, level of interest, underlying concern, or decision driver? Be specific about what you don't yet know.

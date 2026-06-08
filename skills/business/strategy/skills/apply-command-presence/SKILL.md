@@ -18,6 +18,10 @@ Guiguzi (~4th century BC) formulated this as "分威" — distributing authority
 
 **Distinct from `apply-five-commander-virtues`:** apply-five-commander-virtues is an assessment tool for evaluating whether a leader possesses the five Sun Tzu virtues (wisdom, credibility, humanity, courage, discipline). apply-command-presence is a behavioral practice for *projecting* authority in real-time — it does not assess, it acts.
 
+**Adopted by:** US Army (FM 6-22 codifies command presence as one of five required leader presence components); FBI negotiators (Voss's deliberate pacing and calm vocal register as behavioral authority signals); Goleman, Boyatzis & McKee's "Primal Leadership" framework adopted in leadership development programs globally.
+
+**Impact:** Cuddy's "Presence" (2015) demonstrated that expansive, grounded posture reliably alters both the perception of the person projecting it and their own hormonal state; Goleman's research documented that the highest-authority person's composure and confidence propagate outward through emotional contagion, measurably shifting group emotional register.
+
 ## Steps
 
 1. **Prepare internal state before entering.** Command presence cannot be faked from a distracted or anxious internal state — the behavioral signals of anxiety (rapid speech, fidgeting, over-explanation) leak through. Before entering the room, use 90–120 seconds of stillness: slow breath, physical expansion (stand upright, feet flat, shoulders back), and mentally set your single objective for the interaction. This is the "静意固志" (still intent, anchor will) phase.

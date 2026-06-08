@@ -16,6 +16,10 @@ Guiguzi (~4th century BC) identified that continuous speech prevents hearing and
 
 **Distinct from `apply-probe-strategy`:** apply-probe-strategy designs pre-dialogue investigative sequences before entering a conversation. apply-open-close-dialogue governs the real-time rhythm of speaking and silence during a live exchange.
 
+**Adopted by:** FBI hostage negotiators (Voss's tactical silence and emotional labeling methodology); Harvard PON active listening protocol (formalized in negotiation training programs globally); Carl Rogers' person-centered therapy practitioners and motivational interviewing practitioners.
+
+**Impact:** Carl Rogers' active listening research (1951) demonstrated that suspending speech to genuinely absorb a speaker's position produces significantly more disclosure than question-asking alone; Voss documented that deliberate post-label silence consistently caused counterparts to volunteer underlying concerns and constraints they had not disclosed under direct questioning.
+
 ## Steps
 
 1. **Classify each dialogue move before you make it.** Every contribution is either opening (you speak, disclose, ask, react) or closing (you go silent, withhold reaction, defer response). Choose which mode you're entering before acting.

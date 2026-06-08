@@ -16,6 +16,10 @@ Guiguzi (~4th century BC) formulated this as "内楗" — the internal pivot. Hi
 
 **Distinct from `apply-probe-strategy`:** apply-probe-strategy maps the external competitive landscape — who the actors are, what they control, how they relate. apply-interest-alignment is a pre-persuasion technique focused on the internal motivational state of the specific person you are about to persuade: what do they actually want underneath what they're saying?
 
+**Adopted by:** Harvard Program on Negotiation (Fisher & Ury "Getting to Yes" is the foundational curriculum, globally taught); major sales organizations using Neil Rackham's SPIN Selling framework; FBI hostage negotiators and international diplomatic negotiation teams.
+
+**Impact:** Fisher & Ury's interest-based negotiation consistently produces more durable agreements than positional bargaining; Rackham's SPIN Selling research showed that top performers asked significantly more implication and need-payoff questions than average performers, directly correlating interest-discovery behavior with sales success rates.
+
 ## Steps
 
 1. **Withhold your proposal.** Do not present your offer, pitch, or solution until Steps 2–5 are complete. Premature proposals anchor the conversation to your framing and foreclose discovery of the actual interest.
