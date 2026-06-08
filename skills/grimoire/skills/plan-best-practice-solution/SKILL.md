@@ -100,13 +100,24 @@ Your situation spans [N] domains. Here is the solution plan:
 ⚠ [sub-problem]: no installed skill — manual research needed.
 ```
 
-After presenting, if any steps have multiple candidates:
-```
-Step 2 has multiple options. Which practice would you like for that step?
-(Enter skill name or press Enter to use ★ [top-skill])
-```
+After presenting, if any steps have multiple candidates, collect user choices using
+the best available method for your platform:
 
-Collect all user choices before starting execution. Only proceed once every step has a decided skill.
+- **Claude Code**: use `AskUserQuestion` — one question per ambiguous step,
+  ★ recommended option first with "(Recommended)" appended, `multiSelect: false`
+- **Gemini CLI**: use `ask_user` — same structure, `type: "select"`, options list,
+  ★ recommended first
+- **OpenCode**: use `question` — same schema as `AskUserQuestion`
+- **All other platforms** (Codex, Cursor, Copilot, etc.): present numbered list
+  and wait for user to type a number or skill name:
+  ```
+  Step N has multiple options:
+  1. [top-skill] ★ (recommended) — [what it solves]
+  2. [second-skill] — [what it solves]
+  Which would you like? (Enter number or skill name)
+  ```
+
+Collect all choices before starting execution. Only proceed once every step has a decided skill.
 
 ### 6. Execute one skill at a time
 

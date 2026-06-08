@@ -55,8 +55,17 @@ Multiple best practices match this problem:
      [second-skill] — [one sentence: what it solves]
      [third-skill] — [one sentence: what it solves]
 
-Which would you like to apply? (Enter number or press Enter for ★)
 ```
+
+Then collect the user's choice using the best available method for your platform:
+- **Claude Code / OpenCode**: use `AskUserQuestion` / `question` — ★ recommended first with "(Recommended)" appended, `multiSelect: false`
+- **Gemini CLI**: use `ask_user` — `type: "select"`, ★ recommended first
+- **All other platforms**: numbered list, wait for user to type a number or name:
+  ```
+  1. [top-skill] ★ (recommended) — [what it solves]
+  2. [second-skill] — [what it solves]
+  Which would you like? (Enter number or name)
+  ```
 
 ### 3. Apply the skill and extract sub-problems
 
@@ -87,8 +96,17 @@ Sub-problem A → [skill-name] (confidence 0.82). Applying now...
 Sub-problem B → multiple practices apply:
   ★ [top-skill] — [one sentence]  ← recommended
      [second-skill] — [one sentence]
-Which would you like? (Enter number or press Enter for ★)
 ```
+
+Then collect the user's choice using the best available method for your platform:
+- **Claude Code / OpenCode**: use `AskUserQuestion` / `question` — ★ recommended first with "(Recommended)" appended, `multiSelect: false`
+- **Gemini CLI**: use `ask_user` — `type: "select"`, ★ recommended first
+- **All other platforms**: numbered list, wait for user to type a number or name:
+  ```
+  1. [top-skill] ★ (recommended) — [what it solves]
+  2. [second-skill] — [what it solves]
+  Which would you like? (Enter number or name)
+  ```
 
 **Fuzzy match (1 skill 0.4–0.69, no others ≥ 0.4)** — apply with explicit adaptation note:
 ```

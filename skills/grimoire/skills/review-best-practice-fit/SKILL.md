@@ -152,8 +152,15 @@ To close these gaps, I can apply:
     [third-skill] ([N] Significant gaps)
     [one sentence: what this skill addresses]
 
-Which would you like to apply? (Enter number, "all" to apply in sequence, or "skip")
 ```
+
+Then collect the user's choice using the best available method for your platform:
+- **Claude Code / OpenCode**: use `AskUserQuestion` / `question` — ★ recommended first with "(Recommended)" appended, include "Apply all in sequence" and "Skip" as last two options, `multiSelect: false`
+- **Gemini CLI**: use `ask_user` — `type: "select"`, same options including "Apply all in sequence" and "Skip"
+- **All other platforms**: numbered list:
+  ```
+  Which would you like to apply? (Enter number, "all" to apply in sequence, or "skip")
+  ```
 
 After user selects, load the chosen skill and follow its steps. If user chooses "all", apply each in ranked order, confirming after each before proceeding to the next.
 

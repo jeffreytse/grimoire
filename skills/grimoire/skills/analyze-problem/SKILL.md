@@ -45,8 +45,17 @@ Present a compact ranked list and wait for selection:
 Multiple problem analysis practices apply:
   ★ [top-skill] — [one sentence: what analysis it provides]  ← recommended
      [second-skill] — [one sentence]
-Which should I use to analyze this problem first? (Enter number or name)
 ```
+
+Then ask the user using the best available method for your platform:
+- **Claude Code / OpenCode**: use `AskUserQuestion` / `question` — question: "Which analysis practice should I use first?", ★ recommended first with "(Recommended)" appended, `multiSelect: false`
+- **Gemini CLI**: use `ask_user` — question: "Which analysis practice should I use first?", `type: "select"`, ★ recommended first
+- **All other platforms**: numbered list:
+  ```
+  1. [top-skill] ★ (recommended) — [what analysis it provides]
+  2. [second-skill] — [what analysis it provides]
+  Which should I use to analyze this problem first? (Enter number or name)
+  ```
 
 **If no skill scores ≥ 0.5:**
 Proceed with default Steps 1–6 below. No announcement needed.

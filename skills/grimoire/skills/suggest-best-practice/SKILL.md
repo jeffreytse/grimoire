@@ -125,8 +125,15 @@ Multiple best practices apply. Recommended: [top-skill-name]
 3. [skill-name] — [one sentence]
    Domain: [domain/subdomain]  |  Score: [score]  |  Install: ...
 
-Which would you like to apply? (Enter number, "all" to apply in sequence, or "skip" to proceed without)
 ```
+
+Then collect the user's choice using the best available method for your platform:
+- **Claude Code / OpenCode**: use `AskUserQuestion` / `question` — ★ recommended first with "(Recommended)" appended, include "Apply all in sequence" and "Skip" as last two options, `multiSelect: false`
+- **Gemini CLI**: use `ask_user` — `type: "select"`, same options including "Apply all in sequence" and "Skip"
+- **All other platforms**: numbered list:
+  ```
+  Which would you like to apply? (Enter number, "all" to apply in sequence, or "skip" to proceed without)
+  ```
 
 The ★ recommendation is the highest-scoring match. If two skills score equally, recommend the one whose `Use when...` description is the closest literal match to the user's input.
 
@@ -144,7 +151,10 @@ Best practices for: [topic]
 
 2. ...
 ```
-Announce at end: "Say the number or skill name to apply one."
+After listing, collect the user's choice using the best available method for your platform:
+- **Claude Code / OpenCode**: use `AskUserQuestion` / `question` — list all skills as options (no ★ in browse mode), `multiSelect: false`
+- **Gemini CLI**: use `ask_user` — `type: "select"`, list all skills as options
+- **All other platforms**: `"Say the number or skill name to apply one."`
 
 **No match** — all skills score < 0.3:
 

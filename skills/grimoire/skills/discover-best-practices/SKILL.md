@@ -70,9 +70,16 @@ Selection criteria for this list (in priority order):
 ### Step 4: Offer to apply or explore
 
 ```
-Want to apply any of these now, or learn more about one?
-(Enter skill name or number — or "all" for full descriptions)
 ```
+
+Then collect the user's choice using the best available method for your platform:
+- **Claude Code / OpenCode**: use `AskUserQuestion` / `question` — question: "Want to apply any of these now, or learn more about one?", list all discovered skills as options plus "View all full descriptions" and "Skip" as last two options, `multiSelect: false`
+- **Gemini CLI**: use `ask_user` — `type: "select"`, same options
+- **All other platforms**: present:
+  ```
+  Want to apply any of these now, or learn more about one?
+  (Enter skill name or number — or "all" for full descriptions, or "skip" to end)
+  ```
 
 If user selects a specific skill: invoke `suggest-best-practice` with that skill pre-selected as the match.
 If user says "all": present each skill's full `description` field in sequence, grouped by subdomain.
