@@ -1,16 +1,22 @@
 #!/usr/bin/env bash
 set -eo pipefail
 
+GRIMOIRE_HOME="${GRIMOIRE_HOME:-${HOME}/.grimoire}"
+GRIMOIRE_REPO="https://github.com/jeffreytse/grimoire.git"
+LINK=1
+
 SCRIPT_PATH="${BASH_SOURCE[0]:-}"
 if [[ -n "${SCRIPT_PATH}" && -f "${SCRIPT_PATH}" ]]; then
   REPO_ROOT="$(cd "$(dirname "${SCRIPT_PATH}")/.." && pwd)"
-  _TMPDIR=""
 else
-  _TMPDIR="$(mktemp -d)"
-  trap 'rm -rf "${_TMPDIR}"' EXIT
-  echo "Downloading grimoire..."
-  git clone --depth 1 --quiet https://github.com/jeffreytse/grimoire.git "${_TMPDIR}"
-  REPO_ROOT="${_TMPDIR}"
+  if [[ -d "${GRIMOIRE_HOME}/.git" ]]; then
+    echo "Updating grimoire at ${GRIMOIRE_HOME}..."
+    git -C "${GRIMOIRE_HOME}" pull --quiet
+  else
+    echo "Cloning grimoire to ${GRIMOIRE_HOME}..."
+    git clone --depth 1 --quiet "${GRIMOIRE_REPO}" "${GRIMOIRE_HOME}"
+  fi
+  REPO_ROOT="${GRIMOIRE_HOME}"
 fi
 SKILLS_ROOT="${REPO_ROOT}/skills"
 CLAUDE_SKILLS_DIR="${HOME}/.claude/skills"
@@ -26,15 +32,24 @@ Options:
   --subdomain <name>    Restrict to one sub-domain within a domain
   --skill <path>        Install/uninstall one skill (e.g. engineering/development/propose-conventional-commit)
   --target <agent>      Target: claude, codex, gemini, all
+  --copy                Copy skill files instead of symlinking
+  --upgrade             Pull latest grimoire at GRIMOIRE_HOME (symlinks update automatically)
+  --clean               Remove broken symlinks from all agent skill dirs
   --uninstall           Remove skills instead of installing
   --list                List available domains, sub-domains, and skills
   --yes                 Non-interactive: install all skills to all detected agents
   --help                Show this help
 
+Environment:
+  GRIMOIRE_HOME         Persistent clone location (default: ~/.grimoire)
+
 Examples:
   install.sh                                                # Interactive TUI
   install.sh --yes                                          # Install everything, no prompts
+  install.sh --upgrade                                      # Pull latest grimoire
+  install.sh --clean                                        # Remove broken symlinks
   install.sh --domain engineering --target claude
+  install.sh --domain engineering --copy                    # Copy instead of symlink
   install.sh --skill engineering/development/propose-conventional-commit
   install.sh --uninstall --domain engineering --target claude
   install.sh --uninstall --skill engineering/development/propose-conventional-commit
@@ -278,9 +293,15 @@ list_skills() {
 install_skill_dir() {
   local src="$1" dest_dir="$2" skill_name
   skill_name=$(basename "${src}")
-  mkdir -p "${dest_dir}/${skill_name}"
-  cp -r "${src}/." "${dest_dir}/${skill_name}/"
-  echo "  installed: ${skill_name} -> ${dest_dir}/${skill_name}" >/dev/tty
+  mkdir -p "${dest_dir}"
+  if [[ ${LINK} -eq 1 ]]; then
+    ln -sfn "${src}" "${dest_dir}/${skill_name}"
+    echo "  linked: ${skill_name} -> ${dest_dir}/${skill_name}" >/dev/tty
+  else
+    mkdir -p "${dest_dir}/${skill_name}"
+    cp -r "${src}/." "${dest_dir}/${skill_name}/"
+    echo "  installed: ${skill_name} -> ${dest_dir}/${skill_name}" >/dev/tty
+  fi
   (( _installed_count++ )) || true
 }
 
@@ -358,9 +379,9 @@ _in_array() {
 
 is_skill_installed() {
   local skill_name="$1"
-  [[ -d "${CLAUDE_SKILLS_DIR}/${skill_name}" ]] && return 0
-  [[ -d "${AGENTS_SKILLS_DIR}/${skill_name}" ]] && return 0
-  [[ -d "${GEMINI_SKILLS_DIR}/${skill_name}" ]] && return 0
+  [[ -d "${CLAUDE_SKILLS_DIR}/${skill_name}" || -L "${CLAUDE_SKILLS_DIR}/${skill_name}" ]] && return 0
+  [[ -d "${AGENTS_SKILLS_DIR}/${skill_name}" || -L "${AGENTS_SKILLS_DIR}/${skill_name}" ]] && return 0
+  [[ -d "${GEMINI_SKILLS_DIR}/${skill_name}" || -L "${GEMINI_SKILLS_DIR}/${skill_name}" ]] && return 0
   return 1
 }
 
@@ -400,7 +421,11 @@ uninstall_skill_dir() {
     gemini) dest_dir="${GEMINI_SKILLS_DIR}" ;;
     *) return ;;
   esac
-  if [[ -d "${dest_dir}/${skill_name}" ]]; then
+  if [[ -L "${dest_dir}/${skill_name}" ]]; then
+    unlink "${dest_dir}/${skill_name}"
+    echo "  unlinked: ${skill_name} from ${dest_dir}" >/dev/tty
+    (( _uninstalled_count++ )) || true
+  elif [[ -d "${dest_dir}/${skill_name}" ]]; then
     rm -rf "${dest_dir}/${skill_name}"
     echo "  uninstalled: ${skill_name} from ${dest_dir}" >/dev/tty
     (( _uninstalled_count++ )) || true
@@ -433,6 +458,24 @@ uninstall_subdomain() {
   done
 }
 
+do_clean() {
+  local _cleaned=0
+  local dirs=("${CLAUDE_SKILLS_DIR}" "${AGENTS_SKILLS_DIR}" "${GEMINI_SKILLS_DIR}")
+  for dir in "${dirs[@]}"; do
+    [[ -d "${dir}" ]] || continue
+    while IFS= read -r -d '' link; do
+      unlink "${link}"
+      echo "  cleaned: $(basename "${link}") (broken symlink in ${dir})" >/dev/tty
+      (( _cleaned++ )) || true
+    done < <(find "${dir}" -maxdepth 1 -type l ! -e -print0 2>/dev/null)
+  done
+  if [[ ${_cleaned} -eq 0 ]]; then
+    echo "  nothing to clean" >/dev/tty
+  else
+    echo "  ${_cleaned} broken symlink(s) removed" >/dev/tty
+  fi
+}
+
 uninstall_domain() {
   local domain="$1" subdomain="$2" target="$3"
   local domain_dir="${SKILLS_ROOT}/${domain}"
@@ -456,7 +499,7 @@ uninstall_domain() {
 }
 
 # ── Argument parsing ───────────────────────────────────────────────────────────
-DOMAIN="" SUBDOMAIN="" SKILL="" TARGET="" YES=0 UNINSTALL=0
+DOMAIN="" SUBDOMAIN="" SKILL="" TARGET="" YES=0 UNINSTALL=0 UPGRADE=0 CLEAN=0
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -465,12 +508,34 @@ while [[ $# -gt 0 ]]; do
     --skill)      SKILL="$2";     shift 2 ;;
     --target)     TARGET="$2";    shift 2 ;;
     --yes|-y)     YES=1;          shift   ;;
+    --copy)       LINK=0;         shift   ;;
+    --upgrade)    UPGRADE=1;      shift   ;;
+    --clean)      CLEAN=1;        shift   ;;
     --uninstall)  UNINSTALL=1;    shift   ;;
     --list)       list_skills; exit 0 ;;
     --help)       usage; exit 0 ;;
     *) echo "Unknown option: $1"; usage; exit 1 ;;
   esac
 done
+
+if [[ ${UPGRADE} -eq 1 ]]; then
+  if [[ ! -d "${GRIMOIRE_HOME}/.git" ]]; then
+    echo "No grimoire clone found at ${GRIMOIRE_HOME}. Run install first."
+    exit 1
+  fi
+  echo "Pulling latest grimoire at ${GRIMOIRE_HOME}..."
+  git -C "${GRIMOIRE_HOME}" pull
+  echo "Cleaning broken symlinks..."
+  do_clean
+  echo "Done."
+  exit 0
+fi
+
+if [[ ${CLEAN} -eq 1 && ${UNINSTALL} -eq 0 && -z "${DOMAIN}" && -z "${SKILL}" ]]; then
+  echo "Cleaning broken symlinks..."
+  do_clean
+  exit 0
+fi
 
 # ── Interactive TUI (when no flags given) ──────────────────────────────────────
 if [[ -z "${DOMAIN}" && -z "${SKILL}" && -z "${TARGET}" && ${YES} -eq 0 && ${UNINSTALL} -eq 0 ]]; then
@@ -577,6 +642,7 @@ if [[ -z "${DOMAIN}" && -z "${SKILL}" && -z "${TARGET}" && ${YES} -eq 0 && ${UNI
     printf '🗑️  %d skills uninstalled' "${_skill_count_unique}" >/dev/tty
     [[ ${#_agent_list[@]} -gt 1 ]] && printf ' × %d agents (%d total)' "${#_agent_list[@]}" "${_uninstalled_count}" >/dev/tty
     printf ' → %s\n' "${_agent_list[*]}" >/dev/tty
+    do_clean
 
   else
     # ── Install mode ─────────────────────────────────────────────────────────────
@@ -654,6 +720,7 @@ if [[ -z "${DOMAIN}" && -z "${SKILL}" && -z "${TARGET}" && ${YES} -eq 0 && ${UNI
     printf '✅ %d skills installed' "${_skill_count_unique}" >/dev/tty
     [[ ${#_agent_list[@]} -gt 1 ]] && printf ' × %d agents (%d total)' "${#_agent_list[@]}" "${_installed_count}" >/dev/tty
     printf ' → %s\n' "${_agent_list[*]}" >/dev/tty
+    do_clean
   fi
 
 # ── Non-interactive / flag-driven ─────────────────────────────────────────────
@@ -744,6 +811,7 @@ else
       done
     fi
   fi
+  do_clean
 fi
 
 _c_bold=$'\033[1m'

@@ -6,12 +6,31 @@ param(
     [string]$Skill     = "",
     [string]$Target    = "",
     [switch]$Uninstall,
+    [switch]$Copy,
+    [switch]$Upgrade,
+    [switch]$Clean,
     [switch]$Yes,
     [switch]$List,
     [switch]$Help
 )
 
-$RepoRoot        = Split-Path -Parent $PSScriptRoot
+$GrimoireHome = if ($env:GRIMOIRE_HOME) { $env:GRIMOIRE_HOME } else { Join-Path $HOME ".grimoire" }
+$GrimoireRepo = "https://github.com/jeffreytse/grimoire.git"
+$script:Link  = -not $Copy.IsPresent
+
+$_localRepoRoot = Split-Path -Parent $PSScriptRoot
+if (Test-Path (Join-Path $_localRepoRoot ".git")) {
+    $RepoRoot = $_localRepoRoot
+} else {
+    if (Test-Path (Join-Path $GrimoireHome ".git")) {
+        Write-Host "Updating grimoire at $GrimoireHome..."
+        git -C $GrimoireHome pull --quiet
+    } else {
+        Write-Host "Cloning grimoire to $GrimoireHome..."
+        git clone --depth 1 --quiet $GrimoireRepo $GrimoireHome
+    }
+    $RepoRoot = $GrimoireHome
+}
 $SkillsRoot      = Join-Path $RepoRoot "skills"
 $ClaudeSkillsDir = Join-Path $HOME ".claude\skills"
 $AgentsSkillsDir = Join-Path $HOME ".agents\skills"
@@ -44,14 +63,23 @@ Options:
   -Skill <path>        Install/uninstall one skill (e.g. engineering/development/propose-conventional-commit)
   -Target <agent>      Target: claude, codex, gemini, all
   -Uninstall           Remove skills instead of installing
+  -Copy                Use copy mode instead of junctions
+  -Upgrade             Pull latest grimoire at GrimoireHome (junctions update automatically)
+  -Clean               Remove broken junctions from all agent skill dirs
   -Yes                 Non-interactive: install all skills to all detected agents
   -List                List available domains, sub-domains, and skills
   -Help                Show this help
 
+Environment:
+  GRIMOIRE_HOME        Persistent clone location (default: ~\.grimoire)
+
 Examples:
   .\install.ps1                                                   # Interactive TUI
   .\install.ps1 -Yes                                              # Install everything, no prompts
+  .\install.ps1 -Upgrade                                          # Pull latest grimoire
+  .\install.ps1 -Clean                                            # Remove broken junctions
   .\install.ps1 -Domain engineering -Target claude
+  .\install.ps1 -Domain engineering -Copy                         # Copy instead of junction
   .\install.ps1 -Skill engineering/development/propose-conventional-commit
   .\install.ps1 -Uninstall -Domain engineering -Target claude
   .\install.ps1 -Uninstall -Skill engineering/development/propose-conventional-commit
@@ -218,9 +246,16 @@ function Invoke-Multiselect([string]$Prompt, [string[]]$Options) {
 function Install-SkillDir([string]$Src, [string]$DestDir) {
     $skillName = Split-Path -Leaf $Src
     $dest = Join-Path $DestDir $skillName
-    New-Item -ItemType Directory -Force -Path $dest | Out-Null
-    Copy-Item -Path "$Src\*" -Destination $dest -Recurse -Force
-    Write-Host "  installed: $skillName -> $dest"
+    if (-not (Test-Path $DestDir)) { New-Item -ItemType Directory -Force -Path $DestDir | Out-Null }
+    if (Test-Path $dest -ErrorAction SilentlyContinue) { Remove-Item -Recurse -Force $dest }
+    if ($script:Link) {
+        New-Item -ItemType Junction -Path $dest -Target $Src | Out-Null
+        Write-Host "  linked: $skillName -> $dest"
+    } else {
+        New-Item -ItemType Directory -Force -Path $dest | Out-Null
+        Copy-Item -Path "$Src\*" -Destination $dest -Recurse -Force
+        Write-Host "  installed: $skillName -> $dest"
+    }
     $script:InstalledCount++
 }
 
@@ -281,11 +316,35 @@ function Install-Domain([string]$DomainName, [string]$SubdomainName, [string]$Ta
 
 function Uninstall-SkillDir([string]$SkillName, [string]$DestDir) {
     $dest = Join-Path $DestDir $SkillName
-    if (Test-Path $dest) {
+    if (-not (Test-Path $dest -ErrorAction SilentlyContinue)) { return }
+    $item = Get-Item $dest -Force -ErrorAction SilentlyContinue
+    if ($item -and $null -ne $item.LinkType) {
+        Remove-Item $dest -Force
+        Write-Host "  unlinked: $SkillName from $DestDir"
+    } else {
         Remove-Item -Recurse -Force $dest
-        Write-Host "  uninstalled: $SkillName -> $dest"
-        $script:UninstalledCount++
+        Write-Host "  uninstalled: $SkillName from $DestDir"
     }
+    $script:UninstalledCount++
+}
+
+function Invoke-Clean {
+    $cleaned = 0
+    $dirs = @($ClaudeSkillsDir, $AgentsSkillsDir, $GeminiSkillsDir)
+    foreach ($dir in $dirs) {
+        if (-not (Test-Path $dir)) { continue }
+        foreach ($item in Get-ChildItem $dir -Force -ErrorAction SilentlyContinue) {
+            if ($null -eq $item.LinkType) { continue }
+            $broken = -not (Test-Path -LiteralPath $item.Target -ErrorAction SilentlyContinue)
+            if ($broken) {
+                Remove-Item $item.FullName -Force
+                Write-Host "  cleaned: $($item.Name) (broken junction in $dir)"
+                $cleaned++
+            }
+        }
+    }
+    if ($cleaned -eq 0) { Write-Host "  nothing to clean" }
+    else                 { Write-Host "  $cleaned broken junction(s) removed" }
 }
 
 function Invoke-Uninstall([string]$SkillName, [string]$TargetAgent) {
@@ -338,6 +397,25 @@ function Uninstall-Domain([string]$DomainName, [string]$SubdomainName, [string]$
 # ── Main ──────────────────────────────────────────────────────────────────────
 if ($Help) { Show-Usage; exit 0 }
 if ($List) { Get-SkillList; exit 0 }
+
+if ($Upgrade) {
+    if (-not (Test-Path (Join-Path $GrimoireHome ".git"))) {
+        Write-Host "No grimoire clone found at $GrimoireHome. Run install first."
+        exit 1
+    }
+    Write-Host "Pulling latest grimoire at $GrimoireHome..."
+    git -C $GrimoireHome pull
+    Write-Host "Cleaning broken junctions..."
+    Invoke-Clean
+    Write-Host "Done."
+    exit 0
+}
+
+if ($Clean -and -not $Uninstall -and -not $Domain -and -not $Skill) {
+    Write-Host "Cleaning broken junctions..."
+    Invoke-Clean
+    exit 0
+}
 
 $detected    = @()
 $isInteractive = (-not $Domain -and -not $Skill -and -not $Target -and -not $Yes -and -not $Uninstall)
@@ -415,6 +493,7 @@ if ($isInteractive) {
         Write-Host ""
         if ($agentList.Count -gt 1) { Write-Host "🗑️  $unique skills uninstalled × $($agentList.Count) agents ($($script:UninstalledCount) total) → $($agentList -join ' ')" }
         else                        { Write-Host "🗑️  $unique skills uninstalled → $($agentList -join ' ')" }
+        Invoke-Clean
 
     } else {
         $domainList = Invoke-Multiselect "📚 Which domains to install?" $allDomains
@@ -465,6 +544,7 @@ if ($isInteractive) {
         Write-Host ""
         if ($agentList.Count -gt 1) { Write-Host "✅ $unique skills installed × $($agentList.Count) agents ($($script:InstalledCount) total) → $($agentList -join ' ')" }
         else                        { Write-Host "✅ $unique skills installed → $($agentList -join ' ')" }
+        Invoke-Clean
     }
 
 } else {
@@ -523,6 +603,7 @@ if ($isInteractive) {
             }
         }
     }
+    Invoke-Clean
 }
 
 # ── Footer ────────────────────────────────────────────────────────────────────
