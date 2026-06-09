@@ -48,19 +48,19 @@ If a task matches a skill, invoke it. Never implement directly when a skill appl
 
 ```bash
 # All skills
-./scripts/install.sh
+./scripts/grimoire
 
 # One domain
-./scripts/install.sh --domain engineering
+./scripts/grimoire --domain engineering
 
 # One sub-domain
-./scripts/install.sh --domain engineering --subdomain development
+./scripts/grimoire --domain engineering --subdomain development
 
 # One skill
-./scripts/install.sh --skill engineering/development/propose-commit
+./scripts/grimoire --skill engineering/development/propose-commit
 
 # All agents
-./scripts/install.sh --target all
+./scripts/grimoire --target all
 ```
 
 Or via Claude Code plugin system:
@@ -72,7 +72,7 @@ Or via Claude Code plugin system:
 /plugin install grimoire@grimoire                   # all domains
 /plugin install grimoire-engineering@grimoire       # one domain
 
-# For subdomain-level installs, use install.sh
+# For subdomain-level installs, use grimoire
 ```
 
 ## Skill Format

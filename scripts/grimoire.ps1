@@ -11,6 +11,8 @@ param(
     [switch]$Clean,
     [switch]$Yes,
     [switch]$List,
+    [switch]$Doctor,
+    [switch]$Version,
     [switch]$Help
 )
 
@@ -55,7 +57,7 @@ $script:UninstalledCount = 0
 
 function Show-Usage {
     Write-Host @"
-Usage: install.ps1 [OPTIONS]
+Usage: grimoire.ps1 [OPTIONS]
 
 Options:
   -Domain <name>       Install/uninstall all skills for a domain
@@ -68,21 +70,23 @@ Options:
   -Clean               Remove broken junctions from all agent skill dirs
   -Yes                 Non-interactive: install all skills to all detected agents
   -List                List available domains, sub-domains, and skills
+  -Doctor              Run a health check on the grimoire installation
+  -Version             Show grimoire version information
   -Help                Show this help
 
 Environment:
   GRIMOIRE_HOME        Persistent clone location (default: ~\.grimoire)
 
 Examples:
-  .\install.ps1                                                   # Interactive TUI
-  .\install.ps1 -Yes                                              # Install everything, no prompts
-  .\install.ps1 -Upgrade                                          # Pull latest grimoire
-  .\install.ps1 -Clean                                            # Remove broken junctions
-  .\install.ps1 -Domain engineering -Target claude
-  .\install.ps1 -Domain engineering -Copy                         # Copy instead of junction
-  .\install.ps1 -Skill engineering/development/propose-conventional-commit
-  .\install.ps1 -Uninstall -Domain engineering -Target claude
-  .\install.ps1 -Uninstall -Skill engineering/development/propose-conventional-commit
+  .\grimoire.ps1                                                  # Interactive TUI
+  .\grimoire.ps1 -Yes                                             # Install everything, no prompts
+  .\grimoire.ps1 -Upgrade                                         # Pull latest grimoire
+  .\grimoire.ps1 -Clean                                           # Remove broken junctions
+  .\grimoire.ps1 -Domain engineering -Target claude
+  .\grimoire.ps1 -Domain engineering -Copy                        # Copy instead of junction
+  .\grimoire.ps1 -Skill engineering/development/propose-conventional-commit
+  .\grimoire.ps1 -Uninstall -Domain engineering -Target claude
+  .\grimoire.ps1 -Uninstall -Skill engineering/development/propose-conventional-commit
 "@
 }
 
@@ -261,10 +265,363 @@ function Install-SkillDir([string]$Src, [string]$DestDir) {
 
 function Get-DetectedAgents {
     $d = @()
-    if (Test-Path (Join-Path $HOME ".claude"))  { $d += "claude" }
-    if (Test-Path (Join-Path $HOME ".agents"))  { $d += "codex" }
-    if (Test-Path (Join-Path $HOME ".gemini"))  { $d += "gemini" }
+    if ($null -ne (Get-Command "claude"  -ErrorAction SilentlyContinue)) { $d += "claude" }
+    if ($null -ne (Get-Command "codex"   -ErrorAction SilentlyContinue)) { $d += "codex"  }
+    if ($null -ne (Get-Command "gemini"  -ErrorAction SilentlyContinue)) { $d += "gemini" }
     return $d
+}
+
+function Get-AgentDisplayName([string]$Agent) {
+    switch ($Agent) {
+        "claude" { return "Claude Code" }
+        "codex"  { return "Codex" }
+        "gemini" { return "Gemini CLI" }
+        default  { return $Agent }
+    }
+}
+
+function Get-AgentFromDisplay([string]$Display) {
+    switch ($Display) {
+        "Claude Code" { return "claude" }
+        "Codex"       { return "codex"  }
+        "Gemini CLI"  { return "gemini" }
+        default       { return $Display }
+    }
+}
+
+function Get-AgentVersion([string]$Cmd) {
+    try {
+        $raw = & $Cmd --version 2>$null | Select-Object -First 1
+        if ($raw) { return ($raw | Select-String -Pattern '[0-9][0-9.]*' -AllMatches).Matches[0].Value }
+    } catch {}
+    return ""
+}
+
+function Get-GrimoireVersion {
+    $vf = Join-Path $RepoRoot "VERSION"
+    if (Test-Path $vf) { return (Get-Content $vf -Raw -ErrorAction SilentlyContinue).Trim() }
+    return "unknown"
+}
+
+function Test-AnySkillsInstalled {
+    foreach ($dir in @($ClaudeSkillsDir, $AgentsSkillsDir, $GeminiSkillsDir)) {
+        if (-not (Test-Path $dir)) { continue }
+        if ((Get-ChildItem $dir -Force -ErrorAction SilentlyContinue | Measure-Object).Count -gt 0) { return $true }
+    }
+    return $false
+}
+
+function Install-GlobalBin {
+    $installScript = Join-Path $RepoRoot "scripts\grimoire.ps1"
+    $wrapper = "& '$($installScript.Replace("'","''"))' @args"
+    $candidates = @(
+        (Join-Path $env:LOCALAPPDATA "Microsoft\WindowsApps\grimoire.ps1"),
+        (Join-Path $HOME ".local\bin\grimoire.ps1")
+    )
+    foreach ($target in $candidates) {
+        $dir = Split-Path $target
+        if (Test-Path $dir) {
+            try {
+                Set-Content -Path $target -Value $wrapper -Encoding UTF8 -Force
+                Write-Host "  linked: grimoire → $target"
+                return
+            } catch {}
+        }
+    }
+    $fallback = Join-Path $HOME ".local\bin\grimoire.ps1"
+    try {
+        New-Item -ItemType Directory -Force -Path (Split-Path $fallback) | Out-Null
+        Set-Content -Path $fallback -Value $wrapper -Encoding UTF8 -Force
+        Write-Host "  linked: grimoire → $fallback"
+        Write-Host "  note: add $HOME\.local\bin to PATH to use 'grimoire' globally"
+    } catch {
+        Write-Host "  warning: could not create global grimoire command"
+    }
+}
+
+function Remove-GlobalBin {
+    $candidates = @(
+        (Join-Path $env:LOCALAPPDATA "Microsoft\WindowsApps\grimoire.ps1"),
+        (Join-Path $HOME ".local\bin\grimoire.ps1")
+    )
+    foreach ($target in $candidates) {
+        if (Test-Path $target -ErrorAction SilentlyContinue) {
+            try { Remove-Item $target -Force; Write-Host "  unlinked: $target" } catch {}
+        }
+    }
+}
+
+$script:UpgradeDir = ""
+
+function Show-UpgradeResult([string]$OldCommit, [string]$OldVer, [string]$OldDate,
+                            [string]$NewCommit, [string]$NewVer, [string]$NewDate) {
+    $e  = [char]27
+    $ok = "${e}[0;32m✅${e}[0m"
+    $ud = $script:UpgradeDir
+    $diffLines     = git -C $ud diff --name-status "$OldCommit" "$NewCommit" -- "*/SKILL.md" 2>$null
+    $newSkills     = ($diffLines | Where-Object { $_ -match '^A' } | Measure-Object).Count
+    $updatedSkills = ($diffLines | Where-Object { $_ -match '^M' } | Measure-Object).Count
+    Write-Host ""
+    Write-Host "  $ok  Grimoire upgraded to latest."
+    Write-Host ""
+    Write-Host "    Previous: v$OldVer (commit $OldCommit, $OldDate)"
+    Write-Host "    Current:  v$NewVer (commit $NewCommit, $NewDate)"
+    Write-Host ""
+    if ($newSkills     -gt 0) { Write-Host "    New skills:     $newSkills" }
+    if ($updatedSkills -gt 0) { Write-Host "    Updated skills: $updatedSkills" }
+    Write-Host ""
+}
+
+function Confirm-Upgrade {
+    if ($Yes) { return $true }
+    $ans = Read-Host "Upgrade now? [y/n]"
+    return $ans -match '^[Yy]$'
+}
+
+function Invoke-UpgradeStable {
+    $e  = [char]27
+    $ok = "${e}[0;32m✅${e}[0m"
+    $ud = $script:UpgradeDir
+    $curCommit = "unknown"; $curDate = "unknown"; $curVer = "unknown"
+    try { $curCommit = (git -C $ud rev-parse --short HEAD 2>$null).Trim() } catch {}
+    try { $curDate   = (git -C $ud log -1 --format="%cd" --date=short 2>$null).Trim() } catch {}
+    try { $curVer    = (Get-Content (Join-Path $ud "VERSION") -Raw -ErrorAction Stop).Trim() } catch {}
+
+    Write-Host "Fetching release tags..."
+    try { git -C $ud fetch --tags --quiet 2>$null } catch {}
+
+    $latestTag = git -C $ud tag --sort=-v:refname 2>$null |
+                 Where-Object { $_ -match '^v?[0-9]' } | Select-Object -First 1
+    if (-not $latestTag) { Write-Host "  No release tags found. Try the unstable channel."; Write-Host ""; return }
+
+    $tagSha   = ""; $localSha = ""; $tagShort = ""; $tagDate = ""
+    try { $tagSha   = (git -C $ud rev-list -n 1 $latestTag               2>$null).Trim() } catch {}
+    try { $localSha = (git -C $ud rev-parse HEAD                         2>$null).Trim() } catch {}
+    try { $tagShort = (git -C $ud rev-parse --short $latestTag            2>$null).Trim() } catch {}
+    try { $tagDate  = (git -C $ud log -1 --format="%cd" --date=short $latestTag 2>$null).Trim() } catch {}
+
+    if ($tagSha -eq $localSha) {
+        Write-Host "  $ok  Already on latest stable release. ($latestTag, commit $tagShort, $tagDate)"
+        Write-Host ""; return
+    }
+
+    $tagVer = $latestTag -replace '^v', ''
+    Write-Host ""
+    Write-Host "  New stable release available:"
+    Write-Host "    Current:  v$curVer (commit $curCommit, $curDate)"
+    Write-Host "    New:      $latestTag (commit $tagShort, $tagDate)"
+    Write-Host ""
+
+    if (-not (Confirm-Upgrade)) { Write-Host "Upgrade cancelled."; return }
+
+    Write-Host ""
+    Write-Host "Checking out $latestTag..."
+    git -C $ud checkout $latestTag --quiet
+
+    Show-UpgradeResult $curCommit $curVer $curDate $tagShort $tagVer $tagDate
+    Write-Host "Cleaning broken junctions..."
+    Invoke-Clean
+}
+
+function Invoke-UpgradeUnstable {
+    $e  = [char]27
+    $ok = "${e}[0;32m✅${e}[0m"
+    $ud = $script:UpgradeDir
+    $curCommit = "unknown"; $curDate = "unknown"; $curVer = "unknown"
+    try { $curCommit = (git -C $ud rev-parse --short HEAD 2>$null).Trim() } catch {}
+    try { $curDate   = (git -C $ud log -1 --format="%cd" --date=short 2>$null).Trim() } catch {}
+    try { $curVer    = (Get-Content (Join-Path $ud "VERSION") -Raw -ErrorAction Stop).Trim() } catch {}
+
+    Write-Host "Checking for updates..."
+    try { git -C $ud fetch --quiet 2>$null } catch {}
+
+    $localSha = ""; $remoteSha = ""
+    try { $localSha  = (git -C $ud rev-parse HEAD   2>$null).Trim() } catch {}
+    try { $remoteSha = (git -C $ud rev-parse "@{u}" 2>$null).Trim() } catch {}
+
+    if (-not $remoteSha -or $localSha -eq $remoteSha) {
+        Write-Host "  $ok  Already up to date. (v$curVer, commit $curCommit, $curDate)"
+        Write-Host ""; return
+    }
+
+    $newShort = ""; $newDate = ""; $newVer = ""
+    try { $newShort = (git -C $ud rev-parse --short "@{u}"                  2>$null).Trim() } catch {}
+    try { $newDate  = (git -C $ud log -1 --format="%cd" --date=short "@{u}" 2>$null).Trim() } catch {}
+    try { $newVer   = (git -C $ud show "@{u}:VERSION"                       2>$null).Trim() } catch {}
+
+    Write-Host ""
+    Write-Host "  New version available:"
+    Write-Host "    Current:  v$curVer (commit $curCommit, $curDate)"
+    if ($newVer) { Write-Host "    New:      v$newVer (commit $newShort, $newDate)" }
+    else         { Write-Host "    New:      commit $newShort ($newDate)" }
+    Write-Host ""
+
+    if (-not (Confirm-Upgrade)) { Write-Host "Upgrade cancelled."; return }
+
+    Write-Host ""
+    Write-Host "Pulling latest grimoire at $ud..."
+    git -C $ud pull --quiet
+
+    $pulledCommit = "unknown"; $pulledDate = "unknown"; $pulledVer = "unknown"
+    try { $pulledCommit = (git -C $ud rev-parse --short HEAD 2>$null).Trim() } catch {}
+    try { $pulledDate   = (git -C $ud log -1 --format="%cd" --date=short 2>$null).Trim() } catch {}
+    try { $pulledVer    = (Get-Content (Join-Path $ud "VERSION") -Raw -ErrorAction Stop).Trim() } catch {}
+
+    Show-UpgradeResult $curCommit $curVer $curDate $pulledCommit $pulledVer $pulledDate
+    Write-Host "Cleaning broken junctions..."
+    Invoke-Clean
+}
+
+function Invoke-Upgrade {
+    if (Test-Path (Join-Path $GrimoireHome ".git")) {
+        $script:UpgradeDir = $GrimoireHome
+    } elseif (Test-Path (Join-Path $RepoRoot ".git")) {
+        $script:UpgradeDir = $RepoRoot
+    } else {
+        Write-Host "No grimoire git repository found."
+        Write-Host "  Checked: $GrimoireHome"
+        Write-Host "  Checked: $RepoRoot"
+        exit 1
+    }
+    $channel = "unstable"
+    if (-not $Yes) {
+        $channelSel = Select-One "📡 Which upgrade channel?" @(
+            "🔒 Stable    (GitHub releases)",
+            "🔬 Unstable  (latest branch commit)"
+        )
+        if ($channelSel -like "*Stable*") { $channel = "stable" }
+    }
+    if ($channel -eq "stable") { Invoke-UpgradeStable } else { Invoke-UpgradeUnstable }
+}
+
+function Invoke-Version {
+    $e = [char]27
+    $ok = "${e}[0;32m✅${e}[0m"
+    $ver = Get-GrimoireVersion
+    Write-Host ""
+    if (Test-Path (Join-Path $RepoRoot ".git")) {
+        $commit = "unknown"; $date = "unknown"
+        try { $commit = (git -C $RepoRoot rev-parse --short HEAD 2>$null).Trim() } catch {}
+        try { $date   = (git -C $RepoRoot log -1 --format="%cd" --date=short 2>$null).Trim() } catch {}
+        Write-Host "  $ok  grimoire:    v$ver (commit $commit, $date)"
+        Write-Host "  $ok  location:    $RepoRoot"
+    } else {
+        Write-Host "  $ok  grimoire:    v$ver"
+        Write-Host "  $ok  location:    $RepoRoot"
+    }
+    Write-Host "  $ok  grimoire.ps1: present"
+    Write-Host ""
+}
+
+function Invoke-Doctor {
+    $e    = [char]27
+    $ok   = "${e}[0;32m✅${e}[0m"
+    $warn = "${e}[0;33m⚠️ ${e}[0m"
+    $fail = "${e}[0;31m❌${e}[0m"
+    $skip = "⬜"
+    $w = 0; $er = 0
+
+    Write-Host ""
+    Write-Host "Grimoire health check"
+    Write-Host ""
+
+    # ── Source ──────────────────────────────────────────────────────────────────
+    Write-Host "  Source"
+    $ver = Get-GrimoireVersion
+    if (Test-Path (Join-Path $RepoRoot ".git")) {
+        $commit = "unknown"; $date = "unknown"
+        try { $commit = (git -C $RepoRoot rev-parse --short HEAD 2>$null).Trim() } catch {}
+        try { $date   = (git -C $RepoRoot log -1 --format="%cd" --date=short 2>$null).Trim() } catch {}
+        Write-Host "    $ok  grimoire:    v$ver (commit $commit, $date)"
+        Write-Host "    $ok  git repo:    $RepoRoot"
+    } else {
+        Write-Host "    $fail  git repo:    not found at $RepoRoot"
+        $er++
+    }
+    $installPs1 = Join-Path $RepoRoot "scripts\grimoire.ps1"
+    if (Test-Path $installPs1) { Write-Host "    $ok  grimoire.ps1: present" }
+    else                       { Write-Host "    $warn  grimoire.ps1: not found"; $w++ }
+
+    # ── AI agents ────────────────────────────────────────────────────────────────
+    Write-Host ""
+    Write-Host "  AI agents"
+    $skillAgents = @(
+        @{ name = "claude"; cmd = "claude"; dir = $ClaudeSkillsDir; home = (Join-Path $HOME ".claude") }
+        @{ name = "codex";  cmd = "codex";  dir = $AgentsSkillsDir; home = (Join-Path $HOME ".agents") }
+        @{ name = "gemini"; cmd = "gemini"; dir = $GeminiSkillsDir; home = (Join-Path $HOME ".gemini") }
+    )
+    foreach ($entry in $skillAgents) {
+        $hasBin  = $null -ne (Get-Command $entry.cmd -ErrorAction SilentlyContinue)
+        $hasHome = Test-Path $entry.home
+        if (-not $hasBin -and -not $hasHome) {
+            Write-Host "    $skip  $($entry.name): (not detected — skipped)"
+            continue
+        }
+        $agentVer = Get-AgentVersion $entry.cmd
+        $verStr = if ($agentVer) { " v$agentVer" } else { "" }
+        if (-not (Test-Path $entry.dir)) {
+            Write-Host "    $warn  $($entry.name)${verStr}: skills dir not found ($($entry.dir))"
+            $w++; continue
+        }
+        $items   = Get-ChildItem $entry.dir -Force -ErrorAction SilentlyContinue
+        $count   = ($items | Measure-Object).Count
+        $broken  = ($items | Where-Object { $null -ne $_.LinkType -and -not (Test-Path -LiteralPath $_.Target -ErrorAction SilentlyContinue) } | Measure-Object).Count
+        if ($broken -gt 0) {
+            Write-Host "    $warn  $($entry.name)${verStr}: $count skills, $broken broken junctions  → run: -Clean -Target $($entry.name)"
+            $w++
+        } else {
+            Write-Host "    $ok  $($entry.name)${verStr}: $count skills, 0 broken junctions"
+        }
+    }
+    $detectOnly = @(
+        @{ name = "copilot";  cmd = "gh"       }
+        @{ name = "opencode"; cmd = "opencode" }
+        @{ name = "cursor";   cmd = "cursor"   }
+        @{ name = "windsurf"; cmd = "windsurf" }
+        @{ name = "aider";    cmd = "aider"    }
+    )
+    foreach ($entry in $detectOnly) {
+        if ($null -ne (Get-Command $entry.cmd -ErrorAction SilentlyContinue)) {
+            $agentVer = Get-AgentVersion $entry.cmd
+            $verStr = if ($agentVer) { " v$agentVer" } else { "" }
+            Write-Host "    $ok  $($entry.name)${verStr}: detected (skills managed separately)"
+        }
+    }
+
+    # ── Config ───────────────────────────────────────────────────────────────────
+    Write-Host ""
+    Write-Host "  Config"
+    $cwd = (Get-Location).Path
+    $cfgPaths = @(
+        @{ path = (Join-Path $cwd ".grimoire\settings.local.toml"); label = "project personal (.grimoire\settings.local.toml)" }
+        @{ path = (Join-Path $cwd ".grimoire\settings.toml");       label = "project shared (.grimoire\settings.toml)" }
+        @{ path = (Join-Path $HOME ".config\grimoire\settings.toml"); label = "global (~\.config\grimoire\settings.toml)" }
+    )
+    $hasAnyCfg = $false
+    foreach ($cfg in $cfgPaths) {
+        if (-not (Test-Path $cfg.path)) { Write-Host "    $skip  $($cfg.label) — not found"; continue }
+        $hasAnyCfg = $true
+        $valid = $true
+        try {
+            $content = Get-Content $cfg.path -Raw -ErrorAction Stop
+            if ([string]::IsNullOrWhiteSpace($content)) { $valid = $false }
+        } catch { $valid = $false }
+        if ($valid) { Write-Host "    $ok  $($cfg.label) — present" }
+        else        { Write-Host "    $fail  $($cfg.label) — present, unreadable"; $er++ }
+    }
+    if (-not $hasAnyCfg) { Write-Host "    $skip  no settings files found (grimoire uses defaults)" }
+
+    # ── Summary ──────────────────────────────────────────────────────────────────
+    Write-Host ""
+    if ($er -eq 0 -and $w -eq 0) {
+        Write-Host "  $ok  All checks passed."
+    } else {
+        $parts = @()
+        if ($er -gt 0) { $parts += "$er error(s)" }
+        if ($w  -gt 0) { $parts += "$w warning(s)" }
+        Write-Host "  Summary: $($parts -join ', ')."
+    }
+    Write-Host ""
 }
 
 function Invoke-Install([string]$Src, [string]$TargetAgent) {
@@ -395,21 +752,12 @@ function Uninstall-Domain([string]$DomainName, [string]$SubdomainName, [string]$
 }
 
 # ── Main ──────────────────────────────────────────────────────────────────────
-if ($Help) { Show-Usage; exit 0 }
-if ($List) { Get-SkillList; exit 0 }
+if ($Help)    { Show-Usage;     exit 0 }
+if ($List)    { Get-SkillList;  exit 0 }
+if ($Version) { Invoke-Version; exit 0 }
+if ($Doctor)  { Invoke-Doctor;  exit 0 }
 
-if ($Upgrade) {
-    if (-not (Test-Path (Join-Path $GrimoireHome ".git"))) {
-        Write-Host "No grimoire clone found at $GrimoireHome. Run install first."
-        exit 1
-    }
-    Write-Host "Pulling latest grimoire at $GrimoireHome..."
-    git -C $GrimoireHome pull
-    Write-Host "Cleaning broken junctions..."
-    Invoke-Clean
-    Write-Host "Done."
-    exit 0
-}
+if ($Upgrade) { Invoke-Upgrade; exit 0 }
 
 if ($Clean -and -not $Uninstall -and -not $Domain -and -not $Skill) {
     Write-Host "Cleaning broken junctions..."
@@ -423,16 +771,23 @@ $isInteractive = (-not $Domain -and -not $Skill -and -not $Target -and -not $Yes
 if ($isInteractive) {
     Print-Banner
 
-    $tuiMode = Select-One "⚙️  What would you like to do?" @("📥 Install", "🗑️  Uninstall")
+    $tuiMode = Select-One "⚙️  What would you like to do?" @("📥 Install", "🗑️  Uninstall", "⬆️  Upgrade", "🩺 Doctor", "🚪 Exit")
+    if ($tuiMode -like "*Doctor*")  { Invoke-Doctor;  exit 0 }
+    if ($tuiMode -like "*Upgrade*") { Invoke-Upgrade; exit 0 }
+    if ($tuiMode -like "*Exit*")    { exit 0 }
 
     $detected = Get-DetectedAgents
     if ($detected.Count -eq 0) {
         Write-Host "No agents detected. Defaulting to Claude Code."
         $agentList = @("claude")
     } else {
-        if ($tuiMode -like "*Uninstall*") { $agentList = Invoke-Multiselect "🤖 Which agents to uninstall from?" $detected }
-        else                              { $agentList = Invoke-Multiselect "🤖 Which agents to install to?"    $detected }
-        if ($agentList.Count -eq 0) { Write-Host "No agents selected. Exiting."; exit 0 }
+        $displayOpts = @()
+        foreach ($a in $detected) { $displayOpts += Get-AgentDisplayName $a }
+        if ($tuiMode -like "*Uninstall*") { $displaySel = Invoke-Multiselect "🤖 Which agents to uninstall from?" $displayOpts }
+        else                              { $displaySel = Invoke-Multiselect "🤖 Which agents to install to?"    $displayOpts }
+        if ($displaySel.Count -eq 0) { Write-Host "No agents selected. Exiting."; exit 0 }
+        $agentList = @()
+        foreach ($d in $displaySel) { $agentList += Get-AgentFromDisplay $d }
     }
 
     $e = [char]27
@@ -494,6 +849,7 @@ if ($isInteractive) {
         if ($agentList.Count -gt 1) { Write-Host "🗑️  $unique skills uninstalled × $($agentList.Count) agents ($($script:UninstalledCount) total) → $($agentList -join ' ')" }
         else                        { Write-Host "🗑️  $unique skills uninstalled → $($agentList -join ' ')" }
         Invoke-Clean
+        if (-not (Test-AnySkillsInstalled)) { Remove-GlobalBin }
 
     } else {
         $domainList = Invoke-Multiselect "📚 Which domains to install?" $allDomains
@@ -545,6 +901,7 @@ if ($isInteractive) {
         if ($agentList.Count -gt 1) { Write-Host "✅ $unique skills installed × $($agentList.Count) agents ($($script:InstalledCount) total) → $($agentList -join ' ')" }
         else                        { Write-Host "✅ $unique skills installed → $($agentList -join ' ')" }
         Invoke-Clean
+        Install-GlobalBin
     }
 
 } else {
@@ -604,6 +961,11 @@ if ($isInteractive) {
         }
     }
     Invoke-Clean
+    if ($Uninstall) {
+        if (-not (Test-AnySkillsInstalled)) { Remove-GlobalBin }
+    } else {
+        Install-GlobalBin
+    }
 }
 
 # ── Footer ────────────────────────────────────────────────────────────────────

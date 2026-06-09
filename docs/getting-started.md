@@ -28,19 +28,19 @@ See [`.opencode/INSTALL.md`](../.opencode/INSTALL.md) for plugin configuration.
 ### Gemini CLI
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/jeffreytse/grimoire/main/scripts/install.sh | bash --target gemini
+curl -fsSL https://raw.githubusercontent.com/jeffreytse/grimoire/main/scripts/grimoire | bash --target gemini
 ```
 
 ### Script install (all agents)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/jeffreytse/grimoire/main/scripts/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/jeffreytse/grimoire/main/scripts/grimoire | bash
 
 # Options
-./scripts/install.sh --domain engineering
-./scripts/install.sh --domain engineering --subdomain development
-./scripts/install.sh --skill engineering/development/propose-conventional-commit
-./scripts/install.sh --target all    # install for all detected agents
+./scripts/grimoire --domain engineering
+./scripts/grimoire --domain engineering --subdomain development
+./scripts/grimoire --skill engineering/development/propose-conventional-commit
+./scripts/grimoire --target all    # install for all detected agents
 ```
 
 ---

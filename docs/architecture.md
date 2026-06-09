@@ -174,7 +174,7 @@ skills/
 
 ### Claude Code
 
-Claude Code uses the marketplace system. First add the marketplace catalog, then install individual plugins. Skills installed via plugins are **namespaced** (e.g., `/grimoire-engineering:propose-conventional-commit`); skills installed via `install.sh` are not.
+Claude Code uses the marketplace system. First add the marketplace catalog, then install individual plugins. Skills installed via plugins are **namespaced** (e.g., `/grimoire-engineering:propose-conventional-commit`); skills installed via `grimoire` are not.
 
 Install commands:
 ```bash

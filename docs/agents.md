@@ -12,8 +12,8 @@ grimoire works across six AI agents. Each has its own plugin format and installa
 | GitHub Copilot CLI | `.claude-plugin/plugin.json` (shared) | `copilot plugin marketplace add jeffreytse/grimoire` then `copilot plugin install grimoire@grimoire` |
 | Gemini CLI | `gemini-extension.json` + `GEMINI.md` | `gemini extensions install https://github.com/jeffreytse/grimoire` |
 | OpenCode | `.opencode/plugins/grimoire.js` | `.opencode/plugins/` auto-load or `opencode.json` plugin array |
-| Codex CLI | `AGENTS.md` (auto-loaded) | `install.sh --target codex` for skills |
-| Cursor | `AGENTS.md` (context injection) | `install.sh --target cursor` |
+| Codex CLI | `AGENTS.md` (auto-loaded) | `grimoire --target codex` for skills |
+| Cursor | `AGENTS.md` (context injection) | `grimoire --target cursor` |
 
 ---
 
@@ -63,13 +63,13 @@ Describe your task. Copilot CLI activates the matching skill based on its `descr
 
 **Install:**
 ```bash
-./scripts/install.sh --target codex
+./scripts/grimoire --target codex
 ```
 
-Codex CLI supports `AGENTS.md` natively — grimoire's `AGENTS.md` is auto-loaded at session start, providing skill path conventions and domain routing. For the full skill library, run `install.sh` to copy skills to the Codex skills directory.
+Codex CLI supports `AGENTS.md` natively — grimoire's `AGENTS.md` is auto-loaded at session start, providing skill path conventions and domain routing. For the full skill library, run `grimoire` to copy skills to the Codex skills directory.
 
 **Using skills:**
-Codex CLI has an interactive plugin browser: run `codex` then type `/plugins` to browse and install marketplace plugins. For grimoire skills installed via `install.sh`, describe your task and Codex routes to the matching skill via `AGENTS.md` context.
+Codex CLI has an interactive plugin browser: run `codex` then type `/plugins` to browse and install marketplace plugins. For grimoire skills installed via `grimoire`, describe your task and Codex routes to the matching skill via `AGENTS.md` context.
 
 ---
 
@@ -77,10 +77,10 @@ Codex CLI has an interactive plugin browser: run `codex` then type `/plugins` to
 
 **Install:**
 ```bash
-./scripts/install.sh --target cursor
+./scripts/grimoire --target cursor
 ```
 
-No official Cursor CLI plugin install command exists. Skills installed via `install.sh` are available through AGENTS.md context injection. Cursor reads `AGENTS.md` from the project root automatically in Agent mode.
+No official Cursor CLI plugin install command exists. Skills installed via `grimoire` are available through AGENTS.md context injection. Cursor reads `AGENTS.md` from the project root automatically in Agent mode.
 
 **Using skills:**
 Describe your situation in the Cursor chat or Composer panel. Skills activate when the task matches a skill's triggering conditions.
@@ -166,7 +166,7 @@ Any agent that reads `AGENTS.md` from the project root gets grimoire's bootstrap
 
 **Install:**
 ```bash
-./scripts/install.sh --target all
+./scripts/grimoire --target all
 ```
 
 ---

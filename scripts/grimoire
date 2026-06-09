@@ -7,6 +7,13 @@ LINK=1
 
 SCRIPT_PATH="${BASH_SOURCE[0]:-}"
 if [[ -n "${SCRIPT_PATH}" && -f "${SCRIPT_PATH}" ]]; then
+  # Resolve symlinks so REPO_ROOT is correct when called via a global bin symlink
+  _resolved="${SCRIPT_PATH}"
+  while [[ -L "${_resolved}" ]]; do
+    _link="$(readlink "${_resolved}")"
+    [[ "${_link}" == /* ]] && _resolved="${_link}" || _resolved="$(dirname "${_resolved}")/${_link}"
+  done
+  SCRIPT_PATH="${_resolved}"
   REPO_ROOT="$(cd "$(dirname "${SCRIPT_PATH}")/.." && pwd)"
 else
   if [[ -d "${GRIMOIRE_HOME}/.git" ]]; then
@@ -25,7 +32,7 @@ GEMINI_SKILLS_DIR="${HOME}/.gemini/skills"
 
 usage() {
   cat <<EOF
-Usage: install.sh [OPTIONS]
+Usage: grimoire [OPTIONS]
 
 Options:
   --domain <name>       Install/uninstall all skills for a domain
@@ -37,22 +44,24 @@ Options:
   --clean               Remove broken symlinks from all agent skill dirs
   --uninstall           Remove skills instead of installing
   --list                List available domains, sub-domains, and skills
+  --doctor              Run a health check on the grimoire installation
   --yes                 Non-interactive: install all skills to all detected agents
+  --version             Show grimoire version
   --help                Show this help
 
 Environment:
   GRIMOIRE_HOME         Persistent clone location (default: ~/.grimoire)
 
 Examples:
-  install.sh                                                # Interactive TUI
-  install.sh --yes                                          # Install everything, no prompts
-  install.sh --upgrade                                      # Pull latest grimoire
-  install.sh --clean                                        # Remove broken symlinks
-  install.sh --domain engineering --target claude
-  install.sh --domain engineering --copy                    # Copy instead of symlink
-  install.sh --skill engineering/development/propose-conventional-commit
-  install.sh --uninstall --domain engineering --target claude
-  install.sh --uninstall --skill engineering/development/propose-conventional-commit
+  grimoire                                                  # Interactive TUI
+  grimoire --yes                                            # Install everything, no prompts
+  grimoire --upgrade                                        # Pull latest grimoire
+  grimoire --clean                                          # Remove broken symlinks
+  grimoire --domain engineering --target claude
+  grimoire --domain engineering --copy                      # Copy instead of symlink
+  grimoire --skill engineering/development/propose-conventional-commit
+  grimoire --uninstall --domain engineering --target claude
+  grimoire --uninstall --skill engineering/development/propose-conventional-commit
 EOF
 }
 
@@ -307,10 +316,28 @@ install_skill_dir() {
 
 detect_agents() {
   local detected=()
-  [[ -d "${HOME}/.claude" ]] && detected+=("claude")
-  [[ -d "${HOME}/.agents" ]] && detected+=("codex")
-  [[ -d "${HOME}/.gemini" ]] && detected+=("gemini")
+  command -v claude  >/dev/null 2>&1 && detected+=("claude")
+  command -v codex   >/dev/null 2>&1 && detected+=("codex")
+  command -v gemini  >/dev/null 2>&1 && detected+=("gemini")
   echo "${detected[@]:-}"
+}
+
+agent_display_name() {
+  case "$1" in
+    claude) echo "Claude Code" ;;
+    codex)  echo "Codex" ;;
+    gemini) echo "Gemini CLI" ;;
+    *)      echo "$1" ;;
+  esac
+}
+
+agent_from_display() {
+  case "$1" in
+    "Claude Code") echo "claude" ;;
+    "Codex")       echo "codex"  ;;
+    "Gemini CLI")  echo "gemini" ;;
+    *)             echo "$1" ;;
+  esac
 }
 
 do_install() {
@@ -458,6 +485,43 @@ uninstall_subdomain() {
   done
 }
 
+has_any_skills_installed() {
+  local _dir
+  for _dir in "${CLAUDE_SKILLS_DIR}" "${AGENTS_SKILLS_DIR}" "${GEMINI_SKILLS_DIR}"; do
+    [[ -d "${_dir}" ]] || continue
+    local _any
+    _any=$(find "${_dir}" -mindepth 1 -maxdepth 1 2>/dev/null | head -1)
+    [[ -n "${_any}" ]] && return 0
+  done
+  return 1
+}
+
+install_global_bin() {
+  local _target _dir
+  for _target in "/usr/local/bin/grimoire" "${HOME}/.local/bin/grimoire"; do
+    _dir="$(dirname "${_target}")"
+    if [[ -d "${_dir}" && -w "${_dir}" ]]; then
+      ln -sf "${REPO_ROOT}/scripts/grimoire" "${_target}" 2>/dev/null && \
+        printf '  linked: grimoire → %s\n' "${_target}" >/dev/tty && return 0
+    fi
+  done
+  mkdir -p "${HOME}/.local/bin" 2>/dev/null
+  if ln -sf "${REPO_ROOT}/scripts/grimoire" "${HOME}/.local/bin/grimoire" 2>/dev/null; then
+    printf '  linked: grimoire → %s\n' "${HOME}/.local/bin/grimoire" >/dev/tty
+  else
+    printf '  warning: could not create global grimoire command\n' >/dev/tty
+  fi
+}
+
+remove_global_bin() {
+  local _target
+  for _target in "/usr/local/bin/grimoire" "${HOME}/.local/bin/grimoire"; do
+    if [[ -L "${_target}" ]]; then
+      unlink "${_target}" 2>/dev/null && printf '  unlinked: %s\n' "${_target}" >/dev/tty
+    fi
+  done
+}
+
 do_clean() {
   local _cleaned=0
   local dirs=("${CLAUDE_SKILLS_DIR}" "${AGENTS_SKILLS_DIR}" "${GEMINI_SKILLS_DIR}")
@@ -498,8 +562,338 @@ uninstall_domain() {
   fi
 }
 
+_query_version() {
+  local _raw
+  _raw="$("$1" --version 2>/dev/null | head -1)" || _raw=""
+  printf '%s' "${_raw}" | grep -o '[0-9][0-9.]*' | head -1
+}
+
+do_version() {
+  local _ok=$'\033[0;32m✅\033[0m'
+  local _fail=$'\033[0;31m❌\033[0m'
+  local _warn=$'\033[0;33m⚠️ \033[0m'
+  local _grim_ver
+  _grim_ver="$(cat "${REPO_ROOT}/VERSION" 2>/dev/null | tr -d '[:space:]')" || _grim_ver=""
+  [[ -z "${_grim_ver}" ]] && _grim_ver="unknown"
+  printf '\n'
+  if [[ -d "${REPO_ROOT}/.git" ]]; then
+    local _commit _date
+    _commit="$(git -C "${REPO_ROOT}" rev-parse --short HEAD 2>/dev/null)" || _commit="unknown"
+    _date="$(git -C "${REPO_ROOT}" log -1 --format='%cd' --date=short 2>/dev/null)" || _date="unknown"
+    printf '  %s  grimoire:    v%s (commit %s, %s)\n' "${_ok}" "${_grim_ver}" "${_commit}" "${_date}"
+    printf '  %s  location:    %s\n' "${_ok}" "${REPO_ROOT}"
+  else
+    printf '  %s  grimoire:    v%s\n' "${_ok}" "${_grim_ver}"
+    printf '  %s  git repo:    not found at %s\n' "${_fail}" "${REPO_ROOT}"
+  fi
+  if [[ -n "${SCRIPT_PATH}" && -x "${SCRIPT_PATH}" ]]; then
+    printf '  %s  grimoire:    executable\n' "${_ok}"
+  else
+    printf '  %s  grimoire:    not executable\n' "${_warn}"
+  fi
+  printf '\n'
+}
+
+_upgrade_show_result() {
+  # args: old_commit old_ver old_date new_commit new_ver new_date
+  local _old_commit="$1" _old_ver="$2" _old_date="$3"
+  local _new_commit="$4" _new_ver="$5" _new_date="$6"
+  local _ok=$'\033[0;32m✅\033[0m'
+  local _new_skills _updated_skills
+  _new_skills="$(git -C "${_UPGRADE_DIR}" diff --name-status "${_old_commit}" "${_new_commit}" -- '*/SKILL.md' 2>/dev/null | grep -c '^A')" || _new_skills=0
+  _updated_skills="$(git -C "${_UPGRADE_DIR}" diff --name-status "${_old_commit}" "${_new_commit}" -- '*/SKILL.md' 2>/dev/null | grep -c '^M')" || _updated_skills=0
+  printf '\n  %s  Grimoire upgraded to latest.\n\n' "${_ok}"
+  printf '    Previous: v%s (commit %s, %s)\n' "${_old_ver}" "${_old_commit}" "${_old_date}"
+  printf '    Current:  v%s (commit %s, %s)\n' "${_new_ver}" "${_new_commit}" "${_new_date}"
+  printf '\n'
+  [[ ${_new_skills}     -gt 0 ]] && printf '    New skills:     %d\n' "${_new_skills}"
+  [[ ${_updated_skills} -gt 0 ]] && printf '    Updated skills: %d\n' "${_updated_skills}"
+  printf '\n'
+}
+
+_upgrade_confirm() {
+  [[ ${YES} -eq 1 ]] && return 0
+  printf 'Upgrade now? [y/n] '
+  local _ans; read -r _ans
+  [[ "${_ans}" == "y" || "${_ans}" == "Y" ]]
+}
+
+_upgrade_stable() {
+  local _ok=$'\033[0;32m✅\033[0m'
+  local _cur_commit _cur_date _cur_ver
+  _cur_commit="$(git -C "${_UPGRADE_DIR}" rev-parse --short HEAD 2>/dev/null)" || _cur_commit="unknown"
+  _cur_date="$(git -C "${_UPGRADE_DIR}" log -1 --format='%cd' --date=short 2>/dev/null)" || _cur_date="unknown"
+  _cur_ver="$(cat "${_UPGRADE_DIR}/VERSION" 2>/dev/null | tr -d '[:space:]')" || _cur_ver="unknown"
+
+  printf 'Fetching release tags...\n'
+  git -C "${_UPGRADE_DIR}" fetch --tags --quiet 2>/dev/null || true
+
+  local _latest_tag
+  _latest_tag="$(git -C "${_UPGRADE_DIR}" tag --sort=-v:refname 2>/dev/null | grep -E '^v?[0-9]' | head -1)" || _latest_tag=""
+  if [[ -z "${_latest_tag}" ]]; then
+    printf '  No release tags found. Try the unstable channel.\n\n'; return 0
+  fi
+
+  local _tag_sha _local_sha
+  _tag_sha="$(git -C "${_UPGRADE_DIR}" rev-list -n 1 "${_latest_tag}" 2>/dev/null)"  || _tag_sha=""
+  _local_sha="$(git -C "${_UPGRADE_DIR}" rev-parse HEAD 2>/dev/null)"                || _local_sha=""
+  local _tag_short _tag_date
+  _tag_short="$(git -C "${_UPGRADE_DIR}" rev-parse --short "${_latest_tag}" 2>/dev/null)" || _tag_short=""
+  _tag_date="$(git -C "${_UPGRADE_DIR}" log -1 --format='%cd' --date=short "${_latest_tag}" 2>/dev/null)" || _tag_date=""
+
+  if [[ "${_tag_sha}" == "${_local_sha}" ]]; then
+    printf '  %s  Already on latest stable release. (%s, commit %s, %s)\n\n' "${_ok}" "${_latest_tag}" "${_tag_short}" "${_tag_date}"
+    return 0
+  fi
+
+  local _tag_ver="${_latest_tag#v}"
+  printf '\n  New stable release available:\n'
+  printf '    Current:  v%s (commit %s, %s)\n' "${_cur_ver}" "${_cur_commit}" "${_cur_date}"
+  printf '    New:      %s (commit %s, %s)\n' "${_latest_tag}" "${_tag_short}" "${_tag_date}"
+  printf '\n'
+
+  _upgrade_confirm || { printf 'Upgrade cancelled.\n'; return 0; }
+
+  printf '\nChecking out %s...\n' "${_latest_tag}"
+  git -C "${_UPGRADE_DIR}" checkout "${_latest_tag}" --quiet
+
+  _upgrade_show_result "${_cur_commit}" "${_cur_ver}" "${_cur_date}" "${_tag_short}" "${_tag_ver}" "${_tag_date}"
+  printf 'Cleaning broken symlinks...\n'
+  do_clean
+}
+
+_upgrade_unstable() {
+  local _ok=$'\033[0;32m✅\033[0m'
+  local _cur_commit _cur_date _cur_ver
+  _cur_commit="$(git -C "${_UPGRADE_DIR}" rev-parse --short HEAD 2>/dev/null)" || _cur_commit="unknown"
+  _cur_date="$(git -C "${_UPGRADE_DIR}" log -1 --format='%cd' --date=short 2>/dev/null)" || _cur_date="unknown"
+  _cur_ver="$(cat "${_UPGRADE_DIR}/VERSION" 2>/dev/null | tr -d '[:space:]')" || _cur_ver="unknown"
+
+  printf 'Checking for updates...\n'
+  git -C "${_UPGRADE_DIR}" fetch --quiet 2>/dev/null || true
+
+  local _local_sha _remote_sha
+  _local_sha="$(git -C "${_UPGRADE_DIR}" rev-parse HEAD 2>/dev/null)"    || _local_sha=""
+  _remote_sha="$(git -C "${_UPGRADE_DIR}" rev-parse '@{u}' 2>/dev/null)" || _remote_sha=""
+
+  if [[ -z "${_remote_sha}" || "${_local_sha}" == "${_remote_sha}" ]]; then
+    printf '  %s  Already up to date. (v%s, commit %s, %s)\n\n' "${_ok}" "${_cur_ver}" "${_cur_commit}" "${_cur_date}"
+    return 0
+  fi
+
+  local _new_short _new_date _new_ver
+  _new_short="$(git -C "${_UPGRADE_DIR}" rev-parse --short '@{u}' 2>/dev/null)"                 || _new_short=""
+  _new_date="$(git -C "${_UPGRADE_DIR}" log -1 --format='%cd' --date=short '@{u}' 2>/dev/null)" || _new_date=""
+  _new_ver="$(git -C "${_UPGRADE_DIR}" show '@{u}':VERSION 2>/dev/null | tr -d '[:space:]')"    || _new_ver=""
+
+  printf '\n  New version available:\n'
+  printf '    Current:  v%s (commit %s, %s)\n' "${_cur_ver}" "${_cur_commit}" "${_cur_date}"
+  if [[ -n "${_new_ver}" ]]; then
+    printf '    New:      v%s (commit %s, %s)\n' "${_new_ver}" "${_new_short}" "${_new_date}"
+  else
+    printf '    New:      commit %s (%s)\n' "${_new_short}" "${_new_date}"
+  fi
+  printf '\n'
+
+  _upgrade_confirm || { printf 'Upgrade cancelled.\n'; return 0; }
+
+  printf '\nPulling latest grimoire at %s...\n' "${_UPGRADE_DIR}"
+  git -C "${_UPGRADE_DIR}" pull --quiet
+
+  local _pulled_commit _pulled_date _pulled_ver
+  _pulled_commit="$(git -C "${_UPGRADE_DIR}" rev-parse --short HEAD 2>/dev/null)" || _pulled_commit="unknown"
+  _pulled_date="$(git -C "${_UPGRADE_DIR}" log -1 --format='%cd' --date=short 2>/dev/null)" || _pulled_date="unknown"
+  _pulled_ver="$(cat "${_UPGRADE_DIR}/VERSION" 2>/dev/null | tr -d '[:space:]')" || _pulled_ver="unknown"
+
+  _upgrade_show_result "${_cur_commit}" "${_cur_ver}" "${_cur_date}" "${_pulled_commit}" "${_pulled_ver}" "${_pulled_date}"
+  printf 'Cleaning broken symlinks...\n'
+  do_clean
+}
+
+# resolved once by do_upgrade; shared with helper functions above
+_UPGRADE_DIR=""
+
+do_upgrade() {
+  if [[ -d "${GRIMOIRE_HOME}/.git" ]]; then
+    _UPGRADE_DIR="${GRIMOIRE_HOME}"
+  elif [[ -d "${REPO_ROOT}/.git" ]]; then
+    _UPGRADE_DIR="${REPO_ROOT}"
+  else
+    printf 'No grimoire git repository found.\n'
+    printf '  Checked: %s\n' "${GRIMOIRE_HOME}"
+    printf '  Checked: %s\n' "${REPO_ROOT}"
+    exit 1
+  fi
+
+  local _channel="unstable"
+  if [[ ${YES} -eq 0 ]]; then
+    local _channel_sel
+    select_one _channel_sel "📡 Which upgrade channel?" \
+      "🔒 Stable    (GitHub releases)" \
+      "🔬 Unstable  (latest branch commit)"
+    [[ "${_channel_sel}" == *Stable* ]] && _channel="stable"
+  fi
+
+  if [[ "${_channel}" == "stable" ]]; then
+    _upgrade_stable
+  else
+    _upgrade_unstable
+  fi
+}
+
+do_doctor() {
+  local _w=0 _e=0
+  local _ok=$'\033[0;32m✅\033[0m'
+  local _warn=$'\033[0;33m⚠️ \033[0m'
+  local _fail=$'\033[0;31m❌\033[0m'
+
+  printf '\nGrimoire health check\n\n'
+
+  # ── Source ──────────────────────────────────────────────────────────────────
+  printf '  Source\n'
+  local _grim_ver
+  _grim_ver="$(cat "${REPO_ROOT}/VERSION" 2>/dev/null | tr -d '[:space:]')" || _grim_ver=""
+  [[ -z "${_grim_ver}" ]] && _grim_ver="unknown"
+  if [[ -d "${REPO_ROOT}/.git" ]]; then
+    local _commit _date
+    _commit="$(git -C "${REPO_ROOT}" rev-parse --short HEAD 2>/dev/null)" || _commit="unknown"
+    _date="$(git -C "${REPO_ROOT}" log -1 --format='%cd' --date=short 2>/dev/null)" || _date="unknown"
+    printf '    %s  grimoire:    v%s (commit %s, %s)\n' "${_ok}" "${_grim_ver}" "${_commit}" "${_date}"
+    printf '    %s  location:    %s\n' "${_ok}" "${REPO_ROOT}"
+  else
+    printf '    %s  grimoire:    v%s\n' "${_ok}" "${_grim_ver}"
+    printf '    %s  git repo:    not found at %s\n' "${_fail}" "${REPO_ROOT}"
+    (( _e++ )) || true
+  fi
+  if [[ -n "${SCRIPT_PATH}" && -x "${SCRIPT_PATH}" ]]; then
+    printf '    %s  install.sh:  executable\n' "${_ok}"
+  else
+    printf '    %s  install.sh:  not executable\n' "${_warn}"
+    (( _w++ )) || true
+  fi
+
+  # ── AI agents ────────────────────────────────────────────────────────────────
+  printf '\n  AI agents\n'
+
+  # Grimoire-integrated agents: show detection + version + skill counts
+  for _agent in claude codex gemini; do
+    local _dir _label _ver _vs
+    case "${_agent}" in
+      claude) _dir="${CLAUDE_SKILLS_DIR}"; _label="Claude Code" ;;
+      codex)  _dir="${AGENTS_SKILLS_DIR}"; _label="Codex" ;;
+      gemini) _dir="${GEMINI_SKILLS_DIR}"; _label="Gemini CLI" ;;
+    esac
+    if command -v "${_agent}" >/dev/null 2>&1; then
+      _ver="$(_query_version "${_agent}")"
+      [[ -n "${_ver}" ]] && _vs="v${_ver}" || _vs="detected"
+      if [[ -d "${_dir}" ]]; then
+        local _count _broken
+        _count=$(find "${_dir}" -mindepth 1 -maxdepth 1 \( -type d -o -type l \) 2>/dev/null | wc -l | tr -d ' ')
+        _broken=$(find "${_dir}" -mindepth 1 -maxdepth 1 -type l ! -e 2>/dev/null | wc -l | tr -d ' ') || _broken=0
+        if [[ ${_broken} -gt 0 ]]; then
+          printf '    %s  %-16s %-12s %d grimoire skills, %d broken → run: --clean --target %s\n' \
+            "${_warn}" "${_label}" "${_vs}" "${_count}" "${_broken}" "${_agent}"
+          (( _w++ )) || true
+        else
+          printf '    %s  %-16s %-12s %d grimoire skills\n' "${_ok}" "${_label}" "${_vs}" "${_count}"
+        fi
+      else
+        printf '    %s  %-16s %-12s (no grimoire skills installed — run: grimoire --target %s)\n' \
+          "${_warn}" "${_label}" "${_vs}" "${_agent}"
+        (( _w++ )) || true
+      fi
+    else
+      printf '    ⬜  %-16s not found\n' "${_label}"
+    fi
+  done
+
+  # Detect-only agents (grimoire skills not applicable or not yet supported)
+  # GitHub Copilot: requires gh CLI + copilot extension
+  local _copilot_ok=0
+  if command -v gh >/dev/null 2>&1; then
+    gh extension list 2>/dev/null | grep -q "copilot" && _copilot_ok=1 || true
+  fi
+  if [[ ${_copilot_ok} -eq 1 ]]; then
+    local _gh_ver
+    _gh_ver="$(_query_version gh)"
+    [[ -n "${_gh_ver}" ]] && _gh_ver="gh v${_gh_ver}" || _gh_ver="detected"
+    printf '    %s  %-16s %-12s (copilot extension)\n' "${_ok}" "GitHub Copilot" "${_gh_ver}"
+  else
+    printf '    ⬜  %-16s not found\n' "GitHub Copilot"
+  fi
+
+  for _spec in "OpenCode:opencode" "Cursor:cursor" "Windsurf:windsurf" "Aider:aider"; do
+    local _label _cmd _ver _vs
+    _label="${_spec%%:*}"
+    _cmd="${_spec#*:}"
+    if command -v "${_cmd}" >/dev/null 2>&1; then
+      _ver="$(_query_version "${_cmd}")"
+      [[ -n "${_ver}" ]] && _vs="v${_ver}" || _vs="detected"
+      printf '    %s  %-16s %s\n' "${_ok}" "${_label}" "${_vs}"
+    else
+      printf '    ⬜  %-16s not found\n' "${_label}"
+    fi
+  done
+
+  # ── Config files ─────────────────────────────────────────────────────────────
+  printf '\n  Config\n'
+  local _cwd
+  _cwd="$(pwd)"
+  local -a _cfg_paths=(
+    "${_cwd}/.grimoire/settings.local.toml|project personal (.grimoire/settings.local.toml)"
+    "${_cwd}/.grimoire/settings.toml|project shared (.grimoire/settings.toml)"
+    "${HOME}/.config/grimoire/settings.toml|global (~/.config/grimoire/settings.toml)"
+  )
+  local _has_any_cfg=0
+  for _entry in "${_cfg_paths[@]}"; do
+    local _path="${_entry%%|*}"
+    local _label="${_entry#*|}"
+    if [[ ! -f "${_path}" ]]; then
+      printf '    ⬜  %s — not found\n' "${_label}"
+      continue
+    fi
+    _has_any_cfg=1
+    local _toml_ok=1
+    if command -v python3 >/dev/null 2>&1; then
+      python3 - "${_path}" <<'PYEOF' 2>/dev/null || _toml_ok=0
+import sys
+path = sys.argv[1]
+try:
+    import tomllib
+except ImportError:
+    try:
+        import tomli as tomllib  # type: ignore
+    except ImportError:
+        sys.exit(0)
+with open(path, "rb") as f:
+    tomllib.load(f)
+PYEOF
+    fi
+    if [[ ${_toml_ok} -eq 1 ]]; then
+      printf '    %s  %s — present, valid TOML\n' "${_ok}" "${_label}"
+    else
+      printf '    %s  %s — present, invalid TOML\n' "${_fail}" "${_label}"
+      (( _e++ )) || true
+    fi
+  done
+  if [[ ${_has_any_cfg} -eq 0 ]]; then
+    printf '    ⬜  no settings files found (grimoire uses defaults)\n'
+  fi
+
+  # ── Summary ──────────────────────────────────────────────────────────────────
+  printf '\n'
+  if [[ ${_e} -eq 0 && ${_w} -eq 0 ]]; then
+    printf '  %s  All checks passed.\n\n' "${_ok}"
+  else
+    local _parts=()
+    [[ ${_e} -gt 0 ]] && _parts+=("${_e} error(s)")
+    [[ ${_w} -gt 0 ]] && _parts+=("${_w} warning(s)")
+    printf '  Summary: %s.\n\n' "$(IFS=', '; echo "${_parts[*]}")"
+  fi
+}
+
 # ── Argument parsing ───────────────────────────────────────────────────────────
-DOMAIN="" SUBDOMAIN="" SKILL="" TARGET="" YES=0 UNINSTALL=0 UPGRADE=0 CLEAN=0
+DOMAIN="" SUBDOMAIN="" SKILL="" TARGET="" YES=0 UNINSTALL=0 UPGRADE=0 CLEAN=0 DOCTOR=0
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -513,21 +907,20 @@ while [[ $# -gt 0 ]]; do
     --clean)      CLEAN=1;        shift   ;;
     --uninstall)  UNINSTALL=1;    shift   ;;
     --list)       list_skills; exit 0 ;;
+    --version)    do_version; exit 0 ;;
+    --doctor)     DOCTOR=1;       shift   ;;
     --help)       usage; exit 0 ;;
     *) echo "Unknown option: $1"; usage; exit 1 ;;
   esac
 done
 
 if [[ ${UPGRADE} -eq 1 ]]; then
-  if [[ ! -d "${GRIMOIRE_HOME}/.git" ]]; then
-    echo "No grimoire clone found at ${GRIMOIRE_HOME}. Run install first."
-    exit 1
-  fi
-  echo "Pulling latest grimoire at ${GRIMOIRE_HOME}..."
-  git -C "${GRIMOIRE_HOME}" pull
-  echo "Cleaning broken symlinks..."
-  do_clean
-  echo "Done."
+  do_upgrade
+  exit 0
+fi
+
+if [[ ${DOCTOR} -eq 1 ]]; then
+  do_doctor
   exit 0
 fi
 
@@ -541,25 +934,45 @@ fi
 if [[ -z "${DOMAIN}" && -z "${SKILL}" && -z "${TARGET}" && ${YES} -eq 0 && ${UNINSTALL} -eq 0 ]]; then
   print_banner
 
-  # Mode selection (default: Install)
-  select_one _tui_mode "⚙️  What would you like to do?" "📥 Install" "🗑️  Uninstall"
+  # Mode selection
+  select_one _tui_mode "⚙️  What would you like to do?" "📥 Install" "🗑️  Uninstall" "⬆️  Upgrade" "🩺 Doctor" "🚪 Exit"
+
+  if [[ "${_tui_mode}" == *Doctor* ]]; then
+    do_doctor
+    exit 0
+  fi
+  if [[ "${_tui_mode}" == *Upgrade* ]]; then
+    do_upgrade
+    exit 0
+  fi
+  if [[ "${_tui_mode}" == *Exit* ]]; then
+    exit 0
+  fi
 
   read -ra _detected <<< "$(detect_agents)"
 
-  # Agent selection
+  # Agent selection — show display names, map back to internal names after selection
   if [[ ${#_detected[@]} -eq 0 ]]; then
     echo "No agents detected. Defaulting to Claude Code."
     _agent_list=("claude")
   else
+    _display_opts=()
+    for _a in "${_detected[@]}"; do
+      _display_opts+=("$(agent_display_name "${_a}")")
+    done
     if [[ "${_tui_mode}" == *Uninstall* ]]; then
-      multiselect _agent_list "🤖 Which agents to uninstall from?" "${_detected[@]}"
+      multiselect _agent_display_sel "🤖 Which agents to uninstall from?" "${_display_opts[@]}"
     else
-      multiselect _agent_list "🤖 Which agents to install to?" "${_detected[@]}"
+      multiselect _agent_display_sel "🤖 Which agents to install to?" "${_display_opts[@]}"
     fi
-    if [[ ${#_agent_list[@]} -eq 0 ]]; then
+    if [[ ${#_agent_display_sel[@]} -eq 0 ]]; then
       echo "No agents selected. Exiting."
       exit 0
     fi
+    _agent_list=()
+    for _disp in "${_agent_display_sel[@]}"; do
+      _agent_list+=("$(agent_from_display "${_disp}")")
+    done
   fi
 
   if [[ "${_tui_mode}" == *Uninstall* ]]; then
@@ -643,6 +1056,7 @@ if [[ -z "${DOMAIN}" && -z "${SKILL}" && -z "${TARGET}" && ${YES} -eq 0 && ${UNI
     [[ ${#_agent_list[@]} -gt 1 ]] && printf ' × %d agents (%d total)' "${#_agent_list[@]}" "${_uninstalled_count}" >/dev/tty
     printf ' → %s\n' "${_agent_list[*]}" >/dev/tty
     do_clean
+    has_any_skills_installed || remove_global_bin
 
   else
     # ── Install mode ─────────────────────────────────────────────────────────────
@@ -721,6 +1135,7 @@ if [[ -z "${DOMAIN}" && -z "${SKILL}" && -z "${TARGET}" && ${YES} -eq 0 && ${UNI
     [[ ${#_agent_list[@]} -gt 1 ]] && printf ' × %d agents (%d total)' "${#_agent_list[@]}" "${_installed_count}" >/dev/tty
     printf ' → %s\n' "${_agent_list[*]}" >/dev/tty
     do_clean
+    install_global_bin
   fi
 
 # ── Non-interactive / flag-driven ─────────────────────────────────────────────
@@ -812,6 +1227,11 @@ else
     fi
   fi
   do_clean
+  if [[ ${UNINSTALL} -eq 1 ]]; then
+    has_any_skills_installed || remove_global_bin
+  else
+    install_global_bin
+  fi
 fi
 
 _c_bold=$'\033[1m'
