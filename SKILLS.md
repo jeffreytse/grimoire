@@ -1,6 +1,6 @@
 # Skills Directory
 
-559 skills across 27 domains.
+568 skills across 27 domains.
 
 [Install](./README.md#%EF%B8%8F-install) · [Contribute](./CONTRIBUTING.md) · [Standard](./STANDARD.md)
 
@@ -24,7 +24,7 @@
 - [Language (11)](#language)
 - [Law (25)](#law)
 - [Marketing (20)](#marketing)
-- [Grimoire (9)](#grimoire)
+- [Grimoire (28)](#grimoire)
 - [Music (18)](#music)
 - [Parenting (10)](#parenting)
 - [Pets (10)](#pets)
@@ -334,7 +334,7 @@
 
 ---
 
-## Engineering (101) <a name="engineering"></a>
+## Engineering (117) <a name="engineering"></a>
 
 ### ai
 
@@ -349,7 +349,23 @@
 
 ### architecture
 
+- [`apply-abstraction`](./skills/engineering/architecture/skills/apply-abstraction/) — Use when designing modules, services, or class hierarchies — especially when callers depend on concrete implementations, when swapping one provider requires changing multiple call sites, or when tests require the real implementation to run.
+- [`apply-composition-over-inheritance`](./skills/engineering/architecture/skills/apply-composition-over-inheritance/) — Use when designing relationships between classes or modules — especially when tempted to extend a class to reuse its behavior, or when an inheritance hierarchy is becoming deep or brittle.
+- [`apply-controller-pattern`](./skills/engineering/architecture/skills/apply-controller-pattern/) — Use when deciding which non-UI class should handle a system operation or external event — especially when business logic leaks into UI handlers, or when the same system operation is triggered from multiple interfaces (web, CLI, API).
+- [`apply-creator-pattern`](./skills/engineering/architecture/skills/apply-creator-pattern/) — Use when deciding which class should be responsible for creating instances of another class — especially when object creation is scattered across the codebase, or when constructors are called in classes that have no other relationship to the created object.
 - [`apply-domain-driven-design`](./skills/engineering/architecture/skills/apply-domain-driven-design/) — Use when designing complex business software where the domain logic is the primary source of complexity and where miscommunication between technical and business teams causes bugs
+- [`apply-encapsulation`](./skills/engineering/architecture/skills/apply-encapsulation/) — Use when a class's internal state is accessed or mutated from outside — especially when callers reach into fields directly, when invariants are violated by external setters, or when internal data structures leak into the public API.
+- [`apply-high-cohesion`](./skills/engineering/architecture/skills/apply-high-cohesion/) — Use when assigning responsibilities to classes — especially when a class is hard to name, does work unrelated to its core concept, or a single change requires understanding an entire class to avoid breaking something.
+- [`apply-indirection`](./skills/engineering/architecture/skills/apply-indirection/) — Use when two components are directly coupled and that coupling causes problems — especially when changing one component forces changes in the other, or when a component cannot be tested without its direct dependency.
+- [`apply-information-expert`](./skills/engineering/architecture/skills/apply-information-expert/) — Use when deciding which class should be responsible for a computation, validation, or operation — especially when the same data is accessed from multiple places to perform the same calculation, or when a class delegates all its work to another class that holds the actual data.
+- [`apply-inheritance-correctly`](./skills/engineering/architecture/skills/apply-inheritance-correctly/) — Use when deciding whether a class should extend another — especially when tempted to inherit for code reuse, when instanceof checks appear in callers, or when an override weakens the parent's contract.
+- [`apply-law-of-demeter`](./skills/engineering/architecture/skills/apply-law-of-demeter/) — Use when a class reaches through intermediate objects to access deep properties, when a change to an internal object forces changes in unrelated callers, or when code chains method calls three or more levels deep.
+- [`apply-low-coupling`](./skills/engineering/architecture/skills/apply-low-coupling/) — Use when assigning responsibilities to classes — especially when a change to one class ripples into many others, classes are hard to test in isolation, or reusing a class requires dragging in unrelated dependencies.
+- [`apply-object-design-heuristics`](./skills/engineering/architecture/skills/apply-object-design-heuristics/) — Use when reviewing or refactoring an OOP codebase — especially when classes are hard to name, methods reach into other objects' internals, or responsibilities feel wrong but it's unclear exactly why.
+- [`apply-polymorphism`](./skills/engineering/architecture/skills/apply-polymorphism/) — Use when behavior varies based on type — especially when if/switch statements check the type of an object to decide what to do, or when adding a new variant requires editing an existing class.
+- [`apply-protected-variations`](./skills/engineering/architecture/skills/apply-protected-variations/) — Use when a point of variation or instability is identified in a design — especially when a third-party dependency, algorithm, or external interface is likely to change and other components should not be affected.
+- [`apply-pure-fabrication`](./skills/engineering/architecture/skills/apply-pure-fabrication/) — Use when no domain class is a suitable home for a responsibility — especially when assigning a responsibility to a domain object would violate high cohesion or low coupling by introducing infrastructure concerns (database, email, logging) into domain objects.
+- [`apply-solid-principles`](./skills/engineering/architecture/skills/apply-solid-principles/) — Use when designing or reviewing classes and modules in OOP code — especially when tests are hard to write, changes ripple unexpectedly, or classes accumulate unrelated responsibilities.
 - [`apply-strangler-fig-pattern`](./skills/engineering/architecture/skills/apply-strangler-fig-pattern/) — Use when replacing a legacy system or component incrementally without a full rewrite, by routing traffic progressively from the old system to a new implementation.
 - [`audit-technical-debt`](./skills/engineering/architecture/skills/audit-technical-debt/) — Use when assessing, cataloging, or prioritizing technical debt in an existing codebase or system
 - [`design-api`](./skills/engineering/architecture/skills/design-api/) — Use when designing a new REST API, adding endpoints to an existing API, or reviewing an API design for correctness, consistency, and long-term maintainability.
@@ -382,7 +398,11 @@
 
 - [`apply-branch-by-abstraction`](./skills/engineering/development/skills/apply-branch-by-abstraction/) — Use when replacing a large or deeply integrated component of a system incrementally without creating a long-lived feature branch, by introducing an abstraction layer that allows old and new implementations to coexist.
 - [`apply-convention-over-configuration`](./skills/engineering/development/skills/apply-convention-over-configuration/) — Use when designing a project structure, framework, or tooling setup and deciding how much explicit configuration to require from developers.
+- [`apply-defensive-copy`](./skills/engineering/development/skills/apply-defensive-copy/) — Use when writing constructors, setters, or methods that accept or return mutable objects — to prevent callers from silently mutating internal state through shared object references.
 - [`apply-dry-principle`](./skills/engineering/development/skills/apply-dry-principle/) — Use when you notice duplicated code, logic, data, or knowledge across a codebase and need to decide whether and how to consolidate it.
+- [`apply-fail-fast`](./skills/engineering/development/skills/apply-fail-fast/) — Use when writing functions, modules, or services to assert internal assumptions — preconditions, postconditions, invariants — so that violated assumptions produce an immediate, loud error at the point of violation rather than propagating corrupt state downstream.
+- [`apply-kiss-principle`](./skills/engineering/development/skills/apply-kiss-principle/) — Use when reviewing or writing code that feels unnecessarily complex, clever, or hard to follow — to simplify implementation without losing correctness.
+- [`apply-yagni-principle`](./skills/engineering/development/skills/apply-yagni-principle/) — Use when deciding whether to add a feature, abstraction, configuration option, or generalization that isn't required by a current, concrete requirement.
 - [`apply-pair-programming`](./skills/engineering/development/skills/apply-pair-programming/) — Use when onboarding new engineers, tackling high-complexity problems, debugging subtle issues, or when code quality and knowledge sharing are priorities over individual throughput
 - [`apply-parallel-change`](./skills/engineering/development/skills/apply-parallel-change/) — Use when evolving a public API, shared interface, or data schema in a way that must remain backward-compatible with existing consumers during the migration period.
 - [`apply-trunk-based-development`](./skills/engineering/development/skills/apply-trunk-based-development/) — Use when teams want to increase deployment frequency, reduce merge conflicts, or adopt continuous integration and delivery practices
@@ -472,6 +492,7 @@
 - [`design-zero-trust-architecture`](./skills/engineering/security/skills/design-zero-trust-architecture/) — Use when designing or migrating a security architecture to the zero trust model where no user, device, or network is trusted by default
 - [`review-owasp-checklist`](./skills/engineering/security/skills/review-owasp-checklist/) — Use when reviewing a new codebase for security, before a production launch, after a security incident, or during a compliance audit requiring OWASP Top 10 coverage.
 - [`review-secrets-management`](./skills/engineering/security/skills/review-secrets-management/) — Use when reviewing how secrets, credentials, API keys, or certificates are stored, rotated, and accessed in a system
+- [`validate-external-input`](./skills/engineering/security/skills/validate-external-input/) — Use when writing code that accepts data from outside the process boundary — HTTP requests, file uploads, database reads, CLI arguments, environment variables, or inter-service calls — to reject malformed, malicious, or out-of-range data before it reaches business logic.
 
 ### testing
 
@@ -800,10 +821,14 @@
 
 ---
 
-## Grimoire (19) <a name="grimoire"></a>
+## Grimoire (29) <a name="grimoire"></a>
 
+- [`check-best-practice-compliance`](./skills/meta/skills/check-best-practice-compliance/) — Use when the user wants to check whether any artifact or work product aligns with their stated best practice preferences — e.g., "check compliance", "linter for best practices", "are we following our pinned practices?", "check this document against our standards".
+- [`configure-grimoire`](./skills/meta/skills/configure-grimoire/) — Use when the user wants to view, edit, remove, or validate their grimoire settings — including reading current preferences, changing or deleting a setting, switching a named profile, or checking settings.toml for contradictions and expired entries.
 - [`adapt-best-practice`](./skills/grimoire/skills/adapt-best-practice/) — Use when the user wants to apply a practice but has specific constraints that differ from the canonical case — team size, industry regulation, budget, maturity level, technology stack, or organizational culture. Produces an adapted version that preserves the practice's core while fitting the user's reality.
 - [`analyze-problem`](./skills/grimoire/skills/analyze-problem/) — Use when the user presents a problem that isn't well-defined — goal is unclear, scope is unstated, or what's described looks like a symptom rather than a root cause. Asks clarifying questions one at a time until the problem boundary is clear, then produces a problem statement, problem space map, and possible solution routes before handing off to solution skills.
+- [`apply-best-practice-driven-development`](./skills/meta/skills/apply-best-practice-driven-development/) — Use when the user wants to systematically align any project or artifact to their stated best practice preferences — e.g., "apply BPDD", "align this project to our settings", "close the gap between our practices and reality", "enforce our best practices like TDD".
+- [`apply-best-practice-profile`](./skills/meta/skills/apply-best-practice-profile/) — Use when the user wants to activate a named set of best practices for a paradigm or methodology — e.g., "use OOP", "set profile to clean-architecture", "apply TDD practices", "switch to functional style".
 - [`apply-best-practice-tree`](./skills/grimoire/skills/apply-best-practice-tree/) — Use when a problem is complex but stays within one domain — to recursively decompose it into sub-problems and match each to the best-fitting installed skill, one at a time.
 - [`audit-applied-best-practices`](./skills/grimoire/skills/audit-applied-best-practices/) — Use when the user has existing work — code, a document, a plan, a design — and wants to know which best practices were applied, which are missing, and what to fix or add.
 - [`audit-best-practice-domain`](./skills/grimoire/skills/audit-best-practice-domain/) — Use when you need to assess the quality of all skills in a grimoire domain or sub-domain — before a release, after a bulk contribution, or when adopting a domain for the first time.
@@ -812,14 +837,20 @@
 - [`design-best-practice-domain`](./skills/grimoire/skills/design-best-practice-domain/) — Use when adding a new domain or sub-domain to grimoire — whether starting a brand-new domain (health, finance, law), adding a new sub-domain to an existing domain, or deciding whether a new sub-domain is needed at all.
 - [`discover-best-practices`](./skills/grimoire/skills/discover-best-practices/) — Use when the user mentions a field, role, or domain without a specific problem — or wants to know what best practices exist for their area before encountering a problem. Proactively surfaces available practices grouped by subdomain, with emphasis on practices people most commonly discover too late.
 - [`explain-best-practice`](./skills/grimoire/skills/explain-best-practice/) — Use when the user wants to understand WHY a practice works — not just apply it. Covers the problem it solves, its origin, the evidence base, how the mechanism works, failure modes, and common misconceptions. Educational mode, not application mode.
+- [`fix-best-practice-finding`](./skills/meta/skills/fix-best-practice-finding/) — Use when the user wants to fix a specific compliance finding from a check-best-practice-compliance report — e.g., "fix this finding", "resolve violation #3", "fix the SRP violation in UserService", "close this linter error".
+- [`install-grimoire`](./skills/meta/skills/install-grimoire/) — Use when the user wants to install or uninstall grimoire skills by domain or individual skill, upgrade grimoire to the latest version, clean up broken symlinks, or list what skills are available.
 - [`intercept-best-practice`](./skills/grimoire/skills/intercept-best-practice/) — Use when the user is about to begin any task or action — writing, coding, designing, planning — before they have started. Fires proactively on task-start signals to apply the most relevant best practice before the user discovers they needed it.
 - [`pin-best-practice-preference`](./skills/grimoire/skills/pin-best-practice-preference/) — Use when the user wants to save a best practice preference for a domain or subdomain so future sessions automatically apply it without re-matching.
 - [`plan-best-practice-solution`](./skills/grimoire/skills/plan-best-practice-solution/) — Use when the user's problem spans multiple domains, requires coordinating several best practices, or is too complex for a single skill — e.g. "launch a startup", "handle a workplace medical emergency", "going through a divorce while buying a house."
 - [`review-best-practice-fit`](./skills/grimoire/skills/review-best-practice-fit/) — Use when the user already has a solution, plan, approach, or design and wants to know how well it aligns with best practices — including gaps, what's missing, and what to fix.
+- [`resolve-best-practice-conflict`](./skills/meta/skills/resolve-best-practice-conflict/) — Use when two or more installed grimoire skills give contradictory guidance for the same situation, or when the user wants to scan their preferences file proactively to find and rank conflicting skills before a conflict arises.
+- [`review-best-practice-profile`](./skills/meta/skills/review-best-practice-profile/) — Use when the user wants to validate a practice profile before using or sharing it — e.g., "review my profile", "validate my-team.toml", "check this profile before sharing".
 - [`review-best-practice-skill`](./skills/grimoire/skills/review-best-practice-skill/) — Use when evaluating whether a SKILL.md meets grimoire standards — for PR review, self-review before submitting, or auditing existing skills in the repo.
 - [`revise-best-practice-skill`](./skills/grimoire/skills/revise-best-practice-skill/) — Use when an existing SKILL.md has review-best-practice-skill findings to address, a citation has become inaccurate, steps reference an outdated tool, or scope needs adjusting — splitting a skill that covers two concepts, or expanding one that is too shallow.
+- [`share-best-practice-profile`](./skills/meta/skills/share-best-practice-profile/) — Use when the user wants to publish or share a practice profile — e.g., "share my team profile", "publish this profile", "open-source my backend-defaults profile".
 - [`suggest-best-practice`](./skills/grimoire/skills/suggest-best-practice/) — Use when the user describes any situation, problem, goal, complaint, or question — including when they want to browse available best practices for a topic, don't know which domain applies, or don't know a best practice exists for their situation.
 - [`teach-best-practice`](./skills/grimoire/skills/teach-best-practice/) — Use when the user wants to explain, share, or advocate for a best practice with others — a team, manager, client, or stakeholder. Produces structured talking points, a brief explanation, or a presentation outline tailored to the audience's priorities and likely objections.
+- [`write-best-practice-profile`](./skills/meta/skills/write-best-practice-profile/) — Use when the user wants to create a new practice profile — e.g., "create a profile for my team", "write an OOP profile", "make a backend-defaults profile".
 - [`write-best-practice-skill`](./skills/grimoire/skills/write-best-practice-skill/) — Use when authoring a new SKILL.md to contribute to grimoire — whether starting from scratch, adapting existing knowledge, or encoding a domain best practice you know well.
 
 ---
