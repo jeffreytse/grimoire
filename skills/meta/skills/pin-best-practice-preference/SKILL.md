@@ -95,6 +95,8 @@ Write to selected location(s) using TOML format. Domain/subdomain path uses dots
 ```toml
 # Full example — all keys (all optional except practices)
 
+profiles = ["clean-architecture", "tdd"]  # array order = conflict priority; resolves file → default.toml → tag query (see docs/profiles.md)
+
 [global]
 practices = ["simplicity / KISS"]
 
