@@ -68,7 +68,7 @@
 <div align="center">
   <h4>
     <a href="#-why-grimoire">Why</a> |
-    <a href="#-what-a-skill-looks-like">Features</a> |
+    <a href="#-skills-in-action">Features</a> |
     <a href="#%EF%B8%8F-install">Install</a> |
     <a href="#-quick-start">Quick Start</a> |
     <a href="#%EF%B8%8F-domains">Domains</a> |
@@ -96,32 +96,35 @@
 
 ## 🤔 Why Grimoire?
 
-AI assistants have ingested every textbook, every paper, every article ever written. They
-understand fields. They do not practice them. Practice is what happens after 10,000 hours.
-Practice is what a senior surgeon does without thinking. Practice is what a staff engineer
-knows not to do. Practice is what grimoire encodes.
+Books gave everyone knowledge. Google gave everyone access. AI gave everyone comprehension. None of them gave everyone *practice*. Grimoire does.
 
-- 🔍 **Most people don't know the right practice exists.** When you face a problem, you search for a solution — not for the standard that governs it. The ISO certification process, the ABA clause audit, the NSCA periodization model — these exist. Most people solving those problems have never heard of them. Grimoire closes the discovery gap.
+---
 
-- 🤖 **LLMs know the practice. They won't apply it.** Ask an AI to help with a contract and it gives general advice. Ask it to review an architecture and it summarizes what it sees. The model knows ISO, ABA, Google SRE — but without explicit guidance, it won't enforce any of them. Grimoire provides that guidance.
+Practice is what separates a senior attorney from a paralegal, a staff engineer from a junior, a seasoned surgeon from a resident. It is judgment earned through 10,000 hours of specific situations. It has always been locked behind expensive engagements, elite institutions, and years of hard experience. AI didn't unlock it — AI just made the gap more visible.
 
-- 🌍 **The world's best practices belong to everyone.** A McKinsey engagement costs $1M. A senior lawyer bills $800/hr. A structural engineer isn't available at 2am. The practices they follow — proven at the highest levels — are not proprietary. They belong to the world. Grimoire makes them free.
+Ask an AI to review your architecture — it summarizes what it sees. Ask a staff engineer — she tells you the service boundary is wrong and exactly why. Ask an AI to review your contract — it says "this looks reasonable." Ask a senior M&A attorney — she finds the liability cap missing and the indemnification clause unenforceable in your jurisdiction. The model *knows* SOLID, DDD, Google SRE, and the ABA Model Rules. Without explicit guidance, it enforces none of them.
 
-- ⚡ **Skills are verbs.** Not descriptions of what experts know — the exact steps they take, in the exact situation they face, proven at scale. If you can't act on it in the next five minutes, it isn't a skill.
+Grimoire is the enforcement layer. It introduces **skills** — one concept that makes expert knowledge composable, reusable, and enforceable across every field. A skill is not a prompt, not a plugin, not a template. It is a named, citable, executable unit of expert practice: one concept, one source, one set of steps, proven at scale.
 
-- 🔬 **Every claim must be proven.** One skill. One concept. Adopted by most top-tier institutions in the field, with measurable impact and a named source. If you can't prove it, you can't ship it.
+---
 
-- 🏔️ **Consensus is the floor.** If the world's best professionals are split, grimoire acknowledges the debate — and encodes the majority position. When there is no consensus, there is no best practice to ship.
+- 🔍 **You don't know what you don't know.** When you face a problem, you search for a solution — not for the governing standard. The ISO certification process, the ABA clause audit, the NSCA periodization model — these exist. Most people solving those problems have never heard of them. Grimoire surfaces the expert standard you didn't know applied.
 
-- 🤝 **Anyone who has mastered their craft can contribute.** A nurse. A jazz musician. A securities lawyer. A structural engineer. Grimoire is not a developer project. It is a project for everyone who has spent 10,000 hours in a field and has something to say about how it's really done.
+- 🤖 **Knowing is not enough. Grimoire enforces.** The model knows best practices across every field. Without structured guidance, it gives general advice. Grimoire provides specific steps, verifiable criteria, and repeatable results. Not summaries — verdicts.
 
-- ♾️ **The skill outlasts the AI.** Plain Markdown. No lock-in. No proprietary format. These skills will outlive every AI assistant currently running.
+- 🌍 **The world's best practices belong to everyone.** A McKinsey engagement costs $1M. A senior lawyer bills $800/hr. A structural engineer isn't available at 2am. The practices they follow — proven at the highest levels — are not proprietary. They belong to the world. Grimoire makes them free: not as descriptions, but as executable steps, cited and verified.
+
+- 🧱 **Every profession. Every AI.** Not a tool for developers — a layer for everyone who works. 500+ skills across engineering, law, finance, health, writing, business, and 20+ more domains. Works with Claude, Codex, Cursor, Gemini, and OpenCode. Skills are plain Markdown — they outlive every AI assistant currently running.
+
+---
+
+A nurse who knows exactly how to triage. A jazz musician who knows how to teach improvisation. A securities lawyer who knows which clause kills a deal. If you've spent 10,000 hours mastering something, your practice belongs here. Every skill contributed makes grimoire more powerful for everyone who follows — this is how expert knowledge finally compounds.
 
 → [Read the full philosophy](./PHILOSOPHY.md)
 
 ---
 
-## ✨ What a Skill Looks Like
+## ✨ Skills in Action
 
 **Engineering** — propose a commit message from staged diff:
 
@@ -192,11 +195,7 @@ Claude: Hypertrophy block — intermediate, 4 days/week
 
 Every skill is structured: triggering condition, verified source, numbered steps, no freeform guessing.
 
----
-
-## 🎯 Or Describe Your Situation
-
-You don't need to know which skill applies. Just describe the problem:
+**Or describe the situation in plain language** — you don't need to know which skill applies:
 
 ```
 User: I signed a vendor contract and now they're saying they own my data.
@@ -230,17 +229,17 @@ or tells you exactly what to install if the skill isn't in your library yet.
 **One command. Every AI agent on your system.**
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/jeffreytse/grimoire/main/scripts/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/jeffreytse/grimoire/main/scripts/grimoire | bash
 ```
 
-Auto-detects Claude Code, Codex, and Gemini CLI. Installs to every agent found. No flags needed.
+Auto-detects Claude Code, Codex, and Gemini CLI. Installs to every agent found. Also creates a global `grimoire` command for future installs and upgrades.
 
 ---
 
 **Windows (PowerShell):**
 
 ```powershell
-Invoke-WebRequest https://raw.githubusercontent.com/jeffreytse/grimoire/main/scripts/install.ps1 -OutFile install.ps1; .\install.ps1
+Invoke-WebRequest https://raw.githubusercontent.com/jeffreytse/grimoire/main/scripts/grimoire.ps1 -OutFile grimoire.ps1; .\grimoire.ps1
 ```
 
 ---
@@ -255,7 +254,7 @@ Invoke-WebRequest https://raw.githubusercontent.com/jeffreytse/grimoire/main/scr
 /plugin install grimoire@grimoire                   # all domains (latest)
 /plugin install grimoire-engineering@grimoire       # one domain
 
-# For subdomain-level installs, use install.sh
+# For subdomain-level installs, use grimoire
 ```
 
 ---
@@ -263,10 +262,15 @@ Invoke-WebRequest https://raw.githubusercontent.com/jeffreytse/grimoire/main/scr
 **Granular script installs:**
 
 ```bash
-./scripts/install.sh --domain engineering
-./scripts/install.sh --domain engineering --subdomain development
-./scripts/install.sh --skill engineering/development/propose-conventional-commit
-./scripts/install.sh --target all    # force install to all agents, even if not detected
+./scripts/grimoire                   # interactive TUI — install/uninstall/upgrade/doctor
+./scripts/grimoire --domain engineering
+./scripts/grimoire --domain engineering --subdomain development
+./scripts/grimoire --skill engineering/development/propose-conventional-commit
+./scripts/grimoire --target all      # force install to all agents, even if not detected
+./scripts/grimoire --upgrade         # pull latest (choose stable or unstable channel)
+./scripts/grimoire --doctor          # health check: git repo, symlinks, config
+./scripts/grimoire --version         # version info with commit and date
+./scripts/grimoire --list            # list available domains and skills
 ```
 
 **Gemini CLI:**
@@ -282,7 +286,7 @@ gemini extensions update grimoire                                         # upda
 **Cursor:**
 
 ```bash
-./scripts/install.sh --target cursor
+./scripts/grimoire --target cursor
 ```
 
 ---
@@ -320,19 +324,29 @@ Or invoke a skill directly:
 
 ---
 
-## 🔄 Workflows
+## 🎯 Workflows
 
-### User workflows
+| Your situation | Start here |
+|----------------|------------|
+| Know exactly which skill you need | `/skill-name` directly |
+| Have a problem, unsure which skill | `/suggest-best-practice` |
+| Already have a plan, want gaps checked | `/review-best-practice-fit` |
+| Problem spans 3+ independent domains | `/plan-best-practice-solution` |
+| Complex problem within one domain | `/apply-best-practice-tree` |
+| Don't know what practices exist for a topic | `/discover-best-practices` |
+| About to start a task — want to catch gaps before you begin | `/intercept-best-practice` |
+| Problem isn't clear yet — need to define it before solving | `/analyze-problem` |
+| Activate a paradigm's best practices (OOP, TDD, etc.) | `/apply-best-practice-profile` |
+| Align any project or artifact to stated best practice preferences (BPDD) | `/apply-best-practice-driven-development` |
+| Check if any artifact aligns with stated best practice preferences | `/check-best-practice-compliance` |
+| Have a specific compliance finding to fix | `/fix-best-practice-finding` |
+| Two practices conflict (e.g., Google vs IBM) | `/pin-best-practice-preference` |
 
-**1. Know the skill — invoke directly**
+→ [BPDD guide](./docs/bpdd.md) — cycle, compliance linter, LSP output, suppression, CI integration
 
-```
-/propose-conventional-commit
-/calculate-fire-number
-/review-saas-contract
-```
+### Common paths
 
-**2. Have a problem — use `suggest-best-practice`**
+**Describe any problem → `suggest-best-practice`**
 
 Describe any situation. `suggest-best-practice` reads it, finds the best-matching skill(s), and routes you there.
 
@@ -344,24 +358,9 @@ Claude: Situation matches: design-onboarding-program + write-leadership-principl
         → /write-leadership-principles to establish decision-making clarity
 ```
 
-**3. Have a solution — use `review-best-practice-fit`**
+**Problem spans multiple domains → `plan-best-practice-solution`**
 
-Already have a plan or approach? `review-best-practice-fit` checks it against best practices and surfaces gaps.
-
-```
-User: I'm planning to run weekly 1:1s with each engineer, 30 min, no agenda.
-      Is this a good approach?
-
-Claude: Applying review-best-practice-fit (engineering/project-management)...
-
-        🟡 CAUTION No agenda → likely drifts to status updates
-        → Best practice: structured 1:1 (Lencioni format) with 3 fixed topics
-        🟢 PASS Frequency and duration align with Google re:Work research
-```
-
-**4. Problem spans multiple domains — use `plan-best-practice-solution`**
-
-When a problem involves 3+ independent fields (legal, financial, technical, marketing), `plan-best-practice-solution` decomposes it with MECE methodology and sequences skills by dependency.
+When a problem involves 3+ independent fields, `plan-best-practice-solution` decomposes it with MECE methodology and sequences skills by dependency.
 
 ```
 User: I want to leave my job and launch a SaaS startup.
@@ -375,109 +374,28 @@ Claude: Situation spans 4 domains. Solution plan:
         Apply in order? I'll pause for confirmation after each step.
 ```
 
-**5. Complex problem, one domain — use `apply-best-practice-tree`**
+### Contributor workflows
 
-When a problem is deeply complex but stays within one field, `apply-best-practice-tree` uses skills as the decomposition engine — recursively matching sub-problems to best practices until each is covered.
+**Adding a skill**
 
 ```
-User: Our production incident response is a mess — we have no process.
-
-Claude: Top match: design-incident-response-process (confidence 0.81). Applying...
-
-        Sub-problems surfaced:
-          A. Detection    → apply-alerting-strategy
-          B. Escalation   → design-on-call-rotation
-          C. Communication → write-status-page-update
-          D. Post-incident → apply-five-whys
-
-        Ready to apply A: apply-alerting-strategy. Continue?
+/write-best-practice-skill    # author the skill
+/review-best-practice-skill   # validate against STANDARD.md (5 criteria)
+/revise-best-practice-skill   # fix any review findings
+→ open PR
 ```
 
-> `plan-best-practice-solution` handles **breadth** (multiple domains, sequenced). `apply-best-practice-tree` handles **depth** (one domain, recursive).
+**Maintaining a domain**
+
+```
+/audit-best-practice-domain    # batch health check — surfaces outdated or weak-sourced skills
+/revise-best-practice-skill    # update stale or under-sourced skills
+/deprecate-best-practice-skill # retire skills superseded by newer practices
+```
 
 ---
 
-### Decision guide
-
-| Your situation | Start here |
-|----------------|------------|
-| Know exactly which skill you need | `/skill-name` directly |
-| Have a problem, unsure which skill | `/suggest-best-practice` |
-| Already have a plan, want gaps checked | `/review-best-practice-fit` |
-| Problem spans 3+ independent domains | `/plan-best-practice-solution` |
-| Complex problem within one domain | `/apply-best-practice-tree` |
-| Don't know what practices exist for a topic | `/discover-best-practices` |
-| About to start a task — want to catch gaps before you begin | `/intercept-best-practice` |
-| Problem isn't clear yet — need to define it before solving | `/analyze-problem` |
-| Two practices conflict (e.g., Google vs IBM) | `/pin-best-practice-preference` |
-
-**6. Don't know what practices exist — use `discover-best-practices`**
-
-Browse what's available for a domain before you have a specific problem.
-
-```
-User: What best practices exist for software architecture?
-
-Claude: Best practices available for software architecture:
-
-  Design
-    design-api-architecture — most APIs are built without versioning until a
-      breaking change forces it; this closes that gap
-    design-observability — teams discover they can't debug incidents after the
-      first production outage
-
-  Security
-    review-security-posture — security reviews done after a breach cost 10× more than before
-
-Most commonly discovered too late:
-  ★ review-security-posture — applied after a breach, not before
-  ★ design-observability — discovered when the first incident is uninvestigable
-
-Want to apply any of these now, or learn more about one?
-```
-
-**7. About to start a task — use `intercept-best-practice`**
-
-Proactively catches applicable practices before you begin, not after problems emerge.
-
-```
-User: I'm going to refactor our authentication module.
-
-Claude: Before you start: design-api-security applies to authentication refactors.
-
-  Common gaps caught at this stage:
-  • Token expiry and refresh strategy (most teams omit this until a session bug)
-  • Rate limiting on auth endpoints
-  • Audit logging for authentication events
-
-  Apply design-api-security now, or continue without? [y/n]
-```
-
-**8. Problem needs defining first — use `analyze-problem`**
-
-When the problem is vague, define it before routing to a solution skill.
-
-```
-User: My team isn't performing well.
-
-Claude: Before finding the right practice, I need to understand the problem.
-  What outcome are you trying to achieve — better output, faster delivery, or fewer conflicts?
-
-User: Better output, but also morale is low.
-
-Claude: Problem statement: Team output is below expectations and morale is low.
-
-  Scope: In — team performance and culture. Out — individual skill gaps (separate problem).
-
-  Possible routes:
-  A. Fix root cause — run a structured retrospective to surface what's blocking the team
-  B. Workaround — redistribute workload while root cause is investigated
-  C. Prevent recurrence — establish team health rituals to catch issues earlier
-
-  Which route fits best? I can find the applicable best practices.
-```
-
-**Prefer a specific org's practices — use `pin-best-practice-preference`**
+## ⚙️ Settings
 
 When top-tier orgs disagree (Google vs IBM, startup vs enterprise), pin which approach you prefer once — grimoire applies it automatically from then on.
 
@@ -489,7 +407,7 @@ Claude: Pinning preference: Google Engineering Practices → engineering domain.
 
 User: global
 
-Claude: Saved to ~/.grimoire/preferences.md.
+Claude: Saved to ~/.config/grimoire/settings.toml.
         Future engineering conflicts resolve toward Google's approach automatically.
 ```
 
@@ -498,46 +416,129 @@ Claude: Saved to ~/.grimoire/preferences.md.
 | Priority | Level | Stored in | Scope |
 |----------|-------|-----------|-------|
 | 1st | Session | In-memory | Current session only — resets when session ends |
-| 2nd | Project | `.grimoire/preferences.md` in project root | Current project only |
-| 3rd | Global | `~/.grimoire/preferences.md` | All projects on this machine |
-| 4th | Legacy | `CLAUDE.md` under `## Grimoire Preferences` | Fallback |
+| 2nd | Project personal | `.grimoire/settings.local.toml` | Current project, gitignored |
+| 3rd | Project shared | `.grimoire/settings.toml` | Current project, committed to repo |
+| 4th | Global | `~/.config/grimoire/settings.toml` | All projects on this machine |
 
-**Configure manually** — edit the preference files directly without going through the AI:
+**Configure manually** — edit the settings files directly without going through the AI:
 
-```markdown
-# ~/.grimoire/preferences.md  (global — applies everywhere)
-engineering: Google Engineering Practices
-finance: CFA Institute standards
-law: ABA Model Rules
+```toml
+# ~/.config/grimoire/settings.toml  (global — applies everywhere)
+profiles = ["oop"]                 # activate all skills tagged "oop"
+# profiles = ["clean-architecture", "tdd"]  # multiple — first entry wins conflicts
+
+[engineering]
+practices = ["Google Engineering Practices"]
+
+[finance]
+practices = ["CFA Institute standards"]
 ```
 
-```markdown
-# <project-root>/.grimoire/preferences.md  (project — overrides global for this repo)
-engineering: startup  # this project moves fast; override the global Google preference
+```toml
+# <project-root>/.grimoire/settings.toml  (project — overrides global for this repo)
+[engineering.architecture]
+practices = [
+  "SOLID principles: production code",
+  "KISS: prototypes, scripts"
+]
+fallback = "ask"
 ```
 
-Project preferences override global. Session pins override both. Teams can share a global standard while individual projects deviate where needed.
+Project settings override global. Session pins override both. Teams can share a global standard while individual projects deviate where needed.
+
+**`practices = ["OOP"]` vs `profiles = ["oop"]`** — both signal OOP intent, but differently. `practices = ["OOP"]` in a domain section is a loose hint — the AI leans toward OOP conventions from its training. `profiles = ["oop"]` at the top level activates specific installed skills (exact steps, validated sources). Use `profiles` for precision; `practices` for domain-level style preference. → [Full comparison](./docs/profiles.md#profiles-vs-practices)
+
+**Guided settings management:** Use `/configure-grimoire` to view, edit, or validate settings without touching TOML directly. Use `/apply-best-practice-profile` to activate a full paradigm (OOP, TDD, clean architecture) in one command. Use `/resolve-best-practice-conflict` to resolve contradictions between two installed skills and record the priority automatically. Use `/apply-best-practice-driven-development` to run the full BPDD cycle — or see the [BPDD guide](./docs/bpdd.md) for the linter, LSP output, and CI integration details.
 
 ---
 
-### Contributor workflows
+## 🎭 Profiles
 
-**9. Adding a skill**
+Activate a named set of skills in one line — no list to maintain, no file to create.
 
-```
-/write-best-practice-skill    # author the skill
-/review-best-practice-skill   # validate against STANDARD.md (5 criteria)
-/revise-best-practice-skill   # fix any review findings
-→ open PR
+```toml
+# .grimoire/settings.toml
+profiles = ["oop"]   # activates every installed skill tagged "oop"
 ```
 
-**10. Maintaining a domain**
+Grimoire resolves the name in this order, first match wins:
+
+1. `.grimoire/profiles/<name>.toml` — project-level file
+2. `~/.grimoire/profiles/<name>.toml` — user-level file
+3. `.grimoire/profiles/default.toml` — project-level fallback
+4. `~/.grimoire/profiles/default.toml` — user-level fallback
+5. Tag query — all installed skills where `tags` contains the name
+
+If no file exists, the tag query fires automatically. `profiles = ["oop"]` works without creating any file.
+
+**Multiple profiles** — combine paradigms; first entry wins conflicts, duplicates are deduplicated:
+
+```toml
+profiles = ["clean-architecture", "tdd"]  # clean-architecture wins if both include the same skill
+```
+
+**Custom profile** — curate a team-specific subset when the tag set is too broad:
+
+```toml
+# .grimoire/profiles/my-team.toml
+name = "my-team"
+description = "Our backend team's default practices"
+
+[[skills]]
+name = "apply-solid-principles"
+
+[[skills]]
+name = "apply-domain-driven-design"
+```
+
+Commit `.grimoire/profiles/` to share standards across the team. Publish as a gist or repo (`grimoire-profile-<name>`) for the community.
+
+**`profiles` vs `practices`** — `profiles` activates skill bundles globally; `practices` is a domain-scoped explicit list. → [Full comparison](./docs/profiles.md#profiles-vs-practices)
+
+→ [Full profiles guide](./docs/profiles.md) — resolution order, conflict handling, sharing profiles
+
+---
+
+## 📏 BPDD — Best Practice Driven Development
+
+Grimoire doubles as a best-practice linter. Encode your quality criteria once in `settings.toml`, then run `/check-best-practice-compliance` against any artifact — a codebase, a legal contract, a business plan, a training program. Same criteria every run. Gaps that survive human review get caught by the check.
+
+**The cycle** — same inversion as TDD: declare what "good" looks like first, then bring the artifact into alignment.
 
 ```
-/audit-best-practice-domain    # batch health check — surfaces outdated or weak-sourced skills
-/revise-best-practice-skill    # update stale or under-sourced skills
-/deprecate-best-practice-skill # retire skills superseded by newer practices
+1. Red      — run compliance check; identify which practices FAIL or are PARTIAL
+2. Green    — invoke the relevant grimoire skill; fix until the check passes
+3. Refactor — clean up while keeping the check green
+4. Commit   — record progress; repeat for next gap
 ```
+
+Run `/apply-best-practice-driven-development` to drive the full cycle. Run `/check-best-practice-compliance` for a one-off check.
+
+**Output** — dual format, always written to `.grimoire/reports/`:
+
+| File | Format | Use |
+|------|--------|-----|
+| `compliance-<timestamp>.json` | LSP-compatible JSON | editors, CI pipelines, LSP servers, dashboards |
+| `compliance-<timestamp>.html` | HTML | browser or CI artifact upload |
+
+The JSON follows the LSP Diagnostic schema — `uri` + `range` locate any finding in any text artifact, not just code. Gate CI by checking `"threshold.status"` in the output:
+
+```bash
+result=$(jq -r '.threshold.status' .grimoire/reports/compliance-latest.json)
+[ "$result" = "pass" ] || exit 1
+```
+
+**Coverage thresholds** — set in `settings.toml`, enforced on every check:
+
+```toml
+[engineering]
+compliance-threshold = 80        # fail if overall criteria coverage < 80%
+compliance-threshold-error = 0   # fail if any error-severity violations remain
+```
+
+Use `/fix-best-practice-finding` to fix one specific compliance finding — targeted, location-aware, verified. Use `/apply-best-practice-driven-development` to fix everything systematically.
+
+→ [Full BPDD guide](./docs/bpdd.md) — cycle, linter, LSP schema, false positive suppression, incremental mode
 
 ---
 
@@ -586,7 +587,7 @@ grimoire is a framework + reference skills. The domain structure is ready — co
 
 | Domain | Sub-domains |
 | ------ | ----------- |
-| [grimoire](./skills/meta/) | **Problem analysis:** [analyze-problem](./skills/meta/skills/analyze-problem/) · [discover-best-practices](./skills/meta/skills/discover-best-practices/) · **Routing:** [suggest-best-practice](./skills/meta/skills/suggest-best-practice/) · [intercept-best-practice](./skills/meta/skills/intercept-best-practice/) · **Solution planning:** [plan-best-practice-solution](./skills/meta/skills/plan-best-practice-solution/) · [apply-best-practice-tree](./skills/meta/skills/apply-best-practice-tree/) · **Practice evaluation:** [review-best-practice-fit](./skills/meta/skills/review-best-practice-fit/) · [compare-best-practices](./skills/meta/skills/compare-best-practices/) · [audit-applied-best-practices](./skills/meta/skills/audit-applied-best-practices/) · **Practice understanding:** [explain-best-practice](./skills/meta/skills/explain-best-practice/) · [adapt-best-practice](./skills/meta/skills/adapt-best-practice/) · [teach-best-practice](./skills/meta/skills/teach-best-practice/) · **Preferences:** [pin-best-practice-preference](./skills/meta/skills/pin-best-practice-preference/) · **Contributors:** [write-best-practice-skill](./skills/meta/skills/write-best-practice-skill/) · [review-best-practice-skill](./skills/meta/skills/review-best-practice-skill/) · [revise-best-practice-skill](./skills/meta/skills/revise-best-practice-skill/) · [audit-best-practice-domain](./skills/meta/skills/audit-best-practice-domain/) · [deprecate-best-practice-skill](./skills/meta/skills/deprecate-best-practice-skill/) · [design-best-practice-domain](./skills/meta/skills/design-best-practice-domain/) |
+| [grimoire](./skills/meta/) | **Setup:** [install-grimoire](./skills/meta/skills/install-grimoire/) · [configure-grimoire](./skills/meta/skills/configure-grimoire/) · **Problem analysis:** [analyze-problem](./skills/meta/skills/analyze-problem/) · [discover-best-practices](./skills/meta/skills/discover-best-practices/) · **Routing:** [suggest-best-practice](./skills/meta/skills/suggest-best-practice/) · [intercept-best-practice](./skills/meta/skills/intercept-best-practice/) · **Solution planning:** [plan-best-practice-solution](./skills/meta/skills/plan-best-practice-solution/) · [apply-best-practice-tree](./skills/meta/skills/apply-best-practice-tree/) · **Practice evaluation:** [review-best-practice-fit](./skills/meta/skills/review-best-practice-fit/) · [compare-best-practices](./skills/meta/skills/compare-best-practices/) · [audit-applied-best-practices](./skills/meta/skills/audit-applied-best-practices/) · **Practice understanding:** [explain-best-practice](./skills/meta/skills/explain-best-practice/) · [adapt-best-practice](./skills/meta/skills/adapt-best-practice/) · [teach-best-practice](./skills/meta/skills/teach-best-practice/) · **Preferences:** [pin-best-practice-preference](./skills/meta/skills/pin-best-practice-preference/) · [resolve-best-practice-conflict](./skills/meta/skills/resolve-best-practice-conflict/) · [apply-best-practice-profile](./skills/meta/skills/apply-best-practice-profile/) · [write-best-practice-profile](./skills/meta/skills/write-best-practice-profile/) · [review-best-practice-profile](./skills/meta/skills/review-best-practice-profile/) · [share-best-practice-profile](./skills/meta/skills/share-best-practice-profile/) · **Compliance:** [apply-best-practice-driven-development](./skills/meta/skills/apply-best-practice-driven-development/) · [check-best-practice-compliance](./skills/meta/skills/check-best-practice-compliance/) · **Contributors:** [write-best-practice-skill](./skills/meta/skills/write-best-practice-skill/) · [review-best-practice-skill](./skills/meta/skills/review-best-practice-skill/) · [revise-best-practice-skill](./skills/meta/skills/revise-best-practice-skill/) · [audit-best-practice-domain](./skills/meta/skills/audit-best-practice-domain/) · [deprecate-best-practice-skill](./skills/meta/skills/deprecate-best-practice-skill/) · [design-best-practice-domain](./skills/meta/skills/design-best-practice-domain/) |
 | [engineering](./skills/engineering/) | [development](./skills/engineering/development/skills/), [frontend](./skills/engineering/frontend/skills/), [architecture](./skills/engineering/architecture/skills/), [testing](./skills/engineering/testing/skills/), [reliability](./skills/engineering/reliability/skills/), [devops](./skills/engineering/devops/skills/), [cloud](./skills/engineering/cloud/skills/), [networking](./skills/engineering/networking/skills/), [security](./skills/engineering/security/skills/), [data](./skills/engineering/data/skills/), [ai](./skills/engineering/ai/skills/), [hardware](./skills/engineering/hardware/skills/), [mobile](./skills/engineering/mobile/skills/), [performance](./skills/engineering/performance/skills/), [project-management](./skills/engineering/project-management/skills/), [product](./skills/engineering/product/skills/), [documentation](./skills/engineering/documentation/skills/) |
 | [writing](./skills/writing/) | [creative](./skills/writing/creative/skills/), [technical](./skills/writing/technical/skills/), [copywriting](./skills/writing/copywriting/skills/), [academic](./skills/writing/academic/skills/), [journalism](./skills/writing/journalism/skills/) |
 | [design](./skills/design/) | [ui-ux](./skills/design/ui-ux/skills/), [graphic](./skills/design/graphic/skills/), [branding](./skills/design/branding/skills/), [motion](./skills/design/motion/skills/), [product](./skills/design/product/skills/) |
