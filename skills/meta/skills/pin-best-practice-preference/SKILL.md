@@ -59,14 +59,14 @@ Session preferences to save:
   finance/personal-finance  → calculate-fire-number (3.5% rate)
 
 Save all to:
-  [1] This project  → <project-root>/.grimoire/preferences.md
-  [2] All projects  → ~/.grimoire/preferences.md
-                      (uses ~/.config/grimoire/preferences.md if XDG_CONFIG_HOME is set)
-  [3] Both
+  [1] This project (shared)   → <project-root>/.grimoire/settings.toml   (committed)
+  [1b] This project (personal) → <project-root>/.grimoire/settings.local.toml  (gitignored)
+  [2] All projects             → ~/.config/grimoire/settings.toml
+  [3] Both (project + global)
   [4] Choose per preference
 ```
 
-If user picks `[4]`, ask per preference: "Save '[practice]' for [domain]? [1] project [2] global [3] both [n] skip"
+If user picks `[4]`, ask per preference: "Save '[practice]' for [domain]? [1] project/shared [1b] project/personal [2] global [3] both [n] skip"
 
 If no session pins exist:
 ```
@@ -80,22 +80,69 @@ After collecting choices, proceed to Step 4 for each selected preference.
 
 ```
 Save to:
-  [0] This session only  → in memory; resets when session ends
-  [1] This project only  → <project-root>/.grimoire/preferences.md
-  [2] All my projects    → ~/.grimoire/preferences.md
-                           (uses ~/.config/grimoire/preferences.md if XDG_CONFIG_HOME is set)
-  [3] Both (project + global)
+  [0] This session only          → in memory; resets when session ends
+  [1] This project (shared)      → <project-root>/.grimoire/settings.toml      (committed to repo)
+  [1b] This project (personal)   → <project-root>/.grimoire/settings.local.toml (gitignored)
+  [2] All my projects (global)   → ~/.config/grimoire/settings.toml
+                                   ($XDG_CONFIG_HOME/grimoire/settings.toml if XDG_CONFIG_HOME set)
+  [3] Both (project shared + global)
 ```
 
 ### Step 4: Write
 
-Write to selected location(s) using the standard preferences format:
+Write to selected location(s) using TOML format. Domain/subdomain path uses dots (`[engineering.architecture]`). Array order = priority (index 0 = highest).
 
-```markdown
-## [domain]
-- [practice-name]: [detail if provided]
-  reason: [reason if provided]
+```toml
+# Full example — all keys (all optional except practices)
+
+[global]
+practices = ["simplicity / KISS"]
+
+[engineering]
+practices = ["Google's engineering practices"]
+
+[engineering.architecture]
+author = "@backend-team"
+require = ["apply-input-validation"]
+skip-if = ["test files", "config files"]
+practices = [
+  "SOLID principles: production code",  # index 0 = highest priority; qualifier after ':'
+  "KISS: scripts, prototypes"
+]
+fallback = "ask"
+disabled = ["apply-law-of-demeter"]
+ask-before = ["apply-solid-principles"]
+expires = "2026-09-01"
+remind = "2026-07-01"
+shared = true
+lock = true
+note = "agreed in ADR-014 — contact @backend-team for changes"
+
+[engineering.architecture.profiles.prototype]
+practices = ["KISS", "YAGNI"]
+note = "speed over structure"
 ```
+
+**Resolution order (most specific wins):**
+```
+specific entry in [domain.subdomain] > [domain.subdomain] > [domain] > [global]
+```
+Each level overrides the level below for the same preference. `[engineering.architecture]` overrides `[engineering]` which overrides `[global]`. Use broad sections for defaults; narrow sections for overrides.
+
+- `practices` array — **all listed skills apply**. Array order = conflict-resolution priority (index 0 highest). When two skills contradict on a specific point, the lower-index skill wins that conflict. Non-conflicting guidance from all skills applies regardless of index.
+- Context qualifier as `: qualifier` suffix in the practices string (e.g., `"SOLID principles: production code"`). Omit for all-context preference.
+- `fallback` — `"ask"` = AI prompts when skills directly contradict. `"both"` = AI surfaces the tension. Omit = higher-index skill wins the conflict silently.
+- `disabled` — array of skill names the AI must never apply in this domain, even if installed globally.
+- `ask-before` — array of skill names where AI must confirm before applying. Use for high-stakes skills (security, DB migrations).
+- `expires` — ISO date string. On/after this date AI warns "preference has expired — still apply?"
+- `remind` — ISO date string. Soft nudge only — AI says "time to review [domain] preferences." No warning/block.
+- `shared = true` — marks as team-level (commit `settings.toml` to repo). Omit for personal preferences (`settings.local.toml`).
+- `lock = true` — less-specific sections (`[domain]`, `[global]`) do not contribute to this section.
+- `note` — free text the AI reads when applying skills here. Cited when asked why a preference exists.
+- `require` — array of skill names that MUST apply unconditionally. Win over all conflict resolution. Flag if a skill appears in both `require` and `disabled` — that is a contradiction.
+- `author` — who set this preference. AI cites it when asked "why do we prefer X here?"
+- `skip-if` — array of file/context patterns. AI skips this entire section when current file/context matches.
+- `[domain.profiles.name]` — named profile variant. Default (untagged) section is always active. Named profiles inactive until user says "use [name] profile" — then that variant replaces the default for the session.
 
 If file exists: append new domain section only. Never silently overwrite.
 
@@ -103,6 +150,8 @@ If the domain is already pinned in the file, ask before overwriting:
 ```
 [domain] already has "[existing-skill]" pinned. Replace with "[new-skill]"? [y/n]
 ```
+
+To add rankings or resolve conflicts between existing preferences, use `resolve-best-practice-conflict`.
 
 For session-level (option 0): store in session memory only — do not write any file.
 
@@ -119,7 +168,7 @@ Saved to: [path(s) or "session memory (resets when session ends)"]
 - Never prompt for a reason — only record it if the user provided one or used `[e]` / `[r]`
 - Session-level pins (option 0) are never written to disk under any circumstances
 - Project-level overrides global for the same domain — if pinning to "both", write identical content to both files
-- XDG compliance: use `$XDG_CONFIG_HOME/grimoire/preferences.md` if `XDG_CONFIG_HOME` is set, else `~/.grimoire/preferences.md`
+- XDG compliance: global config is `$XDG_CONFIG_HOME/grimoire/settings.toml` (defaults to `~/.config/grimoire/settings.toml`). Fall back to `~/.grimoire/settings.toml` only if `~/.config/grimoire/` does not exist.
 - If a project root cannot be determined, skip option [1] and inform the user: "No project root detected — project-level save unavailable"
 - After writing, always confirm the exact path(s) and what was saved
 
