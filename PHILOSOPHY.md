@@ -22,6 +22,37 @@ Not descriptions of what experts know — the exact steps they take, in the exac
 >
 > That's the difference between knowledge and practice.
 
+## Skills are atoms.
+
+A composite practice is always derivable from its atomic components. SOLID principles
+and KISS are both correct — their combination is not a third skill, it is what the LLM
+does at runtime when both apply.
+
+LLMs compose at runtime. Given a situation, the AI reads the context, picks the relevant
+atoms from the library, and applies them in combination. Pre-composing two skills into
+one rigid unit reduces this flexibility: the composite can only be applied as a whole,
+cannot substitute individual atoms, and cannot recombine with other skills.
+
+Atoms are a library. Composites are a script.
+
+> **Story:** A contributor submits `implement-nutrition-and-training-plan`. It covers
+> macros, periodization, progressive overload, and meal timing. Thorough. Two weeks of
+> work.
+>
+> The reviewer points out: `calculate-macros` already exists. `design-training-program`
+> already exists. `apply-progressive-overload` is in progress.
+>
+> The composite isn't wrong — it's redundant. An athlete bulking for powerlifting needs
+> different atoms than a marathon runner cutting weight. The composite applies as a
+> preset; the atoms compose to the exact situation.
+>
+> The contributor deletes the composite and files the two missing edge cases as updates
+> to the existing skills. The library is stronger.
+>
+> That is what atomicity means in practice.
+
+One skill, one concept. Describe any situation — the LLM picks the right atoms.
+
 ## Every claim must be proven.
 
 One skill. One concept. Adopted by most top-tier institutions in the field, with measurable impact and a named source. If you can't prove it, you can't ship it.

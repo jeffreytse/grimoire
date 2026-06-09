@@ -294,17 +294,25 @@ The reader can DO something immediately. Steps are concrete and commandable.
    Step 2: Run the test — it must fail. If it passes, it tests nothing."
 ```
 
-### 2. Scoped
+### 2. Atomic
 
-One skill = one concept. If a skill covers two separable things, split it.
+One skill = one atomic concept. Composite practices are always derivable from their
+atoms — the LLM composes atomic skills at runtime to match the specific situation.
+Pre-composing two skills into one rigid unit reduces that flexibility without adding
+value: the composite can only be applied as a whole; each atom can be applied
+independently, remixed, and recombined.
+
+If a skill covers two separable concepts, split it.
 
 ```
 ❌ code-review-and-refactoring (two different activities)
-✅ code-review  +  refactor-safely  (two skills)
+✅ review-pull-request  +  refactor-safely  (LLM composes both when the situation calls for it)
 
 ❌ nutrition-and-exercise-planning (two disciplines)
-✅ calculate-macros  +  design-training-program  (two skills)
+✅ calculate-macros  +  design-training-program  (LLM composes to the specific context)
 ```
+
+Test: can each part be usefully applied independently? If yes, split.
 
 ### 3. Industry-proven
 
@@ -762,7 +770,7 @@ Before submitting a skill, verify:
 - [ ] Section states measurable impact with evidence
 - [ ] Section explains why this approach over alternatives
 - [ ] Steps are concrete and immediately actionable
-- [ ] Scoped to one concept
+- [ ] Atomic — encodes one concept; a composite of two separable skills is always rejected
 - [ ] Industry-proven — passes at least one qualification path: (a) majority top-tier company/professional adoption, (b) visionary practitioner with verifiable outcomes, (c) recognized standards body (NIST, OWASP, IETF, W3C, IEEE, WHO, ABA, etc.), or (d) verified domain practitioner (`practitioner: true`)
 - [ ] If `practitioner: true`, `source` names specific verifiable credentials (certification, competition record, publication, or years in recognized context)
 - [ ] If `practitioner: true`, skill is falsifiable and actionable — practitioner path cannot substitute for a philosophy or ideology
