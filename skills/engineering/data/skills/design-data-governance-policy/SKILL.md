@@ -1,7 +1,7 @@
 ---
 name: design-data-governance-policy
 description: Use when designing a data governance policy covering data ownership, classification, access control, lifecycle management, and regulatory compliance
-source: DAMA International "DMBOK2: Data Management Body of Knowledge" 2nd ed. (2017); ISACA "COBIT 2019 Data Governance Framework"; GDPR Article 5 data processing principles (2018); NIST Privacy Framework v1.0 (2020)
+source: 'DAMA International "DMBOK2: Data Management Body of Knowledge" 2nd ed. (2017); ISACA "COBIT 2019 Data Governance Framework"; GDPR Article 5 data processing principles (2018); NIST Privacy Framework v1.0 (2020)'
 tags: [data, governance, gdpr, privacy, data-classification, access-control, compliance]
 verified: true
 ---

@@ -1,7 +1,7 @@
 ---
 name: calculate-macros
 description: Use when determining protein, carbohydrate, and fat targets to support a specific fitness or body composition goal
-source: Eric Helms "The Muscle and Strength Pyramid: Nutrition" (2nd ed.); ACSM Position Stand on Nutrition and Athletic Performance (2016); Layne Norton research on protein synthesis
+source: 'Eric Helms "The Muscle and Strength Pyramid: Nutrition" (2nd ed.); ACSM Position Stand on Nutrition and Athletic Performance (2016); Layne Norton research on protein synthesis'
 tags: [health, fitness, nutrition, macros, protein, body-composition]
 verified: true
 ---

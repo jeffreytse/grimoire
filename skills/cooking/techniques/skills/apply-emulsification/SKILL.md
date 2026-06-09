@@ -1,7 +1,7 @@
 ---
 name: apply-emulsification
 description: Use when making sauces, dressings, or condiments that require a stable oil-water suspension — mayonnaise, hollandaise, aioli, vinaigrette, pan sauces — where fat and water must be combined without breaking
-source: McGee "On Food and Cooking: The Science and Lore of the Kitchen" ch.1 (2004); Myhrvold "Modernist Cuisine" vol.4 (2011); Child "Mastering the Art of French Cooking" (1961); López-Alt "The Food Lab" (2015)
+source: 'McGee "On Food and Cooking: The Science and Lore of the Kitchen" ch.1 (2004); Myhrvold "Modernist Cuisine" vol.4 (2011); Child "Mastering the Art of French Cooking" (1961); López-Alt "The Food Lab" (2015)'
 tags: [cooking, techniques, emulsification, sauces, mayonnaise, hollandaise, vinaigrette, emulsifier, lecithin]
 verified: true
 ---

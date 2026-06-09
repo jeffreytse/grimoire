@@ -1,7 +1,7 @@
 ---
 name: design-employee-onboarding
 description: Use when creating or improving a new employee onboarding program, first-day experience, or ramp plan for a role or organization
-source: SHRM "Onboarding New Employees: Maximizing Success" (2010); Gallup "State of the American Workplace" (2017); BambooHR onboarding study (2020)
+source: 'SHRM "Onboarding New Employees: Maximizing Success" (2010); Gallup "State of the American Workplace" (2017); BambooHR onboarding study (2020)'
 tags: [hr, onboarding, employee-experience, retention, talent-management]
 verified: true
 ---

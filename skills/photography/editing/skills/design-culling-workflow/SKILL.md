@@ -1,7 +1,7 @@
 ---
 name: design-culling-workflow
 description: Use when establishing a systematic photo culling and selection workflow to efficiently identify selects from large shoot volumes
-source: Lightroom Classic industry workflow (Adobe); ASMP digital asset management guidelines; Peter Krogh "The DAM Book: Digital Asset Management for Photographers" (2009)
+source: 'Lightroom Classic industry workflow (Adobe); ASMP digital asset management guidelines; Peter Krogh "The DAM Book: Digital Asset Management for Photographers" (2009)'
 tags: [culling, photo-editing, workflow, lightroom, dam]
 verified: true
 ---

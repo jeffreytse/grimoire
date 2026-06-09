@@ -1,7 +1,7 @@
 ---
 name: apply-show-dont-tell
 description: Use when writing fiction or creative nonfiction prose that feels flat, abstract, or emotionally inert and needs to become vivid, sensory, and immersive.
-source: Chekhov (originator principle, 1886); King "On Writing" (2000); Card "Characters and Viewpoint" (1988); Burroway "Writing Fiction: A Guide to Narrative Craft" (2019)
+source: 'Chekhov (originator principle, 1886); King "On Writing" (2000); Card "Characters and Viewpoint" (1988); Burroway "Writing Fiction: A Guide to Narrative Craft" (2019)'
 tags: [creative-writing, fiction, prose, craft, immersion]
 verified: true
 ---

@@ -1,7 +1,7 @@
 ---
 name: design-threat-model
 description: Use when designing a new system, reviewing architecture for security, adding an external-facing feature, handling sensitive data, or before a security audit.
-source: Microsoft STRIDE model (Adam Shostack, "Threat Modeling: Designing for Security", 2014), OWASP Threat Modeling Cheat Sheet
+source: 'Microsoft STRIDE model (Adam Shostack, "Threat Modeling: Designing for Security", 2014), OWASP Threat Modeling Cheat Sheet'
 tags: [threat-modeling, stride, security-design, attack-surface, security-engineer, developer]
 verified: true
 ---

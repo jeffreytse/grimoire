@@ -1,7 +1,7 @@
 ---
 name: run-exposure-therapy
 description: Use when planning or conducting systematic desensitization or exposure-based treatment for anxiety disorders, phobias, PTSD, OCD, or panic — particularly when avoidance behavior is maintaining or worsening the condition.
-source: Wolpe "Psychotherapy by Reciprocal Inhibition" (1958); Foa & Rothbaum "Treating the Trauma of Rape: Cognitive-Behavioral Therapy for PTSD" (1998); Foa "Prolonged Exposure Therapy for PTSD" (2007); APA Division 12 Empirically Supported Treatments
+source: 'Wolpe "Psychotherapy by Reciprocal Inhibition" (1958); Foa & Rothbaum "Treating the Trauma of Rape: Cognitive-Behavioral Therapy for PTSD" (1998); Foa "Prolonged Exposure Therapy for PTSD" (2007); APA Division 12 Empirically Supported Treatments'
 tags: [therapy, psychology, exposure, anxiety, phobia, PTSD, OCD, CBT, behavioral]
 verified: true
 ---

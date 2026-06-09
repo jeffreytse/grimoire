@@ -1,7 +1,7 @@
 ---
 name: calculate-baker-percentage
 description: Use when scaling a bread or baked good recipe, comparing hydration ratios between doughs, or converting a volume-based recipe to weight for professional or repeatable baking
-source: King Arthur Flour baking methodology; CIA baking curriculum; Jeffrey Hamelman "Bread: A Baker's Book of Techniques and Recipes" (2004)
+source: 'King Arthur Flour baking methodology; CIA baking curriculum; Jeffrey Hamelman "Bread: A Baker's Book of Techniques and Recipes" (2004)'
 tags: [baking, bread, recipe-scaling, baker-percentage, precision]
 verified: true
 ---

@@ -1,7 +1,7 @@
 ---
 name: calculate-break-even-analysis
 description: Use when calculating the break-even point for a product, service, or business to determine the sales volume needed to cover all costs
-source: CIMA (Chartered Institute of Management Accountants) management accounting; Horngren "Cost Accounting: A Managerial Emphasis" (2015); CVP analysis standard methodology
+source: 'CIMA (Chartered Institute of Management Accountants) management accounting; Horngren "Cost Accounting: A Managerial Emphasis" (2015); CVP analysis standard methodology'
 tags: [accounting, break-even, cost-volume-profit, financial-analysis]
 verified: true
 ---

@@ -1,7 +1,7 @@
 ---
 name: apply-abstraction
 description: Use when designing modules, services, or class hierarchies — especially when callers depend on concrete implementations, when swapping one provider requires changing multiple call sites, or when tests require the real implementation to run.
-source: Erich Gamma, Richard Helm, Ralph Johnson, John Vlissides, "Design Patterns: Elements of Reusable Object-Oriented Software" (1994); Robert C. Martin, "Clean Architecture" (2017); Grady Booch, "Object-Oriented Analysis and Design" (1994)
+source: 'Erich Gamma, Richard Helm, Ralph Johnson, John Vlissides, "Design Patterns: Elements of Reusable Object-Oriented Software" (1994); Robert C. Martin, "Clean Architecture" (2017); Grady Booch, "Object-Oriented Analysis and Design" (1994)'
 tags: [oop, abstraction, interfaces, dependency-inversion, design-patterns, testability, coupling]
 ---
 

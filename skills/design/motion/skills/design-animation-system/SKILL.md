@@ -1,7 +1,7 @@
 ---
 name: design-animation-system
 description: Use when creating or auditing a motion design system for a digital product, defining reusable animation tokens, principles, and component-level motion patterns
-source: Thomas & Johnston "The Illusion of Life: Disney Animation" (1981) 12 Principles; Material Design motion guidelines (Google 2014); CSS Animation specification (W3C)
+source: 'Thomas & Johnston "The Illusion of Life: Disney Animation" (1981) 12 Principles; Material Design motion guidelines (Google 2014); CSS Animation specification (W3C)'
 tags: [motion, animation, design-system, ui, interaction]
 verified: true
 ---

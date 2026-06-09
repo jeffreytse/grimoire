@@ -1,7 +1,7 @@
 ---
 name: write-unit-test
 description: Use when writing a new unit test, reviewing tests for quality, adding tests to untested code, or when a test is fragile, slow, or hard to understand.
-source: Kent Beck (Test-Driven Development: By Example), Google Testing Blog, DAMP principle (Jay Fields)
+source: "Kent Beck (Test-Driven Development: By Example), Google Testing Blog, DAMP principle (Jay Fields)"
 tags: [unit-testing, arrange-act-assert, test-isolation, tdd, developer, test-quality]
 verified: true
 ---

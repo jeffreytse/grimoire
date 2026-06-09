@@ -1,7 +1,7 @@
 ---
 name: apply-talent-value-signaling
 description: Use when direct recruiting for a specific type of talent or partner is failing — to make a single visible, costly, and seemingly disproportionate investment in a specific instance of what you want to attract, demonstrating credibly to the market that you are willing to pay for that category, and letting the signal do the recruiting that direct outreach cannot
-source: 千金买骨 (Qiān jīn mǎi gǔ) "Pay a thousand gold for bones" — Zhan Guo Ce 战国策 "Yan Ce Yi" 燕策一 (~3rd–2nd century BC): the story of a king who bought dead horse bones at enormous cost to attract sellers of living prize horses; Spence "Job Market Signaling" (1973) — costly signals as credible information; Akerlof "The Market for Lemons" (1970) — quality signals under information asymmetry; Zahavi "Mate Selection — A Selection for a Handicap" (1975) — costly signal theory
+source: '千金买骨 (Qiān jīn mǎi gǔ) "Pay a thousand gold for bones" — Zhan Guo Ce 战国策 "Yan Ce Yi" 燕策一 (~3rd–2nd century BC): the story of a king who bought dead horse bones at enormous cost to attract sellers of living prize horses; Spence "Job Market Signaling" (1973) — costly signals as credible information; Akerlof "The Market for Lemons" (1970) — quality signals under information asymmetry; Zahavi "Mate Selection — A Selection for a Handicap" (1975) — costly signal theory'
 tags: [talent, signaling, costly-signal, recruiting, zhan-guo-ce, warring-states, information-asymmetry, market-signaling]
 verified: true
 ---

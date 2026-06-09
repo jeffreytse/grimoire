@@ -1,7 +1,7 @@
 ---
 name: design-gitops-workflow
 description: Use when designing a GitOps workflow where Git is the single source of truth for infrastructure and application configuration, with automated reconciliation to the desired state
-source: Weaveworks "GitOps: Operations by Pull Request" Limoncelli (2017); CNCF OpenGitOps Principles v1.0 (2022); Argo CD Documentation (2023); Flux CD GitOps Toolkit patterns (2023)
+source: 'Weaveworks "GitOps: Operations by Pull Request" Limoncelli (2017); CNCF OpenGitOps Principles v1.0 (2022); Argo CD Documentation (2023); Flux CD GitOps Toolkit patterns (2023)'
 tags: [devops, gitops, kubernetes, infrastructure, ci-cd, argocd, flux]
 verified: true
 ---

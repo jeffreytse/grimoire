@@ -1,7 +1,7 @@
 ---
 name: apply-domain-driven-design
 description: Use when designing complex business software where the domain logic is the primary source of complexity and where miscommunication between technical and business teams causes bugs
-source: Eric Evans "Domain-Driven Design: Tackling Complexity in the Heart of Software" (2003); Vernon "Implementing Domain-Driven Design" (2013); DDD community (dddcommunity.org)
+source: 'Eric Evans "Domain-Driven Design: Tackling Complexity in the Heart of Software" (2003); Vernon "Implementing Domain-Driven Design" (2013); DDD community (dddcommunity.org)'
 tags: [architecture, ddd, design, modeling]
 verified: true
 ---

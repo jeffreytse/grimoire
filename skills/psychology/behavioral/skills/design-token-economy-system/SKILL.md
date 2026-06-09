@@ -1,7 +1,7 @@
 ---
 name: design-token-economy-system
 description: Use when designing a structured reinforcement system to systematically increase target behaviors in classrooms, clinical settings, workplaces, or homes — particularly for behavior change programs, special education, addiction recovery, or organizational performance management.
-source: Ayllon & Azrin "The Token Economy" (1968); Kazdin "The Token Economy: A Review and Evaluation" (1977); Cooper, Heron & Heward "Applied Behavior Analysis" (2020); BACB (Behavior Analyst Certification Board) Task List
+source: 'Ayllon & Azrin "The Token Economy" (1968); Kazdin "The Token Economy: A Review and Evaluation" (1977); Cooper, Heron & Heward "Applied Behavior Analysis" (2020); BACB (Behavior Analyst Certification Board) Task List'
 tags: [behavior, ABA, reinforcement, token-economy, psychology, behavior-change, education, clinical]
 verified: true
 ---

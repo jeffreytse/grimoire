@@ -1,7 +1,7 @@
 ---
 name: apply-test-driven-development
 description: Use when implementing any business logic, fixing bugs, or when the correctness of a function's behavior under various inputs needs to be proved
-source: Kent Beck "Test Driven Development: By Example" (2002); Erdogmus et al. "On the Effectiveness of TDD" IEEE Software (2005); Beck "TDD is Dead. Long Live Testing?" debate
+source: 'Kent Beck "Test Driven Development: By Example" (2002); Erdogmus et al. "On the Effectiveness of TDD" IEEE Software (2005); Beck "TDD is Dead. Long Live Testing?" debate'
 tags: [testing, development, tdd, code-quality]
 verified: true
 ---

@@ -1,7 +1,7 @@
 ---
 name: design-data-mesh-architecture
 description: Use when a centralized data platform has become a bottleneck, when data teams cannot keep up with business demand, or when designing data architecture for a large organization with multiple autonomous business domains
-source: Dehghani "Data Mesh: Delivering Data-Driven Value at Scale" (O'Reilly 2022); Dehghani "How to Move Beyond a Monolithic Data Lake" martinfowler.com (2019)
+source: 'Dehghani "Data Mesh: Delivering Data-Driven Value at Scale" (O'Reilly 2022); Dehghani "How to Move Beyond a Monolithic Data Lake" martinfowler.com (2019)'
 tags: [architecture, data, data-mesh, platform]
 verified: true
 ---

@@ -1,7 +1,7 @@
 ---
 name: apply-schema-therapy
 description: Use when addressing deep, longstanding emotional and behavioral patterns — particularly personality disorders, chronic depression, relationship dysfunction, or childhood-rooted emotional difficulties that have not responded to standard CBT.
-source: Young "Schema Therapy: A Practitioner's Guide" (2003); Young, Klosko & Weishaar "Schema Therapy" (2003); ISST (International Society of Schema Therapy); Journal of Behavior Therapy and Experimental Psychiatry
+source: 'Young "Schema Therapy: A Practitioner's Guide" (2003); Young, Klosko & Weishaar "Schema Therapy" (2003); ISST (International Society of Schema Therapy); Journal of Behavior Therapy and Experimental Psychiatry'
 tags: [therapy, psychology, schema, personality, CBT, emotional-patterns, trauma, relationships]
 verified: true
 ---

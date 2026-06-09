@@ -1,7 +1,7 @@
 ---
 name: check-best-practice-compliance
 description: Use when the user wants to check whether any artifact or work product aligns with their stated best practice preferences — e.g., "check compliance", "linter for best practices", "are we following our pinned practices?", "check this document against our standards".
-source: Sadowski et al. (2015) "Tricorder: Building a Program Analysis Ecosystem Inside Google", ICSE; Ford, Parsons, Kua (2017) "Building Evolutionary Architectures"; Open Policy Agent documentation
+source: 'Sadowski et al. (2015) "Tricorder: Building a Program Analysis Ecosystem Inside Google", ICSE; Ford, Parsons, Kua (2017) "Building Evolutionary Architectures"; Open Policy Agent documentation'
 tags: [compliance, linter, enforcement, audit, check, preferences, settings, domain-agnostic, any-domain]
 related: [apply-best-practice-driven-development, review-best-practice-fit, pin-best-practice-preference, apply-best-practice-profile]
 ---

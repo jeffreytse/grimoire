@@ -1,7 +1,7 @@
 ---
 name: design-zero-trust-architecture
 description: Use when designing or migrating a security architecture to the zero trust model where no user, device, or network is trusted by default
-source: NIST SP 800-207 "Zero Trust Architecture" (2020); John Kindervag Forrester "No More Chewy Centers" (2010); Google "BeyondCorp: A New Approach to Enterprise Security" (2014); CISA Zero Trust Maturity Model (2022)
+source: 'NIST SP 800-207 "Zero Trust Architecture" (2020); John Kindervag Forrester "No More Chewy Centers" (2010); Google "BeyondCorp: A New Approach to Enterprise Security" (2014); CISA Zero Trust Maturity Model (2022)'
 tags: [security, zero-trust, network, identity, access-control]
 verified: true
 ---

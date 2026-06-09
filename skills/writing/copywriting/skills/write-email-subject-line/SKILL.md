@@ -1,7 +1,7 @@
 ---
 name: write-email-subject-line
 description: Use when writing email subject lines for marketing campaigns, newsletters, or transactional emails where open rate and deliverability matter.
-source: Mailchimp "Email Subject Line Research" (2023); Cialdini "Influence: The Psychology of Persuasion" (1984); DMA "Email Benchmarks Report" (2023); Litmus "State of Email" (2024); Copyhackers subject line testing methodology
+source: 'Mailchimp "Email Subject Line Research" (2023); Cialdini "Influence: The Psychology of Persuasion" (1984); DMA "Email Benchmarks Report" (2023); Litmus "State of Email" (2024); Copyhackers subject line testing methodology'
 tags: [copywriting, email, subject-line, open-rate, marketing]
 verified: true
 ---

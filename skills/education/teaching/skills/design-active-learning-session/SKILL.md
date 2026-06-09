@@ -1,7 +1,7 @@
 ---
 name: design-active-learning-session
 description: Use when designing classroom or online sessions that replace passive lecturing with activities requiring learner mental engagement and practice
-source: Prince "Does Active Learning Work?" JEET (2004); Freeman et al. "Active Learning Increases Student Performance" PNAS (2014); Bonwell & Eison "Active Learning: Creating Excitement in the Classroom" (1991)
+source: 'Prince "Does Active Learning Work?" JEET (2004); Freeman et al. "Active Learning Increases Student Performance" PNAS (2014); Bonwell & Eison "Active Learning: Creating Excitement in the Classroom" (1991)'
 tags: [active-learning, teaching, facilitation, engagement, instructional-design]
 verified: true
 ---

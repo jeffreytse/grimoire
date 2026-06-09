@@ -1,7 +1,7 @@
 ---
 name: apply-pyramid-principle
 description: Use when writing a business document, memo, email, or presentation where the reader needs to understand a recommendation or conclusion quickly.
-source: Barbara Minto, "The Minto Pyramid Principle: Logic in Writing, Thinking and Problem Solving", 1987 (Minto International)
+source: 'Barbara Minto, "The Minto Pyramid Principle: Logic in Writing, Thinking and Problem Solving", 1987 (Minto International)'
 tags: [communication, executive-writing, structured-thinking, writer, comprehension-speed, persuasion]
 verified: true
 ---

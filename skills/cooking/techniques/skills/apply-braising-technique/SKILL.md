@@ -1,7 +1,7 @@
 ---
 name: apply-braising-technique
 description: Use when cooking tough, collagen-rich cuts of meat (short ribs, pork shoulder, lamb shank, brisket, oxtail) or dense vegetables that benefit from long, moist, low-heat cooking to convert connective tissue into gelatin and build deep flavour
-source: Ruhlman "Ratio: The Simple Codes Behind the Craft of Everyday Cooking" (2009); Keller "Bouchon" (2004); McGee "On Food and Cooking: The Science and Lore of the Kitchen" ch.4 (2004); Bourdain "Les Halles Cookbook" (2004)
+source: 'Ruhlman "Ratio: The Simple Codes Behind the Craft of Everyday Cooking" (2009); Keller "Bouchon" (2004); McGee "On Food and Cooking: The Science and Lore of the Kitchen" ch.4 (2004); Bourdain "Les Halles Cookbook" (2004)'
 tags: [cooking, techniques, braising, meat, slow-cooking, collagen, flavour, dutch-oven, french]
 verified: true
 ---

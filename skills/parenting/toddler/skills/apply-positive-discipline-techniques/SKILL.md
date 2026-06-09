@@ -1,7 +1,7 @@
 ---
 name: apply-positive-discipline-techniques
 description: Use when a parent is dealing with toddler challenging behaviors and needs effective, non-punitive strategies to teach self-regulation and cooperation
-source: Jane Nelsen "Positive Discipline" (1981); AAP discipline guidelines (2018); Dreikurs "Children: The Challenge" (1964)
+source: 'Jane Nelsen "Positive Discipline" (1981); AAP discipline guidelines (2018); Dreikurs "Children: The Challenge" (1964)'
 tags: [toddler, discipline, behavior, positive-parenting, self-regulation]
 verified: true
 ---

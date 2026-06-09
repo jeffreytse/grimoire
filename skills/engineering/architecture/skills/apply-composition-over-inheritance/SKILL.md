@@ -1,7 +1,7 @@
 ---
 name: apply-composition-over-inheritance
 description: Use when designing relationships between classes or modules — especially when tempted to extend a class to reuse its behavior, or when an inheritance hierarchy is becoming deep or brittle.
-source: Gamma, Helm, Johnson & Vlissides, "Design Patterns: Elements of Reusable Object-Oriented Software", Addison-Wesley, 1994
+source: 'Gamma, Helm, Johnson & Vlissides, "Design Patterns: Elements of Reusable Object-Oriented Software", Addison-Wesley, 1994'
 tags: [tight-coupling, composition, design-patterns, oop, developer, fragile-base-class, flexibility, maintainability]
 ---
 

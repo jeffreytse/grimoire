@@ -1,7 +1,7 @@
 ---
 name: apply-best-practice-driven-development
 description: Use when the user wants to systematically align any project or artifact to their stated best practice preferences — e.g., "apply BPDD", "align this project to our settings", "close the gap between our practices and reality", "enforce our best practices like TDD".
-source: Beck (2003) "Test-Driven Development: By Example"; Ford, Parsons, Kua (2017) "Building Evolutionary Architectures"; Nagappan et al. (2008) "Realizing Quality Improvement Through Test Driven Development", IEEE
+source: 'Beck (2003) "Test-Driven Development: By Example"; Ford, Parsons, Kua (2017) "Building Evolutionary Architectures"; Nagappan et al. (2008) "Realizing Quality Improvement Through Test Driven Development", IEEE'
 tags: [bpdd, tdd, compliance, enforcement, cycle, preferences, settings, domain-agnostic, any-domain]
 related: [check-best-practice-compliance, pin-best-practice-preference, apply-best-practice-profile, review-best-practice-fit]
 ---
