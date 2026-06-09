@@ -92,37 +92,22 @@
 
 ![grimoire demo — natural language problem solved with grimoire best practices](./assets/demo.gif)
 
----
-
 ## 🤔 Why Grimoire?
+
+> Your AI knows everything — Grimoire makes it practice it.
 
 Books gave everyone knowledge. Google gave everyone access. AI gave everyone comprehension. None of them gave everyone *practice*. Grimoire does.
 
----
+The model knows SOLID, DDD, Google SRE, and the ABA Model Rules. Without explicit guidance, it enforces none of them. Grimoire is the enforcement layer — **skills**: named, citable, executable units of expert practice, one concept, one source, one set of steps.
 
-Practice is what separates a senior attorney from a paralegal, a staff engineer from a junior, a seasoned surgeon from a resident. It is judgment earned through 10,000 hours of specific situations. It has always been locked behind expensive engagements, elite institutions, and years of hard experience. AI didn't unlock it — AI just made the gap more visible.
+- 🔍 **You don't know what you don't know.** Grimoire surfaces the governing standard you didn't know applied.
+- 🤖 **Knowing is not enough. Grimoire enforces.** Specific steps, verifiable criteria, repeatable results. Not summaries — verdicts.
+- 🌍 **The world's best practices belong to everyone.** McKinsey charges $1M. Senior lawyers bill $800/hr. The practices they follow are not proprietary. Grimoire makes them free — as executable steps, cited and verified.
+- 🧱 **Every profession. Every AI.** 500+ skills across 27 domains. Works with Claude, Codex, Cursor, Gemini, and OpenCode.
 
-Ask an AI to review your architecture — it summarizes what it sees. Ask a staff engineer — she tells you the service boundary is wrong and exactly why. Ask an AI to review your contract — it says "this looks reasonable." Ask a senior M&A attorney — she finds the liability cap missing and the indemnification clause unenforceable in your jurisdiction. The model *knows* SOLID, DDD, Google SRE, and the ABA Model Rules. Without explicit guidance, it enforces none of them.
-
-Grimoire is the enforcement layer. It introduces **skills** — one concept that makes expert knowledge composable, reusable, and enforceable across every field. A skill is not a prompt, not a plugin, not a template. It is a named, citable, executable unit of expert practice: one concept, one source, one set of steps, proven at scale.
-
----
-
-- 🔍 **You don't know what you don't know.** When you face a problem, you search for a solution — not for the governing standard. The ISO certification process, the ABA clause audit, the NSCA periodization model — these exist. Most people solving those problems have never heard of them. Grimoire surfaces the expert standard you didn't know applied.
-
-- 🤖 **Knowing is not enough. Grimoire enforces.** The model knows best practices across every field. Without structured guidance, it gives general advice. Grimoire provides specific steps, verifiable criteria, and repeatable results. Not summaries — verdicts.
-
-- 🌍 **The world's best practices belong to everyone.** A McKinsey engagement costs $1M. A senior lawyer bills $800/hr. A structural engineer isn't available at 2am. The practices they follow — proven at the highest levels — are not proprietary. They belong to the world. Grimoire makes them free: not as descriptions, but as executable steps, cited and verified.
-
-- 🧱 **Every profession. Every AI.** Not a tool for developers — a layer for everyone who works. 500+ skills across engineering, law, finance, health, writing, business, and 20+ more domains. Works with Claude, Codex, Cursor, Gemini, and OpenCode. Skills are plain Markdown — they outlive every AI assistant currently running.
-
----
-
-A nurse who knows exactly how to triage. A jazz musician who knows how to teach improvisation. A securities lawyer who knows which clause kills a deal. If you've spent 10,000 hours mastering something, your practice belongs here. Every skill contributed makes grimoire more powerful for everyone who follows — this is how expert knowledge finally compounds.
+If you've spent 10,000 hours mastering something, your practice belongs here.
 
 → [Read the full philosophy](./PHILOSOPHY.md)
-
----
 
 ## ✨ Skills in Action
 
@@ -222,8 +207,6 @@ Claude: Situation matches: plan-retrospective (engineering/project-management)
 `suggest-best-practice` auto-classifies any situation, routes to the matching skill,
 or tells you exactly what to install if the skill isn't in your library yet.
 
----
-
 ## ⚒️ Install
 
 **One command. Every AI agent on your system.**
@@ -234,15 +217,11 @@ curl -fsSL https://raw.githubusercontent.com/jeffreytse/grimoire/main/scripts/gr
 
 Auto-detects Claude Code, Codex, and Gemini CLI. Installs to every agent found. Also creates a global `grimoire` command for future installs and upgrades.
 
----
-
 **Windows (PowerShell):**
 
 ```powershell
 Invoke-WebRequest https://raw.githubusercontent.com/jeffreytse/grimoire/main/scripts/grimoire.ps1 -OutFile grimoire.ps1; .\grimoire.ps1
 ```
-
----
 
 **Native plugin shortcuts (Claude Code):**
 
@@ -256,8 +235,6 @@ Invoke-WebRequest https://raw.githubusercontent.com/jeffreytse/grimoire/main/scr
 
 # For subdomain-level installs, use grimoire
 ```
-
----
 
 **Granular script installs:**
 
@@ -281,22 +258,16 @@ gemini extensions install https://github.com/jeffreytse/grimoire@v1.0.0   # pin 
 gemini extensions update grimoire                                         # update later
 ```
 
----
-
 **Cursor:**
 
 ```bash
 ./scripts/grimoire --target cursor
 ```
 
----
-
 **OpenCode:** add to `opencode.json`:
 ```json
 { "plugin": ["grimoire@git+https://github.com/jeffreytse/grimoire.git"] }
 ```
-
----
 
 ## 🚀 Quick Start
 
@@ -321,8 +292,6 @@ Or invoke a skill directly:
 ```
 
 **New to grimoire?** Start with `/suggest-best-practice`. Describe any professional or life situation — it reads your context and routes you to the matching skill, or tells you exactly what to install if the skill isn't in your library yet.
-
----
 
 ## 🎯 Workflows
 
@@ -393,8 +362,6 @@ Claude: Situation spans 4 domains. Solution plan:
 /deprecate-best-practice-skill # retire skills superseded by newer practices
 ```
 
----
-
 ## ⚙️ Settings
 
 When top-tier orgs disagree (Google vs IBM, startup vs enterprise), pin which approach you prefer once — grimoire applies it automatically from then on.
@@ -450,7 +417,7 @@ Project settings override global. Session pins override both. Teams can share a 
 
 **Guided settings management:** Use `/configure-grimoire` to view, edit, or validate settings without touching TOML directly. Use `/apply-best-practice-profile` to activate a full paradigm (OOP, TDD, clean architecture) in one command. Use `/resolve-best-practice-conflict` to resolve contradictions between two installed skills and record the priority automatically. Use `/apply-best-practice-driven-development` to run the full BPDD cycle — or see the [BPDD guide](./docs/bpdd.md) for the linter, LSP output, and CI integration details.
 
----
+→ [Full settings reference](./docs/settings.md) — all keys, override hierarchy, TOML examples
 
 ## 🎭 Profiles
 
@@ -497,8 +464,6 @@ Commit `.grimoire/profiles/` to share standards across the team. Publish as a gi
 
 → [Full profiles guide](./docs/profiles.md) — resolution order, conflict handling, sharing profiles
 
----
-
 ## 📏 BPDD — Best Practice Driven Development
 
 Grimoire doubles as a best-practice linter. Encode your quality criteria once in `settings.toml`, then run `/check-best-practice-compliance` against any artifact — a codebase, a legal contract, a business plan, a training program. Same criteria every run. Gaps that survive human review get caught by the check.
@@ -540,8 +505,6 @@ Use `/fix-best-practice-finding` to fix one specific compliance finding — targ
 
 → [Full BPDD guide](./docs/bpdd.md) — cycle, linter, LSP schema, false positive suppression, incremental mode
 
----
-
 ## 🌟 Featured Skills
 
 | Skill | Domain | Source methodology | Verified |
@@ -558,8 +521,6 @@ Use `/fix-best-practice-finding` to fix one specific compliance finding — targ
 | [`design-training-periodization-plan`](./skills/sports/training/skills/design-training-periodization-plan/) | sports/training | Bompa "Periodization" / NSCA | ✓ |
 
 → [Browse all 500+ skills by domain](./SKILLS.md)
-
----
 
 ## 📐 The Grimoire Skill Standard
 
@@ -578,8 +539,6 @@ Every skill must pass `review-best-practice-skill` before merge:
 → [Read the full standard](./STANDARD.md) · [Adopt this standard](./STANDARD.md#adopting-this-standard)
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md) to submit a skill.
-
----
 
 ## 🗺️ Domains
 
@@ -615,8 +574,6 @@ grimoire is a framework + reference skills. The domain structure is ready — co
 | [parenting](./skills/parenting/) | [infant](./skills/parenting/infant/skills/), [toddler](./skills/parenting/toddler/skills/), [school-age](./skills/parenting/school-age/skills/), [teen](./skills/parenting/teen/skills/) |
 | [automotive](./skills/automotive/) | [maintenance](./skills/automotive/maintenance/skills/), [troubleshooting](./skills/automotive/troubleshooting/skills/), [buying](./skills/automotive/buying/skills/), [modifications](./skills/automotive/modifications/skills/), [ev](./skills/automotive/ev/skills/) |
 
----
-
 ## 🤖 Agent Support
 
 | Agent | Plugin install | Script install |
@@ -627,8 +584,6 @@ grimoire is a framework + reference skills. The domain structure is ready — co
 | OpenCode | See [`.opencode/INSTALL.md`](./.opencode/INSTALL.md) | `--target all` |
 | Codex CLI | `AGENTS.md` auto-loaded; browse `/plugins` in CLI | `--target codex` |
 | Cursor | `AGENTS.md` context injection | `--target cursor` |
-
----
 
 ## ❓ FAQ
 
@@ -665,8 +620,6 @@ User: We follow Google's engineering practices, not IBM's.
 ```
 
 **Override or fork.** A skill is a starting point, not a mandate. Adapt any skill to your context, or ignore it entirely. The format is plain Markdown and the license is MIT.
-
----
 
 ## 🤝 Contributing
 
@@ -708,8 +661,6 @@ If it saved you time, money, or a bad decision:
 - **[☕ Ko-fi](https://ko-fi.com/jeffreytse)** · **[Patreon](https://patreon.com/jeffreytse)** · **[Liberapay](https://liberapay.com/jeffreytse)** — one-time or recurring
 
 Every star makes grimoire more visible. Every sponsorship funds one more domain.
-
----
 
 ## 📄 License
 
