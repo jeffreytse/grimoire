@@ -193,6 +193,59 @@ check_skill() {
   (( checked++ )) || true
 }
 
+check_registry() {
+  local skills_md="$REPO_ROOT/SKILLS.md"
+  local reg_missing=0 reg_stale=0
+  local tmp_disk tmp_md
+  tmp_disk=$(mktemp)
+  tmp_md=$(mktemp)
+
+  if [[ ! -f "$skills_md" ]]; then
+    red "SKILLS.md not found at $skills_md"
+    exit 1
+  fi
+
+  echo "grimoire registry check"
+  echo "========================"
+
+  # Collect all skill dirs on disk (relative path without leading repo root)
+  find "$REPO_ROOT/skills" -name 'SKILL.md' -print | while IFS= read -r p; do
+    dir="${p#"$REPO_ROOT/"}"
+    echo "${dir%/SKILL.md}"
+  done | sort > "$tmp_disk"
+
+  # Collect all skill paths linked in SKILLS.md
+  grep -oE '\./skills/[^)]+/' "$skills_md" \
+    | sed 's|^\./||' | sed 's|/$||' | sort > "$tmp_md"
+
+  # Stale: in SKILLS.md but not on disk
+  while IFS= read -r link; do
+    red "  [STALE] $link — linked in SKILLS.md but not on disk"
+    (( reg_stale++ )) || true
+  done < <(comm -23 "$tmp_md" "$tmp_disk")
+
+  # Missing: on disk but not in SKILLS.md
+  while IFS= read -r path; do
+    red "  [MISSING] $path — on disk but not in SKILLS.md"
+    (( reg_missing++ )) || true
+  done < <(comm -23 "$tmp_disk" "$tmp_md")
+
+  rm -f "$tmp_disk" "$tmp_md"
+
+  echo ""
+  local total_entries
+  total_entries=$(grep -cE '\./skills/[^)]+/' "$skills_md" || true)
+  echo "Registry: $reg_stale stale, $reg_missing missing"
+
+  if [[ $(( reg_stale + reg_missing )) -eq 0 ]]; then
+    green "PASS — registry in sync ($total_entries entries)"
+    exit 0
+  else
+    red "FAIL — registry out of sync"
+    exit 1
+  fi
+}
+
 # --- Entry point ---
 
 files=()
@@ -201,13 +254,16 @@ if [[ "${1:-}" == "--all" ]]; then
   while IFS= read -r -d '' f; do
     files+=("$f")
   done < <(find "$REPO_ROOT/skills" -name 'SKILL.md' -print0 | sort -z)
+elif [[ "${1:-}" == "--check-registry" ]]; then
+  check_registry
 else
   files=("$@")
 fi
 
-if [[ ${#files[@]} -eq 0 ]]; then
+if [[ ${#files[@]} -eq 0 && "${1:-}" != "--check-registry" ]]; then
   echo "Usage: validate-skill.sh <SKILL.md> [...]"
   echo "       validate-skill.sh --all"
+  echo "       validate-skill.sh --check-registry"
   exit 1
 fi
 
