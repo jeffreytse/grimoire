@@ -94,27 +94,33 @@ Pattern: `<verb>-<subject>[-<qualifier>]`
 |------|---------|
 | `propose-` | Draft an artifact for human approval |
 | `write-` | Author a document, message, or content |
-| `review-` | Evaluate quality of something that exists |
-| `audit-` | Batch evaluation across many items |
+| `review-` | Evaluate quality of a single artifact using judgment |
+| `audit-` | Systematic checklist evaluation against defined criteria — one or many items |
 | `design-` | Architect a system, plan, or program |
 | `calculate-` | Compute a numeric value or formula |
 | `diagnose-` | Identify the root cause of a problem |
 | `optimize-` | Improve a measured metric |
+| `refactor-` | Restructure existing code or content without changing external behavior |
 | `suggest-` | Recommend options for user selection |
 | `deprecate-` | Retire an outdated artifact |
 | `plan-` | Create a structured sequence of actions |
 | `negotiate-` | Handle a back-and-forth agreement process |
 | `apply-` | Apply a technique, method, or framework to a situation |
+| `profile-` | Measure performance characteristics of a system or process |
+| `validate-` | Check that input or data conforms to expected format or constraints |
 | `run-` | Facilitate or execute a meeting, session, or process |
+
+When multiple verbs fit, prefer the more specific one: `optimize-` over `apply-` when a metric is targeted; `refactor-` over `apply-` when restructuring without behavior change.
 
 Verbs not in this table are allowed if none of the above fit — but vague verbs below are always rejected:
 
 | Reject | Problem | Use instead |
 |--------|---------|-------------|
 | `do-` | Says nothing | The actual action verb |
-| `handle-` | Too vague | `diagnose-`, `review-`, `resolve-` |
+| `handle-` | Too vague | `diagnose-`, `review-`, `refactor-` |
 | `manage-` | Too vague | `plan-`, `design-`, `audit-` |
 | `improve-` | Doesn't say what improves | `optimize-query-latency`, `reduce-churn` |
+| `set-` | Too vague | `set-reminder`, `set-deadline`, `set-profile` |
 | `get-` | Ambiguous (fetch? compute?) | `calculate-`, `fetch-`, `extract-` |
 | `use-` | Reads like a tutorial | The action the skill actually performs |
 | `help-` | Too generic | The actual action verb |
