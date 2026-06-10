@@ -1,5 +1,5 @@
 ---
-name: set-page-language
+name: apply-page-language
 description: Use when building any web page or SPA — to declare the language of the page and any inline content in a different language, so screen readers select the correct text-to-speech voice and language rules.
 source: W3C WCAG 2.1 SC 3.1.1 Language of Page (Level A), SC 3.1.2 Language of Parts (Level AA); IETF BCP 47 language tag specification; MDN HTML lang attribute guide
 tags: [accessibility, wcag, a11y, language, lang-attribute, screen-reader, internationalization, developer]
