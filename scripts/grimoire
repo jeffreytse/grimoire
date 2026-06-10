@@ -302,14 +302,26 @@ list_skills() {
 install_skill_dir() {
   local src="$1" dest_dir="$2" skill_name
   skill_name=$(basename "${src}")
+  local dest="${dest_dir}/${skill_name}"
+
+  if [[ ${LINK} -eq 1 ]] && [[ -L "$dest" ]]; then
+    local existing_target
+    existing_target=$(readlink "$dest")
+    if [[ "$existing_target" != "$src" ]]; then
+      printf '\033[0;33m  [WARN] collision: %s already linked from %s\n         skipping new source: %s\033[0m\n' \
+        "$skill_name" "$existing_target" "$src" >/dev/tty
+      return 0
+    fi
+  fi
+
   mkdir -p "${dest_dir}"
   if [[ ${LINK} -eq 1 ]]; then
-    ln -sfn "${src}" "${dest_dir}/${skill_name}"
-    echo "  linked: ${skill_name} -> ${dest_dir}/${skill_name}" >/dev/tty
+    ln -sfn "${src}" "${dest}"
+    echo "  linked: ${skill_name} -> ${dest}" >/dev/tty
   else
-    mkdir -p "${dest_dir}/${skill_name}"
-    cp -r "${src}/." "${dest_dir}/${skill_name}/"
-    echo "  installed: ${skill_name} -> ${dest_dir}/${skill_name}" >/dev/tty
+    mkdir -p "${dest}"
+    cp -r "${src}/." "${dest}/"
+    echo "  installed: ${skill_name} -> ${dest}" >/dev/tty
   fi
   (( _installed_count++ )) || true
 }
