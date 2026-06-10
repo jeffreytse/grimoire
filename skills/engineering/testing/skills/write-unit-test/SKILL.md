@@ -51,6 +51,50 @@ def setUp(self):
     self.cart.add(Item(id="sku-1", qty=1))
 ```
 
+#### DAMP vs DRY — where to draw the line
+
+DAMP does not mean "never extract helpers." The rule is: **inline data, extract behavior.**
+
+| What to inline (DAMP) | What to extract (OK to DRY) |
+|-----------------------|-----------------------------|
+| Input values, state, config specific to this test | `make_user()` / `create_order()` builder helpers that hide irrelevant noise |
+| Expected output values | Shared assertion helpers (e.g., `assert_valid_response(r)`) |
+| Error messages and thresholds | Mock/fake setup for infrastructure (DB, HTTP client) |
+
+**The 3-question test** — before extracting shared test code, ask:
+1. Does the extracted code contain a value that varies per test? → Keep inline.
+2. Does a reader need to see this value to understand what the test proves? → Keep inline.
+3. Is this purely mechanical plumbing that obscures the test's intent? → Extract.
+
+```python
+# Inline — the specific discount rate IS the test's point
+def test_cart_apply10PercentDiscount_reducesTotalByTen():
+    cart = Cart(items=[Item(price=100)])
+    cart.apply_discount(rate=0.10)          # 0.10 is the subject — must be visible
+    assert cart.total() == 90.0
+
+# Extract — building a valid User is noise; the test is about the email check
+def test_user_changeEmail_rejectsInvalidFormat():
+    user = make_user()                      # irrelevant details hidden
+    with pytest.raises(ValueError):
+        user.change_email("not-an-email")
+
+def make_user(**overrides):
+    defaults = {"name": "Alice", "role": "viewer", "email": "alice@example.com"}
+    return User(**{**defaults, **overrides})
+```
+
+**Builder helpers are DAMP-safe** when they expose relevant fields as overrides:
+
+```python
+# Reader can see the field that matters — all else is noise
+user = make_user(role="admin")
+order = make_order(status="shipped", items=[Item(id="sku-1")])
+```
+
+**Never share mutable fixtures.** A helper that returns the same instance across tests
+causes hidden state leakage. Always return a fresh instance.
+
 ### 3. Act — invoke exactly one call
 
 One call to the unit under test. If you need two calls to express the behavior, it is two behaviors — split the test.
