@@ -66,12 +66,14 @@ check_skill() {
     fi
     local skill_dir duplicates
     skill_dir=$(cd "$(dirname "$file")" && pwd)
-    duplicates=$(find "${REPO_ROOT}/skills" -mindepth 4 -maxdepth 4 -type d \
-      -name "$name" ! -path "$skill_dir" 2>/dev/null || true)
-    if [[ -n "$duplicates" ]]; then
-      red "    [FAIL] name: '$name' already exists in another domain — add qualifier per STANDARD.md"
-      red "           duplicate: $duplicates"
-      (( file_errors++ )) || true
+    if [[ "$skill_dir" == "$REPO_ROOT/skills/"* ]]; then
+      duplicates=$(find "${REPO_ROOT}/skills" -mindepth 4 -maxdepth 4 -type d \
+        -name "$name" ! -path "$skill_dir" 2>/dev/null || true)
+      if [[ -n "$duplicates" ]]; then
+        red "    [FAIL] name: '$name' already exists in another domain — add qualifier per STANDARD.md"
+        red "           duplicate: $duplicates"
+        (( file_errors++ )) || true
+      fi
     fi
   fi
 
