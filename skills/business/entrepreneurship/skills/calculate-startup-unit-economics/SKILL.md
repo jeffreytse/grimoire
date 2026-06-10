@@ -1,5 +1,5 @@
 ---
-name: calculate-unit-economics
+name: calculate-startup-unit-economics
 description: Use when computing or auditing a business's unit-level profitability including CAC, LTV, payback period, and contribution margin
 source: Andreessen Horowitz (a16z) unit economics framework; Skok "SaaS Metrics 2.0" (2012); Bessemer Venture Partners cloud SaaS metrics guide
 tags: [entrepreneurship, unit-economics, saas-metrics, finance, startups]

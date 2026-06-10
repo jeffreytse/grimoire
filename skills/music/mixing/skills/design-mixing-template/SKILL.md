@@ -1,5 +1,5 @@
 ---
-name: design-mix-template
+name: design-mixing-template
 description: Use when creating a reusable DAW mix template to streamline session setup, ensure consistent signal flow, and apply proven mix architecture
 source: Owsinski "The Mixing Engineer's Handbook" (2017, 4th ed.); AES (Audio Engineering Society) mixing standards; Pensado's Place professional mixing methodology
 tags: [music-mixing, daw-template, signal-flow, music-production]

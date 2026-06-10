@@ -2,7 +2,7 @@
 name: design-sourdough-process
 description: Use when making sourdough bread from scratch — maintaining a starter, mixing dough, managing fermentation, shaping, and baking — to produce an open-crumb, well-flavoured loaf with a crackly crust
 source: 'Robertson "Tartine Bread" (2010); King Arthur Baking sourdough guide (2023); Modernist Bread vol.2 (Myhrvold & Migoya, 2017); Hamelman "Bread: A Baker's Book of Techniques and Recipes" (2nd ed., 2004)'
-tags: [cooking, baking, sourdough, bread, fermentation, starter, levain, dutch-oven, gluten]
+tags: [baking, sourdough, bread, fermentation, starter, levain, dutch-oven, gluten]
 verified: true
 ---
 

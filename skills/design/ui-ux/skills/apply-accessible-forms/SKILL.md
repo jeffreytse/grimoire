@@ -2,7 +2,7 @@
 name: apply-accessible-forms
 description: Use when building any form — login, checkout, search, settings — to ensure all inputs are correctly labeled, errors are programmatically associated, and users can complete the form with a keyboard and screen reader.
 source: W3C WCAG 2.1 SC 1.3.5 Identify Input Purpose (Level AA), SC 3.3.1 Error Identification (Level A), SC 3.3.2 Labels or Instructions (Level A), SC 3.3.3 Error Suggestion (Level AA); WAI Forms Tutorial
-tags: [accessibility, wcag, a11y, forms, labels, error-messages, autocomplete, developer, screen-reader]
+tags: [accessibility, wcag, a11y, forms, labels, error-messages, autocomplete, screen-reader]
 related: [design-accessibility-standards, apply-keyboard-accessibility, apply-aria-roles]
 ---
 

@@ -2,7 +2,7 @@
 name: configure-grimoire
 description: Use when the user wants to view, edit, remove, or validate their grimoire settings — including reading current preferences, changing or deleting a setting, switching a named profile, or checking settings.toml for contradictions and expired entries.
 source: Settings management patterns (VS Code settings UI, Git config get/set/unset); XDG Base Directory Specification (freedesktop.org)
-tags: [settings, configuration, preferences, profile, toml, grimoire, view, edit, validate]
+tags: [settings, configuration, preferences, profile, toml, view, edit, validate]
 ---
 
 # Configure Grimoire

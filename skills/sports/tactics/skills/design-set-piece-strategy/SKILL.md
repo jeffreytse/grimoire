@@ -2,7 +2,7 @@
 name: design-set-piece-strategy
 description: Use when designing structured plays for restarts (corners, free kicks, throw-ins, penalties) in team sports where set pieces provide high-probability scoring or defensive opportunities.
 source: Hughes & Franks "The Essentials of Performance Analysis in Sport" (2004); Reep & Benjamin "Skill and Chance in Association Football" (JRSS 1968); UEFA Technical Report (2020); Casal et al. "Analysis of corner kicks in elite football" (IJSPP 2015)
-tags: [sports, tactics, coaching, set-pieces, strategy, team-sports, football, soccer, basketball]
+tags: [tactics, coaching, set-pieces, strategy, team-sports, football, soccer, basketball]
 verified: true
 ---
 

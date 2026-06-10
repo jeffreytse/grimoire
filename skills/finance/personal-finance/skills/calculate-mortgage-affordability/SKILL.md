@@ -2,7 +2,7 @@
 name: calculate-mortgage-affordability
 description: Use when determining how much house you can actually afford — applying the 28/36 rule, stress-testing at higher rates, and calculating required down payment and cash reserves to avoid becoming house-poor
 source: Consumer Financial Protection Bureau "Know Before You Owe" mortgage guide (2023); Federal Housing Administration underwriting guidelines (28/36 rule); Bogle "The Little Book of Common Sense Investing" (2007); Urban Institute Housing Finance Policy Center research (2023)
-tags: [finance, personal-finance, mortgage, home-buying, affordability, 28/36-rule, down-payment, real-estate, PITI]
+tags: [personal-finance, mortgage, home-buying, affordability, 28/36-rule, down-payment, real-estate, PITI]
 verified: true
 ---
 

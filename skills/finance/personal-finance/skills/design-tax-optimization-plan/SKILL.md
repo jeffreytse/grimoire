@@ -2,7 +2,7 @@
 name: design-tax-optimization-plan
 description: Use when planning year-round strategies to legally minimise your tax burden — maximising pre-tax accounts, harvesting losses, locating assets correctly, and timing deductions to reduce what you owe without avoiding legal obligations
 source: IRS Publication 17 "Your Federal Income Tax" (2024); Kiplinger "Tax Planning Guide" (2024); Kitces.com financial planning research; Bogleheads "Tax-Efficient Fund Placement" wiki; IRS Publication 550 (investment income and expenses)
-tags: [finance, personal-finance, tax, tax-optimization, 401k, HSA, tax-loss-harvesting, Roth, asset-location, deductions]
+tags: [tax, tax-optimization, 401k, HSA, tax-loss-harvesting, Roth, asset-location, deductions]
 verified: true
 ---
 

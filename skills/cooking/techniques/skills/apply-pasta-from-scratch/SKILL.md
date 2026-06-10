@@ -2,7 +2,7 @@
 name: apply-pasta-from-scratch
 description: Use when making fresh egg pasta from scratch — mixing, kneading, resting, rolling, and cutting — to produce silky, tender pasta that holds sauce better than dried pasta for dishes like tagliatelle, pappardelle, fettuccine, or lasagne sheets
 source: 'Hazan "Essentials of Classic Italian Cooking" (1992); Ruhlman "Ratio: The Simple Codes Behind the Craft of Everyday Cooking" (2009); Vetri "Mastering Pasta" (2015)'
-tags: [cooking, techniques, pasta, fresh-pasta, egg-pasta, italian, rolling, gluten, flour]
+tags: [techniques, pasta, fresh-pasta, egg-pasta, italian, rolling, gluten, flour]
 verified: true
 ---
 

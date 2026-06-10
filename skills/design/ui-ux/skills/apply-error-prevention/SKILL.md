@@ -2,7 +2,7 @@
 name: apply-error-prevention
 description: Use when building forms that submit legal, financial, or irreversible data — to ensure users can review, confirm, or reverse submissions, and are not asked to re-enter information they've already provided.
 source: W3C WCAG 2.1 SC 3.3.4 Error Prevention Legal Financial Data (Level AA); W3C WCAG 2.2 SC 3.3.7 Redundant Entry (Level A); Nielsen Norman Group form usability research; UK GOV.UK Design System form patterns
-tags: [accessibility, wcag, a11y, error-prevention, forms, confirmation, undo, cognitive-accessibility, developer]
+tags: [accessibility, wcag, a11y, error-prevention, forms, confirmation, undo, cognitive-accessibility]
 related: [apply-accessible-forms, apply-accessible-authentication, design-accessibility-standards]
 ---
 

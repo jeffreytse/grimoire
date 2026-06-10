@@ -2,7 +2,7 @@
 name: apply-page-object-pattern
 description: Use when writing UI automation or end-to-end tests to keep test logic decoupled from page implementation details, so tests remain maintainable when the UI changes.
 source: Fowler "PageObject" (martinfowler.com/bliki/PageObject.html, 2013); Selenium WebDriver documentation (official pattern recommendation); Google Testing Blog; Meszaros "xUnit Test Patterns" (2007)
-tags: [testing, ui-testing, e2e, automation, patterns, selenium, playwright, test-design, maintainability]
+tags: [ui-testing, e2e, automation, patterns, selenium, playwright, test-design, maintainability]
 verified: true
 ---
 

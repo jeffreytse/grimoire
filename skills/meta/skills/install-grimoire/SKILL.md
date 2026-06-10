@@ -2,7 +2,7 @@
 name: install-grimoire
 description: Use when the user wants to install or uninstall grimoire skills by domain or individual skill, upgrade grimoire to the latest version, clean up broken symlinks, list what skills are available, or run a health check on the grimoire installation.
 source: Package manager UX patterns (Homebrew, npm, apt); grimoire scripts/grimoire
-tags: [install, uninstall, upgrade, clean, list, doctor, health, diagnostics, grimoire, skills, domains, setup]
+tags: [uninstall, upgrade, clean, doctor, health, diagnostics, skills, setup]
 ---
 
 # Install Grimoire

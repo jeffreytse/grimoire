@@ -2,7 +2,7 @@
 name: write-demand-letter
 description: Use when asserting a legal claim — unpaid invoices, breach of contract, property damage, or security deposit disputes — and needing a formal written notice that states the claim clearly, sets a deadline, and establishes a paper trail before litigation
 source: American Bar Association "Model Rules of Professional Conduct" (Rule 4.4 — Respect for Rights of Third Persons); NOLO "Everybody's Guide to Small Claims Court" (Warner & Nolo Editors, 2023); Foonberg "How to Start and Build a Law Practice" (ABA, 6th ed.)
-tags: [law, contracts, demand-letter, dispute, collections, breach-of-contract, landlord-tenant, small-claims, legal-notice]
+tags: [contracts, demand-letter, dispute, collections, breach-of-contract, landlord-tenant, small-claims, legal-notice]
 verified: true
 ---
 

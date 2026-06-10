@@ -1,5 +1,5 @@
 ---
-name: write-runbook
+name: write-ops-runbook
 description: Use when documenting a repeatable operational procedure that on-call engineers or operators must execute under pressure
 source: Google SRE Book (Beyer et al., 2016), Chapter 12 "Effective Troubleshooting"; PagerDuty Runbook Guide
 tags: [runbook, operations, on-call, documentation, sre, reliability]

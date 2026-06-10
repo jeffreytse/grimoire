@@ -2,7 +2,7 @@
 name: apply-aria-roles
 description: Use when building custom UI components that native HTML cannot represent — to give assistive technology the correct role, state, and property information for non-native interactive elements.
 source: W3C WCAG 2.1 SC 4.1.2 Name, Role, Value (Level A); WAI-ARIA 1.2 specification; WAI-ARIA Authoring Practices 1.2; MDN ARIA guide
-tags: [accessibility, wcag, a11y, aria, roles, states, properties, developer, screen-reader]
+tags: [accessibility, wcag, a11y, aria, roles, states, properties, screen-reader]
 related: [apply-keyboard-accessibility, write-semantic-html-structure, design-accessibility-standards]
 ---
 

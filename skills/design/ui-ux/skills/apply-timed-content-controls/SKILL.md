@@ -2,7 +2,7 @@
 name: apply-timed-content-controls
 description: Use when building carousels, auto-advancing slideshows, session management, or any content that moves, blinks, or updates automatically — to ensure users can pause, stop, or extend time-sensitive content.
 source: W3C WCAG 2.1 SC 2.2.1 Timing Adjustable (Level A), SC 2.2.2 Pause Stop Hide (Level A), SC 2.2.6 Timeouts (Level AA); WAI-ARIA Carousel Design Pattern; NIST SP 800-63B session management guidance
-tags: [accessibility, wcag, a11y, timing, carousels, session-timeout, auto-advancing, pause-controls, developer]
+tags: [accessibility, wcag, a11y, timing, carousels, session-timeout, auto-advancing, pause-controls]
 related: [apply-keyboard-accessibility, apply-reduced-motion, design-accessibility-standards]
 ---
 

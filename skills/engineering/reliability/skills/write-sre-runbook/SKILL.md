@@ -1,5 +1,5 @@
 ---
-name: write-runbook
+name: write-sre-runbook
 description: Use when writing or updating an on-call runbook, incident response playbook, or alert-to-action guide
 source: "The Site Reliability Workbook (Google, 2018) Ch. 8; PagerDuty Incident Response Documentation; The Art of SRE (Niall Murphy et al.)"
 tags: [sre, runbook, on-call, incident-response, reliability, operations, playbook]

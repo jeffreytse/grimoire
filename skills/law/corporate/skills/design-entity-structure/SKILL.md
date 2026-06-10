@@ -2,7 +2,7 @@
 name: design-entity-structure
 description: Use when a founder, freelancer, or small business owner needs to choose and set up the right legal entity — deciding between sole proprietorship, LLC, S-corp, or C-corp based on liability, tax treatment, and funding plans
 source: IRS entity classification regulations (26 CFR § 301.7701); Feld & Mendelson "Venture Deals" (4th ed., 2019); NOLO "LLC vs. Corporation" (Steingold, 2023); Keatinge & Conaway "Choice of Business Entity" (Thomson Reuters, 2022)
-tags: [law, corporate, entity, llc, s-corp, c-corp, founders, tax, liability, startup, freelance]
+tags: [llc, s-corp, c-corp, founders, tax, liability, startup, freelance]
 verified: true
 ---
 
