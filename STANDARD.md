@@ -629,6 +629,8 @@ Skills in regulated or sensitive domains carry additional obligations.
 | Style preferences without expert justification | Opinions aren't skills |
 | Content that's already well-covered by documentation | Link; don't duplicate |
 
+> **Note on universally known frameworks:** A framework being widely known (SWOT, Fishbone, 5 Whys) does NOT disqualify it. The "generic advice" bar applies to the *content* of the skill, not the *fame* of the framework. A skill encoding SWOT qualifies if it goes beyond listing four quadrants — encoding what practitioners routinely get wrong (confusing internal vs. external factors, skipping the SO/WO/ST/WT strategy matrix, listing wishful thinking as Opportunities). The test: *does this skill encode non-obvious implementation discipline that practitioners who already know the framework name still skip?* If yes, it qualifies. If the skill content reduces to "ask [acronym letter] for each letter," it does not.
+
 ---
 
 ## Size
