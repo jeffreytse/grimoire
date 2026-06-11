@@ -20,7 +20,7 @@ Sources: Cohn "Succeeding with Agile" Addison-Wesley (2009); Fowler "Test Pyrami
 
 ## Steps
 
-1. **Audit the current test distribution** — Count existing tests by type: unit (< 100 ms, no I/O), integration (service + real dependencies), and e2e (browser/API end-to-end). Calculate the ratio. Target: 70% unit, 20% integration, 10% e2e. An inverted pyramid (many e2e, few unit) is the root cause of slow, flaky CI.
+1. **Audit the current test distribution** — Count existing tests by type: unit (< 100 ms, no I/O), integration (service + real dependencies), and e2e (browser/API end-to-end). Calculate the ratio. Target: **80% unit, 15% integration, 5% e2e** (Google's documented target from *Software Engineering at Google*); a widely-used alternative is 70/20/10. Either is correct — the principle is a wide base, not a precise number. An inverted pyramid (many e2e, few unit) is the root cause of slow, flaky CI.
 
 2. **Define test categories precisely** — Unit: tests one class/function in isolation with all dependencies mocked/stubbed; must run in < 100 ms; no network, database, or filesystem. Integration: tests a component with real infrastructure (database, message queue, external API via test container). E2E: tests the full system as a user would interact with it.
 
