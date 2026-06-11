@@ -60,8 +60,8 @@
   </a>
 
   <a href="./skills/">
-    <img src="https://img.shields.io/badge/skills-500%2B-blue"
-      alt="505 Skills" />
+    <img src="https://img.shields.io/badge/skills-800%2B-blue"
+      alt="800+ Skills" />
   </a>
 </p>
 
@@ -88,9 +88,9 @@
 
 ## 🎬 Demo
 
-> "I'm 42, AI just took my job, I have a mortgage. What do I do?"
+> "We're launching our SaaS in 48 hours. I'm terrified something will break. What do we do?"
 
-![grimoire demo — natural language problem solved with grimoire best practices](./assets/demo.gif)
+![grimoire demo — pre-launch protocol: apply-premortem → design-slo → plan-incident-response → run-game-day](./assets/demo.gif)
 
 ## 🤔 Why Grimoire?
 
@@ -103,7 +103,7 @@ The model knows SOLID, DDD, Google SRE, and the ABA Model Rules. Without explici
 - 🔍 **You don't know what you don't know.** Grimoire surfaces the governing standard you didn't know applied.
 - 🤖 **Knowing is not enough. Grimoire enforces.** Specific steps, verifiable criteria, repeatable results. Not summaries — verdicts.
 - 🌍 **The world's best practices belong to everyone.** McKinsey charges $1M. Senior lawyers bill $800/hr. The practices they follow are not proprietary. Grimoire makes them free — as executable steps, cited and verified.
-- 🧱 **Every profession. Every AI.** 500+ skills across 27 domains. Works with Claude, Codex, Cursor, Gemini, and OpenCode.
+- 🧱 **Every profession. Every AI.** 800+ skills across 27 domains. Works with Claude, Codex, Cursor, Gemini, and OpenCode.
 
 If you've spent 10,000 hours mastering something, your practice belongs here.
 
@@ -520,7 +520,7 @@ Use `/fix-best-practice-finding` to fix one specific compliance finding — targ
 | [`write-value-proposition`](./skills/writing/copywriting/skills/write-value-proposition/) | writing/copywriting | Osterwalder "Value Proposition Design" | ✓ |
 | [`design-training-periodization-plan`](./skills/sports/training/skills/design-training-periodization-plan/) | sports/training | Bompa "Periodization" / NSCA | ✓ |
 
-→ [Browse all 500+ skills by domain](./SKILLS.md)
+→ [Browse all skills by domain](./SKILLS.md)
 
 ## 📐 The Grimoire Skill Standard
 
@@ -608,6 +608,16 @@ Knowing a practice and reliably executing it are different things. Ask any model
 
 The "textbook" objection gets it backwards. Established practices are *ideal* for skills precisely because they're falsifiable — you can verify whether the output matches what Google's SRE book, Amazon's mechanisms, or the WHO protocol actually prescribes. If you find a skill that adds nothing over a bare prompt, that's a quality failure. [File an issue.](https://github.com/jeffreytse/grimoire/issues)
 
+**Some frameworks here are universally known — isn't the value already in the model?**
+
+The question isn't whether the model knows the framework name. It's whether the skill encodes what practitioners who already know the name still get wrong.
+
+A framework qualifies when the skill has substantial content beyond the acronym or label — the step most people skip, the failure mode they don't avoid, the discipline that separates expert application from surface-level application. SWOT, for example, is universally known, but most practitioners stop at the 4-quadrant list and never derive the TOWS cross-matrix (SO/WO/ST/WT strategies) — the step that converts a diagnosis into actionable options. The skill encodes that gap.
+
+A framework doesn't qualify when the full implementation reduces to restating the framework name. If a skill's entire content would be "follow the acronym," it adds nothing — the model already knows the letters.
+
+The test: *"What would this skill contain beyond the framework name?"* If the answer is "the step practitioners skip + the failure mode they don't avoid" — it qualifies. If the answer is "the letters, explained" — it doesn't.
+
 **Does grimoire conflict with my team's existing conventions?**
 
 Skills describe what the world's top institutions do. Your team may do things differently — and be right to. Two ways to handle it:
@@ -623,7 +633,7 @@ User: We follow Google's engineering practices, not IBM's.
 
 ## 🤝 Contributing
 
-**grimoire has 500+ skills. It needs 1000. Pick a domain.**
+**grimoire has many best practices. It needs more. Pick a domain.**
 
 Every domain has empty sub-domains waiting for skills. If you know a field — engineering, law, finance, music, cooking, anything — add the practices you've seen work at the highest level.
 
