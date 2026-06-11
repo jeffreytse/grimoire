@@ -1,7 +1,7 @@
 ---
 name: apply-sq3r
 description: Use when reading a textbook chapter, research paper, technical document, or any dense non-fiction text — to maximize comprehension and retention on first pass by converting passive reading into active questioning and retrieval.
-source: 'Francis P. Robinson, "Effective Study", Ohio State University Press (1946); Hattie, "Visible Learning" (2009); National Reading Panel Report (2000); Dunlosky et al., "Improving Students'' Learning With Effective Learning Techniques", Psychological Science in the Public Interest (2013)'
+source: 'Francis P. Robinson, "Effective Study", Ohio State University Press (1946); Thomas & Robinson, "Improving Reading in Every Class" (1972, PQ4R extension); Hattie, "Visible Learning" (2009); National Reading Panel Report (2000); Dunlosky et al., "Improving Students'' Learning With Effective Learning Techniques", Psychological Science in the Public Interest (2013)'
 tags: [reading-comprehension, active-reading, study, sq3r, learner, retention]
 ---
 
@@ -84,6 +84,8 @@ Rules for Recite:
 ```
 
 This is retrieval practice. The difficulty of recalling from memory (not just recognizing text) is what drives encoding into long-term memory. If reciting feels effortless, it means you haven't closed the text — close it.
+
+**Optional Reflect step (PQ4R variant — Thomas & Robinson, 1972):** After reciting each section, add one sentence connecting the material to prior knowledge: "This relates to X because..." or "This contradicts what I knew about Y because...". Dunlosky et al. (2013) rates elaborative interrogation at moderate utility — it improves retention most for complex theoretical material where connections to prior knowledge are non-obvious. Skip for factual or procedural content where connections are not meaningful.
 
 Repeat Steps 3–4 for every section before proceeding to Step 5.
 
