@@ -62,7 +62,7 @@ User: "Here's our API design doc — does it follow REST best practices?"
 
 ---
 
-### analyze-problem
+### analyze-best-practice-problem
 
 **When to use:** When the user's problem isn't clearly defined — goal is unclear, scope is unstated, or what's described looks like a symptom rather than a root cause.
 
@@ -71,7 +71,7 @@ User: "Here's our API design doc — does it follow REST best practices?"
 **Example invocation:**
 ```
 User: "My team isn't performing well."
-→ analyze-problem asks: "What outcome are you trying to achieve — better output, faster delivery, or fewer conflicts?"
+→ analyze-best-practice-problem asks: "What outcome are you trying to achieve — better output, faster delivery, or fewer conflicts?"
 → After answers: Problem statement, scope, routes A/B/C, handoff to suggest-best-practice
 ```
 
@@ -92,7 +92,7 @@ User: "What best practices exist for contract negotiation?"
 
 ---
 
-### intercept-best-practice
+### start-best-practice
 
 **When to use:** When the user signals they are about to begin a task — "I'm going to write X", "starting to build Y", "planning to do Z" — before they have started.
 
@@ -101,7 +101,7 @@ User: "What best practices exist for contract negotiation?"
 **Example invocation:**
 ```
 User: "I'm about to refactor our auth module."
-→ intercept-best-practice: "Before you start: review-security-posture applies here.
+→ start-best-practice: "Before you start: review-security-posture applies here.
    Common gaps at this stage: token expiry strategy, rate limiting, audit logging.
    Apply now, or continue without? [y/n]"
 ```
@@ -332,19 +332,19 @@ Browse before a problem
        → offer to apply or learn more
 
 About to start a task
-  → intercept-best-practice
+  → start-best-practice
        → proactive match before work begins
        → key gaps identified
        → apply now or continue
 
 Problem isn't clear yet
-  → analyze-problem
+  → analyze-best-practice-problem
        → clarification loop (one question at a time)
        → problem statement + space map + possible routes
        → hands off to suggest-best-practice or plan-best-practice-solution
 
 Describe situation
-  → suggest-best-practice (or analyze-problem if vague)
+  → suggest-best-practice (or analyze-best-practice-problem if vague)
        → single skill match: apply it directly
        → multiple matches: ranked list with ★ recommendation
        → no match: identify domain to install
@@ -417,9 +417,9 @@ audit-best-practice-domain                ← weekly or pre-release
 
 | Skill | Audience | Trigger | Output |
 |-------|----------|---------|--------|
-| `analyze-problem` | User | problem isn't clearly defined | problem statement + space map + possible routes |
+| `analyze-best-practice-problem` | User | problem isn't clearly defined | problem statement + space map + possible routes |
 | `discover-best-practices` | User | user mentions a domain, no specific problem | grouped practice list with gap framing |
-| `intercept-best-practice` | User | about to begin a task | proactive practice match + apply offer |
+| `start-best-practice` | User | about to begin a task | proactive practice match + apply offer |
 | `suggest-best-practice` | User | any situation or question | matching skill, ranked list, or install recommendation |
 | `plan-best-practice-solution` | User | multi-domain or complex problem | sequenced skill application plan |
 | `apply-best-practice-tree` | User | complex single-domain problem | recursive skill tree applied in sequence |

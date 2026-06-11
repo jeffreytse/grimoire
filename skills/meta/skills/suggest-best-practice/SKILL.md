@@ -42,11 +42,8 @@ Resolution order — first match wins:
 
 For the relevant domain, check if a practice is already pinned:
 - **Pinned match (file)** → apply the pinned practice directly; skip scoring entirely. No further action needed — already persisted.
-- **Pinned match (session)** → apply the pinned practice directly; skip scoring. After applying, offer once per session per domain:
-  `"[practice] is pinned for this session only. Save it for future sessions? [y/n]"`
-  If yes, invoke `pin-best-practice-preference` to write it to project or global file.
-- **Pinned conflict** → warn before suggesting an alternative:
-  `"You have [X] pinned for [domain]. Suggest changing it? [y/n]"`
+- **Pinned match (session)** → apply the pinned practice directly; skip scoring. After applying, offer once per session per domain using a platform-aware confirm: "Save [practice] for future sessions?" (Claude Code/OpenCode: `AskUserQuestion`; Gemini CLI: `ask_user type: confirm`; other: `[y/n]`). If yes, invoke `pin-best-practice-preference`.
+- **Pinned conflict** → warn before suggesting an alternative using a platform-aware confirm: "You have [X] pinned for [domain]. Suggest changing it?" (Claude Code/OpenCode: `AskUserQuestion`; Gemini CLI: `ask_user type: confirm`; other: `[y/n]`).
 - **No pin** → proceed to Step 1.
 
 ### 1. Extract intent signals (no clarifying questions yet)
@@ -68,7 +65,7 @@ Do not ask the user for any of this — infer it from what they wrote.
 - At least the broad scope is known (what domain or area this is in)
 - What's described is a root cause or problem, not just a symptom with no surrounding context
 
-If NOT clear enough → invoke `analyze-problem` before scoring. Use the problem statement from its output as input to Step 2.
+If NOT clear enough → invoke `analyze-best-practice-problem` before scoring. Use the problem statement from its output as input to Step 2.
 If clear enough → proceed to Step 2.
 
 ### 2. Score candidate skills

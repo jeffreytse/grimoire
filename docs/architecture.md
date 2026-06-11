@@ -96,9 +96,9 @@ Example — the grimoire meta domain:
 skills/
 │   ├── grimoire/                         # Meta skills (the framework's nervous system)
 │   │   └── skills/
-│   │       ├── analyze-problem/
+│   │       ├── analyze-best-practice-problem/
 │   │       ├── discover-best-practices/
-│   │       ├── intercept-best-practice/
+│   │       ├── start-best-practice/
 │   │       ├── suggest-best-practice/
 │   │       ├── plan-best-practice-solution/
 │   │       ├── apply-best-practice-tree/
@@ -229,9 +229,9 @@ grimoire is self-managing. The meta skills in `skills/meta/` run the framework i
 
 | Skill | What it does |
 |-------|-------------|
-| `analyze-problem` | Clarifies an ill-defined problem through structured questioning, then maps the problem space and surfaces possible routes |
+| `analyze-best-practice-problem` | Clarifies an ill-defined problem through structured questioning, then maps the problem space and surfaces possible routes |
 | `discover-best-practices` | Surfaces available practices for a domain before the user has a specific problem — grouped by subdomain, framed as gaps |
-| `intercept-best-practice` | Proactively fires before a task starts — matches the most relevant practice and offers to apply it before gaps emerge |
+| `start-best-practice` | Proactively fires before a task starts — matches the most relevant practice and offers to apply it before gaps emerge |
 | `suggest-best-practice` | Universal entry point — classifies any situation and routes to the matching skill or install command |
 | `plan-best-practice-solution` | Decomposes multi-domain problems into sequenced skill applications (MECE methodology) |
 | `apply-best-practice-tree` | Recursively decomposes a complex single-domain problem into sub-problems, matching each to the best installed skill |

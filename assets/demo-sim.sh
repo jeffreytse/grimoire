@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Simulated Claude Code TUI demo — analyze-problem → plan → 4 skills → outcome
+# Simulated Claude Code TUI demo — analyze-best-practice-problem → plan → 4 skills → outcome
 
 ORANGE='\033[38;5;174m'
 AMBER='\033[38;5;172m'
@@ -175,7 +175,7 @@ analyze() {
   think "Routing" 2
   echo ""
 
-  printf "${AMBER}⏺${NC} ${BOLD}analyze-problem${NC}\n\n"; pause 0.5
+  printf "${AMBER}⏺${NC} ${BOLD}analyze-best-practice-problem${NC}\n\n"; pause 0.5
   printf "  Have you shipped at this scale before, and what's\n"
   printf "  your expected peak concurrent user count?\n\n"
   pause 1.8

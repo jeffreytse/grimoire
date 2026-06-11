@@ -92,11 +92,11 @@ If user says "skip" or does not engage: end gracefully — awareness was the goa
 - If the user already has practices pinned in preferences for a subdomain, note them without re-promoting: "You already have [skill] pinned for [subdomain] — skipping that one."
 - Cap the list at 15 practices; if more are installed, group remainder as: "…and N more in [subdomain] — say 'more' to see them"
 - The "most commonly missed" highlight requires editorial judgment — prefer irreversible-consequence practices over optimization practices
-- Do not invoke this skill if the user already has a specific problem — defer to `suggest-best-practice` or `intercept-best-practice` instead
+- Do not invoke this skill if the user already has a specific problem — defer to `suggest-best-practice` or `start-best-practice` instead
 
 ## Key Differences from Related Skills
 
-| | `suggest-best-practice` | `intercept-best-practice` | `discover-best-practices` |
+| | `suggest-best-practice` | `start-best-practice` | `discover-best-practices` |
 |---|---|---|---|
 | Trigger | User describes a problem | User starts a task | User mentions a domain/role |
 | Goal | Match + apply the right practice | Apply before task begins | Promote awareness before any problem |

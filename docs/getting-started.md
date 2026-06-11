@@ -182,12 +182,12 @@ Claude: You have an existing solution. Applying review-best-practice-fit...
 3. Highlights 1–3 practices most commonly discovered too late
 4. Offers to apply any or learn more about one
 
-## Catch gaps before you start: intercept-best-practice
+## Catch gaps before you start: start-best-practice
 
 **When to use:** You're about to begin a task — writing, coding, designing, planning — and want to apply the right practice before starting rather than after discovering a gap.
 
 ```bash
-/intercept-best-practice "I'm about to refactor our auth module"
+/start-best-practice "I'm about to refactor our auth module"
 ```
 
 **What it does:**
@@ -195,12 +195,12 @@ Claude: You have an existing solution. Applying review-best-practice-fit...
 2. Surfaces the specific gaps it would prevent
 3. Offers to apply it before you begin — or lets you continue without
 
-## Define the problem first: analyze-problem
+## Define the problem first: analyze-best-practice-problem
 
 **When to use:** Your problem isn't clearly defined yet — you know something is wrong but not what exactly to solve.
 
 ```bash
-/analyze-problem "My team isn't performing well"
+/analyze-best-practice-problem "My team isn't performing well"
 ```
 
 **What it does:**
@@ -229,8 +229,8 @@ If no skill in grimoire covers your situation yet, `suggest-best-practice` says 
 
 - **Learn a new practice:** Use `/suggest-best-practice` for any question
 - **Browse a domain:** Use `/discover-best-practices` to see what skills exist before you have a problem
-- **Intercept before starting:** Use `/intercept-best-practice` before any major task
-- **Define your problem:** Use `/analyze-problem` when the problem isn't clear yet
+- **Intercept before starting:** Use `/start-best-practice` before any major task
+- **Define your problem:** Use `/analyze-best-practice-problem` when the problem isn't clear yet
 - **Contribute:** Create a new skill with `/write-best-practice-skill`
 - **Review a contribution:** Audit a skill with `/review-best-practice-skill`
 - **Audit a domain:** Review all skills in a domain with `/audit-best-practice-domain`

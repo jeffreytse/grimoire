@@ -58,8 +58,12 @@ If scope or target is ambiguous, ask one question before proceeding.
 
 ### Step 3: Show command and confirm
 
-Construct the `scripts/grimoire` command and show it before running:
+Construct the `scripts/grimoire` command and show it before running. Use a platform-aware confirm:
+- **Claude Code / OpenCode**: `AskUserQuestion` — options: "Continue (Recommended)" and "Cancel"
+- **Gemini CLI**: `ask_user` — `type: "confirm"`
+- **Other**: show the block below and wait for `[y/n]`
 
+Install example (other platforms):
 ```
 Will run:
   ./scripts/grimoire --domain engineering --target claude
@@ -68,8 +72,7 @@ This will install all engineering skills (~101 skills) to Claude Code.
 Continue? [y/n]
 ```
 
-For `uninstall`, flag it explicitly:
-
+For `uninstall`, flag it explicitly (same platform-aware confirm — Claude Code/OpenCode/Gemini use their native tool):
 ```
 Will run:
   ./scripts/grimoire --domain business --uninstall --target all
@@ -78,8 +81,7 @@ This will REMOVE all business skills from all agents. Cannot be undone without r
 Continue? [y/n]
 ```
 
-For `upgrade`:
-
+For `upgrade` (same pattern):
 ```
 Will run:
   ./scripts/grimoire --upgrade

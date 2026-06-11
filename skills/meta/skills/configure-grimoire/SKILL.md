@@ -71,20 +71,22 @@ Show which file each key came from if multiple files contribute.
 
 ### Step 3b: Edit
 
-Parse the requested change from user input. Show what will change, then ask which file to write to:
+Parse the requested change from user input. Show what will change, then ask which file to write to using a platform-aware prompt:
+- **Claude Code / OpenCode**: `AskUserQuestion` — options: "This project (shared) → settings.toml (Recommended)", "This project (personal) → settings.local.toml", "All projects (global) → ~/.config/grimoire/settings.toml"
+- **Gemini CLI**: `ask_user` — `type: "select"`, same three options, first recommended
+- **Other**: numbered list:
+  ```
+  Change:
 
-```
-Change:
+    [engineering.architecture]
+    - fallback = "ask"
+    + fallback = "both"
 
-  [engineering.architecture]
-  - fallback = "ask"
-  + fallback = "both"
-
-Write to:
-  [1] This project (shared)    → .grimoire/settings.toml       (committed to repo)
-  [1b] This project (personal) → .grimoire/settings.local.toml (gitignored)
-  [2] All projects (global)    → ~/.config/grimoire/settings.toml
-```
+  Write to:
+    [1] This project (shared)    → .grimoire/settings.toml       (committed to repo)
+    [1b] This project (personal) → .grimoire/settings.local.toml (gitignored)
+    [2] All projects (global)    → ~/.config/grimoire/settings.toml
+  ```
 
 After file selection, confirm and write. Never write invalid TOML.
 
@@ -92,29 +94,33 @@ After file selection, confirm and write. Never write invalid TOML.
 
 ### Step 3c: Remove
 
-Ask which file to remove from, then confirm:
+Ask which file to remove from using a platform-aware prompt:
+- **Claude Code / OpenCode**: `AskUserQuestion` — options: "This project (shared) → settings.toml (Recommended)", "This project (personal) → settings.local.toml", "All projects (global) → ~/.config/grimoire/settings.toml"
+- **Gemini CLI**: `ask_user` — `type: "select"`, same three options
+- **Other**:
+  ```
+  Remove from:
+    [1] This project (shared)    → .grimoire/settings.toml       (committed to repo)
+    [1b] This project (personal) → .grimoire/settings.local.toml (gitignored)
+    [2] All projects (global)    → ~/.config/grimoire/settings.toml
+  ```
 
-```
-Remove from:
-  [1] This project (shared)    → .grimoire/settings.toml       (committed to repo)
-  [1b] This project (personal) → .grimoire/settings.local.toml (gitignored)
-  [2] All projects (global)    → ~/.config/grimoire/settings.toml
-```
+After file selection, show what will be removed and ask key vs section using a platform-aware prompt:
+- **Claude Code / OpenCode**: `AskUserQuestion` — options: "Remove this key only (Recommended)", "Remove the entire section", "Cancel"
+- **Gemini CLI**: `ask_user` — `type: "select"`, same options
+- **Other**:
+  ```
+  Remove from .grimoire/settings.toml:
 
-After file selection, show what will be removed and confirm:
+    [engineering.architecture]
+    expires = "2026-09-01"   ← remove this key
 
-```
-Remove from .grimoire/settings.toml:
-
-  [engineering.architecture]
-  expires = "2026-09-01"   ← remove this key
-
-Or remove the entire [engineering.architecture] section? [key / section / cancel]
-```
+  Or remove the entire [engineering.architecture] section? [key / section / cancel]
+  ```
 
 If removing from the project file would expose a global default the user didn't intend, show the effective value after removal before confirming.
 
-After confirmation, remove the key or section. If the domain section becomes empty, ask whether to remove the section header too.
+After confirmation, remove the key or section. If the domain section becomes empty, use a platform-aware confirm (Claude Code/OpenCode: `AskUserQuestion`; Gemini: `ask_user type: confirm`; other: `[y/n]`) to ask whether to remove the section header too.
 
 ---
 
@@ -164,7 +170,7 @@ Validating settings files...
     ✅  engineering/architecture: OK
 
   .grimoire/settings.toml (project shared)
-    ⚠️  engineering/architecture: expires "2026-09-01" is past — still apply? [keep / remove]
+    ⚠️  engineering/architecture: expires "2026-09-01" is past — still apply? (platform-aware confirm: Claude Code/OpenCode `AskUserQuestion` with "Keep" and "Remove"; Gemini `ask_user type: confirm`; other `[keep / remove]`)
     ❌  engineering/testing: "apply-tdd" is in both require and disabled — contradiction
     ✅  engineering/development: OK
 

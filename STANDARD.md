@@ -285,6 +285,45 @@ Examples are NOT historical background or theoretical explanation — those belo
 `## Why This Is Best Practice`. Examples show a reader: "if I were in this situation,
 this is how I would apply the skill."
 
+### Interactive Prompts (conditional)
+
+When a skill presents a choice to the user (multiple candidates, confirm/skip, branching path), it **must** use the native interactive UI for the current platform. Never hardcode `[y/n]` plain text for platforms that support a richer tool.
+
+**Rule:** if your skill asks the user to choose between options, include the platform-aware prompt block below verbatim. Adapt only the option labels and descriptions.
+
+**Multi-option choice:**
+
+```markdown
+Collect choice via platform-aware prompt:
+- **Claude Code**: `AskUserQuestion` — mark recommended option with `(Recommended)` suffix, `multiSelect: false`
+- **Gemini CLI**: `ask_user` — `type: "select"`, recommended option first
+- **OpenCode**: `question` — same schema as `AskUserQuestion`
+- **All other platforms**: numbered list, wait for user to type number or name:
+  ```
+  Options:
+    1. [top option] ★ (recommended)
+    2. [second option]
+  Which? (Enter number or name)
+  ```
+```
+
+**Binary confirm/skip:**
+
+```markdown
+Collect confirm via platform-aware prompt:
+- **Claude Code**: `AskUserQuestion` with two options: `"[action] (Recommended)"` and `"Skip — continue without"`
+- **Gemini CLI**: `ask_user` with `type: "confirm"`
+- **OpenCode**: `question` with two options
+- **Other**: `Apply [X]? [y/n — or just continue]`
+```
+
+**Rules:**
+- Always include a skip option — never force the user to apply a practice
+- Recommended option always first with `(Recommended)` suffix (Claude Code) or `★` (plain text)
+- `multiSelect: false` for ordered sequences — one choice per step
+- **`AskUserQuestion` limit**: max 4 options. For choices with >4 options, use plain numbered list on all platforms — don't merge semantically distinct choices to fit the cap
+- Full reference: [`docs/agent-interactive-ui.md`](./docs/agent-interactive-ui.md)
+
 ---
 
 ## 5 Quality Criteria
@@ -565,7 +604,7 @@ Which would you like to apply? (Enter number, or press Enter for ★ recommended
 - Max 5 options in a ranked list — drop lower-scoring matches beyond 5.
 - Never hallucinate practice names — only list practices that exist in installed domains.
 - If a practice is not installed, include the install command alongside its entry.
-- This rule applies to every skill that performs scoring/matching: `suggest-best-practice`, `intercept-best-practice`, `review-best-practice-fit`, `plan-best-practice-solution`, `apply-best-practice-tree`, and any future skill that routes to other skills.
+- This rule applies to every skill that performs scoring/matching: `suggest-best-practice`, `start-best-practice`, `review-best-practice-fit`, `plan-best-practice-solution`, `apply-best-practice-tree`, and any future skill that routes to other skills.
 
 ---
 

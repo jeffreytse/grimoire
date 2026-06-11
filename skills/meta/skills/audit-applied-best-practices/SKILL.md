@@ -125,16 +125,18 @@ If yes, for each undetected domain, ask: "Which practice do you use for [domain]
 
 ### Step 6: Write preferences file
 
-Ask where to save:
-
-```
-Save preferences to:
-  [0] This session only  → in memory; not written to disk; resets when session ends
-  [1] This project only  → <project-root>/.grimoire/preferences.md
-  [2] All my projects    → ~/.grimoire/preferences.md
-                           (uses ~/.config/grimoire/preferences.md if XDG_CONFIG_HOME is set)
-  [3] Both (project + global)
-```
+Ask where to save using a platform-aware prompt:
+- **Claude Code / OpenCode**: `AskUserQuestion` — options: "This session only (Recommended)", "This project only → .grimoire/preferences.md", "All my projects → ~/.grimoire/preferences.md", "Both (project + global)"
+- **Gemini CLI**: `ask_user` — `type: "select"`, same four options
+- **Other**:
+  ```
+  Save preferences to:
+    [0] This session only  → in memory; not written to disk; resets when session ends
+    [1] This project only  → <project-root>/.grimoire/preferences.md
+    [2] All my projects    → ~/.grimoire/preferences.md
+                             (uses ~/.config/grimoire/preferences.md if XDG_CONFIG_HOME is set)
+    [3] Both (project + global)
+  ```
 
 Write to selected location(s) in this format:
 
@@ -152,10 +154,13 @@ Write to selected location(s) in this format:
   reason: team standard, enforced in CI
 ```
 
-If file already exists at the target path: append new domain sections only. Never silently overwrite existing pins. If a domain conflict exists, ask:
-```
-You already have [existing-skill] pinned for [domain]. Replace it with [new-skill]? [y/n]
-```
+If file already exists at the target path: append new domain sections only. Never silently overwrite existing pins. If a domain conflict exists, ask using a platform-aware confirm:
+- **Claude Code / OpenCode**: `AskUserQuestion` — options: "Replace with [new-skill] (Recommended)" and "Keep [existing-skill]"
+- **Gemini CLI**: `ask_user` — `type: "confirm"`, question: `[domain] already has "[existing-skill]" pinned. Replace with "[new-skill]"?`
+- **Other**:
+  ```
+  You already have [existing-skill] pinned for [domain]. Replace it with [new-skill]? [y/n]
+  ```
 
 After writing, confirm:
 ```

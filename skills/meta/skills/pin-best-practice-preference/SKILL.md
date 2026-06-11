@@ -37,13 +37,16 @@ If domain is ambiguous, ask ONE question:
 Which domain is this for? (e.g. engineering/testing, finance/personal-finance, health/fitness)
 ```
 
-Confirm before writing:
-```
-Pin "[practice]" as your preference for [domain]?
-[y] yes  [n] cancel  [e] edit details first
-```
+Confirm before writing using a platform-aware prompt:
+- **Claude Code / OpenCode**: `AskUserQuestion` — options: "Pin [practice] for [domain] (Recommended)", "Edit details first", "Cancel"
+- **Gemini CLI**: `ask_user` — `type: "select"`, same three options
+- **Other**:
+  ```
+  Pin "[practice]" as your preference for [domain]?
+  [y] yes  [n] cancel  [e] edit details first
+  ```
 
-If user selects `[e]`, ask: "Describe the preference in more detail (e.g. tool name, version, key parameters):"
+If user selects "Edit details first" (or `[e]`), ask: "Describe the preference in more detail (e.g. tool name, version, key parameters):"
 
 After confirmation, proceed to Step 3.
 
@@ -148,10 +151,13 @@ Each level overrides the level below for the same preference. `[engineering.arch
 
 If file exists: append new domain section only. Never silently overwrite.
 
-If the domain is already pinned in the file, ask before overwriting:
-```
-[domain] already has "[existing-skill]" pinned. Replace with "[new-skill]"? [y/n]
-```
+If the domain is already pinned in the file, ask before overwriting using a platform-aware confirm:
+- **Claude Code / OpenCode**: `AskUserQuestion` — options: "Replace with [new-skill] (Recommended)" and "Keep [existing-skill]"
+- **Gemini CLI**: `ask_user` — `type: "confirm"`, question: `[domain] already has "[existing-skill]" pinned. Replace with "[new-skill]"?`
+- **Other**:
+  ```
+  [domain] already has "[existing-skill]" pinned. Replace with "[new-skill]"? [y/n]
+  ```
 
 To add rankings or resolve conflicts between existing preferences, use `resolve-best-practice-conflict`.
 

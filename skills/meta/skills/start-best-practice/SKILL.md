@@ -1,13 +1,13 @@
 ---
-name: intercept-best-practice
-description: Use when starting any user task, action, or request — before taking any other action. Proactively checks whether an applicable best practice exists and applies or offers it before proceeding.
+name: start-best-practice
+description: Use when responding to any user request — maps the intent to the appropriate grimoire workflow, exits silently if no workflow matches, and routes task-starts through skill scoring or other intents to the right entry skill.
 source: Toyota Production System poka-yoke (Shingo, 1986) — error prevention before the action, not after
 tags: [proactive, interception, pre-action, best-practice-discovery, guardian, poka-yoke, quality-gate]
 ---
 
 # Intercept Best Practice
 
-Before any task begins, silently check whether an applicable best practice exists — apply it proactively if confident, offer it if plausible, proceed silently if no match.
+Map every user input to the appropriate grimoire workflow — or exit silently if none applies. For task-start inputs, score installed skills and offer the best match before the task begins. For all other workflow intents, route directly to the right skill.
 
 ## Why This Is Best Practice
 
@@ -19,7 +19,44 @@ Sources: Shingo (1986) "Zero Quality Control: Source Inspection and the Poka-Yok
 
 ## Steps
 
-### Step 0: Check preferences (silent)
+### Step 0: Map intent to workflow (silent)
+
+Silently match the input against the grimoire workflow intent map. This is the only gate — no scoring, no output. If no row matches, exit immediately and proceed with the original request unmodified.
+
+| Intent signal | Route |
+|---------------|-------|
+| About to start a task — executing, implementing, building, writing, deploying, designing, refactoring, testing, planning a concrete deliverable | **self** — continue to Step 1 |
+| Has a problem or situation, unsure which skill fits | invoke `suggest-best-practice` |
+| Already has a plan, wants gaps checked | invoke `review-best-practice-fit` |
+| Problem spans 3+ independent domains | invoke `plan-best-practice-solution` |
+| Complex problem within one domain, wants structured decomposition | invoke `apply-best-practice-tree` |
+| Doesn't know what practices exist for a topic | invoke `discover-best-practices` |
+| Problem isn't clear yet, needs defining before solving | invoke `analyze-best-practice-problem` |
+| Wants to activate a paradigm's practices (OOP, TDD, DDD, etc.) | invoke `apply-best-practice-profile` |
+| Wants to align a project/artifact to stated preferences (BPDD) | invoke `apply-best-practice-driven-development` |
+| Wants to check if an artifact aligns with stated preferences | invoke `check-best-practice-compliance` |
+| Has a specific compliance finding to fix | invoke `fix-best-practice-finding` |
+| Two practices conflict | invoke `pin-best-practice-preference` |
+| **None of the above** | **exit silently** |
+
+**Non-match signals (always exit silently — do not score, do not route):**
+- Primary verb is explanatory: *explain, describe, what is, how does, tell me about, define*
+- Conversational acknowledgment: "ok", "thanks", "looks good", "got it", "continue"
+- Grimoire meta-queries: "what skills are installed?", "show me available skills"
+- Explicit `/skill-name` invocations — user already knows what they want (see Rules)
+- Follow-up message in an ongoing execution (not a new intent)
+
+**If ambiguous:** treat as "about to start a task" → continue to Step 1. Missing an intercept is acceptable; mis-routing a real task is not.
+
+**When routing to another skill** (any row except "self" and "exit silently"):
+```
+This looks like [matched situation]. Routing to [skill-name]...
+```
+Then invoke that skill and stop — do not continue to Step 1.
+
+---
+
+### Step 1: Check preferences (silent)
 
 Resolution order — first match wins:
 1. Session memory — pinned this session only; not written to disk (highest precedence)
@@ -29,14 +66,11 @@ Resolution order — first match wins:
 
 For the relevant domain, check if a practice is already pinned:
 - **Pinned match (file)** → apply the pinned practice directly; skip scoring entirely. No further action needed — already persisted.
-- **Pinned match (session)** → apply the pinned practice directly; skip scoring. After applying, offer once per session per domain:
-  `"[practice] is pinned for this session only. Save it for future sessions? [y/n]"`
-  If yes, invoke `pin-best-practice-preference` to write it to project or global file.
-- **Pinned conflict** → warn before suggesting an alternative:
-  `"You have [X] pinned for [domain]. Suggest changing it? [y/n]"`
+- **Pinned match (session)** → apply the pinned practice directly; skip scoring. After applying, offer once per session per domain using a platform-aware confirm: "Save [practice] for future sessions?" (Claude Code/OpenCode: `AskUserQuestion`; Gemini CLI: `ask_user type: confirm`; other: `[y/n]`). If yes, invoke `pin-best-practice-preference`.
+- **Pinned conflict** → warn before suggesting an alternative using a platform-aware confirm: "You have [X] pinned for [domain]. Suggest changing it?" (Claude Code/OpenCode: `AskUserQuestion`; Gemini CLI: `ask_user type: confirm`; other: `[y/n]`).
 - **No pin** → proceed to Step 1.
 
-### Step 1: Extract intent (silent)
+### Step 2: Extract intent (silent)
 
 From the user's request, identify:
 
@@ -49,7 +83,7 @@ From the user's request, identify:
 
 Do not ask the user anything — infer from the request.
 
-### Step 2: Score candidates (silent)
+### Step 3: Score candidates (silent)
 
 Score installed grimoire skills using the same model as `suggest-best-practice`:
 
@@ -59,7 +93,7 @@ score = (tag_overlap × 2) + (description_match × 3) + (domain_plausibility × 
 
 Cap at top 3 matches. Compute silently — do not announce scoring is happening.
 
-### Step 3: Route by confidence
+### Step 4: Route by confidence
 
 | Condition | Action |
 |-----------|--------|
@@ -75,26 +109,36 @@ Applying before proceeding...
 ```
 
 **Multiple matches (2+ skills ≥ 0.4):**
-```
-Multiple best practices apply to this task:
-  ★ [top-skill] ([domain]) — recommended
-    [second-skill] ([domain])
-    [third-skill] ([domain])
 
-Apply ★ [top-skill] first? [y / n / 2 / 3 — or just continue]
-```
+- **Claude Code**: `AskUserQuestion` — one option per candidate skill, top-ranked marked `(Recommended)`, include "Skip — continue without applying" option, `multiSelect: false`
+- **Gemini CLI**: `ask_user` — `type: "select"`, recommended first
+- **OpenCode**: `question` — same schema as `AskUserQuestion`
+- **All other platforms**: plain text:
+  ```
+  Multiple best practices apply to this task:
+    ★ [top-skill] ([domain]) — recommended
+      [second-skill] ([domain])
+      [third-skill] ([domain])
 
-Keep this offer concise — this is an interception, not a discovery session. One line per option.
+  Apply ★ [top-skill] first? [y / n / 2 / 3 — or just continue]
+  ```
+
+Keep this offer concise — this is an interception, not a discovery session. One option per candidate skill.
 
 **Single medium-confidence match (0.4–0.69):**
-```
-A best practice exists for this: [skill-name] ([domain/subdomain]).
-Apply it first? [y/n — or just continue and I'll proceed with your request]
-```
+
+- **Claude Code**: `AskUserQuestion` — two options: "Apply [skill-name] first (Recommended)" and "Skip — continue with my request"
+- **Gemini CLI**: `ask_user` — `type: "confirm"`, recommended first
+- **OpenCode**: `question` — same schema as `AskUserQuestion`
+- **Other**: plain text:
+  ```
+  A best practice exists for this: [skill-name] ([domain/subdomain]).
+  Apply it first? [y/n — or just continue and I'll proceed with your request]
+  ```
 
 **Low confidence (< 0.4):** No output. Proceed with original request.
 
-### Step 4: Complete original task
+### Step 5: Complete original task
 
 After the matched skill applies (or if no match), always complete the user's original request. The skill output becomes context for fulfilling the request — never abandon the task.
 
@@ -114,13 +158,15 @@ Best practice applied. Proceeding with your original request using the above fra
 
 ## Key Differences from `suggest-best-practice`
 
-| | `suggest-best-practice` | `intercept-best-practice` |
+| | `suggest-best-practice` | `start-best-practice` |
 |---|---|---|
 | Trigger | User describes a problem | User starts any action |
+| Unrelated inputs | N/A — user invokes directly | Exit silently (Step 0 gate) |
 | Low confidence | Asks clarifying question | Proceeds silently |
 | After skill | Routes to skill | Applies skill, THEN completes original task |
 | Browse mode | Supported | Not supported |
 | Interrupts flow | Yes (it IS the flow) | Only at ≥ 0.4 confidence |
+| Dispatch role | No | Yes — routes non-task intents to correct workflow skill |
 
 ## Common Mistakes
 

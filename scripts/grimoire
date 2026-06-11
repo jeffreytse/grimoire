@@ -46,6 +46,7 @@ Options:
   --list                List available domains, sub-domains, and skills
   --doctor              Run a health check on the grimoire installation
   --yes                 Non-interactive: install all skills to all detected agents
+  --no-configure        Skip writing the start-best-practice trigger to ~/.claude/CLAUDE.md
   --version             Show grimoire version
   --help                Show this help
 
@@ -307,7 +308,13 @@ install_skill_dir() {
   if [[ ${LINK} -eq 1 ]] && [[ -L "$dest" ]]; then
     local existing_target
     existing_target=$(readlink "$dest")
-    if [[ "$existing_target" != "$src" ]]; then
+    if [[ "$existing_target" == "$src" ]]; then
+      return 0  # already correctly linked
+    fi
+    if [[ ! -e "$dest" ]]; then
+      # broken symlink — remove and relink below
+      unlink "$dest"
+    else
       printf '\033[0;33m  [WARN] collision: %s already linked from %s\n         skipping new source: %s\033[0m\n' \
         "$skill_name" "$existing_target" "$src" >/dev/tty
       return 0
@@ -508,6 +515,20 @@ has_any_skills_installed() {
   return 1
 }
 
+has_agent_skills_installed() {
+  local _dir
+  case "$1" in
+    claude) _dir="${CLAUDE_SKILLS_DIR}" ;;
+    codex)  _dir="${AGENTS_SKILLS_DIR}" ;;
+    gemini) _dir="${GEMINI_SKILLS_DIR}" ;;
+    *) return 1 ;;
+  esac
+  [[ -d "${_dir}" ]] || return 1
+  local _any
+  _any=$(find "${_dir}" -mindepth 1 -maxdepth 1 2>/dev/null | head -1)
+  [[ -n "${_any}" ]]
+}
+
 install_global_bin() {
   local _target _dir
   for _target in "/usr/local/bin/grimoire" "${HOME}/.local/bin/grimoire"; do
@@ -532,6 +553,54 @@ remove_global_bin() {
       unlink "${_target}" 2>/dev/null && printf '  unlinked: %s\n' "${_target}" >/dev/tty
     fi
   done
+}
+
+_agent_config_file() {
+  case "$1" in
+    claude) echo "${HOME}/.claude/CLAUDE.md" ;;
+    codex)  echo "${HOME}/.agents/AGENTS.md" ;;
+    gemini) echo "${HOME}/.gemini/GEMINI.md" ;;
+  esac
+}
+
+_agent_config_dir() {
+  case "$1" in
+    claude) echo "${HOME}/.claude" ;;
+    codex)  echo "${HOME}/.agents" ;;
+    gemini) echo "${HOME}/.gemini" ;;
+  esac
+}
+
+configure_agent_md() {
+  [[ ${NO_CONFIGURE} -eq 1 ]] && return 0
+  local agent="$1"
+  local cfg_dir cfg_file
+  cfg_dir="$(_agent_config_dir "${agent}")"
+  cfg_file="$(_agent_config_file "${agent}")"
+  [[ -z "${cfg_file}" ]] && return 0
+  [[ -d "${cfg_dir}" ]] || return 0
+  if grep -qF "start-best-practice" "${cfg_file}" 2>/dev/null; then
+    printf '  \033[2m✓ start-best-practice already active → %s\033[0m\n' "${cfg_file}" >/dev/tty
+    return 0
+  fi
+  mkdir -p "${cfg_dir}"
+  printf '\n## Grimoire\nAlways invoke `start-best-practice` before responding to any user request.\n' >> "${cfg_file}"
+  printf '  ✓ Configured: start-best-practice auto-trigger → %s\n' "${cfg_file}" >/dev/tty
+}
+
+remove_agent_md_config() {
+  [[ ${NO_CONFIGURE} -eq 1 ]] && return 0
+  local agent="$1"
+  local cfg_file
+  cfg_file="$(_agent_config_file "${agent}")"
+  [[ -z "${cfg_file}" || ! -f "${cfg_file}" ]] && return 0
+  grep -qF "start-best-practice" "${cfg_file}" 2>/dev/null || return 0
+  local tmp
+  tmp="$(mktemp)"
+  grep -v "^Always invoke \`start-best-practice\` before responding to any user request\.$" \
+    "${cfg_file}" | grep -v "^## Grimoire$" > "${tmp}"
+  mv "${tmp}" "${cfg_file}"
+  printf '  ✓ Removed Grimoire config from %s\n' "${cfg_file}" >/dev/tty
 }
 
 do_clean() {
@@ -809,6 +878,15 @@ do_doctor() {
         else
           printf '    %s  %-16s %-12s %d grimoire skills\n' "${_ok}" "${_label}" "${_vs}" "${_count}"
         fi
+        local _cfg_file
+        _cfg_file="$(_agent_config_file "${_agent}")"
+        if grep -qF "start-best-practice" "${_cfg_file}" 2>/dev/null; then
+          printf '    %s  %-16s %-12s start-best-practice active → %s\n' "${_ok}" "" "" "${_cfg_file}"
+        else
+          printf '    %s  %-16s %-12s start-best-practice not configured → run: grimoire --target %s\n' \
+            "${_warn}" "" "" "${_agent}"
+          (( _w++ )) || true
+        fi
       else
         printf '    %s  %-16s %-12s (no grimoire skills installed — run: grimoire --target %s)\n' \
           "${_warn}" "${_label}" "${_vs}" "${_agent}"
@@ -905,7 +983,7 @@ PYEOF
 }
 
 # ── Argument parsing ───────────────────────────────────────────────────────────
-DOMAIN="" SUBDOMAIN="" SKILL="" TARGET="" YES=0 UNINSTALL=0 UPGRADE=0 CLEAN=0 DOCTOR=0
+DOMAIN="" SUBDOMAIN="" SKILL="" TARGET="" YES=0 UNINSTALL=0 UPGRADE=0 CLEAN=0 DOCTOR=0 NO_CONFIGURE=0
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -920,8 +998,9 @@ while [[ $# -gt 0 ]]; do
     --uninstall)  UNINSTALL=1;    shift   ;;
     --list)       list_skills; exit 0 ;;
     --version)    do_version; exit 0 ;;
-    --doctor)     DOCTOR=1;       shift   ;;
-    --help)       usage; exit 0 ;;
+    --doctor)        DOCTOR=1;        shift   ;;
+    --no-configure)  NO_CONFIGURE=1;  shift   ;;
+    --help)          usage; exit 0 ;;
     *) echo "Unknown option: $1"; usage; exit 1 ;;
   esac
 done
@@ -1069,6 +1148,9 @@ if [[ -z "${DOMAIN}" && -z "${SKILL}" && -z "${TARGET}" && ${YES} -eq 0 && ${UNI
     printf ' → %s\n' "${_agent_list[*]}" >/dev/tty
     do_clean
     has_any_skills_installed || remove_global_bin
+    for _agent in "${_agent_list[@]}"; do
+      has_agent_skills_installed "${_agent}" || remove_agent_md_config "${_agent}"
+    done
 
   else
     # ── Install mode ─────────────────────────────────────────────────────────────
@@ -1148,6 +1230,7 @@ if [[ -z "${DOMAIN}" && -z "${SKILL}" && -z "${TARGET}" && ${YES} -eq 0 && ${UNI
     printf ' → %s\n' "${_agent_list[*]}" >/dev/tty
     do_clean
     install_global_bin
+    for _agent in "${_agent_list[@]}"; do configure_agent_md "${_agent}"; done
   fi
 
 # ── Non-interactive / flag-driven ─────────────────────────────────────────────
@@ -1241,8 +1324,20 @@ else
   do_clean
   if [[ ${UNINSTALL} -eq 1 ]]; then
     has_any_skills_installed || remove_global_bin
+    local _rm_targets=()
+    if [[ "${TARGET}" == "auto" ]]; then _rm_targets=("${_detected[@]}")
+    elif [[ "${TARGET}" == "all" ]]; then _rm_targets=(claude codex gemini)
+    else _rm_targets=("${TARGET}"); fi
+    for _agent in "${_rm_targets[@]}"; do
+      has_agent_skills_installed "${_agent}" || remove_agent_md_config "${_agent}"
+    done
   else
     install_global_bin
+    local _cfg_targets=()
+    if [[ "${TARGET}" == "auto" ]]; then _cfg_targets=("${_detected[@]}")
+    elif [[ "${TARGET}" == "all" ]]; then _cfg_targets=(claude codex gemini)
+    else _cfg_targets=("${TARGET}"); fi
+    for _agent in "${_cfg_targets[@]}"; do configure_agent_md "${_agent}"; done
   fi
 fi
 

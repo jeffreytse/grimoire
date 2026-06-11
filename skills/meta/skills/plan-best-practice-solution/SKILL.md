@@ -33,7 +33,7 @@ From the user's input, silently identify:
 
 Do not ask the user for any of this — infer from what they wrote.
 
-**Problem clarity check:** After extracting dimensions, apply skill judgment: can the goal and at least 2 domains be identified from what the user said? If the goal is completely uninferable, or what's described is clearly a symptom with no root cause context → invoke `analyze-problem` first. Use the problem space map from its output to populate the dimensions above, then continue to Step 2.
+**Problem clarity check:** After extracting dimensions, apply skill judgment: can the goal and at least 2 domains be identified from what the user said? If the goal is completely uninferable, or what's described is clearly a symptom with no root cause context → invoke `analyze-best-practice-problem` first. Use the problem space map from its output to populate the dimensions above, then continue to Step 2.
 
 **Complexity check:** If only one domain is involved and the problem maps cleanly to a single skill, delegate to `suggest-best-practice` instead. `plan-best-practice-solution` is for genuinely multi-domain or multi-step problems.
 

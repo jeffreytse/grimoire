@@ -92,3 +92,6 @@ One-sentence purpose.
 ```
 
 See [STANDARD.md](./STANDARD.md) for the full quality standard.
+
+## Grimoire
+Always invoke `start-best-practice` before responding to any user request.

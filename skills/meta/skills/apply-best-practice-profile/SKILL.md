@@ -93,7 +93,12 @@ Priority: clean-architecture > tdd (array order)
 Scope: [s] session  [p] project  [g] global
 ```
 
-Wait for the user to confirm scope. Default: session.
+Wait for scope using a platform-aware prompt:
+- **Claude Code / OpenCode**: `AskUserQuestion` — options: "Session only (Recommended)", "This project", "All projects (global)"
+- **Gemini CLI**: `ask_user` — `type: "select"`, same three options
+- **Other**: numbered list above — wait for `[s]`, `[p]`, or `[g]`
+
+Default: session.
 
 ---
 

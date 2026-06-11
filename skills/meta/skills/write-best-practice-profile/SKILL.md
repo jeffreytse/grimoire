@@ -67,8 +67,9 @@ Select skills to include (toggle with number, confirm with Enter)
 For each collected skill name, check it exists in installed grimoire skills.
 
 - **Found**: mark ✓, include
-- **Not found**: warn — ask user to confirm inclusion anyway (may be a skill they plan to install later)
+- **Not found**: warn — ask user to confirm inclusion anyway (may be a skill they plan to install later). Use a platform-aware confirm per skill: "Include [skill-name] even though it's not installed?" (Claude Code/OpenCode: `AskUserQuestion`; Gemini CLI: `ask_user type: confirm`; other: `[y/n]`).
 
+Example output (other platforms):
 ```
 Validating skills...
   ✓ apply-solid-principles       — found
@@ -80,11 +81,15 @@ Validating skills...
 
 ### 4. Choose save location
 
-```
-Save to:
-  [p] This project   → .grimoire/profiles/my-team.toml  (commit to repo to share with team)
-  [u] My user level  → ~/.grimoire/profiles/my-team.toml (personal, applies to all projects)
-```
+Use a platform-aware prompt:
+- **Claude Code / OpenCode**: `AskUserQuestion` — options: "This project → .grimoire/profiles/ (share with team) (Recommended)", "My user level → ~/.grimoire/profiles/ (personal)"
+- **Gemini CLI**: `ask_user` — `type: "select"`, same two options
+- **Other**:
+  ```
+  Save to:
+    [p] This project   → .grimoire/profiles/my-team.toml  (commit to repo to share with team)
+    [u] My user level  → ~/.grimoire/profiles/my-team.toml (personal, applies to all projects)
+  ```
 
 ---
 
