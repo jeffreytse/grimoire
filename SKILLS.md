@@ -1,6 +1,6 @@
 # Skills Directory
 
-765 skills across 27 domains.
+803 skills across 27 domains.
 
 [Install](./README.md#%EF%B8%8F-install) · [Contribute](./CONTRIBUTING.md) · [Standard](./STANDARD.md)
 
@@ -10,16 +10,16 @@
 
 - [Art (10)](#art)
 - [Automotive (10)](#automotive)
-- [Business (105)](#business)
+- [Business (110)](#business)
 - [Cooking (11)](#cooking)
-- [Design (44)](#design)
-- [Education (20)](#education)
-- [Engineering (225)](#engineering)
+- [Design (45)](#design)
+- [Education (25)](#education)
+- [Engineering (234)](#engineering)
 - [Environment (11)](#environment)
 - [Fashion (10)](#fashion)
 - [Film (10)](#film)
 - [Finance (22)](#finance)
-- [Health (26)](#health)
+- [Health (30)](#health)
 - [Home (10)](#home)
 - [Language (11)](#language)
 - [Law (25)](#law)
@@ -28,11 +28,11 @@
 - [Music (18)](#music)
 - [Parenting (10)](#parenting)
 - [Pets (10)](#pets)
-- [Photography (16)](#photography)
-- [Productivity (19)](#productivity)
-- [Psychology (16)](#psychology)
+- [Photography (21)](#photography)
+- [Productivity (25)](#productivity)
+- [Psychology (18)](#psychology)
 - [Science (16)](#science)
-- [Sports (15)](#sports)
+- [Sports (16)](#sports)
 - [Travel (10)](#travel)
 - [Writing (24)](#writing)
 
@@ -93,7 +93,7 @@
 
 ---
 
-## Business (106) <a name="business"></a>
+## Business (110) <a name="business"></a>
 
 ### entrepreneurship
 
@@ -112,7 +112,8 @@
 
 ### leadership
 
-- [`apply-constructive-dissent`](./skills/business/leadership/skills/apply-constructive-dissent/) — Use when building or assessing a team, decision process, or organizational culture where you need genuine diverse thinking to surface before commitment — not after — and where the risk is false consensus rather than open conflict
+- [`apply-constructive-dissent`](./skills/business/leadership/skills/apply-constructive-dissent/)
+- [`apply-extreme-ownership`](./skills/business/leadership/skills/apply-extreme-ownership/) — Use when leading a team and outcomes are falling short — to apply the principle that the leader owns every result, including failures caused by team members, as the non-negotiable foundation for improving performance and building trust. — Use when building or assessing a team, decision process, or organizational culture where you need genuine diverse thinking to surface before commitment — not after — and where the risk is false consensus rather than open conflict
 - [`apply-enabling-structure`](./skills/business/leadership/skills/apply-enabling-structure/) — Use when building or leading a team, organization, or system — to create the conditions, remove the obstacles, and design the structures that let people execute with high autonomy, rather than directing through control
 - [`apply-merit-selection`](./skills/business/leadership/skills/apply-merit-selection/) — Use when making any talent selection, promotion, or recommendation decision — to test your evaluation against the reversed-relationship check, because evaluator relationship bias systematically corrupts talent decisions even in well-intentioned evaluators
 - [`design-hiring-process`](./skills/business/leadership/skills/design-hiring-process/) — Use when building or overhauling a hiring process for a role to reduce bias and improve quality-of-hire
@@ -124,7 +125,8 @@
 
 ### operations
 
-- [`apply-enforcement-timing`](./skills/business/operations/skills/apply-enforcement-timing/) — Use when misconduct, policy violation, or serious wrongdoing has been detected — to determine whether to act immediately or delay enforcement until the case is overwhelming and legally unassailable, because premature enforcement against powerful bad actors weakens the case, creates procedural exposure, and enables the subject to claim overreach
+- [`apply-enforcement-timing`](./skills/business/operations/skills/apply-enforcement-timing/)
+- [`apply-fishbone-diagram`](./skills/business/operations/skills/apply-fishbone-diagram/) — Use when investigating the root cause of a quality defect, recurring process failure, or operational problem — to map all contributing causes across multiple categories simultaneously before selecting which cause to address. — Use when misconduct, policy violation, or serious wrongdoing has been detected — to determine whether to act immediately or delay enforcement until the case is overwhelming and legally unassailable, because premature enforcement against powerful bad actors weakens the case, creates procedural exposure, and enables the subject to claim overreach
 - [`apply-pdca`](./skills/business/operations/skills/apply-pdca/) — Use when implementing a process improvement, resolving a recurring operational problem, or running a controlled experiment where you need to learn and standardize before scaling.
 - [`audit-process-efficiency`](./skills/business/operations/skills/audit-process-efficiency/) — Use when identifying waste, bottlenecks, or inefficiencies in a repeatable business or operational workflow
 - [`design-honest-record-keeping`](./skills/business/operations/skills/design-honest-record-keeping/) — Use when designing or auditing your organization's documentation practices — to establish institutional norms for recording events, failures, and decisions accurately and without euphemism
@@ -181,11 +183,14 @@
 - [`apply-reversal-probe`](./skills/business/strategy/skills/apply-reversal-probe/) — Use when you need to discover another party's true position, interest, or timeline and direct questioning would produce diplomatic or socially expected answers rather than genuine disclosure
 - [`apply-second-front-strategy`](./skills/business/strategy/skills/apply-second-front-strategy/) — Use when a stronger opponent outguns you in direct confrontation — to relieve pressure on the primary front by opening a credible second front at the opponent's rear or home base
 - [`apply-source-disruption`](./skills/business/strategy/skills/apply-source-disruption/) — Use when a competitor's surface strength is sustained by a specific underlying resource, relationship, or capability — to attack the source directly rather than competing against their products or market position
+- [`apply-jobs-to-be-done`](./skills/business/strategy/skills/apply-jobs-to-be-done/) — Use when designing a product, evaluating product-market fit, or investigating why customers switch to or away from a solution — to understand what functional, social, and emotional progress customers are trying to make, independent of your existing product framing.
+- [`apply-sora-ame-kasa`](./skills/business/strategy/skills/apply-sora-ame-kasa/) — Use when structuring a business recommendation, analysis, or proposal — to ensure every argument moves clearly from observable fact (Sky) through logical interpretation (Rain) to a specific recommended action (Umbrella), eliminating ambiguity about what decision is being requested.
 - [`apply-strategic-deception`](./skills/business/strategy/skills/apply-strategic-deception/) — Use when operating in competitive environments where revealing your intentions, timing, or concentration point would allow the opponent to pre-empt, counter-concentrate, or deny you the element of surprise
 - [`apply-strategic-endurance`](./skills/business/strategy/skills/apply-strategic-endurance/) — Use when facing severe competitive defeat — forced exit, punishing terms, or subjugation — where survival requires accepting humiliation in the short term to systematically rebuild capability over years for eventual reversal
 - [`apply-strategic-momentum`](./skills/business/strategy/skills/apply-strategic-momentum/) — Use when planning a campaign, product launch, or competitive push — to build strategic potential before committing, combine direct and indirect forces simultaneously, and strike at the moment of maximum advantage rather than at the earliest opportunity
 - [`apply-strategic-sacrifice`](./skills/business/strategy/skills/apply-strategic-sacrifice/) — Use when preserving something of high strategic value requires giving up something of lower value, or when offering something valuable will attract something of greater value — to make deliberate asymmetric trades rather than defending everything equally
 - [`apply-surplus-reallocation`](./skills/business/strategy/skills/apply-surplus-reallocation/) — Use when managing a portfolio of initiatives, products, teams, or investments — to identify areas generating surplus above their optimal level and actively redirect those resources to deficit areas
+- [`apply-swot-analysis`](./skills/business/strategy/skills/apply-swot-analysis/) — Use when assessing a business, product, team, or initiative before a strategic decision — to systematically surface internal capabilities and external conditions, then derive concrete strategic options rather than an unactionable list.
 - [`apply-systems-iceberg`](./skills/business/strategy/skills/apply-systems-iceberg/) — Use when a problem keeps recurring despite fixes, when a team is reacting to events without understanding why they happen, or when a decision needs structural rather than symptomatic treatment.
 - [`apply-tactical-adaptation`](./skills/business/strategy/skills/apply-tactical-adaptation/) — Use when circumstances change mid-engagement and tactics must adapt — diagnosing which of the nine strategic situations you occupy, applying the situation-specific response, and avoiding the five commander faults that cause strategic failure
 - [`apply-terrain-strategy`](./skills/business/strategy/skills/apply-terrain-strategy/) — Use when choosing where to compete or commit resources — to classify the competitive terrain, avoid fighting on ground that advantages the opponent, and create or occupy terrain that structurally favours your position
@@ -252,7 +257,7 @@
 
 ---
 
-## Design (44) <a name="design"></a>
+## Design (45) <a name="design"></a>
 
 ### branding
 
@@ -273,6 +278,7 @@
 
 ### product
 
+- [`apply-design-thinking`](./skills/design/product/skills/apply-design-thinking/) — Use when solving a complex, human-centered problem where the right solution is unknown — to move through structured phases of deep user empathy, problem reframing, divergent ideation, and rapid prototype testing before committing to a solution.
 - [`audit-accessibility`](./skills/design/product/skills/audit-accessibility/) — Use when auditing a product or component for accessibility compliance or when preparing for WCAG 2.1 AA certification
 - [`design-information-architecture-product`](./skills/design/product/skills/design-information-architecture-product/) — Use when structuring content, navigation, or feature hierarchies for a product so users can find information predictably and efficiently
 - [`design-user-journey-map`](./skills/design/product/skills/design-user-journey-map/) — Use when mapping end-to-end user experiences to identify pain points, emotional lows, and opportunity areas across a product or service touchpoint chain.
@@ -315,7 +321,7 @@
 
 ---
 
-## Education (21) <a name="education"></a>
+## Education (25) <a name="education"></a>
 
 ### assessment
 
@@ -342,6 +348,11 @@
 ### learning-science
 
 - [`apply-feynman-technique`](./skills/education/learning-science/skills/apply-feynman-technique/) — Use when learning a new concept, diagnosing why understanding feels shallow, or preparing to explain complex material — to verify genuine comprehension by explaining the topic in plain language, identify exactly where the explanation breaks down, and fill those gaps until the explanation is clear and jargon-free
+- [`apply-cornell-notes`](./skills/education/learning-science/skills/apply-cornell-notes/) — Use when taking notes during a lecture, seminar, class, or while reading a dense text — to capture information in a structured three-section format that builds in review, retrieval practice, and summarization without extra study sessions.
+- [`apply-deliberate-practice`](./skills/education/learning-science/skills/apply-deliberate-practice/) — Use when designing a practice regimen to build expert performance in any skill domain — to structure sessions around specific weaknesses, immediate feedback, and focused repetition at the edge of current ability rather than comfortable repetitive performance.
+- [`apply-memory-palace`](./skills/education/learning-science/skills/apply-memory-palace/) — Use when memorizing large ordered sequences — speech outlines, vocabulary lists, historical dates, names, numbers, or any information that must be recalled in sequence without notes.
+- [`apply-mind-mapping`](./skills/education/learning-science/skills/apply-mind-mapping/) — Use when brainstorming, exploring relationships between concepts, planning a project scope, or creating an overview of a topic — to generate and organize ideas visually as a radial network rather than a linear list.
+- [`apply-sq3r`](./skills/education/learning-science/skills/apply-sq3r/) — Use when reading a textbook chapter, research paper, technical document, or any dense non-fiction text — to maximize comprehension and retention on first pass by converting passive reading into active questioning and retrieval.
 
 ### teaching
 
@@ -355,7 +366,7 @@
 
 ---
 
-## Engineering (222) <a name="engineering"></a>
+## Engineering (231) <a name="engineering"></a>
 
 ### ai
 
@@ -462,6 +473,9 @@
 
 ### development
 
+- [`apply-api-first-design`](./skills/engineering/development/skills/apply-api-first-design/) — Use when starting a new API, adding a major feature to an existing API, or aligning multiple teams on an interface — to define the contract in an OpenAPI spec before writing any implementation code.
+- [`apply-hyrums-law`](./skills/engineering/development/skills/apply-hyrums-law/) — Use when designing APIs, evolving existing interfaces, or planning a change to system behavior — to account for the fact that all observable behavior will be depended upon by someone, regardless of what the documented contract says.
+- [`apply-small-cls`](./skills/engineering/development/skills/apply-small-cls/) — Use when preparing a pull request or planning a feature branch — to keep changes small, focused, and independently reviewable so reviews are faster, more thorough, and easier to roll back.
 - [`apply-branch-by-abstraction`](./skills/engineering/development/skills/apply-branch-by-abstraction/) — Use when replacing a large or deeply integrated component of a system incrementally without creating a long-lived feature branch, by introducing an abstraction layer that allows old and new implementations to coexist.
 - [`apply-convention-over-configuration`](./skills/engineering/development/skills/apply-convention-over-configuration/) — Use when designing a project structure, framework, or tooling setup and deciding how much explicit configuration to require from developers.
 - [`apply-defensive-copy`](./skills/engineering/development/skills/apply-defensive-copy/) — Use when writing constructors, setters, or methods that accept or return mutable objects — to prevent callers from silently mutating internal state through shared object references.
@@ -474,6 +488,7 @@
 - [`apply-trunk-based-development`](./skills/engineering/development/skills/apply-trunk-based-development/) — Use when teams want to increase deployment frequency, reduce merge conflicts, or adopt continuous integration and delivery practices
 - [`design-branching-strategy`](./skills/engineering/development/skills/design-branching-strategy/) — Use when choosing or designing a Git branching model for a team or project
 - [`design-code-review-process`](./skills/engineering/development/skills/design-code-review-process/) — Use when establishing or improving a team's code review workflow, when reviews are causing bottlenecks, or when quality issues are escaping review into production
+- [`design-grpc-service`](./skills/engineering/development/skills/design-grpc-service/) — Use when building a gRPC service — to define the proto contract first, apply field numbering and naming conventions, model errors with google.rpc.Status, handle streaming patterns, and maintain backward compatibility across versions.
 - [`design-naming-convention`](./skills/engineering/development/skills/design-naming-convention/) — Use when establishing naming conventions for a new artifact type — APIs, database tables, files, functions, CLI commands, event names, skill libraries, or any identifier namespace that multiple contributors will add to over time.
 - [`design-restful-api`](./skills/engineering/development/skills/design-restful-api/) — Use when designing HTTP API endpoints — choosing resource names, HTTP methods, status codes, versioning strategy, and response shapes.
 - [`diagnose-bug`](./skills/engineering/development/skills/diagnose-bug/) — Use when a bug, test failure, crash, or unexpected behavior is reported — before proposing any fix. Use when behavior diverges from specification and the root cause is unknown.
@@ -481,7 +496,9 @@
 - [`review-code-style`](./skills/engineering/development/skills/review-code-style/) — Use when reviewing code for style consistency, readability, or adherence to a team or language style guide
 - [`review-pull-request`](./skills/engineering/development/skills/review-pull-request/) — Use when asked to review a pull request, diff, or code change — whether reviewing as an AI assistant or guiding a human reviewer on what to check and how to give feedback.
 - [`write-changelog`](./skills/engineering/development/skills/write-changelog/) — Use when writing or updating a CHANGELOG for a software project before a release
+- [`write-review-comments`](./skills/engineering/development/skills/write-review-comments/) — Use when writing code review comments — to phrase feedback in a way that is kind, clear, and actionable; distinguishes blocking from optional suggestions; and helps the author improve without feeling attacked.
 - [`write-database-migration`](./skills/engineering/development/skills/write-database-migration/) — Use when changing a database schema — adding or removing columns, creating tables, adding indexes, or altering constraints.
+- [`write-openapi-spec`](./skills/engineering/development/skills/write-openapi-spec/) — Use when writing or reviewing an OpenAPI 3.x specification — to apply naming conventions, schema reuse, error modeling, pagination, security schemes, and examples that make the spec complete, consistent, and usable as a contract.
 - [`apply-idiomatic-code`](./skills/engineering/development/skills/apply-idiomatic-code/) — Use when writing or reviewing code in a specific language or ecosystem — especially when contributors from different language backgrounds write in conflicting styles, or when code compiles but feels foreign to native speakers of the language.
 - [`apply-predictable-code`](./skills/engineering/development/skills/apply-predictable-code/) — Use when writing or reviewing functions and modules — especially when callers encounter surprising side effects, error handling is inconsistent, or debugging requires tracing hidden state changes.
 
@@ -572,6 +589,8 @@
 - [`validate-external-input`](./skills/engineering/security/skills/validate-external-input/) — Use when writing code that accepts data from outside the process boundary — HTTP requests, file uploads, database reads, CLI arguments, environment variables, or inter-service calls — to reject malformed, malicious, or out-of-range data before it reaches business logic.
 - [`apply-content-security-policy`](./skills/engineering/security/skills/apply-content-security-policy/) — Use when deploying a web application that serves HTML — especially one with user-generated content, third-party scripts, or inline JavaScript — to restrict what resources the browser may load or execute.
 - [`apply-cors-policy`](./skills/engineering/security/skills/apply-cors-policy/) — Use when building an API or web service that needs to be called from browser JavaScript on a different origin — including public APIs, microservices accessed from SPAs, and third-party integrations.
+- [`audit-cors-configuration`](./skills/engineering/security/skills/audit-cors-configuration/) — Use when you need to verify that a CORS policy is actually enforced correctly — after configuring CORS, before shipping an API, or during a security review. Tests origin reflection, null origin, subdomain bypass, wildcard-with-credentials, and preflight correctness.
+- [`configure-cors-for-oauth`](./skills/engineering/security/skills/configure-cors-for-oauth/) — Use when building an OAuth 2.0 authorization server or configuring CORS on OAuth endpoints — token, userinfo, revocation, and introspection endpoints each have different CORS requirements that differ from ordinary API CORS.
 - [`apply-jwt-security`](./skills/engineering/security/skills/apply-jwt-security/) — Use when implementing JWT-based authentication or authorization — covering token generation, algorithm selection, validation, expiry, and revocation for stateless APIs.
 - [`apply-password-hashing`](./skills/engineering/security/skills/apply-password-hashing/) — Use when storing user passwords or credentials in a database — covers algorithm selection, work factor configuration, and migration from legacy hashing schemes.
 - [`apply-security-headers`](./skills/engineering/security/skills/apply-security-headers/) — Use when configuring any web server or application that serves HTTP responses to browsers — covers the full set of security response headers that harden against common attacks.
@@ -626,6 +645,7 @@
 
 ### testing
 
+- [`apply-beyonce-rule`](./skills/engineering/testing/skills/apply-beyonce-rule/) — Use when deciding whether to protect a behavior with a test, responding to an unexpected breakage, or reviewing code that depends on undocumented behavior — if a behavior matters enough to depend on, it needs a test; if it breaks without one, you have no standing to complain.
 - [`apply-page-object-pattern`](./skills/engineering/testing/skills/apply-page-object-pattern/) — Use when writing UI automation or end-to-end tests to keep test logic decoupled from page implementation details, so tests remain maintainable when the UI changes.
 - [`apply-test-driven-development`](./skills/engineering/testing/skills/apply-test-driven-development/) — Use when implementing any business logic, fixing bugs, or when the correctness of a function's behavior under various inputs needs to be proved
 - [`audit-test-coverage`](./skills/engineering/testing/skills/audit-test-coverage/) — Use when evaluating the adequacy of a test suite, identifying coverage gaps, or deciding where to add tests
@@ -764,11 +784,12 @@
 
 ---
 
-## Health (26) <a name="health"></a>
+## Health (30) <a name="health"></a>
 
 ### fitness
 
 - [`apply-functional-movement-screening`](./skills/health/fitness/skills/apply-functional-movement-screening/) — Use when assessing an athlete's or client's movement quality to identify dysfunction, asymmetry, and injury risk before designing a training or rehabilitation program
+- [`apply-greasing-the-groove`](./skills/health/fitness/skills/apply-greasing-the-groove/) — Use when you want to rapidly increase strength or rep capacity in a specific movement (pull-ups, push-ups, kettlebell press, squats) — by practicing that movement multiple times per day at sub-maximal effort, never reaching fatigue.
 - [`apply-progressive-overload`](./skills/health/fitness/skills/apply-progressive-overload/) — Use when systematically increasing training stimulus over time to ensure continued adaptation and prevent plateaus
 - [`calculate-macros`](./skills/health/fitness/skills/calculate-macros/) — Use when determining protein, carbohydrate, and fat targets to support a specific fitness or body composition goal
 - [`calculate-one-rep-max`](./skills/health/fitness/skills/calculate-one-rep-max/) — Use when estimating maximal lifting capacity from sub-maximal performance data or when prescribing training loads based on percentage of 1RM
@@ -777,6 +798,8 @@
 - [`design-recovery-protocol`](./skills/health/fitness/skills/design-recovery-protocol/) — Use when structuring post-training recovery strategies for athletes or active individuals to optimize adaptation and prevent overtraining
 - [`design-strength-training-program`](./skills/health/fitness/skills/design-strength-training-program/) — Use when creating a resistance training program to build muscular strength, hypertrophy, or power for a specific individual
 - [`design-training-program`](./skills/health/fitness/skills/design-training-program/) — Use when creating a structured resistance training program for strength, hypertrophy, or athletic performance
+- [`apply-sauna-protocol`](./skills/health/fitness/skills/apply-sauna-protocol/) — Use when establishing a regular sauna practice for cardiovascular health and longevity — to apply the evidence-based frequency, duration, and temperature parameters shown to reduce all-cause mortality.
+- [`apply-wim-hof-breathing`](./skills/health/fitness/skills/apply-wim-hof-breathing/) — Use when managing acute stress response, preparing for cold exposure, or building autonomic resilience — to perform the Wim Hof Method breathing protocol that voluntarily activates the sympathetic nervous system and suppresses inflammatory response.
 - [`plan-deload`](./skills/health/fitness/skills/plan-deload/) — Use when planning a recovery week to dissipate accumulated training fatigue and restore performance
 
 ### medicine
@@ -788,6 +811,7 @@
 
 - [`apply-cognitive-behavioral-techniques`](./skills/health/mental-health/skills/apply-cognitive-behavioral-techniques/) — Use when helping someone identify and restructure unhelpful thought patterns and behaviors contributing to emotional distress or maladaptive functioning
 - [`apply-mindfulness-based-stress-reduction`](./skills/health/mental-health/skills/apply-mindfulness-based-stress-reduction/) — Use when guiding an individual through the MBSR protocol or implementing mindfulness-based practices to reduce chronic stress, anxiety, or pain
+- [`apply-rain-technique`](./skills/health/mental-health/skills/apply-rain-technique/) — Use when you are overwhelmed by a difficult emotion — anxiety, shame, anger, grief, craving — and need a structured mindfulness practice to work with it rather than avoid or act out of it.
 - [`design-stress-management-plan`](./skills/health/mental-health/skills/design-stress-management-plan/) — Use when helping an individual identify stress sources and build a personalized, multi-modal plan to reduce chronic stress and build resilience
 
 ### nutrition
@@ -1077,13 +1101,16 @@
 
 ---
 
-## Photography (16) <a name="photography"></a>
+## Photography (21) <a name="photography"></a>
 
 ### composition
 
+- [`apply-exposure-triangle`](./skills/photography/composition/skills/apply-exposure-triangle/) — Use when setting camera exposure for any shot — to understand how aperture, shutter speed, and ISO interact so you can make deliberate creative choices rather than relying on full auto.
+- [`apply-leading-lines`](./skills/photography/composition/skills/apply-leading-lines/) — Use when composing a photograph to direct the viewer's eye through the frame, create depth, or connect subject to environment using natural or architectural lines.
 - [`apply-negative-space-technique`](./skills/photography/composition/skills/apply-negative-space-technique/) — Use when composing a photograph to create visual impact, emphasize the subject, and evoke mood through deliberate use of empty space.
 - [`apply-rule-of-thirds`](./skills/photography/composition/skills/apply-rule-of-thirds/) — Use when composing a photograph and need to position subjects and horizon lines for visual impact
 - [`design-photography-shot-list`](./skills/photography/composition/skills/design-photography-shot-list/) — Use when planning a photography session, event coverage, or commercial shoot that requires pre-defined deliverables
+- [`review-histogram-exposure`](./skills/photography/composition/skills/review-histogram-exposure/) — Use when evaluating a shot's exposure in-camera or in post-processing — to determine if highlights are blown, shadows are blocked, or exposure should be shifted before the scene changes.
 - [`review-light-quality`](./skills/photography/composition/skills/review-light-quality/) — Use when assessing the lighting conditions for a scene before shooting or planning a lighting setup
 
 ### editing
@@ -1095,9 +1122,11 @@
 
 ### genres
 
+- [`design-food-photography`](./skills/photography/genres/skills/design-food-photography/) — Use when planning and executing food photography for editorial, commercial, social media, or restaurant use — covering styling, lighting, angles, and hero shot composition.
 - [`design-portrait-session`](./skills/photography/genres/skills/design-portrait-session/) — Use when planning and executing a portrait photography session including lighting, posing, location, and client communication
 - [`design-product-photography`](./skills/photography/genres/skills/design-product-photography/) — Use when planning and executing product photography for e-commerce, advertising, or catalog use
 - [`run-event-photography`](./skills/photography/genres/skills/run-event-photography/) — Use when planning and executing photography coverage for corporate events, conferences, weddings, or live performances
+- [`run-landscape-photography`](./skills/photography/genres/skills/run-landscape-photography/) — Use when planning and executing a landscape photography shoot — from location scouting and weather timing through camera settings, composition, and foreground interest.
 - [`run-street-photography`](./skills/photography/genres/skills/run-street-photography/) — Use when approaching street photography including ethical considerations, camera settings, anticipation, and the decisive moment
 
 ### lighting
@@ -1109,14 +1138,16 @@
 
 ---
 
-## Productivity (19) <a name="productivity"></a>
+## Productivity (25) <a name="productivity"></a>
 
 ### focus
 
 - [`apply-deep-work`](./skills/productivity/focus/skills/apply-deep-work/) — Use when planning sessions for cognitively demanding work that requires sustained uninterrupted concentration
 - [`apply-deep-work-principles`](./skills/productivity/focus/skills/apply-deep-work-principles/) — Use when designing a work schedule, environment, or practice to enable sustained, distraction-free, cognitively demanding work
+- [`apply-energy-management`](./skills/productivity/focus/skills/apply-energy-management/) — Use when your time management system is in place but you still feel unproductive, exhausted, or unable to sustain quality work — to shift from managing time to managing physical, emotional, mental, and purpose energy.
 - [`apply-first-principles`](./skills/productivity/focus/skills/apply-first-principles/) — Use when solving a problem that feels constrained by inherited assumptions or industry convention
 - [`apply-pomodoro`](./skills/productivity/focus/skills/apply-pomodoro/) — Use when starting a focused work session to maintain consistent output and prevent cognitive fatigue across a full workday
+- [`apply-single-tasking`](./skills/productivity/focus/skills/apply-single-tasking/) — Use when switching between tasks frequently, when you find yourself doing multiple things simultaneously, or when work quality feels inconsistent — to eliminate context-switching costs and recover the cognitive capacity lost to multitasking.
 - [`design-distraction-free-environment`](./skills/productivity/focus/skills/design-distraction-free-environment/) — Use when designing a physical or digital workspace to minimize interruptions and maximize sustained cognitive performance
 
 ### goals
@@ -1129,13 +1160,17 @@
 ### habits
 
 - [`apply-behavior-design`](./skills/productivity/habits/skills/apply-behavior-design/) — Use when designing systems to create new habits, break existing ones, or change behavior using evidence-based behavior design principles
+- [`apply-fear-setting`](./skills/productivity/habits/skills/apply-fear-setting/) — Use when a decision or action feels paralyzed by vague anxiety — to define your fears explicitly in three columns (define / prevent / repair), calculate the cost of inaction, and transform a diffuse fear into a specific, manageable problem.
 - [`apply-marginal-accumulation`](./skills/productivity/habits/skills/apply-marginal-accumulation/) — Use when building a new capability, closing a performance gap, or sustaining long-term improvement — to replace intensity-and-breakthrough thinking with consistent small efforts that compound
 - [`apply-two-minute-rule`](./skills/productivity/habits/skills/apply-two-minute-rule/) — Use when processing any inbox, task list, or request to decide whether to act immediately or schedule
 - [`design-habit-stack`](./skills/productivity/habits/skills/design-habit-stack/) — Use when introducing a new habit and needing a reliable cue to trigger it consistently
+- [`design-morning-routine`](./skills/productivity/habits/skills/design-morning-routine/) — Use when your mornings feel reactive, rushed, or wasted — to design a consistent pre-work ritual that primes cognitive state, protects focus, and ensures the most important work gets started before the day becomes reactive.
 
 ### time-management
 
+- [`apply-eat-the-frog`](./skills/productivity/time-management/skills/apply-eat-the-frog/) — Use when planning your workday or a work session — to identify the single most important or most dreaded task and complete it before anything else, eliminating the procrastination tax.
 - [`apply-eisenhower-matrix`](./skills/productivity/time-management/skills/apply-eisenhower-matrix/) — Use when your task list feels overwhelming and you need to decide what to do, defer, delegate, or drop
+- [`apply-parkinson-law`](./skills/productivity/time-management/skills/apply-parkinson-law/) — Use when a task is taking longer than expected, a project has slack time that is being absorbed, or you want to compress work into a shorter window to force prioritization and eliminate perfectionism.
 - [`apply-time-blocking`](./skills/productivity/time-management/skills/apply-time-blocking/) — Use when planning your workday to eliminate reactive drift and protect deep work time
 - [`design-weekly-review-process`](./skills/productivity/time-management/skills/design-weekly-review-process/) — Use when designing a structured weekly review ritual to process tasks, plan the week, and maintain control of commitments and projects
 
@@ -1147,7 +1182,7 @@
 
 ---
 
-## Psychology (16) <a name="psychology"></a>
+## Psychology (18) <a name="psychology"></a>
 
 ### behavioral
 
@@ -1165,10 +1200,12 @@
 
 - [`apply-acceptance-commitment-therapy`](./skills/psychology/cognitive/skills/apply-acceptance-commitment-therapy/) — Use when helping someone reduce psychological suffering caused by rigid avoidance, fusion with unhelpful thoughts, or values-behavior disconnection — particularly for anxiety, depression, chronic pain, or stress.
 - [`apply-cognitive-reframing`](./skills/psychology/cognitive/skills/apply-cognitive-reframing/) — Use when a person holds distorted, unhelpful, or catastrophic thought patterns that fuel emotional distress, anxiety, or depression
+- [`apply-regret-minimization`](./skills/psychology/cognitive/skills/apply-regret-minimization/) — Use when facing a major irreversible decision — career change, starting a company, relocating, committing to a relationship — to evaluate choices by projecting your future self's retrospective judgment rather than current-moment anxiety.
 - [`apply-schema-therapy`](./skills/psychology/cognitive/skills/apply-schema-therapy/) — Use when addressing deep, longstanding emotional and behavioral patterns — particularly personality disorders, chronic depression, relationship dysfunction, or childhood-rooted emotional difficulties that have not responded to standard CBT.
 
 ### positive
 
+- [`apply-gratitude-journaling`](./skills/psychology/positive/skills/apply-gratitude-journaling/) — Use when establishing a daily or weekly practice to improve wellbeing, reduce depression symptoms, or shift habitual negative attentional bias — by writing specific, concrete things you are grateful for using the evidence-based format that produces lasting mood effects.
 - [`apply-growth-mindset-techniques`](./skills/psychology/positive/skills/apply-growth-mindset-techniques/) — Use when someone is avoiding challenges, giving up after setbacks, or attributing ability rather than effort and strategy to performance outcomes
 - [`apply-self-compassion-practice`](./skills/psychology/positive/skills/apply-self-compassion-practice/) — Use when helping someone reduce self-criticism, shame, or harsh inner judgment — particularly when perfectionism, failure responses, or chronic self-blame are interfering with wellbeing, resilience, or motivation.
 - [`design-character-strengths-plan`](./skills/psychology/positive/skills/design-character-strengths-plan/) — Use when helping someone identify their top character strengths and design a structured plan to apply them in new ways — particularly for improving engagement, wellbeing, resilience, or role satisfaction.
@@ -1217,7 +1254,7 @@
 
 ---
 
-## Sports (15) <a name="sports"></a>
+## Sports (16) <a name="sports"></a>
 
 ### coaching
 
@@ -1243,6 +1280,7 @@
 
 ### training
 
+- [`apply-hrv-monitoring`](./skills/sports/training/skills/apply-hrv-monitoring/) — Use when programming training for athletes or yourself — to use daily heart rate variability measurements as an objective readiness indicator that guides whether to push, maintain, or reduce training load on a given day.
 - [`apply-progressive-overload-principle`](./skills/sports/training/skills/apply-progressive-overload-principle/) — Use when designing resistance, endurance, or skill training programs that must produce continuous adaptation without plateauing or causing injury
 - [`calculate-training-load`](./skills/sports/training/skills/calculate-training-load/) — Use when a coach or athlete needs to quantify weekly training stress, monitor cumulative fatigue, and manage acute:chronic workload ratio to reduce injury risk
 - [`calculate-vo2-max-training-zones`](./skills/sports/training/skills/calculate-vo2-max-training-zones/) — Use when an athlete needs to establish individualized aerobic and anaerobic training zones based on VO2max or lactate threshold data
