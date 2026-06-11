@@ -1,0 +1,146 @@
+---
+name: apply-cryptographic-storage
+description: Use when storing sensitive data at rest — PII, health records, financial data, cryptographic keys, or any data that must remain confidential if storage media is compromised.
+source: 'OWASP Cryptographic Storage Cheat Sheet (owasp.org/www-project-cheat-sheets); NIST SP 800-175B (Cryptographic Standards); OWASP Top 10 2021 A02; CWE-312'
+tags: [security, owasp, encryption, cryptography, key-management, data-at-rest, developer]
+---
+
+# Apply Cryptographic Storage
+
+Encrypt sensitive data at rest using AES-256-GCM with authenticated encryption, manage keys in a dedicated key management service, and separate key storage from encrypted data.
+
+## Why This Is Best Practice
+
+**Adopted by:** NIST SP 800-175B mandates AES-256 and approved modes for federal systems. PCI DSS v4.0 Requirement 3 mandates encryption of stored cardholder data with strong cryptography. HIPAA Security Rule (45 CFR 164.312) requires encryption for PHI. AWS KMS, Google Cloud KMS, Azure Key Vault, and HashiCorp Vault are all built on these standards. Every major cloud database (AWS RDS, Google Cloud SQL, Azure SQL) offers encryption at rest as a default.
+**Impact:** The 2013 Adobe breach (153M records) exposed passwords stored with 3DES-ECB — a reversible, unauthenticated cipher — enabling mass decryption. LinkedIn (2012, SHA-1 passwords), LastPass (2022, encrypted vaults with weak key derivation), and Equifax (2017) all demonstrate the cost of weak or missing encryption. AES-256-GCM with authenticated encryption makes stored data computationally infeasible to decrypt or tamper with.
+**Why best:** AES-128-CBC (without authentication) is the common alternative — it's vulnerable to padding oracle attacks (POODLE, BEAST) and bit-flipping ciphertext tampering because CBC has no integrity check. AES-256-GCM is an AEAD cipher: it encrypts AND authenticates in one operation, detecting any tampering. The 256-bit key provides post-quantum margin.
+
+Sources: OWASP Cryptographic Storage Cheat Sheet; NIST SP 800-175B; PCI DSS v4.0 Req 3; CWE-312
+
+## Steps
+
+1. **Use AES-256-GCM (authenticated encryption) for all sensitive data**:
+
+   ```python
+   from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+   import os
+
+   def encrypt(plaintext: bytes, key: bytes) -> bytes:
+       # key must be 32 bytes (256 bits)
+       aesgcm = AESGCM(key)
+       nonce = os.urandom(12)  # 96-bit nonce — unique per encryption
+       ciphertext = aesgcm.encrypt(nonce, plaintext, associated_data=None)
+       return nonce + ciphertext  # prepend nonce for storage
+
+   def decrypt(stored: bytes, key: bytes) -> bytes:
+       nonce, ciphertext = stored[:12], stored[12:]
+       aesgcm = AESGCM(key)
+       return aesgcm.decrypt(nonce, ciphertext, associated_data=None)
+       # Raises InvalidTag if ciphertext was tampered
+   ```
+
+   ```javascript
+   // Node.js
+   const { createCipheriv, createDecipheriv, randomBytes } = require('crypto');
+
+   function encrypt(plaintext, key) {
+     const iv = randomBytes(12);
+     const cipher = createCipheriv('aes-256-gcm', key, iv);
+     const encrypted = Buffer.concat([cipher.update(plaintext), cipher.final()]);
+     const tag = cipher.getAuthTag();
+     return Buffer.concat([iv, tag, encrypted]);
+   }
+   ```
+
+2. **Store encryption keys separately from the data they protect** — use a Key Management Service:
+
+   ```python
+   # AWS KMS example — data key per record or per tenant
+   import boto3
+   kms = boto3.client('kms')
+
+   def get_data_key(key_id):
+       response = kms.generate_data_key(KeyId=key_id, KeySpec='AES_256')
+       plaintext_key = response['Plaintext']       # use for encryption, then discard
+       encrypted_key = response['CiphertextBlob']  # store alongside ciphertext
+       return plaintext_key, encrypted_key
+
+   def decrypt_data_key(encrypted_key):
+       response = kms.decrypt(CiphertextBlob=encrypted_key)
+       return response['Plaintext']
+   ```
+
+   Alternatives: HashiCorp Vault, Google Cloud KMS, Azure Key Vault.
+
+3. **For field-level encryption in databases** — encrypt before storing, decrypt after reading:
+
+   ```python
+   class EncryptedField:
+       def __set_name__(self, owner, name):
+           self.name = name
+
+       def __set__(self, obj, value):
+           if value is not None:
+               obj.__dict__[self.name] = encrypt(value.encode(), get_key())
+           else:
+               obj.__dict__[self.name] = None
+
+       def __get__(self, obj, objtype=None):
+           raw = obj.__dict__.get(self.name)
+           if raw is not None:
+               return decrypt(raw, get_key()).decode()
+           return None
+
+   class Patient(Model):
+       ssn = EncryptedField()    # transparently encrypted in DB
+       dob = EncryptedField()
+   ```
+
+4. **Use envelope encryption for scale** — one master key in KMS, unique data keys per record:
+
+   ```
+   Master Key (KMS — never leaves KMS)
+       └─ Data Key (unique per user/record, generated by KMS)
+           └─ Encrypted Data (stored in DB alongside encrypted data key)
+   ```
+
+   This limits blast radius: compromising one data key affects only one record.
+
+5. **Derive keys from passwords using a KDF** — when the encryption key comes from a user secret:
+
+   ```python
+   from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
+   import os
+
+   def derive_key(password: bytes, salt: bytes = None):
+       if salt is None:
+           salt = os.urandom(16)
+       kdf = Scrypt(salt=salt, length=32, n=2**17, r=8, p=1)
+       key = kdf.derive(password)
+       return key, salt
+   ```
+
+   Use Argon2id (preferred), scrypt, or PBKDF2-HMAC-SHA256 (FIPS only). Store the salt alongside the encrypted data.
+
+6. **Rotate keys without re-encrypting all data** — use key versioning:
+
+   ```python
+   # Store key version alongside ciphertext
+   # On read: decrypt with key version stored in record
+   # On next write: re-encrypt with current key version
+   # Old key version stays valid until all records are migrated
+   ```
+
+## Rules
+
+- Never implement your own encryption algorithm — use well-tested libraries (cryptography, libsodium, Bouncy Castle).
+- AES in ECB mode is insecure for any plaintext longer than 16 bytes — identical blocks produce identical ciphertext, revealing patterns.
+- The nonce/IV must be unique per encryption operation — reusing a nonce with the same key in GCM mode completely breaks confidentiality.
+- Storing the encryption key in the same database as the encrypted data eliminates the security benefit.
+
+## Common Mistakes
+
+- **Using AES-CBC without a MAC** — vulnerable to padding oracle attacks; use GCM (AEAD) instead.
+- **Hardcoding keys in source code** — keys in code go into git history and are visible to all developers; use KMS or environment secrets.
+- **Encrypting but not authenticating** — without an authentication tag, attackers can flip ciphertext bits and corrupt data without detection.
+- **Encrypting the same data with the same nonce twice** — nonce reuse in GCM allows key recovery; always generate nonces with `os.urandom(12)`.

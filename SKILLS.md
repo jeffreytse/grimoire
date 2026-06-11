@@ -1,6 +1,6 @@
 # Skills Directory
 
-568 skills across 27 domains.
+765 skills across 27 domains.
 
 [Install](./README.md#%EF%B8%8F-install) · [Contribute](./CONTRIBUTING.md) · [Standard](./STANDARD.md)
 
@@ -12,9 +12,9 @@
 - [Automotive (10)](#automotive)
 - [Business (105)](#business)
 - [Cooking (11)](#cooking)
-- [Design (23)](#design)
+- [Design (44)](#design)
 - [Education (20)](#education)
-- [Engineering (101)](#engineering)
+- [Engineering (225)](#engineering)
 - [Environment (11)](#environment)
 - [Fashion (10)](#fashion)
 - [Film (10)](#film)
@@ -97,7 +97,7 @@
 
 ### entrepreneurship
 
-- [`calculate-unit-economics`](./skills/business/entrepreneurship/skills/calculate-unit-economics/) — Use when computing or auditing a business's unit-level profitability including CAC, LTV, payback period, and contribution margin
+- [`calculate-startup-unit-economics`](./skills/business/entrepreneurship/skills/calculate-startup-unit-economics/) — Use when computing or auditing a business's unit-level profitability including CAC, LTV, payback period, and contribution margin
 - [`design-go-to-market-strategy`](./skills/business/entrepreneurship/skills/design-go-to-market-strategy/) — Use when launching a new product, entering a new market, or planning the commercialization approach for a startup or new business unit
 - [`run-customer-discovery`](./skills/business/entrepreneurship/skills/run-customer-discovery/) — Use when validating a startup idea, product hypothesis, or new feature by conducting structured interviews with target customers before building
 - [`write-business-plan`](./skills/business/entrepreneurship/skills/write-business-plan/) — Use when creating a business plan for a startup, new venture, loan application, or investor pitch requiring a formal written document
@@ -132,7 +132,7 @@
 - [`design-kpi-dashboard`](./skills/business/operations/skills/design-kpi-dashboard/) — Use when building or redesigning a performance dashboard to track organizational, team, or product KPIs and support data-driven decisions
 - [`design-speak-up-framework`](./skills/business/operations/skills/design-speak-up-framework/) — Use when building or auditing your organization's ability to surface ethical violations, compliance breaches, safety issues, and misconduct — to design the channels, protections, and culture that make reporting wrongdoing possible and expected
 - [`run-operational-review`](./skills/business/operations/skills/run-operational-review/) — Use when facilitating a recurring business review meeting to assess operational performance, address blockers, and align leadership on priorities
-- [`write-runbook`](./skills/business/operations/skills/write-runbook/) — Use when documenting a repeatable operational procedure that on-call engineers or operators must execute under pressure
+- [`write-ops-runbook`](./skills/business/operations/skills/write-ops-runbook/) — Use when documenting a repeatable operational procedure that on-call engineers or operators must execute under pressure
 
 ### strategy
 
@@ -252,7 +252,7 @@
 
 ---
 
-## Design (23) <a name="design"></a>
+## Design (44) <a name="design"></a>
 
 ### branding
 
@@ -291,6 +291,27 @@
 - [`design-onboarding-flow`](./skills/design/ui-ux/skills/design-onboarding-flow/) — Use when designing or redesigning a user onboarding flow for a SaaS or digital product where activation rate, time-to-value, or early churn are problems.
 - [`run-usability-test`](./skills/design/ui-ux/skills/run-usability-test/) — Use when validating a UI design, prototype, or live product with real users to find usability problems before or after launch
 - [`write-design-brief`](./skills/design/ui-ux/skills/write-design-brief/) — Use when starting a design project, commissioning design work, or aligning stakeholders before any visual design begins
+- [`apply-accessible-authentication`](./skills/design/ui-ux/skills/apply-accessible-authentication/) — Use when building login, registration, or any authentication flow — to ensure users with cognitive disabilities can authenticate without being blocked by memory tests, cognitive puzzles, or disabled paste functionality.
+- [`apply-accessible-color`](./skills/design/ui-ux/skills/apply-accessible-color/) — Use when choosing colors for text, UI components, or data visualizations — to ensure sufficient contrast ratios and that color is never the sole means of conveying information.
+- [`apply-accessible-forms`](./skills/design/ui-ux/skills/apply-accessible-forms/) — Use when building any form — login, checkout, search, settings — to ensure all inputs are correctly labeled, errors are programmatically associated, and users can complete the form with a keyboard and screen reader.
+- [`apply-aria-live-regions`](./skills/design/ui-ux/skills/apply-aria-live-regions/) — Use when adding dynamic content that changes without a user-triggered focus move — toast notifications, search results loading, form submission status, chat messages, or any async UI update — so screen reader users are informed of the change.
+- [`apply-aria-roles`](./skills/design/ui-ux/skills/apply-aria-roles/) — Use when building custom UI components that native HTML cannot represent — to give assistive technology the correct role, state, and property information for non-native interactive elements.
+- [`apply-audio-controls`](./skills/design/ui-ux/skills/apply-audio-controls/) — Use when adding audio or video with sound that plays automatically — to ensure users can pause, stop, or mute it without being unable to hear their screen reader or complete tasks in a noisy environment.
+- [`apply-error-prevention`](./skills/design/ui-ux/skills/apply-error-prevention/) — Use when building forms that submit legal, financial, or irreversible data — to ensure users can review, confirm, or reverse submissions, and are not asked to re-enter information they've already provided.
+- [`apply-focus-management`](./skills/design/ui-ux/skills/apply-focus-management/) — Use when building modals, drawers, route changes in SPAs, dynamic content insertion, or any interaction that moves or removes focus — to ensure keyboard focus moves predictably and is never lost.
+- [`apply-hover-content`](./skills/design/ui-ux/skills/apply-hover-content/) — Use when adding tooltips, popovers, or any content that appears on hover or focus — to ensure users can dismiss it, move their pointer over it, and that it doesn't disappear before they've read it.
+- [`apply-keyboard-accessibility`](./skills/design/ui-ux/skills/apply-keyboard-accessibility/) — Use when building interactive UI components — to ensure every action achievable with a mouse is also achievable with a keyboard alone, with no traps or dead ends.
+- [`apply-media-captions`](./skills/design/ui-ux/skills/apply-media-captions/) — Use when publishing video, audio, or any time-based media — to provide captions, transcripts, and audio descriptions for users who cannot hear or see the media content.
+- [`apply-page-language`](./skills/design/ui-ux/skills/apply-page-language/) — Use when building any web page or SPA — to declare the language of the page and any inline content in a different language, so screen readers select the correct text-to-speech voice and language rules.
+- [`apply-pointer-accessibility`](./skills/design/ui-ux/skills/apply-pointer-accessibility/) — Use when building touch interfaces, drag-and-drop interactions, gesture-based controls, or any feature activated on mouse or touch events — to ensure users with motor disabilities can operate all functionality with a single pointer without complex gestures.
+- [`apply-predictable-navigation`](./skills/design/ui-ux/skills/apply-predictable-navigation/) — Use when building multi-page applications, SPAs with multiple routes, or any UI with repeated navigation elements — to ensure focus and input changes don't trigger unexpected page transitions, and navigation appears consistently across views.
+- [`apply-reduced-motion`](./skills/design/ui-ux/skills/apply-reduced-motion/) — Use when adding animations, transitions, parallax effects, or auto-playing video to a UI — to respect users' motion sensitivity preferences and prevent content that could trigger seizures.
+- [`apply-responsive-text`](./skills/design/ui-ux/skills/apply-responsive-text/) — Use when styling text on any web page — to ensure content remains readable and functional when users resize text to 200%, zoom to 400%, or override text spacing with their own stylesheets.
+- [`apply-sensory-independence`](./skills/design/ui-ux/skills/apply-sensory-independence/) — Use when writing UI instructions or labels, and when building mobile or responsive interfaces — to ensure content is understandable without relying solely on shape, color, position, or orientation, and that display orientation is not unnecessarily locked.
+- [`apply-skip-navigation`](./skills/design/ui-ux/skills/apply-skip-navigation/) — Use when building any page with repeated header and navigation content — to let keyboard and screen reader users skip directly to the main content without tabbing through every navigation link.
+- [`apply-text-alternatives`](./skills/design/ui-ux/skills/apply-text-alternatives/) — Use when adding images, icons, SVGs, canvas elements, or any non-text content to a page — to ensure users who cannot see the content receive an equivalent text description.
+- [`apply-timed-content-controls`](./skills/design/ui-ux/skills/apply-timed-content-controls/) — Use when building carousels, auto-advancing slideshows, session management, or any content that moves, blinks, or updates automatically — to ensure users can pause, stop, or extend time-sensitive content.
+- [`write-semantic-html-structure`](./skills/design/ui-ux/skills/write-semantic-html-structure/) — Use when building or reviewing a web page's HTML structure — to ensure heading hierarchy, landmark regions, and semantic elements convey the correct document outline to screen readers and assistive technology.
 
 ---
 
@@ -334,7 +355,7 @@
 
 ---
 
-## Engineering (117) <a name="engineering"></a>
+## Engineering (222) <a name="engineering"></a>
 
 ### ai
 
@@ -346,6 +367,16 @@
 - [`design-rag-pipeline`](./skills/engineering/ai/skills/design-rag-pipeline/) — Use when designing a retrieval-augmented generation (RAG) pipeline for grounding LLM outputs in external knowledge
 - [`design-rag-system`](./skills/engineering/ai/skills/design-rag-system/) — Use when building LLM applications that need to answer questions about proprietary, recent, or domain-specific knowledge that is not in the model's training data
 - [`write-eval-suite`](./skills/engineering/ai/skills/write-eval-suite/) — Use when building a test suite to evaluate LLM model performance, prompt quality, or AI system behavior
+- [`apply-evaluation-driven-development`](./skills/engineering/ai/skills/apply-evaluation-driven-development/) — Use when building or iterating on an LLM feature, prompt, or agentic system — to measure improvement objectively rather than speculating about what the model needs.
+- [`design-agentic-workflow`](./skills/engineering/ai/skills/design-agentic-workflow/) — Use when building or prompting a multi-step agentic system — to structure execution so the agent plans before acting, creates verifiable checkpoints, and avoids irreversible mistakes.
+- [`apply-llm-output-sanitization`](./skills/engineering/ai/skills/apply-llm-output-sanitization/) — Use when rendering LLM-generated text in a browser, executing LLM-generated code, or inserting LLM output into a database or downstream system — any place LLM output leaves the AI layer and enters another execution context.
+- [`apply-llm-resource-limits`](./skills/engineering/ai/skills/apply-llm-resource-limits/) — Use when building applications that make LLM API calls, run inference locally, or build agentic systems — to prevent runaway costs, infinite loops, and denial of service via unrestricted model consumption.
+- [`audit-llm-data-disclosure`](./skills/engineering/ai/skills/audit-llm-data-disclosure/) — Use when deploying an LLM application that may have been trained on or given access to sensitive data — to assess the risk of the model leaking PII, proprietary information, or confidential context through its outputs.
+- [`audit-training-data-integrity`](./skills/engineering/ai/skills/audit-training-data-integrity/) — Use when curating, collecting, or managing datasets for training or fine-tuning machine learning models — to detect and mitigate poisoned, biased, mislabeled, or adversarially crafted training data.
+- [`design-llm-action-boundaries`](./skills/engineering/ai/skills/design-llm-action-boundaries/) — Use when building LLM agents that can take actions in the world — sending emails, modifying files, making API calls, or executing code — to prevent the model from taking actions beyond its intended scope.
+- [`design-llm-plugin-security`](./skills/engineering/ai/skills/design-llm-plugin-security/) — Use when building tools, plugins, or function-calling integrations for LLM systems — defining what actions the model can invoke, how those invocations are validated, and how to prevent misuse of plugin capabilities.
+- [`design-prompt-injection-defense`](./skills/engineering/ai/skills/design-prompt-injection-defense/) — Use when building LLM-powered applications that process user input alongside system instructions — chatbots, AI agents, document processors, code assistants, or any system where untrusted text reaches an LLM.
+- [`validate-llm-output`](./skills/engineering/ai/skills/validate-llm-output/) — Use when LLM outputs are used to make decisions, generate content, answer questions, or drive application logic — to detect hallucinations, verify factual grounding, and prevent over-reliance on unverified AI-generated content.
 
 ### architecture
 
@@ -377,6 +408,32 @@
 - [`design-microservices`](./skills/engineering/architecture/skills/design-microservices/) — Use when decomposing a monolith or designing a new system using microservices architecture
 - [`design-system-architecture`](./skills/engineering/architecture/skills/design-system-architecture/) — Use when asked to design, evaluate, or document the high-level architecture of a system — including new systems, major feature additions, or scaling a system beyond its current design limits.
 - [`write-adr`](./skills/engineering/architecture/skills/write-adr/) — Use when a significant technical decision is being made or has just been made — including technology choices, architectural patterns, API contracts, data models, or security boundaries. Use before implementing a decision that would be costly to reverse.
+- [`apply-abstract-factory-pattern`](./skills/engineering/architecture/skills/apply-abstract-factory-pattern/) — Use when a system must create families of related objects and must remain independent of how those objects are created — so that swapping one product family for another requires no changes to client code.
+- [`apply-adapter-pattern`](./skills/engineering/architecture/skills/apply-adapter-pattern/) — Use when you need to use an existing class but its interface is incompatible with what your code expects — converting one interface into another without modifying either.
+- [`apply-bridge-pattern`](./skills/engineering/architecture/skills/apply-bridge-pattern/) — Use when you need to vary both an abstraction and its implementation independently — avoiding an exponential class hierarchy that results from combining them through inheritance.
+- [`apply-builder-pattern`](./skills/engineering/architecture/skills/apply-builder-pattern/) — Use when constructing a complex object requires many steps or parameters — especially when the same construction process should produce different representations, or when telescoping constructors become unreadable.
+- [`apply-chain-of-responsibility-pattern`](./skills/engineering/architecture/skills/apply-chain-of-responsibility-pattern/) — Use when more than one object may handle a request and the handler isn't known a priori — letting you pass the request along a chain of handlers until one handles it, without coupling the sender to any specific handler.
+- [`apply-command-pattern`](./skills/engineering/architecture/skills/apply-command-pattern/) — Use when you need to parameterize objects with operations, queue or log requests, support undoable operations, or implement transactional behavior — by encapsulating each request as an object with a uniform execute interface.
+- [`apply-composable-design`](./skills/engineering/architecture/skills/apply-composable-design/) — Use when designing modules, services, or functions — especially when units are hard to reuse independently, replacements require touching many files, or combining two features requires coupling their internals.
+- [`apply-composite-pattern`](./skills/engineering/architecture/skills/apply-composite-pattern/) — Use when you need to represent part-whole hierarchies of objects and want clients to treat individual objects and compositions of objects uniformly — without special-casing leaf vs. container nodes.
+- [`apply-decorator-pattern`](./skills/engineering/architecture/skills/apply-decorator-pattern/) — Use when you need to add responsibilities to individual objects dynamically — without modifying the class and without the combinatorial explosion that results from subclassing every combination of features.
+- [`apply-domain-based-naming`](./skills/engineering/architecture/skills/apply-domain-based-naming/) — Use when naming variables, functions, classes, modules, or directories — especially when new team members struggle to connect code to domain concepts, or when domain experts and engineers use different terms for the same thing.
+- [`apply-facade-pattern`](./skills/engineering/architecture/skills/apply-facade-pattern/) — Use when you want to provide a simple, unified interface to a complex subsystem — reducing the number of objects clients must interact with and lowering the coupling between client code and subsystem internals.
+- [`apply-factory-method-pattern`](./skills/engineering/architecture/skills/apply-factory-method-pattern/) — Use when a class must create objects but should not be responsible for deciding which concrete class to instantiate — letting subclasses or configuration determine the type at runtime.
+- [`apply-flyweight-pattern`](./skills/engineering/architecture/skills/apply-flyweight-pattern/) — Use when an application creates a very large number of fine-grained objects whose combined memory cost is prohibitive — by sharing the intrinsic (immutable) state across instances and storing only extrinsic (context-specific) state outside.
+- [`apply-interpreter-pattern`](./skills/engineering/architecture/skills/apply-interpreter-pattern/) — Use when you need to interpret sentences in a simple language — defining a grammar as a class hierarchy where each rule is a class and interpreting an expression is traversing that hierarchy.
+- [`apply-iterator-pattern`](./skills/engineering/architecture/skills/apply-iterator-pattern/) — Use when you need to access elements of a collection sequentially without exposing its underlying representation — decoupling traversal logic from the collection's data structure.
+- [`apply-mediator-pattern`](./skills/engineering/architecture/skills/apply-mediator-pattern/) — Use when many objects communicate with each other in complex, tangled ways — centralizing all interaction in a mediator object so that components only talk to the mediator, not to each other.
+- [`apply-memento-pattern`](./skills/engineering/architecture/skills/apply-memento-pattern/) — Use when you need to capture and restore an object's internal state — for undo/redo, rollback, or snapshot functionality — without exposing or violating the object's encapsulation.
+- [`apply-observer-pattern`](./skills/engineering/architecture/skills/apply-observer-pattern/) — Use when a change in one object must automatically notify and update an open-ended set of dependent objects — without the subject knowing which specific objects depend on it.
+- [`apply-prototype-pattern`](./skills/engineering/architecture/skills/apply-prototype-pattern/) — Use when creating a new object by copying an existing instance is cheaper or simpler than constructing from scratch — especially when object initialization is expensive or when the exact type of object to create is determined at runtime.
+- [`apply-proxy-pattern`](./skills/engineering/architecture/skills/apply-proxy-pattern/) — Use when you need to control access to an object — adding lazy initialization, access control, logging, caching, or remote access — without changing the object's interface or the client's code.
+- [`apply-singleton-pattern`](./skills/engineering/architecture/skills/apply-singleton-pattern/) — Use when exactly one instance of a class must exist across the entire application — such as a configuration store, connection pool, or logger — and global access to that instance is required.
+- [`apply-state-pattern`](./skills/engineering/architecture/skills/apply-state-pattern/) — Use when an object's behavior changes based on its internal state and the logic for each state is complex — replacing large conditional chains with state objects where each state encapsulates its own behavior.
+- [`apply-strategy-pattern`](./skills/engineering/architecture/skills/apply-strategy-pattern/) — Use when you have multiple algorithms or behaviors that can be swapped for a given task — encapsulating each algorithm in its own class and making them interchangeable at runtime.
+- [`apply-template-method-pattern`](./skills/engineering/architecture/skills/apply-template-method-pattern/) — Use when multiple classes share the same algorithm skeleton but differ in specific steps — defining the invariant structure once in a base class and letting subclasses override only the varying parts.
+- [`apply-unix-philosophy`](./skills/engineering/architecture/skills/apply-unix-philosophy/) — Use when designing tools, services, CLIs, or modules — especially when a component accumulates responsibilities over time, changes to one feature break unrelated features, or the component is hard to test in isolation.
+- [`apply-visitor-pattern`](./skills/engineering/architecture/skills/apply-visitor-pattern/) — Use when you need to perform many distinct operations on a stable object structure — adding new operations without modifying the element classes by separating the operation from the data structure.
 
 ### cloud
 
@@ -385,6 +442,15 @@
 - [`design-disaster-recovery-plan`](./skills/engineering/cloud/skills/design-disaster-recovery-plan/) — Use when establishing or auditing business continuity for cloud systems that must recover from catastrophic failures, data loss, or prolonged outages
 - [`design-multi-region-architecture`](./skills/engineering/cloud/skills/design-multi-region-architecture/) — Use when designing systems that must survive regional outages, minimize global latency, or meet geographic data residency requirements
 - [`optimize-cloud-spend`](./skills/engineering/cloud/skills/optimize-cloud-spend/) — Use when cloud costs are growing faster than usage, when preparing for budget reviews, or when seeking to reduce infrastructure spend without degrading performance
+- [`apply-cloud-runtime-security`](./skills/engineering/cloud/skills/apply-cloud-runtime-security/) — Use when running workloads in cloud environments — enabling GuardDuty, Security Command Center, or Microsoft Defender, and deploying Falco for Kubernetes runtime threat detection.
+- [`apply-serverless-function-security`](./skills/engineering/cloud/skills/apply-serverless-function-security/) — Use when writing serverless functions (AWS Lambda, Google Cloud Functions, Azure Functions) — validating event data from all trigger sources, preventing execution flow manipulation, and securing error handling.
+- [`apply-serverless-least-privilege`](./skills/engineering/cloud/skills/apply-serverless-least-privilege/) — Use when writing serverless functions — assigning per-function IAM execution roles with minimal permissions, disabling unused triggers, and securing function URLs and API authentication.
+- [`apply-serverless-secrets`](./skills/engineering/cloud/skills/apply-serverless-secrets/) — Use when managing secrets in serverless functions — replacing environment variable credentials with Secrets Manager or Parameter Store, auditing third-party Lambda layers, and preventing secret leakage in logs.
+- [`design-cloud-network-segmentation`](./skills/engineering/cloud/skills/design-cloud-network-segmentation/) — Use when designing cloud network architecture — structuring VPCs with public/private subnets, using VPC endpoints for AWS service access, and implementing security groups as stateful firewalls to contain blast radius.
+- [`design-cloud-workload-identity`](./skills/engineering/cloud/skills/design-cloud-workload-identity/) — Use when Kubernetes pods or cloud services need to access cloud APIs — replacing long-lived IAM keys with IRSA (AWS), Workload Identity (GCP), or Managed Identity (Azure) to eliminate credential leakage risks.
+- [`design-serverless-cost-protection`](./skills/engineering/cloud/skills/design-serverless-cost-protection/) — Use when deploying serverless functions at scale — setting reserved concurrency, SQS visibility timeouts, recursion detection, and budget alerts to prevent denial-of-service via financial resource exhaustion.
+- [`design-serverless-observability`](./skills/engineering/cloud/skills/design-serverless-observability/) — Use when operating serverless functions in production — implementing structured logging, distributed tracing, anomaly-based alerting, and cold start monitoring to detect security incidents and performance degradation.
+- [`review-cloud-native-security`](./skills/engineering/cloud/skills/review-cloud-native-security/) — Use when auditing a cloud-native application or infrastructure — systematically checking all 10 OWASP Cloud-Native Application Security Top 10 vulnerability classes with AWS CLI, kubectl, and Terraform commands.
 
 ### data
 
@@ -416,6 +482,8 @@
 - [`review-pull-request`](./skills/engineering/development/skills/review-pull-request/) — Use when asked to review a pull request, diff, or code change — whether reviewing as an AI assistant or guiding a human reviewer on what to check and how to give feedback.
 - [`write-changelog`](./skills/engineering/development/skills/write-changelog/) — Use when writing or updating a CHANGELOG for a software project before a release
 - [`write-database-migration`](./skills/engineering/development/skills/write-database-migration/) — Use when changing a database schema — adding or removing columns, creating tables, adding indexes, or altering constraints.
+- [`apply-idiomatic-code`](./skills/engineering/development/skills/apply-idiomatic-code/) — Use when writing or reviewing code in a specific language or ecosystem — especially when contributors from different language backgrounds write in conflicting styles, or when code compiles but feels foreign to native speakers of the language.
+- [`apply-predictable-code`](./skills/engineering/development/skills/apply-predictable-code/) — Use when writing or reviewing functions and modules — especially when callers encounter surprising side effects, error handling is inconsistent, or debugging requires tracing hidden state changes.
 
 ### devops
 
@@ -427,6 +495,11 @@
 - [`design-platform-engineering-model`](./skills/engineering/devops/skills/design-platform-engineering-model/) — Use when designing an internal developer platform (IDP) to reduce cognitive load on product teams, standardize infrastructure access, and improve developer experience at scale
 - [`plan-incident-response`](./skills/engineering/devops/skills/plan-incident-response/) — Use when a production incident is declared or suspected, when building an incident response runbook, or when running a post-incident review that needs a structured process.
 - [`write-post-mortem`](./skills/engineering/devops/skills/write-post-mortem/) — Use when an incident, outage, or significant production failure has occurred and needs to be documented — including partial outages, data pipeline failures, degraded performance events, or security incidents. Trigger once the incident is resolved and engineers are ready to analyze it.
+- [`apply-docker-security`](./skills/engineering/devops/skills/apply-docker-security/) — Use when writing Dockerfiles, configuring container runtimes, or deploying containerized workloads — to harden containers against privilege escalation, image vulnerabilities, and container escape.
+- [`apply-iac-security`](./skills/engineering/devops/skills/apply-iac-security/) — Use when writing Terraform, CloudFormation, Pulumi, or Bicep templates — to detect misconfigurations, enforce least privilege IAM, and prevent insecure defaults before infrastructure reaches production.
+- [`apply-kubernetes-security`](./skills/engineering/devops/skills/apply-kubernetes-security/) — Use when deploying workloads to Kubernetes — configuring RBAC, network policies, pod security standards, secrets management, and admission controls to prevent privilege escalation and lateral movement.
+- [`design-cicd-pipeline-security`](./skills/engineering/devops/skills/design-cicd-pipeline-security/) — Use when designing or hardening CI/CD pipelines — securing secret injection, restricting pipeline permissions, signing artifacts, and preventing supply chain attacks in GitHub Actions, GitLab CI, or Jenkins.
+- [`review-kubernetes-top10`](./skills/engineering/devops/skills/review-kubernetes-top10/) — Use when auditing a Kubernetes cluster or reviewing a deployment for security — systematically checking all 10 OWASP Kubernetes Top 10 (2022) vulnerability classes with test commands and remediation guidance.
 
 ### documentation
 
@@ -443,6 +516,10 @@
 - [`audit-mobile-performance`](./skills/engineering/mobile/skills/audit-mobile-performance/) — Use when diagnosing performance problems in a mobile app or conducting a systematic mobile performance review
 - [`design-offline-first`](./skills/engineering/mobile/skills/design-offline-first/) — Use when designing a mobile or web application that must function without a reliable network connection
 - [`write-push-notification`](./skills/engineering/mobile/skills/write-push-notification/) — Use when writing copy for push notifications or designing a push notification permission and delivery strategy
+- [`apply-mobile-code-hardening`](./skills/engineering/mobile/skills/apply-mobile-code-hardening/) — Use when preparing a mobile app for production release — especially apps handling financial data, DRM content, or anti-cheat systems — to raise the bar against reverse engineering, tampering, and runtime manipulation.
+- [`apply-mobile-cryptography`](./skills/engineering/mobile/skills/apply-mobile-cryptography/) — Use when implementing cryptographic operations in a mobile app — encrypting data, hashing passwords, generating keys, signing data, or establishing secure communication channels between the app and backend.
+- [`apply-secure-mobile-storage`](./skills/engineering/mobile/skills/apply-secure-mobile-storage/) — Use when storing sensitive data on a mobile device — credentials, tokens, PII, health data, financial data, or any data that should not be accessible to other apps or readable from device backups.
+- [`design-mobile-privacy-controls`](./skills/engineering/mobile/skills/design-mobile-privacy-controls/) — Use when building a mobile app that collects, processes, or transmits user data — implementing data minimization, purpose limitation, consent management, and user data controls required by app store policies and privacy regulations.
 
 ### networking
 
@@ -481,7 +558,7 @@
 - [`design-slo-sla-framework`](./skills/engineering/reliability/skills/design-slo-sla-framework/) — Use when establishing reliability targets for services, defining error budgets for engineering teams, or negotiating service commitments with customers
 - [`run-chaos-engineering`](./skills/engineering/reliability/skills/run-chaos-engineering/) — Use when validating system reliability before a major launch, when SLO breach investigations reveal unknown failure modes, or when establishing a proactive reliability practice
 - [`run-game-day`](./skills/engineering/reliability/skills/run-game-day/) — Use when validating incident response capabilities, onboarding new engineers to on-call, preparing for a major launch, or after significant architecture changes
-- [`write-runbook`](./skills/engineering/reliability/skills/write-runbook/) — Use when writing or updating an on-call runbook, incident response playbook, or alert-to-action guide
+- [`write-sre-runbook`](./skills/engineering/reliability/skills/write-sre-runbook/) — Use when writing or updating an on-call runbook, incident response playbook, or alert-to-action guide
 
 ### security
 
@@ -493,6 +570,59 @@
 - [`review-owasp-checklist`](./skills/engineering/security/skills/review-owasp-checklist/) — Use when reviewing a new codebase for security, before a production launch, after a security incident, or during a compliance audit requiring OWASP Top 10 coverage.
 - [`review-secrets-management`](./skills/engineering/security/skills/review-secrets-management/) — Use when reviewing how secrets, credentials, API keys, or certificates are stored, rotated, and accessed in a system
 - [`validate-external-input`](./skills/engineering/security/skills/validate-external-input/) — Use when writing code that accepts data from outside the process boundary — HTTP requests, file uploads, database reads, CLI arguments, environment variables, or inter-service calls — to reject malformed, malicious, or out-of-range data before it reaches business logic.
+- [`apply-content-security-policy`](./skills/engineering/security/skills/apply-content-security-policy/) — Use when deploying a web application that serves HTML — especially one with user-generated content, third-party scripts, or inline JavaScript — to restrict what resources the browser may load or execute.
+- [`apply-cors-policy`](./skills/engineering/security/skills/apply-cors-policy/) — Use when building an API or web service that needs to be called from browser JavaScript on a different origin — including public APIs, microservices accessed from SPAs, and third-party integrations.
+- [`apply-jwt-security`](./skills/engineering/security/skills/apply-jwt-security/) — Use when implementing JWT-based authentication or authorization — covering token generation, algorithm selection, validation, expiry, and revocation for stateless APIs.
+- [`apply-password-hashing`](./skills/engineering/security/skills/apply-password-hashing/) — Use when storing user passwords or credentials in a database — covers algorithm selection, work factor configuration, and migration from legacy hashing schemes.
+- [`apply-security-headers`](./skills/engineering/security/skills/apply-security-headers/) — Use when configuring any web server or application that serves HTTP responses to browsers — covers the full set of security response headers that harden against common attacks.
+- [`apply-tls-configuration`](./skills/engineering/security/skills/apply-tls-configuration/) — Use when configuring HTTPS on a web server, API gateway, or load balancer — covers cipher suites, TLS version enforcement, certificate management, and HSTS.
+- [`design-security-logging`](./skills/engineering/security/skills/design-security-logging/) — Use when adding logging to authentication flows, authorization decisions, admin actions, or any security-sensitive operation — to enable detection, forensics, and incident response.
+- [`design-session-management`](./skills/engineering/security/skills/design-session-management/) — Use when implementing user authentication state — creating, storing, transmitting, and expiring session tokens or cookies in a web application.
+- [`prevent-clickjacking`](./skills/engineering/security/skills/prevent-clickjacking/) — Use when building any web page that performs state-changing actions on click — login forms, payment buttons, delete confirmations, or settings toggles that could be exploited if framed by an attacker.
+- [`prevent-csrf`](./skills/engineering/security/skills/prevent-csrf/) — Use when building any server-side endpoint that performs state-changing operations (POST, PUT, PATCH, DELETE) and is accessible by a browser session.
+- [`prevent-insecure-deserialization`](./skills/engineering/security/skills/prevent-insecure-deserialization/) — Use when deserializing data from untrusted sources — user-submitted cookies, API request bodies, message queue payloads, or any format that reconstructs objects (pickle, Java serialization, YAML, PHP serialize).
+- [`prevent-path-traversal`](./skills/engineering/security/skills/prevent-path-traversal/) — Use when building file upload, file download, file serving, or any feature where user input influences a filesystem path — including filename parameters, directory parameters, or file include logic.
+- [`prevent-sql-injection`](./skills/engineering/security/skills/prevent-sql-injection/) — Use when writing code that constructs database queries using any data that originates outside the application — user input, API parameters, headers, cookies, or environment variables.
+- [`prevent-ssrf`](./skills/engineering/security/skills/prevent-ssrf/) — Use when building features that fetch URLs or make HTTP requests based on user-supplied input — web scrapers, webhook receivers, URL preview services, import-from-URL features, or any server-side HTTP client.
+- [`prevent-xss`](./skills/engineering/security/skills/prevent-xss/) — Use when rendering user-supplied content in HTML, writing JavaScript that inserts data into the DOM, or building APIs whose responses are rendered in a browser.
+- [`prevent-xxe`](./skills/engineering/security/skills/prevent-xxe/) — Use when parsing XML in any context — file uploads, SOAP APIs, RSS/Atom feeds, SVG processing, document conversion, or any XML-based data exchange format.
+- [`apply-api-client-security`](./skills/engineering/security/skills/apply-api-client-security/) — Use when your application consumes external or third-party APIs — configuring HTTP clients, validating TLS certificates, handling secrets, and sanitizing responses from upstream services.
+- [`apply-api-rate-limiting`](./skills/engineering/security/skills/apply-api-rate-limiting/) — Use when building any API endpoint — especially authentication endpoints, resource-creation endpoints, and any operation with a per-user or per-tenant cost — to protect against abuse, brute force, and resource exhaustion.
+- [`apply-authorization-control`](./skills/engineering/security/skills/apply-authorization-control/) — Use when implementing access control decisions — determining which users can perform which actions on which resources — in any API, web application, or service.
+- [`apply-cryptographic-storage`](./skills/engineering/security/skills/apply-cryptographic-storage/) — Use when storing sensitive data at rest — PII, health records, financial data, cryptographic keys, or any data that must remain confidential if storage media is compromised.
+- [`apply-oauth2-security`](./skills/engineering/security/skills/apply-oauth2-security/) — Use when implementing OAuth 2.0 or OpenID Connect flows — building an authorization server, integrating a third-party identity provider, or securing API access delegation between services.
+- [`design-error-handling`](./skills/engineering/security/skills/design-error-handling/) — Use when designing how errors, exceptions, and failures are surfaced to users and logged internally — ensuring error messages don't leak sensitive implementation details while providing enough context for debugging.
+- [`prevent-mass-assignment`](./skills/engineering/security/skills/prevent-mass-assignment/) — Use when binding HTTP request parameters or JSON bodies directly to model objects, database records, or data transfer objects — any place where user-supplied fields are mapped to internal properties.
+- [`prevent-open-redirect`](./skills/engineering/security/skills/prevent-open-redirect/) — Use when building any endpoint that redirects users based on a URL parameter — login redirects, logout returns, OAuth callback handling, or any redirect-after-action flow.
+- [`prevent-redos`](./skills/engineering/security/skills/prevent-redos/) — Use when writing or reviewing regular expressions that process user-controlled input — especially patterns with nested quantifiers, alternation with overlapping cases, or patterns applied to long strings.
+- [`review-owasp-api-checklist`](./skills/engineering/security/skills/review-owasp-api-checklist/) — Use when auditing an API for security vulnerabilities, conducting a pre-launch security review, performing a penetration test on API endpoints, or assessing API security posture against the OWASP API Security Top 10 (2023).
+- [`apply-graphql-security`](./skills/engineering/security/skills/apply-graphql-security/) — Use when building or securing a GraphQL API — limiting query depth and complexity, disabling introspection in production, enforcing field-level authorization, and preventing batching abuse.
+- [`apply-key-management`](./skills/engineering/security/skills/apply-key-management/) — Use when designing encryption key lifecycle — generating, storing, rotating, and retiring cryptographic keys for application secrets, database encryption, and API signing keys.
+- [`apply-microservices-security`](./skills/engineering/security/skills/apply-microservices-security/) — Use when building microservices that communicate with each other — implementing service-to-service mTLS, JWT propagation for user identity, and API gateway authentication to prevent lateral movement between services.
+- [`apply-secure-defaults`](./skills/engineering/security/skills/apply-secure-defaults/) — Use when configuring a new application, framework, or service — ensuring security is enabled out of the box by setting restrictive defaults for cookies, headers, database connections, and framework security features.
+- [`design-mfa-system`](./skills/engineering/security/skills/design-mfa-system/) — Use when adding multi-factor authentication to an application — implementing TOTP, WebAuthn/passkeys, recovery codes, and phishing-resistant options for high-value accounts.
+- [`design-secure-sdlc`](./skills/engineering/security/skills/design-secure-sdlc/) — Use when establishing or improving a software development lifecycle — embedding security requirements, threat modeling, and security testing at each phase to find vulnerabilities when they cost 10× less to fix.
+- [`prevent-credential-stuffing`](./skills/engineering/security/skills/prevent-credential-stuffing/) — Use when building login endpoints — detecting and blocking automated credential stuffing attacks using breached password detection, device fingerprinting, and bot detection.
+- [`review-authentication-security`](./skills/engineering/security/skills/review-authentication-security/) — Use when penetration testing or auditing authentication mechanisms — executing WSTG OTG-AUTHN test cases for username enumeration, brute force, default credentials, weak lockout, MFA bypass, and password reset flaws.
+- [`review-owasp-asvs`](./skills/engineering/security/skills/review-owasp-asvs/) — Use when auditing a web application's security posture against a structured verification standard — applying OWASP ASVS Level 1, 2, or 3 requirements to find and document security gaps across authentication, session management, access control, cryptography, and input validation.
+- [`review-session-management-security`](./skills/engineering/security/skills/review-session-management-security/) — Use when penetration testing or auditing session handling — executing WSTG OTG-SESS test cases for session token analysis, cookie attribute verification, CSRF, session fixation, and logout completeness.
+
+### blockchain
+
+- [`apply-smart-contract-access-control`](./skills/engineering/blockchain/skills/apply-smart-contract-access-control/) — Use when writing Solidity contracts with admin functions, upgradeable proxies, or multi-role permissions — implementing Ownable, role-based access control, and two-step ownership transfer to prevent unauthorized function execution.
+- [`apply-smart-contract-randomness`](./skills/engineering/blockchain/skills/apply-smart-contract-randomness/) — Use when writing Solidity contracts that need randomness — NFT mints, lotteries, games — replacing insecure block variable entropy with Chainlink VRF or commit-reveal to prevent miner manipulation.
+- [`design-oracle-security`](./skills/engineering/blockchain/skills/design-oracle-security/) — Use when writing DeFi smart contracts that rely on price feeds, randomness, or external data — preventing oracle manipulation via TWAP, multiple oracle sources, and circuit breakers.
+- [`prevent-front-running`](./skills/engineering/blockchain/skills/prevent-front-running/) — Use when writing DeFi smart contracts with user-submitted transactions — implementing commit-reveal, slippage tolerance, and MEV-resistant patterns to prevent front-running and sandwich attacks.
+- [`prevent-reentrancy`](./skills/engineering/blockchain/skills/prevent-reentrancy/) — Use when writing Solidity smart contracts that transfer ETH or call external contracts — applying the Checks-Effects-Interactions pattern and ReentrancyGuard to prevent reentrancy attacks.
+- [`review-smart-contract-security`](./skills/engineering/blockchain/skills/review-smart-contract-security/) — Use when auditing a Solidity smart contract or reviewing a protocol before deployment — systematically checking all 10 OWASP Smart Contract Top 10 vulnerability classes with Slither/Foundry test procedures.
+
+### hardware
+
+- [`apply-iot-device-hardening`](./skills/engineering/hardware/skills/apply-iot-device-hardening/) — Use when preparing IoT devices for production deployment — removing default credentials, disabling debug interfaces, encrypting stored data, and implementing physical tamper detection.
+- [`apply-iot-network-hardening`](./skills/engineering/hardware/skills/apply-iot-network-hardening/) — Use when designing IoT device network interfaces — disabling unnecessary services, enforcing TLS for all communication, segmenting devices on isolated VLANs, and securing management APIs.
+- [`design-iot-device-management`](./skills/engineering/hardware/skills/design-iot-device-management/) — Use when building IoT fleet management infrastructure — designing secure device provisioning, certificate lifecycle, remote management, and decommissioning processes.
+- [`design-iot-secure-boot`](./skills/engineering/hardware/skills/design-iot-secure-boot/) — Use when designing firmware update mechanisms for IoT devices — implementing code signing, secure boot chains, and rollback protection to prevent malicious firmware from running on deployed hardware.
+- [`review-iot-security`](./skills/engineering/hardware/skills/review-iot-security/) — Use when auditing an IoT product or deployment — systematically checking all 10 OWASP IoT Top 10 vulnerability classes with test procedures, firmware analysis commands, and network scanning.
 
 ### testing
 
@@ -566,7 +696,7 @@
 ### cinematography
 
 - [`apply-cinematography-principles`](./skills/film/cinematography/skills/apply-cinematography-principles/) — Use when making lens, exposure, lighting ratio, or camera movement decisions that must serve the story's emotional and narrative goals
-- [`design-shot-list`](./skills/film/cinematography/skills/design-shot-list/) — Use when planning a film shoot and need to organize every camera setup into a structured shot list before principal photography begins
+- [`design-film-shot-list`](./skills/film/cinematography/skills/design-film-shot-list/) — Use when planning a film shoot and need to organize every camera setup into a structured shot list before principal photography begins
 
 ### directing
 
@@ -601,7 +731,7 @@
 ### corporate
 
 - [`calculate-npv-irr`](./skills/finance/corporate/skills/calculate-npv-irr/) — Use when evaluating capital investments, projects, or acquisitions using Net Present Value and Internal Rate of Return analysis
-- [`calculate-unit-economics`](./skills/finance/corporate/skills/calculate-unit-economics/) — Use when evaluating the profitability and scalability of a business model at the per-customer or per-transaction level
+- [`calculate-corporate-unit-economics`](./skills/finance/corporate/skills/calculate-corporate-unit-economics/) — Use when evaluating the profitability and scalability of a business model at the per-customer or per-transaction level
 - [`calculate-wacc`](./skills/finance/corporate/skills/calculate-wacc/) — Use when calculating the Weighted Average Cost of Capital for a company to use as the discount rate in valuation or capital budgeting decisions
 - [`design-capital-structure`](./skills/finance/corporate/skills/design-capital-structure/) — Use when advising on or designing the optimal capital structure for a company, including debt-equity mix, financing decisions, and leverage analysis
 - [`design-pricing-strategy`](./skills/finance/corporate/skills/design-pricing-strategy/) — Use when setting, revising, or validating the pricing for a product or service
@@ -825,33 +955,33 @@
 
 - [`check-best-practice-compliance`](./skills/meta/skills/check-best-practice-compliance/) — Use when the user wants to check whether any artifact or work product aligns with their stated best practice preferences — e.g., "check compliance", "linter for best practices", "are we following our pinned practices?", "check this document against our standards".
 - [`configure-grimoire`](./skills/meta/skills/configure-grimoire/) — Use when the user wants to view, edit, remove, or validate their grimoire settings — including reading current preferences, changing or deleting a setting, switching a named profile, or checking settings.toml for contradictions and expired entries.
-- [`adapt-best-practice`](./skills/grimoire/skills/adapt-best-practice/) — Use when the user wants to apply a practice but has specific constraints that differ from the canonical case — team size, industry regulation, budget, maturity level, technology stack, or organizational culture. Produces an adapted version that preserves the practice's core while fitting the user's reality.
-- [`analyze-problem`](./skills/grimoire/skills/analyze-problem/) — Use when the user presents a problem that isn't well-defined — goal is unclear, scope is unstated, or what's described looks like a symptom rather than a root cause. Asks clarifying questions one at a time until the problem boundary is clear, then produces a problem statement, problem space map, and possible solution routes before handing off to solution skills.
+- [`adapt-best-practice`](./skills/meta/skills/adapt-best-practice/) — Use when the user wants to apply a practice but has specific constraints that differ from the canonical case — team size, industry regulation, budget, maturity level, technology stack, or organizational culture. Produces an adapted version that preserves the practice's core while fitting the user's reality.
+- [`analyze-problem`](./skills/meta/skills/analyze-problem/) — Use when the user presents a problem that isn't well-defined — goal is unclear, scope is unstated, or what's described looks like a symptom rather than a root cause. Asks clarifying questions one at a time until the problem boundary is clear, then produces a problem statement, problem space map, and possible solution routes before handing off to solution skills.
 - [`apply-best-practice-driven-development`](./skills/meta/skills/apply-best-practice-driven-development/) — Use when the user wants to systematically align any project or artifact to their stated best practice preferences — e.g., "apply BPDD", "align this project to our settings", "close the gap between our practices and reality", "enforce our best practices like TDD".
 - [`apply-best-practice-profile`](./skills/meta/skills/apply-best-practice-profile/) — Use when the user wants to activate a named set of best practices for a paradigm or methodology — e.g., "use OOP", "set profile to clean-architecture", "apply TDD practices", "switch to functional style".
-- [`apply-best-practice-tree`](./skills/grimoire/skills/apply-best-practice-tree/) — Use when a problem is complex but stays within one domain — to recursively decompose it into sub-problems and match each to the best-fitting installed skill, one at a time.
-- [`audit-applied-best-practices`](./skills/grimoire/skills/audit-applied-best-practices/) — Use when the user has existing work — code, a document, a plan, a design — and wants to know which best practices were applied, which are missing, and what to fix or add.
-- [`audit-best-practice-domain`](./skills/grimoire/skills/audit-best-practice-domain/) — Use when you need to assess the quality of all skills in a grimoire domain or sub-domain — before a release, after a bulk contribution, or when adopting a domain for the first time.
-- [`compare-best-practices`](./skills/grimoire/skills/compare-best-practices/) — Use when the user wants to choose between two or more practices that could apply to the same problem — or when suggest-best-practice surfaces multiple close-scoring options and the user needs help deciding. Produces a side-by-side comparison with trade-offs and a recommendation.
-- [`deprecate-best-practice-skill`](./skills/grimoire/skills/deprecate-best-practice-skill/) — Use when a grimoire skill has become outdated — the referenced tool no longer exists at scale, the source institution revised its position, a newer practice has achieved majority top-tier adoption that supersedes it, or the skill fails review-best-practice-skill criteria it once passed.
-- [`design-best-practice-domain`](./skills/grimoire/skills/design-best-practice-domain/) — Use when adding a new domain or sub-domain to grimoire — whether starting a brand-new domain (health, finance, law), adding a new sub-domain to an existing domain, or deciding whether a new sub-domain is needed at all.
-- [`discover-best-practices`](./skills/grimoire/skills/discover-best-practices/) — Use when the user mentions a field, role, or domain without a specific problem — or wants to know what best practices exist for their area before encountering a problem. Proactively surfaces available practices grouped by subdomain, with emphasis on practices people most commonly discover too late.
-- [`explain-best-practice`](./skills/grimoire/skills/explain-best-practice/) — Use when the user wants to understand WHY a practice works — not just apply it. Covers the problem it solves, its origin, the evidence base, how the mechanism works, failure modes, and common misconceptions. Educational mode, not application mode.
+- [`apply-best-practice-tree`](./skills/meta/skills/apply-best-practice-tree/) — Use when a problem is complex but stays within one domain — to recursively decompose it into sub-problems and match each to the best-fitting installed skill, one at a time.
+- [`audit-applied-best-practices`](./skills/meta/skills/audit-applied-best-practices/) — Use when the user has existing work — code, a document, a plan, a design — and wants to know which best practices were applied, which are missing, and what to fix or add.
+- [`audit-best-practice-domain`](./skills/meta/skills/audit-best-practice-domain/) — Use when you need to assess the quality of all skills in a grimoire domain or sub-domain — before a release, after a bulk contribution, or when adopting a domain for the first time.
+- [`compare-best-practices`](./skills/meta/skills/compare-best-practices/) — Use when the user wants to choose between two or more practices that could apply to the same problem — or when suggest-best-practice surfaces multiple close-scoring options and the user needs help deciding. Produces a side-by-side comparison with trade-offs and a recommendation.
+- [`deprecate-best-practice-skill`](./skills/meta/skills/deprecate-best-practice-skill/) — Use when a grimoire skill has become outdated — the referenced tool no longer exists at scale, the source institution revised its position, a newer practice has achieved majority top-tier adoption that supersedes it, or the skill fails review-best-practice-skill criteria it once passed.
+- [`design-best-practice-domain`](./skills/meta/skills/design-best-practice-domain/) — Use when adding a new domain or sub-domain to grimoire — whether starting a brand-new domain (health, finance, law), adding a new sub-domain to an existing domain, or deciding whether a new sub-domain is needed at all.
+- [`discover-best-practices`](./skills/meta/skills/discover-best-practices/) — Use when the user mentions a field, role, or domain without a specific problem — or wants to know what best practices exist for their area before encountering a problem. Proactively surfaces available practices grouped by subdomain, with emphasis on practices people most commonly discover too late.
+- [`explain-best-practice`](./skills/meta/skills/explain-best-practice/) — Use when the user wants to understand WHY a practice works — not just apply it. Covers the problem it solves, its origin, the evidence base, how the mechanism works, failure modes, and common misconceptions. Educational mode, not application mode.
 - [`fix-best-practice-finding`](./skills/meta/skills/fix-best-practice-finding/) — Use when the user wants to fix a specific compliance finding from a check-best-practice-compliance report — e.g., "fix this finding", "resolve violation #3", "fix the SRP violation in UserService", "close this linter error".
 - [`install-grimoire`](./skills/meta/skills/install-grimoire/) — Use when the user wants to install or uninstall grimoire skills by domain or individual skill, upgrade grimoire to the latest version, clean up broken symlinks, or list what skills are available.
-- [`intercept-best-practice`](./skills/grimoire/skills/intercept-best-practice/) — Use when the user is about to begin any task or action — writing, coding, designing, planning — before they have started. Fires proactively on task-start signals to apply the most relevant best practice before the user discovers they needed it.
-- [`pin-best-practice-preference`](./skills/grimoire/skills/pin-best-practice-preference/) — Use when the user wants to save a best practice preference for a domain or subdomain so future sessions automatically apply it without re-matching.
-- [`plan-best-practice-solution`](./skills/grimoire/skills/plan-best-practice-solution/) — Use when the user's problem spans multiple domains, requires coordinating several best practices, or is too complex for a single skill — e.g. "launch a startup", "handle a workplace medical emergency", "going through a divorce while buying a house."
-- [`review-best-practice-fit`](./skills/grimoire/skills/review-best-practice-fit/) — Use when the user already has a solution, plan, approach, or design and wants to know how well it aligns with best practices — including gaps, what's missing, and what to fix.
+- [`intercept-best-practice`](./skills/meta/skills/intercept-best-practice/) — Use when the user is about to begin any task or action — writing, coding, designing, planning — before they have started. Fires proactively on task-start signals to apply the most relevant best practice before the user discovers they needed it.
+- [`pin-best-practice-preference`](./skills/meta/skills/pin-best-practice-preference/) — Use when the user wants to save a best practice preference for a domain or subdomain so future sessions automatically apply it without re-matching.
+- [`plan-best-practice-solution`](./skills/meta/skills/plan-best-practice-solution/) — Use when the user's problem spans multiple domains, requires coordinating several best practices, or is too complex for a single skill — e.g. "launch a startup", "handle a workplace medical emergency", "going through a divorce while buying a house."
+- [`review-best-practice-fit`](./skills/meta/skills/review-best-practice-fit/) — Use when the user already has a solution, plan, approach, or design and wants to know how well it aligns with best practices — including gaps, what's missing, and what to fix.
 - [`resolve-best-practice-conflict`](./skills/meta/skills/resolve-best-practice-conflict/) — Use when two or more installed grimoire skills give contradictory guidance for the same situation, or when the user wants to scan their preferences file proactively to find and rank conflicting skills before a conflict arises.
 - [`review-best-practice-profile`](./skills/meta/skills/review-best-practice-profile/) — Use when the user wants to validate a practice profile before using or sharing it — e.g., "review my profile", "validate my-team.toml", "check this profile before sharing".
-- [`review-best-practice-skill`](./skills/grimoire/skills/review-best-practice-skill/) — Use when evaluating whether a SKILL.md meets grimoire standards — for PR review, self-review before submitting, or auditing existing skills in the repo.
-- [`revise-best-practice-skill`](./skills/grimoire/skills/revise-best-practice-skill/) — Use when an existing SKILL.md has review-best-practice-skill findings to address, a citation has become inaccurate, steps reference an outdated tool, or scope needs adjusting — splitting a skill that covers two concepts, or expanding one that is too shallow.
+- [`review-best-practice-skill`](./skills/meta/skills/review-best-practice-skill/) — Use when evaluating whether a SKILL.md meets grimoire standards — for PR review, self-review before submitting, or auditing existing skills in the repo.
+- [`revise-best-practice-skill`](./skills/meta/skills/revise-best-practice-skill/) — Use when an existing SKILL.md has review-best-practice-skill findings to address, a citation has become inaccurate, steps reference an outdated tool, or scope needs adjusting — splitting a skill that covers two concepts, or expanding one that is too shallow.
 - [`share-best-practice-profile`](./skills/meta/skills/share-best-practice-profile/) — Use when the user wants to publish or share a practice profile — e.g., "share my team profile", "publish this profile", "open-source my backend-defaults profile".
-- [`suggest-best-practice`](./skills/grimoire/skills/suggest-best-practice/) — Use when the user describes any situation, problem, goal, complaint, or question — including when they want to browse available best practices for a topic, don't know which domain applies, or don't know a best practice exists for their situation.
-- [`teach-best-practice`](./skills/grimoire/skills/teach-best-practice/) — Use when the user wants to explain, share, or advocate for a best practice with others — a team, manager, client, or stakeholder. Produces structured talking points, a brief explanation, or a presentation outline tailored to the audience's priorities and likely objections.
+- [`suggest-best-practice`](./skills/meta/skills/suggest-best-practice/) — Use when the user describes any situation, problem, goal, complaint, or question — including when they want to browse available best practices for a topic, don't know which domain applies, or don't know a best practice exists for their situation.
+- [`teach-best-practice`](./skills/meta/skills/teach-best-practice/) — Use when the user wants to explain, share, or advocate for a best practice with others — a team, manager, client, or stakeholder. Produces structured talking points, a brief explanation, or a presentation outline tailored to the audience's priorities and likely objections.
 - [`write-best-practice-profile`](./skills/meta/skills/write-best-practice-profile/) — Use when the user wants to create a new practice profile — e.g., "create a profile for my team", "write an OOP profile", "make a backend-defaults profile".
-- [`write-best-practice-skill`](./skills/grimoire/skills/write-best-practice-skill/) — Use when authoring a new SKILL.md to contribute to grimoire — whether starting from scratch, adapting existing knowledge, or encoding a domain best practice you know well.
+- [`write-best-practice-skill`](./skills/meta/skills/write-best-practice-skill/) — Use when authoring a new SKILL.md to contribute to grimoire — whether starting from scratch, adapting existing knowledge, or encoding a domain best practice you know well.
 
 ---
 
@@ -867,7 +997,7 @@
 ### mixing
 
 - [`apply-compression`](./skills/music/mixing/skills/apply-compression/) — Use when applying dynamic compression to any audio source to control dynamics or add punch and glue
-- [`design-mix-template`](./skills/music/mixing/skills/design-mix-template/) — Use when creating a reusable DAW mix template to streamline session setup, ensure consistent signal flow, and apply proven mix architecture
+- [`design-mixing-template`](./skills/music/mixing/skills/design-mixing-template/) — Use when creating a reusable DAW mix template to streamline session setup, ensure consistent signal flow, and apply proven mix architecture
 - [`design-stereo-field`](./skills/music/mixing/skills/design-stereo-field/) — Use when placing elements in the stereo field or designing spatial depth in a mix
 - [`write-mix-notes`](./skills/music/mixing/skills/write-mix-notes/) — Use when documenting mix revision requests, feedback sessions, or communicating changes between mixer and client
 
@@ -880,7 +1010,7 @@
 ### production
 
 - [`apply-eq-technique`](./skills/music/production/skills/apply-eq-technique/) — Use when applying EQ to any audio track or bus to shape tone and reduce masking
-- [`design-mix-template`](./skills/music/production/skills/design-mix-template/) — Use when setting up a DAW session template for mixing or starting a new production project
+- [`design-production-mix-template`](./skills/music/production/skills/design-production-mix-template/) — Use when setting up a DAW session template for mixing or starting a new production project
 - [`design-recording-session`](./skills/music/production/skills/design-recording-session/) — Use when planning and executing a professional recording session for any instrument or vocal, in a studio or home recording environment
 - [`design-signal-chain`](./skills/music/production/skills/design-signal-chain/) — Use when routing audio through processing plugins or hardware and need to determine the optimal processing order
 
@@ -953,7 +1083,7 @@
 
 - [`apply-negative-space-technique`](./skills/photography/composition/skills/apply-negative-space-technique/) — Use when composing a photograph to create visual impact, emphasize the subject, and evoke mood through deliberate use of empty space.
 - [`apply-rule-of-thirds`](./skills/photography/composition/skills/apply-rule-of-thirds/) — Use when composing a photograph and need to position subjects and horizon lines for visual impact
-- [`design-shot-list`](./skills/photography/composition/skills/design-shot-list/) — Use when planning a photography session, event coverage, or commercial shoot that requires pre-defined deliverables
+- [`design-photography-shot-list`](./skills/photography/composition/skills/design-photography-shot-list/) — Use when planning a photography session, event coverage, or commercial shoot that requires pre-defined deliverables
 - [`review-light-quality`](./skills/photography/composition/skills/review-light-quality/) — Use when assessing the lighting conditions for a scene before shooting or planning a lighting setup
 
 ### editing
