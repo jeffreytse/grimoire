@@ -115,6 +115,90 @@ Sources: OWASP CORS Cheat Sheet; W3C CORS spec (fetch.spec.whatwg.org); CWE-942;
    }));
    ```
 
+   ```typescript
+   // Next.js App Router — app/api/route.ts
+   const ALLOWED_ORIGINS = ['https://app.example.com'];
+
+   export async function OPTIONS(request: Request) {
+     const origin = request.headers.get('origin') ?? '';
+     const allowed = ALLOWED_ORIGINS.includes(origin) ? origin : '';
+     return new Response(null, {
+       status: 204,
+       headers: {
+         'Access-Control-Allow-Origin': allowed,
+         'Access-Control-Allow-Methods': 'GET, POST',
+         'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+         'Access-Control-Max-Age': '86400',
+         'Vary': 'Origin',
+       },
+     });
+   }
+   ```
+
+   ```go
+   // Go net/http — manual middleware
+   var allowedOrigins = map[string]bool{
+       "https://app.example.com": true,
+   }
+
+   func corsMiddleware(next http.Handler) http.Handler {
+       return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+           origin := r.Header.Get("Origin")
+           if allowedOrigins[origin] {
+               w.Header().Set("Access-Control-Allow-Origin", origin)
+               w.Header().Set("Vary", "Origin")
+               if r.Method == http.MethodOptions {
+                   w.Header().Set("Access-Control-Allow-Methods", "GET, POST")
+                   w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+                   w.Header().Set("Access-Control-Max-Age", "86400")
+                   w.WriteHeader(http.StatusNoContent)
+                   return
+               }
+           }
+           next.ServeHTTP(w, r)
+       })
+   }
+   ```
+
+   ```nginx
+   # Nginx — origin allowlist via map
+   map $http_origin $cors_origin {
+       default                      "";
+       "https://app.example.com"    $http_origin;
+       "https://admin.example.com"  $http_origin;
+   }
+
+   server {
+       location /api/ {
+           if ($request_method = OPTIONS) {
+               add_header Access-Control-Allow-Origin  $cors_origin always;
+               add_header Access-Control-Allow-Methods "GET, POST" always;
+               add_header Access-Control-Allow-Headers "Content-Type, Authorization" always;
+               add_header Access-Control-Max-Age       86400 always;
+               add_header Vary                         Origin always;
+               return 204;
+           }
+           add_header Access-Control-Allow-Origin $cors_origin always;
+           add_header Vary Origin always;
+           proxy_pass http://backend;
+       }
+   }
+   ```
+
+   ```yaml
+   # AWS API Gateway — REST API (serverless.yml / SAM)
+   Cors:
+     AllowOrigins:
+       - https://app.example.com
+     AllowHeaders:
+       - Content-Type
+       - Authorization
+     AllowMethods:
+       - GET
+       - POST
+     AllowCredentials: true
+   ```
+
 ## Rules
 
 - Never reflect `Origin` without checking against an allowlist — `if (origin) response.set('Access-Control-Allow-Origin', origin)` is the CORS misconfiguration pattern.
