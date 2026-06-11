@@ -82,9 +82,13 @@ Write comments. Then before posting, re-read them and apply these filters:
 
 ### 9. Decide: approve, request changes, or comment-only
 
-- **Approve**: all blocking issues resolved, code is good enough to ship even if not perfect
-- **Request changes**: one or more blocking issues remain
+**Google's standard:** Approve a CL once it *definitely improves the overall code health of the codebase*, even if it isn't perfect. Do not withhold approval waiting for perfection — perfect is the enemy of merged. The goal is incremental improvement, not a single pass to ideal.
+
+- **Approve**: all blocking issues resolved; code improves or at least doesn't degrade codebase health
+- **Request changes**: one or more blocking issues remain — correctness bugs, security holes, missing tests for new behavior
 - **Comment**: questions or suggestions where you lack enough context to block
+
+**Handling pushback:** When the author disagrees with a comment, consider their argument seriously — they are closer to the code and may be right. If their argument is sound, acknowledge it and drop the comment. If you still believe your suggestion improves code health, explain *why* more fully. Hold firm on code health concerns; defer on style preferences. Never approve a known health problem just to end the argument.
 
 ## Rules
 
