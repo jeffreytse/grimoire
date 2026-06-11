@@ -106,6 +106,7 @@ Pattern: `<verb>-<subject>[-<qualifier>]`
 | `plan-` | Create a structured sequence of actions |
 | `negotiate-` | Handle a back-and-forth agreement process |
 | `apply-` | Apply a technique, method, or framework to a situation |
+| `prevent-` | Block a specific attack class, failure mode, or vulnerability — subject names the threat, not the countermeasure |
 | `profile-` | Measure performance characteristics of a system or process |
 | `validate-` | Check that input or data conforms to expected format or constraints |
 | `run-` | Facilitate or execute a meeting, session, or process |

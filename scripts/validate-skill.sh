@@ -51,7 +51,7 @@ check_skill() {
     if [[ "$file" != *"/meta/"* ]]; then
       local verb
       verb=$(echo "$name" | cut -d'-' -f1)
-      local approved_verbs="propose write review audit design calculate diagnose optimize suggest deprecate plan negotiate apply profile validate run refactor"
+      local approved_verbs="propose write review audit design calculate diagnose optimize suggest deprecate plan negotiate apply prevent profile validate run refactor"
       local rejected_verbs="do handle manage improve set get use help"
       if echo "$rejected_verbs" | grep -qw "$verb"; then
         red "    [FAIL] name: verb '$verb' is a rejected verb (too vague) — see STANDARD.md"
