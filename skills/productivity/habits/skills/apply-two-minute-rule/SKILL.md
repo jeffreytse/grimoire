@@ -15,7 +15,7 @@ If a task takes less than two minutes, do it immediately rather than tracking, s
 **Adopted by:** Fortune 500 executive teams, Google, McKinsey, law firms — anywhere GTD methodology is deployed
 **Impact:** Allen: the overhead cost of capturing, tracking, re-reading, re-deciding, and re-opening a small task reliably exceeds the time to execute it; eliminating re-decision friction is a core GTD efficiency gain
 
-Small undone tasks accumulate as open loops in working memory, creating a persistent cognitive drag that consumes attention even when you're not actively thinking about them. The two-minute rule closes those loops before they open, keeping the task management system lean and the mind clear.
+**Why best:** Small undone tasks accumulate as open loops in working memory, creating a persistent cognitive drag that consumes attention even when you're not actively thinking about them. The two-minute rule closes those loops before they open, keeping the task management system lean and the mind clear.
 
 ## Steps
 

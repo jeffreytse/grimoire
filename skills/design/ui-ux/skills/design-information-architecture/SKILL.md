@@ -15,7 +15,7 @@ Organize product content and navigation so users can find information quickly us
 **Adopted by:** NN Group IA practice, GOV.UK digital service standard, Shopify design system team
 **Impact:** Nielsen Norman Group studies show that users abandon tasks 40% more often due to poor navigation than due to visual design problems; tree testing can identify IA problems before any visual design is built
 
-Information architecture fails invisibly — users blame themselves when they can't find things, not the product. Structural problems discovered in tree testing cost 10× less to fix than those found post-launch.
+**Why best:** Information architecture fails invisibly — users blame themselves when they can't find things, not the product. Structural problems discovered in tree testing cost 10× less to fix than those found post-launch.
 
 ## Steps
 

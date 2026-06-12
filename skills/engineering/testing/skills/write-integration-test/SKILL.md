@@ -15,7 +15,7 @@ Write tests that verify component interactions — database, API, message bus, o
 **Adopted by:** Google (testing pyramid doctrine), Pact.io (used by ITV, Dius, DiUS, many enterprises for contract tests)
 **Impact:** Google's testing pyramid allocates 15% of test effort to integration tests; Pact contract tests reduced ITV's integration regression cycle from 3 days to 20 minutes.
 
-Unit tests verify logic in isolation; integration tests verify that the parts work together. Without them, systems pass unit tests but fail at the boundary — database constraints, serialization mismatches, API version drift. Contract tests (Pact) are a lighter alternative for service-to-service boundaries.
+**Why best:** Unit tests verify logic in isolation; integration tests verify that the parts work together. Without them, systems pass unit tests but fail at the boundary — database constraints, serialization mismatches, API version drift. Contract tests (Pact) are a lighter alternative for service-to-service boundaries.
 
 ## Steps
 

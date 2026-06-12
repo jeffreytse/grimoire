@@ -15,7 +15,7 @@ Systematically identify, classify, and prioritize technical debt to make informe
 **Adopted by:** SonarQube (SQALE model), Google (internal debt tracking), Stripe engineering blog documents debt reduction programs
 **Impact:** Google's internal studies found that unmanaged technical debt doubles feature development time within 18 months; SonarQube's SQALE index quantifies remediation cost per issue.
 
-Ward Cunningham's metaphor frames debt as a deliberate trade-off, not a failure. Fowler's quadrant (deliberate/inadvertent × reckless/prudent) distinguishes debt worth paying from debt worth carrying. Auditing without this classification leads to either over-investment in low-value cleanup or ignored high-interest debt.
+**Why best:** Ward Cunningham's metaphor frames debt as a deliberate trade-off, not a failure. Fowler's quadrant (deliberate/inadvertent × reckless/prudent) distinguishes debt worth paying from debt worth carrying. Auditing without this classification leads to either over-investment in low-value cleanup or ignored high-interest debt.
 
 ## Steps
 

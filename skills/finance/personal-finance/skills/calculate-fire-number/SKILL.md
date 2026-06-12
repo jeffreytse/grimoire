@@ -15,7 +15,7 @@ Determine the portfolio size at which passive investment income can sustain your
 **Adopted by:** FIRE community (Mr. Money Mustache, Mad Fientist); foundational to fee-only financial planning practice
 **Impact:** Trinity Study analyzed 30-year retirement periods from 1926–1995 and found a 4% withdrawal rate succeeds in ~95% of historical scenarios with a 50%+ equity portfolio.
 
-The 4% rule provides a defensible starting point that is grounded in 70+ years of market data across multiple cycles including the Great Depression. Adjusting the withdrawal rate for longer retirement horizons (40–60 years for early retirees) and current valuations improves the reliability of the estimate beyond the basic rule.
+**Why best:** The 4% rule provides a defensible starting point that is grounded in 70+ years of market data across multiple cycles including the Great Depression. Adjusting the withdrawal rate for longer retirement horizons (40–60 years for early retirees) and current valuations improves the reliability of the estimate beyond the basic rule.
 
 ## Steps
 

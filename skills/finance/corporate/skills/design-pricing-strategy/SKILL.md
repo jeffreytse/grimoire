@@ -15,7 +15,7 @@ Build a defensible pricing strategy grounded in customer value, competitive posi
 **Adopted by:** Simon-Kucher & Partners (world's largest pricing consultancy, 1,600 consultants); McKinsey Pricing Practice; SaaS companies including Salesforce, HubSpot, and Slack
 **Impact:** McKinsey research shows a 1% improvement in price realization yields an average 8.7% improvement in operating profit — more leverage than a 1% reduction in variable costs (5.1%) or a 1% volume increase (3.3%).
 
-Pricing is the most underleveraged profit lever because founders and product managers default to cost-plus or competitor-matching, both of which leave significant value on the table. Value-based pricing captures the actual economic benefit delivered to the customer, which is typically 5–10× the cost to deliver.
+**Why best:** Pricing is the most underleveraged profit lever because founders and product managers default to cost-plus or competitor-matching, both of which leave significant value on the table. Value-based pricing captures the actual economic benefit delivered to the customer, which is typically 5–10× the cost to deliver.
 
 ## Steps
 

@@ -15,7 +15,7 @@ Categorise every task by Urgent × Important to spend more time on what matters 
 **Adopted by:** US military planning, executive coaching, Stephen Covey's 7 Habits curriculum, corporate leadership training globally
 **Impact:** Covey found most people spend 90% of time in Q1 (urgent+important) and Q3 (urgent+not important), leaving Q2 (not urgent+important) — the quadrant of strategy, health, and relationships — nearly empty
 
-Urgency creates psychological pressure that hijacks prioritisation. The matrix makes the urgent/important distinction explicit, forcing the question "urgent to whom and why?" before acting. Sustained Q2 investment is the defining behavior of high-performing leaders and individual contributors.
+**Why best:** Urgency creates psychological pressure that hijacks prioritisation. The matrix makes the urgent/important distinction explicit, forcing the question "urgent to whom and why?" before acting. Sustained Q2 investment is the defining behavior of high-performing leaders and individual contributors.
 
 ## Steps
 

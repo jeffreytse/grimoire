@@ -15,7 +15,7 @@ Systematically identify and eliminate unnecessary tax drag from investments and 
 **Adopted by:** Vanguard, Fidelity, Schwab (offer tax-loss harvesting services); mandated review in CFP financial planning process
 **Impact:** Vanguard research shows proper asset location alone can add 0.75% per year in after-tax returns; tax-loss harvesting adds an additional 0.5–1.5%/year depending on portfolio size and volatility.
 
-Tax efficiency is the highest-certainty source of additional return — unlike alpha, you can control your tax bill. The three pillars (asset location, tax-loss harvesting, account withdrawal sequencing) compound over decades and can represent hundreds of thousands of dollars over a working lifetime.
+**Why best:** Tax efficiency is the highest-certainty source of additional return — unlike alpha, you can control your tax bill. The three pillars (asset location, tax-loss harvesting, account withdrawal sequencing) compound over decades and can represent hundreds of thousands of dollars over a working lifetime.
 
 ## Steps
 

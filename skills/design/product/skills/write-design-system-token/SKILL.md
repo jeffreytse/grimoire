@@ -15,7 +15,7 @@ Define design tokens with clear naming, semantic layers, and platform-ready outp
 **Adopted by:** Salesforce Lightning, IBM Carbon, Adobe Spectrum, GitHub Primer, Atlassian Design System
 **Impact:** Spotify reported a 60% reduction in design inconsistency across platforms after adopting a structured token layer; the W3C Design Tokens format (`.tokens.json`) is becoming the cross-tool standard for Figma→code pipelines
 
-Tokens transform design decisions from hardcoded values scattered across codebases into a single source of truth. Without a semantic layer, changing a brand color requires touching thousands of individual components instead of one token value.
+**Why best:** Tokens transform design decisions from hardcoded values scattered across codebases into a single source of truth. Without a semantic layer, changing a brand color requires touching thousands of individual components instead of one token value.
 
 ## Steps
 

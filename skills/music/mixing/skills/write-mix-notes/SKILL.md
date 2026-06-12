@@ -15,7 +15,7 @@ Produce precise, actionable mix revision notes that a mixer can implement withou
 **Adopted by:** Major label A&R and professional mixing workflows; AES publishes professional communication standards for studio collaboration
 **Impact:** Professional studios report that vague mix notes (e.g., "make it bigger") are the leading cause of unnecessary revision rounds, each costing 2-4 hours of mixer time
 
-Ambiguous mix notes waste everyone's time. "More energy" is not actionable; "raise the snare by 2dB from bar 17 onward" is. Notes that include timestamps, element names, reference tracks, and directional descriptors (more/less, brighter/darker, wider/narrower) eliminate interpretation errors. Structured notes also create a record of creative decisions for future reference.
+**Why best:** Ambiguous mix notes waste everyone's time. "More energy" is not actionable; "raise the snare by 2dB from bar 17 onward" is. Notes that include timestamps, element names, reference tracks, and directional descriptors (more/less, brighter/darker, wider/narrower) eliminate interpretation errors. Structured notes also create a record of creative decisions for future reference.
 
 ## Steps
 

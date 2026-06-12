@@ -16,7 +16,7 @@ Craft a single defensible claim that defines the paper's scope, stakes, and argu
 
 **Impact:** Writing programs universally identify a weak or missing thesis as the leading cause of unfocused papers; Harvard Writing Center reports thesis revision as the intervention that most improves paper quality
 
-A thesis is not an observation or a topic — it is a claim someone could disagree with. Without a falsifiable thesis, a paper has no argument, only summary. The thesis governs every paragraph that follows: if a paragraph does not advance the thesis, it does not belong in the paper.
+**Why best:** A thesis is not an observation or a topic — it is a claim someone could disagree with. Without a falsifiable thesis, a paper has no argument, only summary. The thesis governs every paragraph that follows: if a paragraph does not advance the thesis, it does not belong in the paper.
 
 ## Steps
 

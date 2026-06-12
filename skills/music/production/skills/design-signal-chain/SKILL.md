@@ -15,7 +15,7 @@ Determine the correct order of processing tools in an audio signal chain to maxi
 **Adopted by:** Bob Katz's gain staging approach is used universally in mastering; UA Apollo console design reflects decades of hardware signal chain research
 **Impact:** Bob Katz established the K-System metering standard adopted by the AES (Audio Engineering Society) precisely because signal chain gain staging errors are the most common cause of quality loss in digital audio
 
-Processing order is not arbitrary — it determines what each subsequent processor "hears." A compressor after a distortion pedal hears a different signal than a compressor before it. Incorrect order causes the wrong problems to be compressed, the wrong frequencies to be EQ'd, and saturation to occur at the wrong stage. Getting the chain right once prevents hours of remedial work.
+**Why best:** Processing order is not arbitrary — it determines what each subsequent processor "hears." A compressor after a distortion pedal hears a different signal than a compressor before it. Incorrect order causes the wrong problems to be compressed, the wrong frequencies to be EQ'd, and saturation to occur at the wrong stage. Getting the chain right once prevents hours of remedial work.
 
 ## Steps
 

@@ -15,7 +15,7 @@ Design a CI pipeline that gives fast, reliable feedback on every commit and enab
 **Adopted by:** Google, Netflix, Amazon, Etsy — all DORA elite performers with documented CI/CD practices
 **Impact:** DORA research (Accelerate, 2018) shows elite performers have 46× more frequent deployments and 2,555× faster lead time to change; fast CI (<10 min) is a key differentiator between elite and low performers.
 
-A well-designed CI pipeline is the heartbeat of software delivery. It enforces quality gates, provides rapid feedback, and is the foundation that makes trunk-based development safe at scale. Slow or flaky CI is one of the highest-leverage engineering problems to fix.
+**Why best:** A well-designed CI pipeline is the heartbeat of software delivery. It enforces quality gates, provides rapid feedback, and is the foundation that makes trunk-based development safe at scale. Slow or flaky CI is one of the highest-leverage engineering problems to fix.
 
 ## Steps
 

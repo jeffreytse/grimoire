@@ -16,7 +16,7 @@ Analyze error budget consumption to decide whether to invest in reliability work
 
 **Impact:** Google's original SRE book documents error budget policies eliminating the feature/reliability conflict by making trade-offs data-driven; organizations that implement error budget policies report reduced escalation frequency and faster incident resolution prioritization
 
-Error budget is the mathematical expression of acceptable unreliability. Consuming it is not inherently bad — it means features shipped. Consuming it too fast is bad — it means users suffered unexpectedly. The audit identifies whether consumption is within the expected rate and triggers defined policy responses when it is not.
+**Why best:** Error budget is the mathematical expression of acceptable unreliability. Consuming it is not inherently bad — it means features shipped. Consuming it too fast is bad — it means users suffered unexpectedly. The audit identifies whether consumption is within the expected rate and triggers defined policy responses when it is not.
 
 ## Steps
 

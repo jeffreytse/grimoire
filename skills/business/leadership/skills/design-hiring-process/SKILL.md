@@ -15,7 +15,7 @@ Create a structured, repeatable hiring process that predicts job performance and
 **Adopted by:** Google (Project Oxygen), Stripe, Airbnb, and organizations following Schmidt & Hunter's 80-year meta-analysis of hiring validity
 **Impact:** Structured interviews have 2× the predictive validity of unstructured ones (Schmidt & Hunter, 1998); Google's data-driven hiring reduced bad hires by 25% after removing brain-teasers and adding structured rubrics
 
-Unstructured hiring defaults to affinity bias — interviewers hire people like themselves. A structured process defines what "good" looks like before meeting any candidate, forcing evaluation against a common standard.
+**Why best:** Unstructured hiring defaults to affinity bias — interviewers hire people like themselves. A structured process defines what "good" looks like before meeting any candidate, forcing evaluation against a common standard.
 
 ## Steps
 

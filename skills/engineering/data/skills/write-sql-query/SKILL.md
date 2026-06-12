@@ -15,7 +15,7 @@ Write SQL queries that are correct, index-aware, readable, and safe against inje
 **Adopted by:** PostgreSQL community (Use The Index, Luke), Google (BigQuery SQL style guide), GitLab (SQL query guidelines in engineering handbook)
 **Impact:** A missing index on a WHERE clause column can cause full table scans — a 10ms query becomes 10 seconds on a 10M row table. Celko's patterns and index-aware SQL are the standard in performance-critical data engineering.
 
-Most SQL performance problems have the same root cause: the query does not use an available index, or no appropriate index exists. Writing index-aware SQL from the start costs nothing; retroactively optimizing a slow query in production is expensive and disruptive.
+**Why best:** Most SQL performance problems have the same root cause: the query does not use an available index, or no appropriate index exists. Writing index-aware SQL from the start costs nothing; retroactively optimizing a slow query in production is expensive and disruptive.
 
 ## Steps
 

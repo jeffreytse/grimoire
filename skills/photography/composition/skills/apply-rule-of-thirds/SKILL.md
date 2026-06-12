@@ -15,7 +15,7 @@ Position subjects on thirds intersection points and horizon lines to create visu
 **Adopted by:** New York Institute of Photography, all major photography curricula; implemented as an overlay in every major camera and editing application
 **Impact:** Eye-tracking research by Nikon and MIT Media Lab shows viewers naturally scan images along thirds lines and dwell longer on subjects placed near intersection points vs. centered subjects
 
-The rule of thirds works because it creates visual tension and movement — the eye travels from the subject toward the negative space, generating energy. Centered composition creates balance but not dynamism. Understanding the rule enables both application and intentional violation for creative effect.
+**Why best:** The rule of thirds works because it creates visual tension and movement — the eye travels from the subject toward the negative space, generating energy. Centered composition creates balance but not dynamism. Understanding the rule enables both application and intentional violation for creative effect.
 
 ## Steps
 

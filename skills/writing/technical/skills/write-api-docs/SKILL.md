@@ -16,7 +16,7 @@ Write clear, complete API reference documentation that developers trust and can 
 
 **Impact:** Stripe attributes low support volume directly to documentation quality; Twilio reports 30%+ faster onboarding for customers who read docs before integrating
 
-Well-written API docs reduce integration time and support burden simultaneously. Developers treat docs as a contract — ambiguity breaks trust permanently. The OpenAPI Specification enforces machine-readable consistency while Stripe's style demonstrates the narrative layer on top.
+**Why best:** Well-written API docs reduce integration time and support burden simultaneously. Developers treat docs as a contract — ambiguity breaks trust permanently. The OpenAPI Specification enforces machine-readable consistency while Stripe's style demonstrates the narrative layer on top.
 
 ## Steps
 

@@ -15,7 +15,7 @@ Build a structured personal budget that allocates every dollar to needs, wants, 
 **Adopted by:** YNAB (4M+ users), financial planning associations, Consumer Financial Protection Bureau
 **Impact:** YNAB internal data (2022) shows new users save an average of $600 in the first two months and $6,000 in the first year compared to pre-budget behavior.
 
-Zero-based budgeting eliminates the "I don't know where the money went" problem by giving every dollar a job before it is spent. The 50/30/20 framework provides a proportional sanity check that works across income levels. Combining both methods — allocating by category while checking against the ratio framework — catches both overspending and misaligned priorities.
+**Why best:** Zero-based budgeting eliminates the "I don't know where the money went" problem by giving every dollar a job before it is spent. The 50/30/20 framework provides a proportional sanity check that works across income levels. Combining both methods — allocating by category while checking against the ratio framework — catches both overspending and misaligned priorities.
 
 ## Steps
 

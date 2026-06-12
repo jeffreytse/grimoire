@@ -15,7 +15,7 @@ Decompose a system into independently deployable services aligned to business ca
 **Adopted by:** Netflix, Amazon, Uber, Spotify — all publicly documented their migrations from monoliths
 **Impact:** Amazon's service decomposition enabled teams to deploy independently, reducing release cycle from months to minutes; Netflix processes 2+ billion API requests/day across ~700 microservices.
 
-DDD bounded contexts provide the natural seam for service decomposition — they align services to business domains, minimize cross-service coupling, and give each team a clear ownership boundary. Sam Newman's patterns (strangler fig, anti-corruption layer) provide proven migration paths.
+**Why best:** DDD bounded contexts provide the natural seam for service decomposition — they align services to business domains, minimize cross-service coupling, and give each team a clear ownership boundary. Sam Newman's patterns (strangler fig, anti-corruption layer) provide proven migration paths.
 
 ## Steps
 

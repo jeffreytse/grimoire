@@ -15,7 +15,7 @@ Establish a legally defensible data retention schedule that balances regulatory 
 **Adopted by:** ISO/IEC 27001, GDPR supervisory authorities, ARMA International (information governance), legal departments globally
 **Impact:** GDPR storage limitation violations carry significant fines; conversely, deletion of data subject to legal hold constitutes spoliation (destruction of evidence) with severe litigation consequences including adverse inference jury instructions; a documented retention schedule is the only way to satisfy both obligations simultaneously.
 
-Data retention sits at the intersection of privacy law (minimize), records law (retain certain records), and litigation law (legal hold). Without a formal retention schedule, organizations either retain everything forever (GDPR violation) or delete too aggressively (spoliation risk). A properly designed schedule navigates both hazards.
+**Why best:** Data retention sits at the intersection of privacy law (minimize), records law (retain certain records), and litigation law (legal hold). Without a formal retention schedule, organizations either retain everything forever (GDPR violation) or delete too aggressively (spoliation risk). A properly designed schedule navigates both hazards.
 
 ## Steps
 

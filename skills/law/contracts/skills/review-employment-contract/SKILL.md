@@ -15,7 +15,7 @@ Systematically review an employment agreement to identify legal risks, non-stand
 **Adopted by:** ABA Labor and Employment Law Section, employment attorneys, HR professionals at major employers
 **Impact:** According to SHRM data, 70% of employees sign employment contracts without reading them fully; non-compete and IP assignment clauses in particular have significant long-term financial impact that is invisible at signing.
 
-Employment contracts are rarely negotiated after starting — the leverage window is before signing. Key provisions (non-compete scope, IP assignment breadth, dispute resolution) are typically negotiable at the offer stage but extremely difficult to modify once employment has begun. A structured review prevents inadvertent waiver of rights.
+**Why best:** Employment contracts are rarely negotiated after starting — the leverage window is before signing. Key provisions (non-compete scope, IP assignment breadth, dispute resolution) are typically negotiable at the offer stage but extremely difficult to modify once employment has begun. A structured review prevents inadvertent waiver of rights.
 
 ## Steps
 

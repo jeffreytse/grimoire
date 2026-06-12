@@ -15,7 +15,7 @@ Design secure authentication and authorization flows using OAuth 2.0 / OIDC stan
 **Adopted by:** Google, Microsoft, GitHub, Okta, Auth0 — all implement OAuth 2.0 + PKCE as the baseline
 **Impact:** OWASP reports that broken authentication is consistently in the top 3 web vulnerabilities; PKCE (RFC 7636) eliminates the authorization code interception attack that affected millions of mobile apps.
 
-Rolling custom auth is the single highest-risk decision in software security. OAuth 2.0 + OIDC provides a peer-reviewed, widely-audited framework. PKCE extends it safely to public clients (SPAs, mobile apps) where client secrets cannot be stored securely.
+**Why best:** Rolling custom auth is the single highest-risk decision in software security. OAuth 2.0 + OIDC provides a peer-reviewed, widely-audited framework. PKCE extends it safely to public clients (SPAs, mobile apps) where client secrets cannot be stored securely.
 
 ## Steps
 

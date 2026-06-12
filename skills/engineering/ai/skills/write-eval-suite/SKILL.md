@@ -15,7 +15,7 @@ Build a structured evaluation suite that measures LLM or AI system performance w
 **Adopted by:** OpenAI (public Evals framework), Stanford (HELM — Holistic Evaluation of Language Models), EleutherAI (LM Evaluation Harness)
 **Impact:** HELM evaluates 30+ models across 42 scenarios and 7 metric categories; OpenAI uses community evals to discover model regressions before release — systematic evals caught GPT-4 Turbo regressions not visible to internal red-teaming.
 
-Evals are to AI systems what unit tests are to software: they make quality measurable, regressions detectable, and improvements verifiable. Without them, "the model got better" is a belief, not a fact. A good eval suite is the single most durable investment in a production AI system.
+**Why best:** Evals are to AI systems what unit tests are to software: they make quality measurable, regressions detectable, and improvements verifiable. Without them, "the model got better" is a belief, not a fact. A good eval suite is the single most durable investment in a production AI system.
 
 ## Steps
 

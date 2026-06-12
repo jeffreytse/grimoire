@@ -15,7 +15,7 @@ Determine individualized macronutrient targets calibrated to training load, body
 **Adopted by:** ACSM, Academy of Nutrition and Dietetics, International Society of Sports Nutrition (ISSN)
 **Impact:** ISSN position stand (2017) confirms protein at 1.6–2.2g/kg/day maximizes muscle protein synthesis; Helms' meta-analysis shows caloric precision within ±10% of TDEE is the primary determinant of body composition change.
 
-Macronutrient targets provide a structured nutritional framework that prevents the most common failure modes: inadequate protein (muscle loss during deficit), insufficient calories (performance decline), and excess fat or carbohydrate (suboptimal partitioning). A macro-first approach ensures both performance and body composition goals are served simultaneously.
+**Why best:** Macronutrient targets provide a structured nutritional framework that prevents the most common failure modes: inadequate protein (muscle loss during deficit), insufficient calories (performance decline), and excess fat or carbohydrate (suboptimal partitioning). A macro-first approach ensures both performance and body composition goals are served simultaneously.
 
 ## Steps
 

@@ -15,7 +15,7 @@ Set up a key, fill, and rim light to create a three-dimensional, separation-rich
 **Adopted by:** Hollywood cinematography since the 1930s; ASMP training; Strobist methodology used by millions of photographers worldwide
 **Impact:** David Hobby's Strobist.com documented that three-point lighting principles work identically from $100 speedlights to $10,000 studio strobes — democratizing the technique across budget levels
 
-Three-point lighting solves the two fundamental problems of photographing a three-dimensional subject on a two-dimensional sensor: dimensionality (the subject looks flat) and separation (the subject merges with the background). Each light serves a specific function; removing any one degrades the result in a predictable, diagnosable way.
+**Why best:** Three-point lighting solves the two fundamental problems of photographing a three-dimensional subject on a two-dimensional sensor: dimensionality (the subject looks flat) and separation (the subject merges with the background). Each light serves a specific function; removing any one degrades the result in a predictable, diagnosable way.
 
 ## Steps
 

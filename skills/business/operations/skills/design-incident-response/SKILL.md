@@ -15,7 +15,7 @@ Build a structured incident response process that minimizes customer impact, coo
 **Adopted by:** Google SRE, PagerDuty, Atlassian, AWS, and organizations following NIST SP 800-61 as the federal standard for incident handling
 **Impact:** Organizations with a documented incident response process resolve incidents 28% faster and have 50% lower repeat-incident rates than those without (PagerDuty State of Digital Operations, 2022)
 
-Without a defined process, incidents devolve into heroics — one person firefighting while everyone else watches. A defined incident command structure, clear roles, and a blameless postmortem loop convert incidents into organizational learning.
+**Why best:** Without a defined process, incidents devolve into heroics — one person firefighting while everyone else watches. A defined incident command structure, clear roles, and a blameless postmortem loop convert incidents into organizational learning.
 
 ## Steps
 

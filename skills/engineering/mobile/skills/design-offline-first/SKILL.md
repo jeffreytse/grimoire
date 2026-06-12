@@ -16,7 +16,7 @@ Design data and sync architecture so the app works fully offline and merges chan
 
 **Impact:** Google research shows 53% of users abandon mobile sites that take over 3 seconds to load; apps that work offline eliminate the entire class of "no connection" failures that drive uninstalls; Figma reported offline support as a top enterprise adoption driver
 
-Treating the network as unreliable by default — rather than an exception — produces more resilient applications. Offline-first means writes go to local storage immediately and sync to the server eventually, rather than blocking on network availability for every user action.
+**Why best:** Treating the network as unreliable by default — rather than an exception — produces more resilient applications. Offline-first means writes go to local storage immediately and sync to the server eventually, rather than blocking on network availability for every user action.
 
 ## Steps
 

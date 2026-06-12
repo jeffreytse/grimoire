@@ -15,7 +15,7 @@ Systematically identify waste and bottlenecks in a workflow using lean value str
 **Adopted by:** Toyota, Amazon operations, General Electric Six Sigma programs, NHS Lean transformation
 **Impact:** Value stream mapping studies show 30–50% lead-time reduction in manufacturing and 20–40% in knowledge-work processes when waste is systematically eliminated (Lean Enterprise Institute, 2021)
 
-Most process inefficiency is invisible to participants because they are inside it. A structured audit externalizes the process, quantifies non-value-adding time, and produces a prioritized improvement backlog rather than a list of complaints.
+**Why best:** Most process inefficiency is invisible to participants because they are inside it. A structured audit externalizes the process, quantifies non-value-adding time, and produces a prioritized improvement backlog rather than a list of complaints.
 
 ## Steps
 

@@ -15,7 +15,7 @@ Design statistically sound A/B experiments that produce trustworthy causal evide
 **Adopted by:** Microsoft (ExP platform, Kohavi's team), Google, Netflix, Airbnb — all maintain internal experimentation platforms
 **Impact:** Kohavi et al. report that only 1/3 of A/B experiments at Microsoft produce a positive result; without rigorous experiment design, teams ship features that feel successful but have no causal impact or actively harm metrics.
 
-A/B testing is the only method that provides causal evidence in product development. Without it, correlation-based decisions (feature launched, DAU went up — success!) fail to account for confounders. Trustworthy experiments require pre-registration of hypotheses, power analysis, and fixed analysis windows.
+**Why best:** A/B testing is the only method that provides causal evidence in product development. Without it, correlation-based decisions (feature launched, DAU went up — success!) fail to account for confounders. Trustworthy experiments require pre-registration of hypotheses, power analysis, and fixed analysis windows.
 
 ## Steps
 

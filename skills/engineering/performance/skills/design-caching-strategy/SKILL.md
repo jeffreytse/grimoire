@@ -16,7 +16,7 @@ Configure cache-control directives and CDN rules to serve assets at maximum spee
 
 **Impact:** Cloudflare reports CDN cache hits serving responses in <10ms vs. 100-400ms for origin fetches; Facebook's static asset caching strategy (immutable + content-addressed URLs) eliminates cache invalidation for static content entirely
 
-Caching decisions are permanent performance wins: unlike code optimizations, a correctly cached response costs nothing to serve regardless of origin server load. The strategy must match the content's mutability — aggressive caching of mutable content breaks correctness; conservative caching of immutable content wastes the performance budget.
+**Why best:** Caching decisions are permanent performance wins: unlike code optimizations, a correctly cached response costs nothing to serve regardless of origin server load. The strategy must match the content's mutability — aggressive caching of mutable content breaks correctness; conservative caching of immutable content wastes the performance budget.
 
 ## Steps
 

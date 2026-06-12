@@ -15,7 +15,7 @@ Schedule daily uninterrupted 90–120 minute sessions of single-task cognitive w
 **Adopted by:** Carl Jung (stone tower retreats), Bill Gates (think weeks), J.K. Rowling (hotel isolation), leading academics and senior engineers across disciplines
 **Impact:** Gloria Mark (2008): after an interruption, average 23 minutes to regain full focus; Newport: deep work produces in focused hours what reactive work produces in days of fragmented effort
 
-Cognitive demanding tasks — writing, coding, designing, analysis — require the prefrontal cortex to hold large problem states in working memory. Each interruption flushes that state. Attention residue (the cognitive echo of the previous task) persists for up to 20 minutes after switching, meaning even brief interruptions impose enormous performance costs invisible to the worker.
+**Why best:** Cognitive demanding tasks — writing, coding, designing, analysis — require the prefrontal cortex to hold large problem states in working memory. Each interruption flushes that state. Attention residue (the cognitive echo of the previous task) persists for up to 20 minutes after switching, meaning even brief interruptions impose enormous performance costs invisible to the worker.
 
 ## Steps
 

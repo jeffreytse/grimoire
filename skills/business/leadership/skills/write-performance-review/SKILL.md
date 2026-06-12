@@ -15,7 +15,7 @@ Write a performance review that is honest, specific, and developmentally useful 
 **Adopted by:** Adobe (replaced annual reviews with Check-ins), Microsoft (growth mindset reviews), Center for Creative Leadership SBI model used by 750K+ managers
 **Impact:** Adobe eliminated annual reviews in 2012 and saw voluntary turnover drop 30% while performance accountability increased; vague reviews correlate with higher attrition than no reviews
 
-A performance review fails when it is too vague to act on or contains surprises the employee was never given a chance to address. The best reviews summarize feedback already delivered, add calibration context, and set a direction for growth.
+**Why best:** A performance review fails when it is too vague to act on or contains surprises the employee was never given a chance to address. The best reviews summarize feedback already delivered, add calibration context, and set a direction for growth.
 
 ## Steps
 

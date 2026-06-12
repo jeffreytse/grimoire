@@ -16,7 +16,7 @@ Cao Gui (曹刿) articulated this after the Battle of Changshao (684 BC), record
 
 The principle generalizes: any confrontational move — a demand, a threat, an objection, a competitive attack — follows a morale/emotional energy curve. The first expression is always the most emotionally charged and least negotiable. The second expression is weaker. By the third, the actor has revealed whether the move was performative or genuine, and what they actually want.
 
-This pattern is independently validated across modern negotiation, sales, and communications practice:
+**Why best:** This pattern is independently validated across modern negotiation, sales, and communications practice:
 
 **Adopted by:** Harvard Program on Negotiation (Fisher & Ury "Getting to Yes"), FBI Crisis Negotiation Unit (Voss), major sales methodologies (SPIN Selling, Challenger Sale), military doctrine (US Army FM 3-0, "Operations"), PR and crisis communications practice.
 

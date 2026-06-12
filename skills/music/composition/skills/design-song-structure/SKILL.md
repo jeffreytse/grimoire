@@ -15,7 +15,7 @@ Plan a song's large-scale form to create compelling contrast, momentum, and emot
 **Adopted by:** Berklee's songwriting curriculum; Jason Blume's methodology used in Nashville professional development
 **Impact:** ASCAP research and music psychology studies (Huron "Sweet Anticipation") show that contrast between song sections is the primary driver of listener engagement and emotional response
 
-Song structure determines the listener's journey. Without deliberate contrast between sections, songs feel monotonous. Structure choices dictate how tension builds, when release occurs, and what the listener takes away. Professional songwriters design structure before writing lyrics to ensure the emotional arc is intentional, not accidental.
+**Why best:** Song structure determines the listener's journey. Without deliberate contrast between sections, songs feel monotonous. Structure choices dictate how tension builds, when release occurs, and what the listener takes away. Professional songwriters design structure before writing lyrics to ensure the emotional arc is intentional, not accidental.
 
 ## Steps
 

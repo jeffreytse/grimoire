@@ -15,7 +15,7 @@ Design and execute load tests that reveal system performance characteristics, bo
 **Adopted by:** Grafana Labs (k6 as OSS standard), Netflix (Chaos + load testing), Amazon (load tests every release)
 **Impact:** Amazon's 100ms latency improvement drove 1% revenue increase; load testing before peak events (Black Friday) prevents outages that cost retailers $220k/minute average downtime cost (Gartner).
 
-Load testing answers questions that unit and integration tests cannot: Where does the system break? What is the maximum sustainable throughput? Where is the bottleneck? Without this data, capacity planning is guesswork.
+**Why best:** Load testing answers questions that unit and integration tests cannot: Where does the system break? What is the maximum sustainable throughput? Where is the bottleneck? Without this data, capacity planning is guesswork.
 
 ## Steps
 

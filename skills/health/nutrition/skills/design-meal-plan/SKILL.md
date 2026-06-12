@@ -15,7 +15,7 @@ Build a practical, nutritionally complete weekly meal plan that aligns with calo
 **Adopted by:** Academy of Nutrition and Dietetics, registered dietitians, sports nutrition programs (USOC, NFL, NBA team dietitians)
 **Impact:** Systematic review in the Journal of Nutrition Education and Behavior (2017) found meal planning is independently associated with better diet quality, lower body weight, and greater dietary variety — effects that hold regardless of specific dietary philosophy.
 
-Meal planning eliminates the high-friction decision of "what do I eat right now?" which reliably leads to poor choices under time pressure. A structured plan enables grocery list optimization (cost and waste reduction), batch cooking efficiency, and nutritional completeness checking in advance rather than retrospectively.
+**Why best:** Meal planning eliminates the high-friction decision of "what do I eat right now?" which reliably leads to poor choices under time pressure. A structured plan enables grocery list optimization (cost and waste reduction), batch cooking efficiency, and nutritional completeness checking in advance rather than retrospectively.
 
 ## Steps
 

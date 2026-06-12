@@ -15,7 +15,7 @@ Construct an integrated three-statement financial model linking income statement
 **Adopted by:** Investment banks (Goldman Sachs, JP Morgan), management consulting firms (McKinsey, Bain), corporate finance teams at Fortune 500 companies
 **Impact:** McKinsey "Valuation" research demonstrates that integrated three-statement models reduce forecasting errors by forcing accounting consistency; broken links between statements are the primary source of model errors in practice.
 
-Three-statement integration ensures that every assumption flows consistently through all financial statements. A model where cash flow does not reconcile to the balance sheet is fundamentally unreliable. Sensitivity analysis built into the structure allows real-time scenario toggling without rebuilding the model.
+**Why best:** Three-statement integration ensures that every assumption flows consistently through all financial statements. A model where cash flow does not reconcile to the balance sheet is fundamentally unreliable. Sensitivity analysis built into the structure allows real-time scenario toggling without rebuilding the model.
 
 ## Steps
 

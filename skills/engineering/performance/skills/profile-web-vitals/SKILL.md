@@ -16,7 +16,7 @@ Measure LCP, CLS, and INP on real user data, then trace each metric to its root 
 
 **Impact:** Google's CrUX data shows pages passing all Core Web Vitals thresholds have 24% fewer abandonment events; BBC found a 10% improvement in LCP correlated with a 1% increase in additional page views
 
-Core Web Vitals measure what users experience, not what the server reports. A fast server response with a slow LCP means users still perceive the page as slow. Lab measurements (Lighthouse) show potential; field measurements (CrUX, RUM) show reality. Always diagnose with field data first.
+**Why best:** Core Web Vitals measure what users experience, not what the server reports. A fast server response with a slow LCP means users still perceive the page as slow. Lab measurements (Lighthouse) show potential; field measurements (CrUX, RUM) show reality. Always diagnose with field data first.
 
 ## Steps
 

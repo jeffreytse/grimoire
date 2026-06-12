@@ -15,7 +15,7 @@ Build a brand identity system that connects strategy (who you are and why) to co
 **Adopted by:** Interbrand (world's largest brand consultancy), Landor & Fitch, Wolff Olins, and every major CPG and technology company going through a brand build or refresh
 **Impact:** Neumeier's research shows that brands with consistent identity systems generate 3.5× more revenue growth than inconsistent ones; McKinsey "Strong Brands" study (2019) found top-quartile brand strength companies outperform the S&P 500 by 34%
 
-Brand identity is not a logo — it is the complete system of signals that lets people recognize, trust, and prefer you over alternatives. Strategy without visual execution is invisible; visual execution without strategy is arbitrary.
+**Why best:** Brand identity is not a logo — it is the complete system of signals that lets people recognize, trust, and prefer you over alternatives. Strategy without visual execution is invisible; visual execution without strategy is arbitrary.
 
 ## Steps
 

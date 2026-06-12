@@ -15,7 +15,7 @@ Review and negotiate a non-disclosure agreement to appropriately protect confide
 **Adopted by:** ABA Business Law Section, corporate legal departments at Fortune 500 companies, M&A and technology law practices
 **Impact:** ABA surveys show that overly broad NDA definitions are the most litigated NDA provision; the Uniform Trade Secrets Act requires reasonable measures to protect trade secrets — an inadequate NDA can forfeit trade secret protection in litigation.
 
-NDAs that are too broad are unenforceable; NDAs that are too narrow fail to protect legitimate confidential information. The negotiation objective is a precisely scoped agreement that can actually be complied with and enforced. The residuals clause and the definition of confidential information are the two highest-stakes provisions in most commercial NDAs.
+**Why best:** NDAs that are too broad are unenforceable; NDAs that are too narrow fail to protect legitimate confidential information. The negotiation objective is a precisely scoped agreement that can actually be complied with and enforced. The residuals clause and the definition of confidential information are the two highest-stakes provisions in most commercial NDAs.
 
 ## Steps
 

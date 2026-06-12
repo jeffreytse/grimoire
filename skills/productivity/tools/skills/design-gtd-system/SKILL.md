@@ -15,7 +15,7 @@ Build a personal productivity system using GTD's five stages — Capture, Clarif
 **Adopted by:** Google, NASA, US military leadership programs, major consulting firms; GTD is the most widely implemented personal productivity system in knowledge work
 **Impact:** Allen: the mind is for having ideas, not holding them — every open loop held in memory consumes cognitive resources; externalising to a trusted system produces measurable reductions in stress and increases in creative throughput
 
-GTD works because it addresses the root cause of overwhelm: incomplete agreements with yourself. Each uncaptured task is an open loop draining background attention. The system closes loops by placing every commitment in a defined location with a defined next action, making it possible to engage with the present without anxiety about what might be forgotten.
+**Why best:** GTD works because it addresses the root cause of overwhelm: incomplete agreements with yourself. Each uncaptured task is an open loop draining background attention. The system closes loops by placing every commitment in a defined location with a defined next action, making it possible to engage with the present without anxiety about what might be forgotten.
 
 ## Steps
 

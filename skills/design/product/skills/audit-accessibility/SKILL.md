@@ -15,7 +15,7 @@ Systematically test a product against WCAG 2.1 AA to find and prioritize accessi
 **Adopted by:** UK Government Digital Service (mandatory WCAG 2.1 AA), US Section 508, EU EN 301 549, and all major tech companies under legal obligation or voluntary commitment
 **Impact:** WebAIM Million report (2024) found 95.9% of top 1M homepages had detectable WCAG failures; automated tools catch ~30–40% of issues — manual and assistive technology testing is required for full coverage
 
-Accessibility is a legal requirement in most jurisdictions and expands the addressable market by ~1.3 billion people globally with disabilities. Retrofitting accessibility after launch costs 3–5× more than building it in.
+**Why best:** Accessibility is a legal requirement in most jurisdictions and expands the addressable market by ~1.3 billion people globally with disabilities. Retrofitting accessibility after launch costs 3–5× more than building it in.
 
 ## Steps
 

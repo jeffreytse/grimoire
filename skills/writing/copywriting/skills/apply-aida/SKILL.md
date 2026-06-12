@@ -16,7 +16,7 @@ Structure persuasive copy using the Attention-Interest-Desire-Action sequence to
 
 **Impact:** AIDA-structured direct mail historically outperforms unstructured copy by 20-40% in response rate (DMA Annual Report data); Ogilvy's AIDA-based campaigns for American Express and Rolls-Royce set industry benchmarks still studied today
 
-AIDA works because it maps to the reader's cognitive journey. You cannot demand action from a reader who is not yet interested. You cannot generate desire in a reader who is not yet interested. The sequence is not arbitrary — each stage is a prerequisite for the next.
+**Why best:** AIDA works because it maps to the reader's cognitive journey. You cannot demand action from a reader who is not yet interested. You cannot generate desire in a reader who is not yet interested. The sequence is not arbitrary — each stage is a prerequisite for the next.
 
 ## Steps
 

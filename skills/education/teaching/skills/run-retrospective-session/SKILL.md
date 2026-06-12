@@ -15,7 +15,7 @@ Facilitate a structured retrospective that converts experience into transferable
 **Adopted by:** Agile teams worldwide, US Army After-Action Reviews, medical simulation debriefs, Harvard Business School case method
 **Impact:** Kolb's research shows experiential learning without structured reflection has 40% lower transfer to new contexts; Gibb's Reflective Cycle studies confirm structured debriefs improve performance on follow-up tasks by 25% vs. experience-only groups
 
-Experience alone does not produce learning — reflection is the step that converts what happened into what to do differently. A facilitator's job is to slow the group down long enough to extract the lesson before moving to the next experience.
+**Why best:** Experience alone does not produce learning — reflection is the step that converts what happened into what to do differently. A facilitator's job is to slow the group down long enough to extract the lesson before moving to the next experience.
 
 ## Steps
 

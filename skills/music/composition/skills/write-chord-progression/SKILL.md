@@ -15,7 +15,7 @@ Construct a chord progression that serves the emotional and structural needs of 
 **Adopted by:** Berklee's harmony curriculum, used in commercial songwriting across pop, jazz, R&B, and film scoring
 **Impact:** Analysis of Billboard Hot 100 by hooktheory.com shows that I-V-vi-IV and its variants appear in over 70% of charting songs; understanding why they work enables both replication and intentional deviation
 
-Effective progressions balance tension and resolution. Knowing function (tonic, subdominant, dominant) allows composers to control emotional trajectory. Secondary dominants and borrowed chords add color without losing tonal center. Random chord selection produces progressions that feel arbitrary; function-based design produces progressions that feel inevitable.
+**Why best:** Effective progressions balance tension and resolution. Knowing function (tonic, subdominant, dominant) allows composers to control emotional trajectory. Secondary dominants and borrowed chords add color without losing tonal center. Random chord selection produces progressions that feel arbitrary; function-based design produces progressions that feel inevitable.
 
 ## Steps
 

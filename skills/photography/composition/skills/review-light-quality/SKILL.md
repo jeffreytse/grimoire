@@ -15,7 +15,7 @@ Assess the direction, quality, color temperature, and intensity of available lig
 **Adopted by:** Joe McNally's lighting methodology is used in National Geographic assignments and taught at the Santa Fe Workshops; NYIP curriculum is the standard for professional photography training
 **Impact:** Bryan Peterson's research on exposure shows that photographers who pre-evaluate light before shooting make 3-5x fewer exposure adjustments and achieve technically correct exposure on the first shot more consistently
 
-Light is the medium of photography — everything else serves it. Evaluating light before composing or exposing prevents unrecoverable errors: harsh midday sun creating unflattering shadows, mixed color temperatures creating color cast, backlight destroying detail. Evaluation takes 60 seconds and prevents hours of remediation in post.
+**Why best:** Light is the medium of photography — everything else serves it. Evaluating light before composing or exposing prevents unrecoverable errors: harsh midday sun creating unflattering shadows, mixed color temperatures creating color cast, backlight destroying detail. Evaluation takes 60 seconds and prevents hours of remediation in post.
 
 ## Steps
 

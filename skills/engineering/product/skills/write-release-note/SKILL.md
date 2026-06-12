@@ -15,7 +15,7 @@ Write concise, user-focused release notes that communicate value and impact, not
 **Adopted by:** Stripe (benchmark for developer communication), GitHub (model for technical release notes), Apple App Store (mandated format for consumer apps)
 **Impact:** Stripe's documentation is cited as the industry standard for developer experience; well-written release notes reduce support ticket volume by 15-25% after major releases (per Intercom product research).
 
-Release notes are a product communication artifact, not a technical log. Users care about what changed for them, not how it was implemented. Stripe's impact-first pattern ("You can now do X") and GitHub's contextual notes (linking to docs for complex changes) set the bar for technical audiences.
+**Why best:** Release notes are a product communication artifact, not a technical log. Users care about what changed for them, not how it was implemented. Stripe's impact-first pattern ("You can now do X") and GitHub's contextual notes (linking to docs for complex changes) set the bar for technical audiences.
 
 ## Steps
 

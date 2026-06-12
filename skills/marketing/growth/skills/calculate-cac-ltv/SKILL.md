@@ -15,7 +15,7 @@ Accurately compute Customer Acquisition Cost and Lifetime Value to assess unit e
 **Adopted by:** Bessemer Venture Partners uses LTV:CAC as a primary SaaS health benchmark; David Skok's "SaaS Metrics 2.0" is the canonical reference for SaaS finance
 **Impact:** Bessemer benchmarks: healthy SaaS requires LTV:CAC ≥ 3x and CAC payback period ≤ 12 months; companies below these thresholds face capital efficiency problems
 
-CAC and LTV are the twin pillars of sustainable growth. Miscomputing either produces a false signal: under-counting CAC justifies overspending on acquisition; over-estimating LTV justifies unsustainable CAC. The ratio and payback period together determine how aggressively a business can invest in growth.
+**Why best:** CAC and LTV are the twin pillars of sustainable growth. Miscomputing either produces a false signal: under-counting CAC justifies overspending on acquisition; over-estimating LTV justifies unsustainable CAC. The ratio and payback period together determine how aggressively a business can invest in growth.
 
 ## Steps
 

@@ -15,7 +15,7 @@ Systematically assess an organization's GDPR compliance posture across data proc
 **Adopted by:** EDPB, national Data Protection Authorities (DPAs), CNIL (France), ICO (UK), BfDI (Germany); required for all organizations processing EU personal data
 **Impact:** GDPR maximum fines reach €20M or 4% of global annual turnover, whichever is higher; in 2023, Meta received a €1.2B fine; Amazon received €746M in 2021. The majority of fines stem from auditable failures: no legal basis, no DPA, no ROPA.
 
-GDPR compliance is an ongoing accountability obligation, not a one-time project. Organizations that invest in structured compliance programs (ROPA, DPIAs, vendor management) demonstrate accountability to DPAs, reducing both enforcement risk and fine quantum when incidents occur.
+**Why best:** GDPR compliance is an ongoing accountability obligation, not a one-time project. Organizations that invest in structured compliance programs (ROPA, DPIAs, vendor management) demonstrate accountability to DPAs, reducing both enforcement risk and fine quantum when incidents occur.
 
 ## Steps
 

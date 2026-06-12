@@ -15,7 +15,7 @@ Apply color grading using HSL adjustments, tone curves, and color wheels to achi
 **Adopted by:** VSCO's film emulation methodology is used by 200M+ users; Adobe's color grading tools are the industry standard; LACMA and major galleries use consistent color grading in documentary photography exhibitions
 **Impact:** Color psychology research (Itten's color theory, validated by subsequent neuroaesthetics studies) shows that warm-shifted images are rated as more emotionally positive and trustworthy; consistent color grading increases brand recognition by 33% (Pantone/Forbes study)
 
-Color grading transforms technically correct images into emotionally specific images. It is the difference between "accurate" and "intentional." Inconsistent color grading across a session or brand portfolio signals amateur work even when individual images are technically excellent. The craft is knowing which color relationships to reinforce or suppress to serve the emotional goal.
+**Why best:** Color grading transforms technically correct images into emotionally specific images. It is the difference between "accurate" and "intentional." Inconsistent color grading across a session or brand portfolio signals amateur work even when individual images are technically excellent. The craft is knowing which color relationships to reinforce or suppress to serve the emotional goal.
 
 ## Steps
 

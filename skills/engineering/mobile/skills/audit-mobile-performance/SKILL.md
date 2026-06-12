@@ -16,7 +16,7 @@ Systematically identify and quantify performance bottlenecks using platform-nati
 
 **Impact:** Google reports a 1-second improvement in mobile page speed improves conversions by up to 27% (Google/SOASTA research, 2017); Apple's MetricKit data shows apps with launch times above 2 seconds have 3× higher 1-day uninstall rates
 
-Performance optimization without measurement is guesswork. Platform-provided metrics (Android Vitals, MetricKit) represent real-device, real-user data that synthetic benchmarks cannot replicate. Always measure first; optimize the metric with the largest user impact.
+**Why best:** Performance optimization without measurement is guesswork. Platform-provided metrics (Android Vitals, MetricKit) represent real-device, real-user data that synthetic benchmarks cannot replicate. Always measure first; optimize the metric with the largest user impact.
 
 ## Steps
 

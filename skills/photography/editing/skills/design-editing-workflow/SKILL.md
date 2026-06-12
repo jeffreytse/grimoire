@@ -15,7 +15,7 @@ Build a structured, repeatable import-to-delivery workflow that maximizes editin
 **Adopted by:** Adobe's own Lightroom documentation; ASMP Digital Imaging Guide; professional photographers processing 500-5,000 images per session
 **Impact:** ASMP Professional Business Practices documents that photographers with defined editing workflows deliver 40% faster and with 60% fewer client revision requests than those using ad hoc post-processing
 
-Without a defined workflow, photographers make inconsistent decisions under pressure: over-editing some images, under-editing others, losing files to poor organization, and delivering inconsistent batches. A workflow converts subjective editing into a repeatable process where decisions about culling, color, and export happen at defined stages, not randomly.
+**Why best:** Without a defined workflow, photographers make inconsistent decisions under pressure: over-editing some images, under-editing others, losing files to poor organization, and delivering inconsistent batches. A workflow converts subjective editing into a repeatable process where decisions about culling, color, and export happen at defined stages, not randomly.
 
 ## Steps
 

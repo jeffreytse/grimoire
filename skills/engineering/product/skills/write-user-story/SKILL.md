@@ -15,7 +15,7 @@ Write user stories that clearly express user intent, satisfy the INVEST criteria
 **Adopted by:** Atlassian (Jira templates), Pivotal, ThoughtWorks — all use the INVEST + acceptance criteria pattern as the baseline
 **Impact:** Cohn's research shows that teams with well-formed stories (INVEST-compliant with AC) have 40% fewer scope change requests and ship features that pass acceptance testing first time at 2× the rate of teams without structured stories.
 
-Stories are not requirements documents — they are placeholders for conversations. INVEST criteria (Independent, Negotiable, Valuable, Estimable, Small, Testable) ensure stories can be planned, prioritized, and delivered without ambiguity. Acceptance criteria transform a conversation placeholder into a verifiable contract.
+**Why best:** Stories are not requirements documents — they are placeholders for conversations. INVEST criteria (Independent, Negotiable, Valuable, Estimable, Small, Testable) ensure stories can be planned, prioritized, and delivered without ambiguity. Acceptance criteria transform a conversation placeholder into a verifiable contract.
 
 ## Steps
 

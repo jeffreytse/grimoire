@@ -15,7 +15,7 @@ Design a physics experiment with clearly defined variables, control conditions, 
 **Adopted by:** NIST uncertainty guidelines are adopted by all major metrology institutes worldwide; Taylor's error analysis text is used in undergraduate physics labs at MIT, Caltech, and 1,000+ universities
 **Impact:** NIST documents that poorly designed experiments with uncharacterized uncertainties account for the majority of irreproducible results in physics literature; rigorous protocol design eliminates this class of error
 
-A physics experiment without a formal protocol produces measurements that cannot be interpreted, compared, or replicated. The protocol specifies what is measured, how it is measured, what is controlled, and how uncertainty is characterized. These decisions made before the experiment prevent the most common failure: collecting data that cannot answer the question the experimenter actually asked.
+**Why best:** A physics experiment without a formal protocol produces measurements that cannot be interpreted, compared, or replicated. The protocol specifies what is measured, how it is measured, what is controlled, and how uncertainty is characterized. These decisions made before the experiment prevent the most common failure: collecting data that cannot answer the question the experimenter actually asked.
 
 ## Steps
 

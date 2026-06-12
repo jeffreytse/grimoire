@@ -15,7 +15,7 @@ Systematically evaluate all on-page SEO factors for a given URL to surface ranki
 **Adopted by:** Moz, Ahrefs, Semrush audit methodologies; Google Search Console recommendations
 **Impact:** Moz's 2023 On-Page Ranking Factors study found content relevance and page experience signals account for over 40% of ranking variance
 
-On-page audits catch issues invisible to casual review — thin content, duplicate tags, poor Core Web Vitals — that silently suppress rankings. Structured checklists prevent omission of any factor class. Regular audits track regressions after site changes.
+**Why best:** On-page audits catch issues invisible to casual review — thin content, duplicate tags, poor Core Web Vitals — that silently suppress rankings. Structured checklists prevent omission of any factor class. Regular audits track regressions after site changes.
 
 ## Steps
 

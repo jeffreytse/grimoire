@@ -16,7 +16,7 @@ Articulate exactly what a product does, for whom, and why it beats the alternati
 
 **Impact:** Companies with clearly articulated value propositions convert prospects at 2-3x the rate of those without (MarketingExperiments, 2014); Strategyzer reports that teams using the Value Proposition Canvas cut product-market fit cycles by 30%
 
-A value proposition is not a slogan. It is a falsifiable claim that a specific customer segment has a specific problem, your product solves it better than the named alternative, and here is the proof. Vague claims ("best in class," "all-in-one") are invisible to buyers conditioned to ignore marketing noise.
+**Why best:** A value proposition is not a slogan. It is a falsifiable claim that a specific customer segment has a specific problem, your product solves it better than the named alternative, and here is the proof. Vague claims ("best in class," "all-in-one") are invisible to buyers conditioned to ignore marketing noise.
 
 ## Steps
 

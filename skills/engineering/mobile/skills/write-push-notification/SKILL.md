@@ -16,7 +16,7 @@ Write notification copy and design delivery timing so users find notifications u
 
 **Impact:** Airship research (2023) shows personalized notifications achieve 4-7× higher click-through than generic broadcast notifications; 60% of users who disable notifications never re-enable them — the first impression is permanent
 
-Push notification permission is among the most fragile trust signals in mobile UX. Users who grant permission and then receive irrelevant notifications revoke it immediately and permanently. Every notification must pass a single test: does this require the user's attention right now, and does it give them enough information to decide whether to open the app?
+**Why best:** Push notification permission is among the most fragile trust signals in mobile UX. Users who grant permission and then receive irrelevant notifications revoke it immediately and permanently. Every notification must pass a single test: does this require the user's attention right now, and does it give them enough information to decide whether to open the app?
 
 ## Steps
 

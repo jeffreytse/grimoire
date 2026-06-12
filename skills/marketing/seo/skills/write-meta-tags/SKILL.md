@@ -15,7 +15,7 @@ Craft title tags and meta descriptions that maximize click-through rate while si
 **Adopted by:** Google's own Search documentation specifies best practices; Moz CTR studies validate impact
 **Impact:** A/B tests by Portent and Moz show optimized title tags improve organic CTR by 20-30% without any change in ranking
 
-Title tags are the primary ranking signal Google reads first. Meta descriptions don't directly affect ranking but are the primary lever for CTR — the metric that creates a compounding ranking feedback loop. Both must serve humans and algorithms simultaneously.
+**Why best:** Title tags are the primary ranking signal Google reads first. Meta descriptions don't directly affect ranking but are the primary lever for CTR — the metric that creates a compounding ranking feedback loop. Both must serve humans and algorithms simultaneously.
 
 ## Steps
 

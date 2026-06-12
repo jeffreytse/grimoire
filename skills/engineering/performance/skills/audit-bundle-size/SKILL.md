@@ -16,7 +16,7 @@ Identify and eliminate excess JavaScript to reduce parse/compile time and reach 
 
 **Impact:** Addy Osmani (Google) documented that 1MB of JavaScript takes 8 seconds to parse on a median mobile device; Google's CrUX data shows JavaScript parse time is the leading cause of poor INP and TTI on mobile
 
-JavaScript is the most expensive resource per byte on the web: it must be downloaded, parsed, compiled, and executed before it produces value. Images of equivalent size are far cheaper because they only require decoding. Every KB of JavaScript removed improves TTI on low-end devices disproportionately.
+**Why best:** JavaScript is the most expensive resource per byte on the web: it must be downloaded, parsed, compiled, and executed before it produces value. Images of equivalent size are far cheaper because they only require decoding. Every KB of JavaScript removed improves TTI on low-end devices disproportionately.
 
 ## Steps
 

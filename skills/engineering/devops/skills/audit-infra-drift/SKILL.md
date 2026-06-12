@@ -15,7 +15,7 @@ Detect and remediate differences between infrastructure-as-code declarations and
 **Adopted by:** WeaveWorks (GitOps origin), AWS (Config + CloudFormation drift detection), HashiCorp (Terraform plan as drift detection)
 **Impact:** Puppet's State of DevOps report found that IaC adoption reduces change failure rate by 60%; undetected drift is the #1 cause of "works in staging, fails in production" incidents.
 
-Drift accumulates when engineers make manual ("click-ops") changes to production that are not reflected in the IaC source of truth. Over time, the declared state diverges from reality, making changes unpredictable and compliance verification impossible. Regular drift audits restore confidence in IaC as the authoritative source.
+**Why best:** Drift accumulates when engineers make manual ("click-ops") changes to production that are not reflected in the IaC source of truth. Over time, the declared state diverges from reality, making changes unpredictable and compliance verification impossible. Regular drift audits restore confidence in IaC as the authoritative source.
 
 ## Steps
 

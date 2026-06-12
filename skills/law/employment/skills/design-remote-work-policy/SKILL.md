@@ -15,7 +15,7 @@ Create a comprehensive remote work policy that addresses legal compliance, opera
 **Adopted by:** SHRM, DOL, HR departments at remote-first companies (GitLab, Automattic, Basecamp); enforced by state labor departments
 **Impact:** SHRM data shows organizations with documented remote work policies have 40% fewer wage-hour disputes; DOL investigations of remote workers routinely uncover unrecorded overtime, the most common compliance failure for remote non-exempt employees.
 
-Remote work introduces legal complexity across multiple domains simultaneously: wage-hour law requires timekeeping for non-exempt workers regardless of location; state law requires compliance with the employee's home state (not company headquarters); data security regulations extend to home offices. A written policy is the foundational document for managing all of these simultaneously.
+**Why best:** Remote work introduces legal complexity across multiple domains simultaneously: wage-hour law requires timekeeping for non-exempt workers regardless of location; state law requires compliance with the employee's home state (not company headquarters); data security regulations extend to home offices. A written policy is the foundational document for managing all of these simultaneously.
 
 ## Steps
 

@@ -16,7 +16,7 @@ Build scenes that end with a door closing — forcing the protagonist into the n
 
 **Impact:** Dwight Swain's scene/sequel pattern has been in continuous print since 1965 and remains foundational to commercial fiction technique; Jack Bickham's extension is taught in university creative writing programs globally
 
-The scene/sequel unit creates the forward momentum readers describe as "unputdownable." Every scene must end with disaster — a setback, a complication, or new information that makes things worse. The sequel processes the disaster emotionally and logically before launching the next scene.
+**Why best:** The scene/sequel unit creates the forward momentum readers describe as "unputdownable." Every scene must end with disaster — a setback, a complication, or new information that makes things worse. The sequel processes the disaster emotionally and logically before launching the next scene.
 
 ## Steps
 

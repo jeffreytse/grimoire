@@ -15,7 +15,7 @@ Systematically map the competitive landscape to identify where your product can 
 **Adopted by:** McKinsey, BCG, HBS MBA curriculum, Google strategy teams
 **Impact:** Porter's Five Forces framework is cited in over 7,000 academic strategy studies and underpins competitive strategy at Fortune 500 planning cycles
 
-Structured competitive analysis prevents both overconfidence (ignoring real threats) and underconfidence (competing on dimensions customers don't value). Jobs-to-be-Done extends it by revealing who you truly compete with — often different from who you think.
+**Why best:** Structured competitive analysis prevents both overconfidence (ignoring real threats) and underconfidence (competing on dimensions customers don't value). Jobs-to-be-Done extends it by revealing who you truly compete with — often different from who you think.
 
 ## Steps
 

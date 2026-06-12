@@ -15,7 +15,7 @@ Build a complete shot list that ensures every required image is captured during 
 **Adopted by:** ASMP recommends shot lists as a core professional practice; used universally in commercial, editorial, and wedding photography
 **Impact:** ASMP Professional Business Practices (9th edition) cites shot lists as the primary tool for preventing client disputes about missing deliverables — the #1 source of post-shoot conflict
 
-Shot lists transform a creative assignment into a manageable production. They align expectations between photographer and client before the shoot, prevent missed shots under time pressure, and serve as a post-shoot audit checklist. A shot list also enables assistants and second shooters to work independently without needing constant direction.
+**Why best:** Shot lists transform a creative assignment into a manageable production. They align expectations between photographer and client before the shoot, prevent missed shots under time pressure, and serve as a post-shoot audit checklist. A shot list also enables assistants and second shooters to work independently without needing constant direction.
 
 ## Steps
 

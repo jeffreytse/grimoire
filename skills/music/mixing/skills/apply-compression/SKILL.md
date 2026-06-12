@@ -15,7 +15,7 @@ Set compression parameters with intention — using attack, release, ratio, and 
 **Adopted by:** Every professional mixer uses compression; Mike Senior's methodology is the most widely cited beginner-to-intermediate reference in English
 **Impact:** Studies in music perception (Danielsen et al.) show that dynamic envelope shaping via compression is the primary tool for groove manipulation — attack time determines perceived "punch" more than any other parameter
 
-Compression is misunderstood more than any other mixing tool. Most beginners over-compress, removing the dynamics that make music feel alive. The correct approach starts from the musical goal (control peaks, add punch, create glue, add sustain) and works backward to settings. Every compression decision should be audible when bypassed but not audible as "compression" when engaged.
+**Why best:** Compression is misunderstood more than any other mixing tool. Most beginners over-compress, removing the dynamics that make music feel alive. The correct approach starts from the musical goal (control peaks, add punch, create glue, add sustain) and works backward to settings. Every compression decision should be audible when bypassed but not audible as "compression" when engaged.
 
 ## Steps
 

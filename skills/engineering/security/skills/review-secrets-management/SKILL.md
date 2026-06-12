@@ -15,7 +15,7 @@ Audit how secrets are stored, distributed, and rotated to eliminate hardcoded cr
 **Adopted by:** HashiCorp (Vault used by 70%+ of Fortune 500), AWS Secrets Manager, GitHub Advanced Security (secret scanning)
 **Impact:** GitGuardian detected 10 million secrets exposed on GitHub in 2023; hardcoded credentials are the #1 cause of cloud breach initial access (Verizon DBIR 2023).
 
-Secrets in code, environment files, or CI logs are a single git clone away from exposure. Centralized secrets management provides: access control, audit logging, automatic rotation, and short-lived credential issuance — none of which are possible with hardcoded or manually managed secrets.
+**Why best:** Secrets in code, environment files, or CI logs are a single git clone away from exposure. Centralized secrets management provides: access control, audit logging, automatic rotation, and short-lived credential issuance — none of which are possible with hardcoded or manually managed secrets.
 
 ## Steps
 

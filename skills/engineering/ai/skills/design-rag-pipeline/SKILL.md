@@ -15,7 +15,7 @@ Design a retrieval-augmented generation pipeline that retrieves relevant context
 **Adopted by:** OpenAI (GPT with Retrieval), Microsoft (Azure AI Search + OpenAI), Anthropic (Claude with tool use for retrieval), LangChain ecosystem
 **Impact:** RAG reduces LLM hallucination rates by 40-60% on knowledge-intensive tasks compared to vanilla generation (Lewis et al., 2020); enables knowledge cutoff extension and source citation without fine-tuning.
 
-RAG separates parametric knowledge (what the model learned) from non-parametric knowledge (what can be retrieved). This allows updating the knowledge base without retraining, enables source attribution, and grounds outputs in verifiable documents — critical for enterprise and compliance use cases.
+**Why best:** RAG separates parametric knowledge (what the model learned) from non-parametric knowledge (what can be retrieved). This allows updating the knowledge base without retraining, enables source attribution, and grounds outputs in verifiable documents — critical for enterprise and compliance use cases.
 
 ## Steps
 

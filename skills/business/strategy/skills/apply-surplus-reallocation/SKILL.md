@@ -18,7 +18,7 @@ Identify areas generating surplus above optimal level and actively redirect thos
 
 "The way of heaven reduces surplus and supplements deficiency. The way of humans does the opposite — takes from the deficient to serve the surplus."
 
-Laozi identifies this as the distinguishing feature of self-sustaining systems: they actively harvest from areas above optimum and redirect to areas below. Human systems do the reverse — over-invest in what's already working, under-invest in what's behind — until the imbalance becomes critical. The principle is not redistribution for fairness; it is rebalancing for long-term system health.
+**Why best:** Laozi identifies this as the distinguishing feature of self-sustaining systems: they actively harvest from areas above optimum and redirect to areas below. Human systems do the reverse — over-invest in what's already working, under-invest in what's behind — until the imbalance becomes critical. The principle is not redistribution for fairness; it is rebalancing for long-term system health.
 
 **BCG matrix (Bruce Henderson, Boston Consulting Group, 1970):** The most widely adopted portfolio management framework in corporate strategy. The explicit mechanics: Cash Cows (high market share, mature market, surplus cash generation) are intentionally constrained — reinvestment is capped at the level needed to maintain share, and surplus is redirected to Stars (high growth, high investment need) and to funding future Question Marks. The framework formalizes 损有余而补不足 as portfolio policy: harvest surplus from over-performers, redirect to deficit areas. Used by McKinsey, BCG, Bain, and standard in Fortune 500 strategy processes globally.
 

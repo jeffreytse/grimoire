@@ -15,7 +15,7 @@ Measure per-unit profitability to determine whether a business model is viable a
 **Adopted by:** Y Combinator, a16z, Bessemer Venture Partners; required analysis in Series A+ due diligence; standard in SaaS and subscription businesses
 **Impact:** David Skok's research shows that SaaS businesses with LTV:CAC < 3x consistently fail to reach profitability at scale; a16z portfolio data confirms CAC payback period is the single strongest predictor of capital efficiency.
 
-Unit economics reveal whether growth is value-creating or value-destroying before the aggregate P&L shows the problem. A business acquiring customers profitably at small scale can raise prices and invest in growth; one with broken unit economics cannot be fixed by scaling.
+**Why best:** Unit economics reveal whether growth is value-creating or value-destroying before the aggregate P&L shows the problem. A business acquiring customers profitably at small scale can raise prices and invest in growth; one with broken unit economics cannot be fixed by scaling.
 
 ## Steps
 

@@ -15,7 +15,7 @@ Design a structured deload week that dissipates accumulated fatigue while preser
 **Adopted by:** Renaissance Periodization (RP Hypertrophy), Stronger by Science, professional strength coaches across Olympic lifting and powerlifting federations
 **Impact:** Israetel's RP research demonstrates that fatigue accumulation masks ~10–15% of realized fitness; deload weeks allow supercompensation, producing measurable performance increases in the week following a proper deload.
 
-Fatigue is not fitness. Heavy training blocks produce both fitness gains and fatigue; only when fatigue is dissipated does the net fitness gain become visible and usable. Athletes who never deload accumulate residual fatigue that progressively degrades performance, elevates injury risk, and eventually leads to overtraining syndrome.
+**Why best:** Fatigue is not fitness. Heavy training blocks produce both fitness gains and fatigue; only when fatigue is dissipated does the net fitness gain become visible and usable. Athletes who never deload accumulate residual fatigue that progressively degrades performance, elevates injury risk, and eventually leads to overtraining syndrome.
 
 ## Steps
 

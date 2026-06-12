@@ -15,7 +15,7 @@ Build a systematic trademark strategy to select a protectable mark, clear it for
 **Adopted by:** USPTO, INTA, trademark attorneys in all major law firms; required in brand-building and M&A due diligence
 **Impact:** USPTO data shows that registered trademarks have a significantly stronger presumption of validity and ownership (constructive notice nationwide); unregistered marks are limited to actual geographic areas of use and cannot use the ® symbol, materially weakening enforcement position.
 
-Trademark strategy is risk management for brand investment. Building a brand on a weak or conflicting mark creates legal exposure that grows proportionally with marketing spend. A systematic clearance process before launch, followed by timely registration, protects the brand investment and enables enforcement against infringers.
+**Why best:** Trademark strategy is risk management for brand investment. Building a brand on a weak or conflicting mark creates legal exposure that grows proportionally with marketing spend. A systematic clearance process before launch, followed by timely registration, protects the brand investment and enables enforcement against infringers.
 
 ## Steps
 

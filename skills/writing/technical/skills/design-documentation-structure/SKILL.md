@@ -16,7 +16,7 @@ Organize documentation so readers always land in the right place for their curre
 
 **Impact:** Canonical reported measurably reduced support requests after restructuring Ubuntu docs around Diátaxis; Django's docs are cited as a model for open-source project documentation
 
-The Diátaxis framework distinguishes four fundamentally different reader needs — learning, doing, understanding, and looking up — each demanding a different writing style. Mixing these modes in one document forces readers to mentally filter content, increasing cognitive load and causing them to miss critical information.
+**Why best:** The Diátaxis framework distinguishes four fundamentally different reader needs — learning, doing, understanding, and looking up — each demanding a different writing style. Mixing these modes in one document forces readers to mentally filter content, increasing cognitive load and causing them to miss critical information.
 
 ## Steps
 

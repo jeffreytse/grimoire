@@ -15,7 +15,7 @@ Systematically evaluate LLM outputs for factual accuracy, relevance, safety, and
 **Adopted by:** OpenAI (evals framework), Anthropic (Constitutional AI red-teaming), Stanford (HELM benchmark), Google DeepMind
 **Impact:** RAGAS studies show that naive RAG pipelines have faithfulness scores of 0.6-0.7 out of 1.0 — meaning 30-40% of LLM statements are unsupported by the retrieved context; systematic auditing identifies and resolves these gaps.
 
-LLM outputs are probabilistic — the same prompt can produce different quality responses. Without structured auditing, quality regressions go undetected when models are updated, prompts change, or knowledge bases evolve. Automated metrics provide continuous quality signals; human evaluation sets the ground truth.
+**Why best:** LLM outputs are probabilistic — the same prompt can produce different quality responses. Without structured auditing, quality regressions go undetected when models are updated, prompts change, or knowledge bases evolve. Automated metrics provide continuous quality signals; human evaluation sets the ground truth.
 
 ## Steps
 

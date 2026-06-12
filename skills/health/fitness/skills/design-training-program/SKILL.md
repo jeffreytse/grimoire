@@ -15,7 +15,7 @@ Build a periodized resistance training program grounded in NSCA and ACSM evidenc
 **Adopted by:** National Strength and Conditioning Association (NSCA), USA Weightlifting, professional sports organizations (NFL, NBA, MLB)
 **Impact:** NSCA research and meta-analyses consistently show periodized training produces 10–15% greater strength gains than non-periodized training over 12 weeks; progressive overload is the single most validated principle in exercise science.
 
-Periodization prevents accommodation (the body's adaptation to a fixed stimulus) by systematically varying volume, intensity, and exercise selection over time. Without structure, most trainees reach a plateau within 6–12 weeks. A written program also enables objective progress tracking and informed adjustments.
+**Why best:** Periodization prevents accommodation (the body's adaptation to a fixed stimulus) by systematically varying volume, intensity, and exercise selection over time. Without structure, most trainees reach a plateau within 6–12 weeks. A written program also enables objective progress tracking and informed adjustments.
 
 ## Steps
 

@@ -15,7 +15,7 @@ Select the appropriate proof technique for a mathematical claim and build the pr
 **Adopted by:** Polya's heuristics are foundational to mathematics education worldwide; used in every major undergraduate real analysis and discrete mathematics course
 **Impact:** Polya's "How to Solve It" has sold over 1 million copies and is cited as the single most influential book in mathematics pedagogy; its heuristics demonstrably reduce the time to find valid proofs in educational settings
 
-Choosing the wrong proof strategy wastes significant time. A direct proof that cannot be completed is often a signal that contradiction or contrapositive would work. Understanding which technique fits which claim structure prevents the common failure of pushing one approach until the proof collapses. Polya's heuristics — draw a picture, work backward, find an analogous problem — consistently surface the right strategy faster than random exploration.
+**Why best:** Choosing the wrong proof strategy wastes significant time. A direct proof that cannot be completed is often a signal that contradiction or contrapositive would work. Understanding which technique fits which claim structure prevents the common failure of pushing one approach until the proof collapses. Polya's heuristics — draw a picture, work backward, find an analogous problem — consistently surface the right strategy faster than random exploration.
 
 ## Steps
 

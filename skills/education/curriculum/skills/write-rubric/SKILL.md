@@ -15,7 +15,7 @@ Create an analytic rubric that enables consistent, criterion-based evaluation of
 **Adopted by:** College Board AP program, IB Diploma, most research university writing programs, and K-12 standards-based grading adoptions
 **Impact:** Brookhart (2013) meta-analysis shows rubrics improve inter-rater reliability from ~60% to ~90% agreement; student performance on rubric-assessed tasks improves when the rubric is shared before the task begins
 
-Rubrics make implicit quality standards explicit — both for the assessor and the learner. When students receive a rubric before working, they self-assess against criteria and produce stronger work. When shared after, rubrics explain grades rather than develop learning.
+**Why best:** Rubrics make implicit quality standards explicit — both for the assessor and the learner. When students receive a rubric before working, they self-assess against criteria and produce stronger work. When shared after, rubrics explain grades rather than develop learning.
 
 ## Steps
 

@@ -15,7 +15,7 @@ Build a review schedule and card system that exploits the spacing effect to maxi
 **Adopted by:** Medical schools (Step 1 boards prep), language learning platforms (Duolingo, Anki), military training curricula, and over 5M active Anki users
 **Impact:** Ebbinghaus showed retrieval at spaced intervals reduces the forgetting curve from 50% recall at 1 day to 80%+ recall at 30 days; Cepeda et al. (2008) meta-analysis of 254 studies confirmed optimal spacing outperforms massed practice by 10–30% on delayed tests
 
-Massed practice (cramming) produces short-term recall. Spaced repetition exploits the spacing effect and the testing effect to encode material into long-term memory by retrieving it just as forgetting begins.
+**Why best:** Massed practice (cramming) produces short-term recall. Spaced repetition exploits the spacing effect and the testing effect to encode material into long-term memory by retrieving it just as forgetting begins.
 
 ## Steps
 

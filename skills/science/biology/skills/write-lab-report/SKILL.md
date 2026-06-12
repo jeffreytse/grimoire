@@ -15,7 +15,7 @@ Write a complete biology lab report using the IMRaD structure with correct stati
 **Adopted by:** Nature, Science, PLOS Biology, and all major peer-reviewed journals use IMRaD format; ICMJE (International Committee of Medical Journal Editors) provides the global standard
 **Impact:** Nature Methods' 2013 analysis found that incomplete methods reporting is the leading cause of failed replication attempts in biology — the reproducibility crisis that prompted new reporting standards
 
-IMRaD (Introduction, Methods, Results, Discussion) is not bureaucratic convention — it is the structure that allows independent scientists to evaluate, replicate, and build on findings. Each section serves a distinct epistemic function: why the question matters, how the answer was obtained, what was observed, and what it means. Omitting detail from Methods is the single most common reason biology experiments cannot be reproduced.
+**Why best:** IMRaD (Introduction, Methods, Results, Discussion) is not bureaucratic convention — it is the structure that allows independent scientists to evaluate, replicate, and build on findings. Each section serves a distinct epistemic function: why the question matters, how the answer was obtained, what was observed, and what it means. Omitting detail from Methods is the single most common reason biology experiments cannot be reproduced.
 
 ## Steps
 

@@ -15,7 +15,7 @@ Place audio elements in the stereo field to create width, depth, and separation 
 **Adopted by:** David Gibson's three-dimensional mix visualization is taught in audio engineering programs worldwide; mastering engineers universally require mono-compatible mixes
 **Impact:** Gibson's "The Art of Mixing" documents that spatial placement is perceived as emotional distance — elements panned center feel more intimate; wide elements feel distant or environmental. This is not metaphor; it is perceptual psychology.
 
-A flat, center-panned mix is fatiguing and lacks dimension. Strategic stereo field design creates the auditory illusion of a physical space — instruments in specific locations, depth from front to back. However, every width decision must be verified in mono because streaming services, phone speakers, and many club systems sum to mono, collapsing unchecked stereo into phase cancellation artifacts.
+**Why best:** A flat, center-panned mix is fatiguing and lacks dimension. Strategic stereo field design creates the auditory illusion of a physical space — instruments in specific locations, depth from front to back. However, every width decision must be verified in mono because streaming services, phone speakers, and many club systems sum to mono, collapsing unchecked stereo into phase cancellation artifacts.
 
 ## Steps
 

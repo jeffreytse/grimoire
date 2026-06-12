@@ -15,7 +15,7 @@ Frame a design problem clearly enough that the right solution can be recognized 
 **Adopted by:** IDEO, Frog Design, Stanford d.school, D&AD award-winning agencies — design brief is the foundational artifact of professional design practice
 **Impact:** IDEO research across 200+ projects found that projects with a clear brief delivered in the first week had 3× higher stakeholder satisfaction and 40% fewer major revision cycles
 
-A brief is not a specification — it frames the problem without prescribing the solution. A brief written too narrowly produces safe, obvious solutions. A brief written too broadly produces unfocused exploration. The brief's job is to create useful creative tension.
+**Why best:** A brief is not a specification — it frames the problem without prescribing the solution. A brief written too narrowly produces safe, obvious solutions. A brief written too broadly produces unfocused exploration. The brief's job is to create useful creative tension.
 
 ## Steps
 

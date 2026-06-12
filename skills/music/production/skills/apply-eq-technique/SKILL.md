@@ -15,7 +15,7 @@ Apply EQ with intention — removing problem frequencies first, then adding char
 **Adopted by:** Used by mixing engineers across all commercial genres; taught in every major audio engineering curriculum
 **Impact:** David Gibson's frequency mapping in "The Art of Mixing" demonstrates that frequency masking between competing elements is the primary cause of muddy mixes; systematic EQ addresses this mechanically
 
-EQ done wrong wastes headroom and creates masking. The standard professional approach is subtractive first (remove what hurts), additive second (add what helps). This order prevents boosting frequencies that are already crowded. Listening in context, not solo, reveals the actual masking problem rather than the track's isolated character.
+**Why best:** EQ done wrong wastes headroom and creates masking. The standard professional approach is subtractive first (remove what hurts), additive second (add what helps). This order prevents boosting frequencies that are already crowded. Listening in context, not solo, reveals the actual masking problem rather than the track's isolated character.
 
 ## Steps
 

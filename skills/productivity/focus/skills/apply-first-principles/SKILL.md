@@ -16,7 +16,7 @@ Decompose any problem to bedrock truths and rebuild solutions unconstrained by i
 
 **Impact:** SpaceX applied first principles to rocket manufacturing: instead of buying rockets at market price (~$65M/launch), Musk's team priced raw materials (carbon fibre, aluminium, titanium, copper) at commodity rates — achieving ~$6M/launch, a 10× cost reduction (Musk, TED 2013).
 
-Analogical thinking — reasoning from "how others do it" — imports all of an industry's historical constraints and compromises. First principles cuts through accumulated convention to reach what is actually true, enabling solutions that would be invisible to anyone anchored to precedent.
+**Why best:** Analogical thinking — reasoning from "how others do it" — imports all of an industry's historical constraints and compromises. First principles cuts through accumulated convention to reach what is actually true, enabling solutions that would be invisible to anyone anchored to precedent.
 
 ## Steps
 

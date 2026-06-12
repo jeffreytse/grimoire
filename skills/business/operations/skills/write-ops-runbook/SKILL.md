@@ -15,7 +15,7 @@ Create an operational runbook that any qualified engineer can execute correctly 
 **Adopted by:** Google SRE teams, AWS operations, Cloudflare, PagerDuty — all treat runbooks as living operational documentation
 **Impact:** Google SRE reports that documented runbooks reduce mean time to resolution (MTTR) by 40–60% for known failure modes; they also reduce on-call burnout by eliminating repeated tribal-knowledge lookups
 
-A good runbook transfers expert knowledge into a form that a competent non-expert can execute at 2 AM during an incident. Every step of ambiguity in a runbook multiplies the risk of error under stress.
+**Why best:** A good runbook transfers expert knowledge into a form that a competent non-expert can execute at 2 AM during an incident. Every step of ambiguity in a runbook multiplies the risk of error under stress.
 
 ## Steps
 

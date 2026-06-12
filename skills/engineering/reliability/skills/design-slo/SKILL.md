@@ -16,7 +16,7 @@ Define measurable reliability commitments that align engineering effort with wha
 
 **Impact:** Google's SRE book reports error budget policies cut feature/reliability conflict resolution time significantly; Dropbox publicly documented SLO adoption reducing production incidents by 30% within one year
 
-Without SLOs, reliability work is driven by gut feel and loudest complaint. SLOs make reliability a quantified engineering decision: when error budget is full, ship features; when it burns fast, halt releases and fix reliability. This makes the reliability/feature trade-off objective and removes it from politics.
+**Why best:** Without SLOs, reliability work is driven by gut feel and loudest complaint. SLOs make reliability a quantified engineering decision: when error budget is full, ship features; when it burns fast, halt releases and fix reliability. This makes the reliability/feature trade-off objective and removes it from politics.
 
 ## Steps
 

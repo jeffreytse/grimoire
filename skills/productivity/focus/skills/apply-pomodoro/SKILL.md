@@ -15,7 +15,7 @@ Work in focused 25-minute intervals separated by 5-minute breaks; after four int
 **Adopted by:** Software development teams, academic researchers, writers, students in structured study programs worldwide
 **Impact:** Ariga & Lleras (2011, University of Illinois): brief mental breaks prevent performance degradation over long tasks — subjects who took structured breaks maintained performance while continuous-work subjects degraded significantly; Cirillo: technique eliminates time anxiety and internal interruptions by making time tangible
 
-The Pomodoro Technique works by treating time as a discrete, visible unit rather than an abstract flow. The ticking timer externalises urgency, creating a mild positive pressure that counters procrastination. Scheduled breaks prevent the cognitive saturation that builds invisibly during long uninterrupted work sessions.
+**Why best:** The Pomodoro Technique works by treating time as a discrete, visible unit rather than an abstract flow. The ticking timer externalises urgency, creating a mild positive pressure that counters procrastination. Scheduled breaks prevent the cognitive saturation that builds invisibly during long uninterrupted work sessions.
 
 ## Steps
 

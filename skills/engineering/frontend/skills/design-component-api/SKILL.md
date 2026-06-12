@@ -16,7 +16,7 @@ Design component interfaces that are easy to use correctly, hard to use incorrec
 
 **Impact:** Radix UI's accessibility-first, behavior-composable API is now the standard reference for accessible component design; libraries using inversion of control report dramatically fewer "escape hatch" issues where users need to patch around the library
 
-A component API is a contract. Once published and used, breaking changes cost the entire consuming codebase. Designing for composition, not configuration, produces components that can adapt to unforeseen requirements without API changes — extending the useful life of the interface.
+**Why best:** A component API is a contract. Once published and used, breaking changes cost the entire consuming codebase. Designing for composition, not configuration, produces components that can adapt to unforeseen requirements without API changes — extending the useful life of the interface.
 
 ## Steps
 

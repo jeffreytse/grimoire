@@ -15,7 +15,7 @@ Design, run, and learn from a growth experiment using a structured hypothesis-dr
 **Adopted by:** Facebook Growth team, Airbnb, Uber — all pioneered rapid experimentation culture documented in "Hacking Growth"
 **Impact:** Sean Ellis documented that companies running 10+ experiments per week grow 2x faster than those running fewer than 5; Facebook ran 1,000+ experiments per day at peak
 
-Ad hoc "let's try this" changes produce noise, not learning. A structured experiment framework separates signal from noise, quantifies impact, and builds institutional knowledge about what works for a specific product and audience. ICE scoring prevents teams from chasing high-effort, low-impact ideas.
+**Why best:** Ad hoc "let's try this" changes produce noise, not learning. A structured experiment framework separates signal from noise, quantifies impact, and builds institutional knowledge about what works for a specific product and audience. ICE scoring prevents teams from chasing high-effort, low-impact ideas.
 
 ## Steps
 

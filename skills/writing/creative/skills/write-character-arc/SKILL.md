@@ -16,7 +16,7 @@ Design an internal character transformation that makes the plot feel emotionally
 
 **Impact:** K.M. Weiland's framework is used by thousands of published novelists; Donald Maass's agency represents clients whose books regularly debut on the New York Times list
 
-External plot and internal arc must mirror each other — the plot's challenges should be precisely calibrated to force the character to confront their core wound. When arc and plot are misaligned, readers feel the story is contrived; when they reinforce each other, the story feels inevitable.
+**Why best:** External plot and internal arc must mirror each other — the plot's challenges should be precisely calibrated to force the character to confront their core wound. When arc and plot are misaligned, readers feel the story is contrived; when they reinforce each other, the story feels inevitable.
 
 ## Steps
 

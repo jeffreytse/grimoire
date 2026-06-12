@@ -16,7 +16,7 @@ Write landing page copy structured to move a specific visitor from skepticism to
 
 **Impact:** Copyhackers reports headline rewrites alone producing 10-90% conversion lifts in A/B tests; Nielsen Norman Group research shows users decide whether to stay within 10-20 seconds of landing
 
-Landing page copy is not general marketing writing. Every element exists to earn the next element. The headline earns the subhead. The subhead earns the body. The body earns the CTA. If any link in that chain breaks, the visitor leaves.
+**Why best:** Landing page copy is not general marketing writing. Every element exists to earn the next element. The headline earns the subhead. The subhead earns the body. The body earns the CTA. If any link in that chain breaks, the visitor leaves.
 
 ## Steps
 

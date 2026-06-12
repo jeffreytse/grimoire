@@ -16,7 +16,7 @@ Structure a literature review that establishes credibility, maps the field, and 
 
 **Impact:** PRISMA-compliant systematic reviews are reproducible and accepted by high-impact journals; unsystematic reviews are rejected or flagged for methodological weakness by peer reviewers at Nature, NEJM, and equivalent journals
 
-A literature review is not a summary of sources read — it is a synthesis that reveals a conversation among scholars and identifies where that conversation has a gap your research fills. The gap is the justification for the entire study. Without a clearly stated gap, reviewers ask "why was this research done?"
+**Why best:** A literature review is not a summary of sources read — it is a synthesis that reveals a conversation among scholars and identifies where that conversation has a gap your research fills. The gap is the justification for the entire study. Without a clearly stated gap, reviewers ask "why was this research done?"
 
 ## Steps
 

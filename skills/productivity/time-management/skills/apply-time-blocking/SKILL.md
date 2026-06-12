@@ -15,7 +15,7 @@ Schedule every working hour in advance in themed blocks to reclaim time lost to 
 **Adopted by:** Bill Gates ("think weeks"), Elon Musk (5-minute blocks), Cal Newport, Benjamin Franklin
 **Impact:** Newport research: time blocking recovers 20–30% of hours lost to reactive, unplanned work
 
-Without a block plan, knowledge workers spend most of the day responding to whatever arrives — email, Slack, ad-hoc requests. Time blocking forces intentional allocation before the day begins, making it structurally harder to drift. Themed blocks (deep work, meetings, admin) also reduce switching cost by batching similar cognitive loads together.
+**Why best:** Without a block plan, knowledge workers spend most of the day responding to whatever arrives — email, Slack, ad-hoc requests. Time blocking forces intentional allocation before the day begins, making it structurally harder to drift. Themed blocks (deep work, meetings, admin) also reduce switching cost by batching similar cognitive loads together.
 
 ## Steps
 

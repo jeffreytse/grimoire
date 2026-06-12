@@ -15,7 +15,7 @@ Build a prioritized, clustered keyword map aligned to search intent and business
 **Adopted by:** Ahrefs, Semrush, HubSpot content teams; Google's own Quality Rater Guidelines codify intent taxonomy
 **Impact:** Ahrefs data shows that 92% of keywords get fewer than 10 monthly searches; targeting intent clusters rather than individual keywords is the only scalable approach
 
-Keyword strategy without intent mapping produces content that ranks but doesn't convert. Clustering prevents cannibalization and enables topical authority — the signal Google uses to assess expertise. Difficulty scoring against domain authority prevents wasted effort on unwinnable terms.
+**Why best:** Keyword strategy without intent mapping produces content that ranks but doesn't convert. Clustering prevents cannibalization and enables topical authority — the signal Google uses to assess expertise. Difficulty scoring against domain authority prevents wasted effort on unwinnable terms.
 
 ## Steps
 

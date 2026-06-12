@@ -15,7 +15,7 @@ Write precise, measurable learning objectives that align instruction, activities
 **Adopted by:** US military training doctrine (ADDIE model), Coursera/edX course standards, K-12 Common Core alignment, medical education accreditation boards (LCME, ACGME)
 **Impact:** Mager's criterion-referenced objectives reduced training time by 30% in military studies by eliminating content not tied to objectives; meta-analyses show objectives with observable verbs improve learning retention by 15–20% vs. vague goal statements
 
-Poorly written objectives ("students will understand X") cannot be assessed, cannot align content, and cannot tell a learner whether they've succeeded. Observable-verb objectives make every design decision — content, activity, assessment — testable.
+**Why best:** Poorly written objectives ("students will understand X") cannot be assessed, cannot align content, and cannot tell a learner whether they've succeeded. Observable-verb objectives make every design decision — content, activity, assessment — testable.
 
 ## Steps
 

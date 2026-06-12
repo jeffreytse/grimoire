@@ -15,7 +15,7 @@ Move individual voices between chords with maximum smoothness and minimum parall
 **Adopted by:** Classical conservatory training worldwide; Berklee jazz harmony courses; film scoring programs
 **Impact:** Schoenberg's "Harmonielehre" established voice-leading principles that remain the foundation of Western tonal harmony pedagogy and are validated by psychoacoustic research on auditory stream segregation
 
-Good voice leading makes chord changes imperceptible — harmony flows rather than jumps. Poor voice leading creates unnecessary leaps, parallel fifths that blur harmonic identity, and dissonances that sound like mistakes rather than tension. In any style from Bach to Billie Eilish, smooth voice leading is the difference between professional-sounding harmony and amateur block chords.
+**Why best:** Good voice leading makes chord changes imperceptible — harmony flows rather than jumps. Poor voice leading creates unnecessary leaps, parallel fifths that blur harmonic identity, and dissonances that sound like mistakes rather than tension. In any style from Bach to Billie Eilish, smooth voice leading is the difference between professional-sounding harmony and amateur block chords.
 
 ## Steps
 

@@ -16,7 +16,7 @@ Write a runbook that an on-call engineer who has never seen this service can fol
 
 **Impact:** PagerDuty reports that teams with documented runbooks reduce mean time to resolution (MTTR) by 40-60%; AWS Well-Architected reviews flag missing runbooks as a reliability risk requiring remediation
 
-Runbooks fail when they assume knowledge the on-call engineer does not have at 3 AM under stress. The baseline assumption must be: the reader knows nothing about this specific service, is tired, and has five minutes before an executive asks for an update.
+**Why best:** Runbooks fail when they assume knowledge the on-call engineer does not have at 3 AM under stress. The baseline assumption must be: the reader knows nothing about this specific service, is tired, and has five minutes before an executive asks for an update.
 
 ## Steps
 

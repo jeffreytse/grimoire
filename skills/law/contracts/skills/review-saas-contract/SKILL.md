@@ -15,7 +15,7 @@ Systematically review a SaaS agreement to identify legal, commercial, and operat
 **Adopted by:** ABA Technology Law Committee, Gartner IT legal risk frameworks, enterprise procurement legal teams globally
 **Impact:** IACCM research shows 9% of contract value is lost to poorly negotiated terms; SaaS contracts introduce unique risks (data ownership, SLA credits, vendor lock-in) absent in traditional software licenses that require specialized review checklists.
 
-SaaS contracts transfer operational dependency to a third party. Unlike on-premise software, the customer cannot access the underlying code if the vendor fails. Contract terms around data portability, SLA remedies, security obligations, and limitation of liability directly determine business continuity risk and legal exposure.
+**Why best:** SaaS contracts transfer operational dependency to a third party. Unlike on-premise software, the customer cannot access the underlying code if the vendor fails. Contract terms around data portability, SLA remedies, security obligations, and limitation of liability directly determine business continuity risk and legal exposure.
 
 ## Steps
 

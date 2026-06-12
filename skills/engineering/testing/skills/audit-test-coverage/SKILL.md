@@ -15,7 +15,7 @@ Evaluate test suite quality by analyzing both line/branch coverage metrics and m
 **Adopted by:** Google (internal coverage standards), PIT mutation testing (Pitest — used across Java OSS ecosystem)
 **Impact:** Mutation testing (Pitest) studies show that 80% line coverage can correspond to as low as 40% mutation score — meaning half the bugs survive despite passing coverage thresholds. Google's internal research found diminishing returns above 85% line coverage for most code.
 
-Line coverage is a floor, not a ceiling. It tells you which lines execute during tests, not whether tests would catch a bug. Mutation testing injects real bugs and checks whether tests detect them — a far stronger signal of test quality.
+**Why best:** Line coverage is a floor, not a ceiling. It tells you which lines execute during tests, not whether tests would catch a bug. Mutation testing injects real bugs and checks whether tests detect them — a far stronger signal of test quality.
 
 ## Steps
 

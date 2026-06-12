@@ -15,7 +15,7 @@ Systematically verify that all intellectual property assets are properly owned a
 **Adopted by:** USPTO, ABA IP Law Section; required by VC firms and acquirers in due diligence; mandatory in M&A and financing transactions
 **Impact:** NVCA (National Venture Capital Association) reports that IP ownership defects are one of the top three issues that kill or reprice M&A deals; IP ownership problems discovered post-acquisition create indemnification claims and escrow disputes worth millions.
 
-IP ownership is not automatic. Creating IP does not mean owning it — the legal owner depends on who created it, under what employment or contractor relationship, and whether proper assignment agreements were executed. Auditing IP ownership closes the gap between assumed and documented ownership before a transaction surfaces the problem.
+**Why best:** IP ownership is not automatic. Creating IP does not mean owning it — the legal owner depends on who created it, under what employment or contractor relationship, and whether proper assignment agreements were executed. Auditing IP ownership closes the gap between assumed and documented ownership before a transaction surfaces the problem.
 
 ## Steps
 

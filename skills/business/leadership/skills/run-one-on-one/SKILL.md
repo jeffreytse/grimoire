@@ -15,7 +15,7 @@ Make every 1:1 a high-signal conversation that builds trust, surfaces problems e
 **Adopted by:** Manager Tools methodology used by 5M+ managers; Andy Grove formalized 1:1s at Intel as a core management tool
 **Impact:** Gallup research shows that managers who hold regular 1:1s reduce voluntary turnover by up to 25% and improve engagement scores by 3× compared to ad-hoc check-ins
 
-The 1:1 is the primary tool for a manager to learn what is actually happening on the ground. It belongs to the direct report, not the manager — inverting the usual power dynamic creates psychological safety and honest reporting.
+**Why best:** The 1:1 is the primary tool for a manager to learn what is actually happening on the ground. It belongs to the direct report, not the manager — inverting the usual power dynamic creates psychological safety and honest reporting.
 
 ## Steps
 

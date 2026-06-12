@@ -15,7 +15,7 @@ Produce a structured brief that gives writers everything needed to create conten
 **Adopted by:** HubSpot, Animalz, Clearscope — all publish content brief frameworks used industry-wide
 **Impact:** HubSpot's content team reports briefs reduce revision cycles by 50% and improve first-draft ranking rate significantly
 
-Briefs eliminate the guessing that causes misaligned drafts. By pre-researching competitors, intent, and required entities, briefs let writers focus on craft rather than research. A brief that includes SERP analysis prevents the most common failure: writing content that doesn't match what Google expects to rank.
+**Why best:** Briefs eliminate the guessing that causes misaligned drafts. By pre-researching competitors, intent, and required entities, briefs let writers focus on craft rather than research. A brief that includes SERP analysis prevents the most common failure: writing content that doesn't match what Google expects to rank.
 
 ## Steps
 

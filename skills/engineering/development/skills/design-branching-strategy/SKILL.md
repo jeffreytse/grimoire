@@ -15,7 +15,7 @@ Select and configure a Git branching model that matches team size, release caden
 **Adopted by:** Google (mono-trunk), Netflix, Etsy (trunk-based); GitFlow used widely in release-gated software
 **Impact:** DORA research (Accelerate) shows trunk-based development correlates with elite software delivery performance — 46x more frequent deployments, 440x faster lead time.
 
-The right branching strategy reduces merge conflicts, clarifies code ownership, and aligns version control with deployment processes. Mismatched strategies (e.g., GitFlow for a team deploying daily) create unnecessary overhead.
+**Why best:** The right branching strategy reduces merge conflicts, clarifies code ownership, and aligns version control with deployment processes. Mismatched strategies (e.g., GitFlow for a team deploying daily) create unnecessary overhead.
 
 ## Steps
 

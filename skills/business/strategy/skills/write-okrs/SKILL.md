@@ -15,7 +15,7 @@ Create Objectives and Key Results that focus a team on outcomes that matter, not
 **Adopted by:** Google (since 1999), Intel, LinkedIn, Spotify, and thousands of companies via Doerr's framework
 **Impact:** Google attributes much of its early hyper-growth to OKR discipline; teams using OKRs show 22% higher goal attainment than KPI-only teams (Perdoo 2023 study)
 
-OKRs force the distinction between aspiration (Objective) and evidence of success (Key Result). Unlike traditional MBOs, they are public, time-boxed, and graded — creating accountability without micromanagement.
+**Why best:** OKRs force the distinction between aspiration (Objective) and evidence of success (Key Result). Unlike traditional MBOs, they are public, time-boxed, and graded — creating accountability without micromanagement.
 
 ## Steps
 

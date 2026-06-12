@@ -15,7 +15,7 @@ Design systems where components communicate via immutable events, enabling loose
 **Adopted by:** LinkedIn (Kafka origin), Uber, Airbnb, AWS (EventBridge), Martin Fowler's canonical patterns
 **Impact:** LinkedIn's move to event-driven with Kafka handled 7 trillion messages/day; event sourcing provides a complete audit log by construction, eliminating a common compliance requirement.
 
-Events as first-class citizens decouple producers from consumers in time and space. Event sourcing makes the audit log the source of truth. CQRS separates read and write models, allowing each to scale and evolve independently.
+**Why best:** Events as first-class citizens decouple producers from consumers in time and space. Event sourcing makes the audit log the source of truth. CQRS separates read and write models, allowing each to scale and evolve independently.
 
 ## Steps
 

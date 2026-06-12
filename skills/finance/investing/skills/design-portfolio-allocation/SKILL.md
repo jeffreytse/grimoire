@@ -15,7 +15,7 @@ Construct a risk-adjusted portfolio allocation grounded in Modern Portfolio Theo
 **Adopted by:** CFA Institute, institutional asset managers (Vanguard, BlackRock, endowments), pension funds globally
 **Impact:** Vanguard research shows asset allocation explains ~90% of long-run return variability; Markowitz's mean-variance optimization won the 1990 Nobel Prize in Economics.
 
-Diversification across uncorrelated asset classes reduces portfolio volatility without proportionally reducing expected returns — the only "free lunch" in finance. A structured allocation process prevents behavioral errors (chasing performance, panic-selling) by anchoring decisions to an Investment Policy Statement.
+**Why best:** Diversification across uncorrelated asset classes reduces portfolio volatility without proportionally reducing expected returns — the only "free lunch" in finance. A structured allocation process prevents behavioral errors (chasing performance, panic-selling) by anchoring decisions to an Investment Policy Statement.
 
 ## Steps
 

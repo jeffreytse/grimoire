@@ -15,7 +15,7 @@ Design data pipelines using functional principles — idempotency, immutability,
 **Adopted by:** Airbnb (Airflow originator), Fishtown Analytics (dbt originator, now dbt Labs), Lyft, GitLab
 **Impact:** Beauchemin's functional data engineering principles, adopted by thousands of data teams, eliminate an entire class of pipeline bugs (non-idempotent transforms, mutable state) that cause silent data corruption. dbt's adoption grew from 0 to 30,000+ companies in 5 years due to its application of software engineering practices to data transformation.
 
-Traditional ETL pipelines are stateful, brittle, and difficult to test. Functional data engineering applies software engineering principles: pure transformations (same input → same output), immutable historical data, idempotent operations (safe to re-run), and declarative SQL-based transforms that are version-controlled and testable.
+**Why best:** Traditional ETL pipelines are stateful, brittle, and difficult to test. Functional data engineering applies software engineering principles: pure transformations (same input → same output), immutable historical data, idempotent operations (safe to re-run), and declarative SQL-based transforms that are version-controlled and testable.
 
 ## Steps
 

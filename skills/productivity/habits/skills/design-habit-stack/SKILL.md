@@ -15,7 +15,7 @@ Attach a new habit to an existing anchor habit so that the current behavior beco
 **Adopted by:** Behavior design programs at Stanford (BJ Fogg's Tiny Habits), corporate wellness programs, athletic training systems
 **Impact:** Gollwitzer (1999): implementation intentions — specifying exact when/where/how — double habit adoption success rates vs. intention alone; Clear: habit stacking creates unambiguous cues that eliminate the decision of when to start
 
-The brain encodes behavior as sequences. Attaching a new behavior to an established one borrows the existing neural pathway as a trigger, removing the need for willpower or memory. Starting at 2 minutes eliminates the resistance barrier that causes most new habits to collapse in week two.
+**Why best:** The brain encodes behavior as sequences. Attaching a new behavior to an established one borrows the existing neural pathway as a trigger, removing the need for willpower or memory. Starting at 2 minutes eliminates the resistance barrier that causes most new habits to collapse in week two.
 
 ## Steps
 

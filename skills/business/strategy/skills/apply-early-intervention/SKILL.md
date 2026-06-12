@@ -18,7 +18,7 @@ Tackle difficult problems while they are still small — because the cost to res
 
 "Tackle the difficult while it is still easy; accomplish the great while it is still small. All difficult things in the world begin as easy ones; all great things begin as small ones."
 
-Laozi's observation is causal, not motivational: the window in which a problem is easy to solve exists before it is visible as a crisis. Once a problem becomes obviously critical, the easy solution is no longer available — only expensive, disruptive, high-risk interventions remain. The principle is not "fix problems early because it's virtuous" but "fix them early because the cheap path closes as the problem grows."
+**Why best:** Laozi's observation is causal, not motivational: the window in which a problem is easy to solve exists before it is visible as a crisis. Once a problem becomes obviously critical, the easy solution is no longer available — only expensive, disruptive, high-risk interventions remain. The principle is not "fix problems early because it's virtuous" but "fix them early because the cheap path closes as the problem grows."
 
 **IBM Systems Sciences Institute defect research (1981):** The foundational empirical study of intervention cost vs. delay in software development. Finding: the cost to fix a defect identified in the requirements phase is $1; the same defect identified in production costs $100. The nonlinear cost curve — not a linear increase — is the key finding. A 100× cost multiplier is not recoverable through better late-stage execution; it changes the economics of intervention entirely. Replicated in multiple studies; forms the foundation of the "cost of quality" framework used at IBM, Boeing, and throughout software and manufacturing.
 

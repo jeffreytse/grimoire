@@ -15,7 +15,7 @@ Systematically scan, triage, and remediate known vulnerabilities in third-party 
 **Adopted by:** GitHub (Dependabot), Snyk (used by Google, Salesforce, Adobe), OWASP top 10 mandates
 **Impact:** OWASP A06:2021 moved Vulnerable Components from #9 to #6; the Log4Shell vulnerability (CVE-2021-44228) affected 93% of enterprise cloud environments and cost organizations an average of $4.6M to remediate (IBM 2022).
 
-Third-party code is the majority of most applications. Vulnerabilities in transitive dependencies are as exploitable as direct ones — Log4Shell was a transitive dependency in most affected systems. Automated scanning must be continuous, not a one-time audit.
+**Why best:** Third-party code is the majority of most applications. Vulnerabilities in transitive dependencies are as exploitable as direct ones — Log4Shell was a transitive dependency in most affected systems. Automated scanning must be continuous, not a one-time audit.
 
 ## Steps
 

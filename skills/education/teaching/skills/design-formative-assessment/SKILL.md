@@ -15,7 +15,7 @@ Build assessment-for-learning checkpoints that give teachers real-time data and 
 **Adopted by:** UK Assessment Reform Group policy, Dylan Wiliam's Embedded Formative Assessment adopted in 30+ countries, OECD learning frameworks
 **Impact:** Black & Wiliam's landmark 1998 meta-analysis (250 studies) showed formative assessment interventions produce effect sizes of 0.4–0.7 SD — among the highest of any educational intervention; Hattie's Visible Learning synthesis ranks feedback as the #1 influence on student achievement
 
-Summative assessment tells learners how they did. Formative assessment tells them — and the teacher — what to do next, while there is still time to do it. The gap between "where learners are" and "where they need to be" is the formative assessment's only job to reveal.
+**Why best:** Summative assessment tells learners how they did. Formative assessment tells them — and the teacher — what to do next, while there is still time to do it. The gap between "where learners are" and "where they need to be" is the formative assessment's only job to reveal.
 
 ## Steps
 

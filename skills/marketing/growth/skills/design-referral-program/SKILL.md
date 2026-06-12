@@ -15,7 +15,7 @@ Design a referral program that systematically converts satisfied customers into 
 **Adopted by:** Dropbox (60% growth from referrals), Airbnb (double-sided referral drove significant expansion), PayPal (early $10/$10 referral bonus)
 **Impact:** Dropbox's two-sided referral program increased signups by 60% and produced a 3900% growth rate over 15 months
 
-Referral programs work because referred customers have pre-existing trust — they convert at higher rates and retain longer than paid acquisition. The viral coefficient (K = invites sent × conversion rate) determines whether a program achieves compounding growth or merely supplements it. Programs fail most often from misaligned incentives or friction in the sharing flow.
+**Why best:** Referral programs work because referred customers have pre-existing trust — they convert at higher rates and retain longer than paid acquisition. The viral coefficient (K = invites sent × conversion rate) determines whether a program achieves compounding growth or merely supplements it. Programs fail most often from misaligned incentives or friction in the sharing flow.
 
 ## Steps
 

@@ -15,7 +15,7 @@ Write every goal as Specific, Measurable, Achievable, Relevant, and Time-bound t
 **Adopted by:** Corporate OKR frameworks (Google, Intel), NHS clinical targets, US military unit readiness goals, university academic planning systems
 **Impact:** Locke & Latham (1990): specific and challenging goals outperform "do your best" goals by up to 250% on measurable performance outcomes; Doran (1981): vague goals produce vague results — SMART criteria force the precision required for execution
 
-Vague goals ("improve performance," "be healthier") fail because they provide no signal about whether you are making progress or what to do next. SMART criteria convert a wish into a decision: you either hit the target or you do not, and if not, the deviation is measurable and correctable.
+**Why best:** Vague goals ("improve performance," "be healthier") fail because they provide no signal about whether you are making progress or what to do next. SMART criteria convert a wish into a decision: you either hit the target or you do not, and if not, the deviation is measurable and correctable.
 
 ## Steps
 

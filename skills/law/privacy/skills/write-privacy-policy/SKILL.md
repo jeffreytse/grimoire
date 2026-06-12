@@ -15,7 +15,7 @@ Draft a legally compliant, transparent privacy policy that meets GDPR Article 13
 **Adopted by:** EDPB, FTC, ICO, CNIL; enforced by all major data protection authorities globally
 **Impact:** FTC has taken enforcement action against companies for deceptive privacy policies; EDPB fines for transparency violations include Google Ireland (€60M, 2022); a compliant privacy policy is the foundational document for regulatory accountability.
 
-A privacy policy is a legal disclosure document, not a marketing document. It must accurately reflect actual data practices — a policy that is more restrictive than actual practices (or less restrictive) creates legal exposure. GDPR and CCPA impose specific mandatory disclosures; omitting any required element is a regulatory violation.
+**Why best:** A privacy policy is a legal disclosure document, not a marketing document. It must accurately reflect actual data practices — a policy that is more restrictive than actual practices (or less restrictive) creates legal exposure. GDPR and CCPA impose specific mandatory disclosures; omitting any required element is a regulatory violation.
 
 ## Steps
 

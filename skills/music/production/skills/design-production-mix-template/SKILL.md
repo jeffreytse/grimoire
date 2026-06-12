@@ -15,7 +15,7 @@ Build a reusable DAW session template that enforces correct gain staging, bus ar
 **Adopted by:** Professional mixing engineers including Michael Brauer (multi-bus technique), Chris Lord-Alge, and Tchad Blake publish their template approaches
 **Impact:** Mike Senior's research in "Mixing Secrets for the Small Studio" shows that session organization and gain staging decisions made before mixing account for 60% of final mix quality in small-room contexts
 
-A template eliminates setup time and enforces discipline. Correct gain staging from the start prevents headroom loss that forces remedial compression later. Bus routing enables parallel processing and recall-able bus compression — the core of the "mix bus glue" approach used on virtually every commercial release.
+**Why best:** A template eliminates setup time and enforces discipline. Correct gain staging from the start prevents headroom loss that forces remedial compression later. Bus routing enables parallel processing and recall-able bus compression — the core of the "mix bus glue" approach used on virtually every commercial release.
 
 ## Steps
 

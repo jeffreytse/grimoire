@@ -16,7 +16,7 @@ Write a README that turns a visitor into a contributor or user in under five min
 
 **Impact:** Projects with complete READMEs receive 2-3x more stars and contributions on GitHub (GitHub Octoverse report); npm packages with detailed READMEs show higher install counts in equivalent categories
 
-A README is the storefront for your project. Most visitors decide whether to use or contribute within 30 seconds. Clear purpose, instant setup, and visible build status eliminate the friction that causes capable people to close the tab.
+**Why best:** A README is the storefront for your project. Most visitors decide whether to use or contribute within 30 seconds. Clear purpose, instant setup, and visible build status eliminate the friction that causes capable people to close the tab.
 
 ## Steps
 

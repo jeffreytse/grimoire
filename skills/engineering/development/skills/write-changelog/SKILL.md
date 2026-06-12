@@ -15,7 +15,7 @@ Produce a human-readable changelog that communicates what changed, for whom, and
 **Adopted by:** Most major open-source projects (Node.js, Vue, Angular, Rails); mandated by Conventional Commits adopters
 **Impact:** Changelogs reduce support tickets at release time by giving users a clear upgrade path; Angular's adoption of Conventional Commits automated changelog generation and halved release preparation time.
 
-A changelog is a contract with users. It separates "what the code did" (commit log) from "what users need to know" (changelog). The Keep a Changelog format provides a widely understood, machine-parseable structure.
+**Why best:** A changelog is a contract with users. It separates "what the code did" (commit log) from "what users need to know" (changelog). The Keep a Changelog format provides a widely understood, machine-parseable structure.
 
 ## Steps
 

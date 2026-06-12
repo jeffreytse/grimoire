@@ -15,7 +15,7 @@ Conduct a structured 60–90 minute review every week: clear all inboxes, review
 **Adopted by:** GTD-certified coaches, Google SRE teams, McKinsey consultants, executive coaches at top MBA programs
 **Impact:** Allen: the weekly review is the "master key" of GTD — without it, the system collapses within days as inboxes overflow, projects stall without next actions, and the mind re-absorbs the cognitive load the system was meant to carry
 
-The brain cannot distinguish between a commitment you've captured in a trusted system and one you're holding in memory. The weekly review is the trust-restoring ritual: it proves to your subconscious that nothing has fallen through the cracks, enabling genuine cognitive rest and attention during focused work. Skipping it for two weeks reliably causes system abandonment.
+**Why best:** The brain cannot distinguish between a commitment you've captured in a trusted system and one you're holding in memory. The weekly review is the trust-restoring ritual: it proves to your subconscious that nothing has fallen through the cracks, enabling genuine cognitive rest and attention during focused work. Skipping it for two weeks reliably causes system abandonment.
 
 ## Steps
 

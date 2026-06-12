@@ -15,7 +15,7 @@ Compress months of design-build-test cycles into five focused days to answer a h
 **Adopted by:** Google Ventures (ran 150+ sprints with portfolio companies), Slack, Airbnb, LEGO, and adopted by NHS and UN for service design
 **Impact:** GV data shows design sprints reduce average time to validated prototype from 6–12 weeks to 5 days; Knapp reports 85% of sprint teams make a major strategic decision based on Day 5 test results
 
-A sprint forces the team to make decisions with incomplete information by creating real user data on Friday. It replaces weeks of debate and assumption with a concrete test result.
+**Why best:** A sprint forces the team to make decisions with incomplete information by creating real user data on Friday. It replaces weeks of debate and assumption with a concrete test result.
 
 ## Steps
 

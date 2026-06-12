@@ -15,7 +15,7 @@ Build a type system with a coherent scale, contrast, and rhythm so readers navig
 **Adopted by:** Every major editorial, book, and web design discipline; Google Material Design type system; Apple Human Interface Guidelines typography specifications
 **Impact:** Bringhurst's principles underpin professional typography in 50+ countries; eye-tracking research (Nielsen Norman Group, 2018) confirms users scan pages in F-patterns — visual hierarchy guides the eye through deliberate size and weight contrast
 
-Good typography is invisible to the reader. Bad typography is a tax on every reading moment. A coherent hierarchy reduces cognitive load by encoding priority in visual weight before the reader processes a word.
+**Why best:** Good typography is invisible to the reader. Bad typography is a tax on every reading moment. A coherent hierarchy reduces cognitive load by encoding priority in visual weight before the reader processes a word.
 
 ## Steps
 

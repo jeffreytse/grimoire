@@ -15,7 +15,7 @@ Systematically classify a sleep problem using evidence-based criteria to guide t
 **Adopted by:** American Academy of Sleep Medicine (AASM), sleep medicine specialists, CBT-I certified practitioners
 **Impact:** AASM and NIH designate CBT-I as the first-line treatment for chronic insomnia (superior to medication); correct diagnosis is a prerequisite — the wrong intervention (e.g., sleep restriction for someone with sleep apnea) is ineffective and potentially harmful.
 
-Misdiagnosing the type of sleep disorder leads to ineffective or counterproductive interventions. Insomnia, sleep apnea, restless leg syndrome, and circadian rhythm disorders have different causes and require different treatments; a structured diagnostic approach prevents wasted months on the wrong solution.
+**Why best:** Misdiagnosing the type of sleep disorder leads to ineffective or counterproductive interventions. Insomnia, sleep apnea, restless leg syndrome, and circadian rhythm disorders have different causes and require different treatments; a structured diagnostic approach prevents wasted months on the wrong solution.
 
 ## Steps
 

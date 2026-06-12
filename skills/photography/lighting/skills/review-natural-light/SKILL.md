@@ -15,7 +15,7 @@ Assess natural light conditions — direction, quality, and color — and determ
 **Adopted by:** National Geographic photographers, Bryan Peterson's photography education programs reaching 500,000+ students
 **Impact:** Peterson's exposure research documents that photographers who shoot at golden hour consistently rate their images 40% higher for emotional impact compared to images shot at midday under identical technical conditions
 
-Natural light is free, directional, and varies with time and weather in predictable ways. Photographers who understand the light cycle can predict ideal shooting windows, position subjects advantageously, and choose modification tools (reflector, diffuser, fill flash) appropriate to the conditions. Those who don't spend hours in post chasing tonality that should have been captured in camera.
+**Why best:** Natural light is free, directional, and varies with time and weather in predictable ways. Photographers who understand the light cycle can predict ideal shooting windows, position subjects advantageously, and choose modification tools (reflector, diffuser, fill flash) appropriate to the conditions. Those who don't spend hours in post chasing tonality that should have been captured in camera.
 
 ## Steps
 

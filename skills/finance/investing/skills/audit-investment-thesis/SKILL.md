@@ -15,7 +15,7 @@ Stress-test an investment thesis using systematic mental models and adversarial 
 **Adopted by:** Berkshire Hathaway, Oaktree Capital, top-tier value investors; taught at Columbia Business School Value Investing Program
 **Impact:** Howard Marks' memos document that second-level thinking and explicit thesis auditing reduce permanent capital loss; Munger's "checklist" method is credited with Berkshire's long-run outperformance.
 
-A thesis audit forces inversion — asking "how could this be wrong?" before "why will this work?" Explicit pre-mortems catch errors of omission (what you didn't consider) that optimistic analysis routinely misses. Requiring a margin of safety quantifies the price of being wrong.
+**Why best:** A thesis audit forces inversion — asking "how could this be wrong?" before "why will this work?" Explicit pre-mortems catch errors of omission (what you didn't consider) that optimistic analysis routinely misses. Requiring a margin of safety quantifies the price of being wrong.
 
 ## Steps
 

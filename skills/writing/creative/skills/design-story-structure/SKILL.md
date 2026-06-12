@@ -16,7 +16,7 @@ Build a load-bearing narrative skeleton that keeps audiences emotionally engaged
 
 **Impact:** Blake Snyder's Save the Cat beat sheet is used across thousands of produced films; McKee's Story seminar has trained screenwriters whose films have earned over $2 billion at the box office
 
-Audiences are wired to expect setup, escalation, and resolution. Structure is not a constraint on creativity — it is the invisible scaffolding that lets creativity land. Without it, even original ideas feel unsatisfying because they violate emotional expectations built by centuries of narrative tradition.
+**Why best:** Audiences are wired to expect setup, escalation, and resolution. Structure is not a constraint on creativity — it is the invisible scaffolding that lets creativity land. Without it, even original ideas feel unsatisfying because they violate emotional expectations built by centuries of narrative tradition.
 
 ## Steps
 

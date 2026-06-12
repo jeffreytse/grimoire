@@ -15,7 +15,7 @@ Estimate Total Daily Energy Expenditure to establish an accurate caloric baselin
 **Adopted by:** ACSM, Academy of Nutrition and Dietetics, registered dietitians, sports nutrition programs
 **Impact:** Frankenfield et al. (2005) systematic review in the Journal of the American Dietetic Association validated Mifflin-St Jeor as the most accurate predictive equation for BMR in both normal-weight and obese adults, with mean error of ±10% vs. measured RMR.
 
-TDEE is the required foundation for any caloric intervention. Without a reasonable baseline, caloric prescriptions are arbitrary. While no equation perfectly predicts individual metabolic rate (genetic variation spans ~15%), validated equations provide a starting estimate that real-world tracking can quickly calibrate.
+**Why best:** TDEE is the required foundation for any caloric intervention. Without a reasonable baseline, caloric prescriptions are arbitrary. While no equation perfectly predicts individual metabolic rate (genetic variation spans ~15%), validated equations provide a starting estimate that real-world tracking can quickly calibrate.
 
 ## Steps
 

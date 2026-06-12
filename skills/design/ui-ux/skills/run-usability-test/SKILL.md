@@ -15,7 +15,7 @@ Conduct a structured usability test that reveals real user problems in a prototy
 **Adopted by:** Nielsen Norman Group, Google UX, IDEO, Apple HIG team — usability testing is the core research method in every major UX practice
 **Impact:** Nielsen's landmark research shows 5 users discover ~85% of usability problems; each additional 5-user round yields diminishing returns, making small iterative rounds more cost-effective than large studies
 
-Usability testing replaces opinion with observation. Watching a real user fail to complete a task is more persuasive to stakeholders than any heuristic review or UX opinion.
+**Why best:** Usability testing replaces opinion with observation. Watching a real user fail to complete a task is more persuasive to stakeholders than any heuristic review or UX opinion.
 
 ## Steps
 

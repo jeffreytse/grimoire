@@ -15,7 +15,7 @@ Build a network of atomic, linked notes — one idea per note, connected by expl
 **Adopted by:** Academic researchers, non-fiction writers, software architects, knowledge workers in law, philosophy, and science using tools like Obsidian, Roam, and Logseq
 **Impact:** Luhmann: used his Zettelkasten to produce 70 books and 400 academic articles over a 40-year career; Ahrens: linear note-taking produces archives you never re-read; Zettelkasten produces a thinking partner that generates connections you didn't plan
 
-The core insight is that the value of notes is not in storage but in retrieval and collision. When each note is atomic (one idea, standalone) and explicitly linked to related notes, the act of placing a new note forces you to articulate how it relates to existing knowledge — and that articulation is where insight is generated.
+**Why best:** The core insight is that the value of notes is not in storage but in retrieval and collision. When each note is atomic (one idea, standalone) and explicitly linked to related notes, the act of placing a new note forces you to articulate how it relates to existing knowledge — and that articulation is where insight is generated.
 
 ## Steps
 

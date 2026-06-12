@@ -15,7 +15,7 @@ Select and implement the deployment strategy that best matches the system's risk
 **Adopted by:** Netflix (canary), AWS (blue-green with CodeDeploy), Google (gradual rollouts in GKE), Facebook (progressive push)
 **Impact:** Netflix's canary deployments catch ~95% of production issues before they affect all users; blue-green deployments reduce mean time to recover (MTTR) from hours to minutes via instant rollback.
 
-The choice of deployment strategy directly determines blast radius when something goes wrong. A rolling deploy with no traffic control can expose 100% of users to a bad release in minutes; canary deploys can limit exposure to 1% while metrics are evaluated.
+**Why best:** The choice of deployment strategy directly determines blast radius when something goes wrong. A rolling deploy with no traffic control can expose 100% of users to a bad release in minutes; canary deploys can limit exposure to 1% while metrics are evaluated.
 
 ## Steps
 

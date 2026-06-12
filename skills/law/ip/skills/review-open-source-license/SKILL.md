@@ -15,7 +15,7 @@ Evaluate open source software licenses to determine usage rights, obligations, a
 **Adopted by:** Linux Foundation, CNCF (Cloud Native Computing Foundation), OSI, legal teams at Google, Microsoft, Red Hat
 **Impact:** The Linux Foundation's FOSS Compliance study found that OSS license non-compliance is the most common IP risk in software acquisitions; GPL violations have resulted in significant litigation (BusyBox/VMware, MySQL/Progress Software), injunctions, and forced source disclosure.
 
-Open source licenses are not uniformly permissive. Copyleft licenses impose distribution obligations that can require disclosure of proprietary source code when triggered. Understanding the trigger conditions and the compatibility matrix between multiple licenses is essential before incorporating any open source component into a commercial product.
+**Why best:** Open source licenses are not uniformly permissive. Copyleft licenses impose distribution obligations that can require disclosure of proprietary source code when triggered. Understanding the trigger conditions and the compatibility matrix between multiple licenses is essential before incorporating any open source component into a commercial product.
 
 ## Steps
 

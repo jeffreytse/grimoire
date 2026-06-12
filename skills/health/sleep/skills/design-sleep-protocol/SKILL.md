@@ -15,7 +15,7 @@ Build a systematic sleep protocol that optimizes sleep quality, duration, and ci
 **Adopted by:** American Academy of Sleep Medicine (AASM), National Sleep Foundation, sleep medicine practices globally
 **Impact:** Walker cites NIH data showing chronic sleep deprivation (< 7 hours) doubles cancer risk, increases cardiovascular disease risk by 45%, and reduces immune function by 70% after one week; AASM recommends 7–9 hours for adults as a non-negotiable health requirement.
 
-Sleep is the highest-leverage recovery and cognitive performance intervention available. No supplement, nootropic, or recovery tool compensates for insufficient sleep quality or duration. A structured sleep protocol eliminates the behavioral and environmental variables that are the primary causes of poor sleep in healthy adults.
+**Why best:** Sleep is the highest-leverage recovery and cognitive performance intervention available. No supplement, nootropic, or recovery tool compensates for insufficient sleep quality or duration. A structured sleep protocol eliminates the behavioral and environmental variables that are the primary causes of poor sleep in healthy adults.
 
 ## Steps
 

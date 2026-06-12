@@ -15,7 +15,7 @@ Build a focused launch plan that moves a product from concept to paying customer
 **Adopted by:** Salesforce, HubSpot, Andreessen Horowitz portfolio companies
 **Impact:** Moore's "whole product" model shows that B2B startups crossing the chasm succeed 3× more often when they dominate a single beachhead before expanding
 
-Most failed launches spread effort across too many segments simultaneously. Concentrating on one beachhead segment lets you build a complete solution, generate referenceable customers, and create word-of-mouth before expanding.
+**Why best:** Most failed launches spread effort across too many segments simultaneously. Concentrating on one beachhead segment lets you build a complete solution, generate referenceable customers, and create word-of-mouth before expanding.
 
 ## Steps
 

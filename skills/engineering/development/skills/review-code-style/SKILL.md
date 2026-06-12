@@ -15,7 +15,7 @@ Systematically review code against a defined style guide using automated linters
 **Adopted by:** Google, Airbnb, Meta, Microsoft (all publish and enforce internal style guides)
 **Impact:** Consistent style reduces code review time by up to 20% and onboarding time by 30% (Google Engineering Productivity research)
 
-Style consistency lowers cognitive load when reading code written by others. Automated linting catches mechanical issues before human review, freeing reviewers to focus on logic and design. Google's style guides are widely adopted as authoritative baselines across the industry.
+**Why best:** Style consistency lowers cognitive load when reading code written by others. Automated linting catches mechanical issues before human review, freeing reviewers to focus on logic and design. Google's style guides are widely adopted as authoritative baselines across the industry.
 
 ## Steps
 

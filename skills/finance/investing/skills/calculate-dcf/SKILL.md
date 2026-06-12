@@ -15,7 +15,7 @@ Build a discounted cash flow valuation to estimate the intrinsic value of an ass
 **Adopted by:** CFA Institute, investment banks (Goldman Sachs, Morgan Stanley), private equity firms globally
 **Impact:** DCF remains the dominant valuation methodology for intrinsic value; Damodaran's NYU research shows it outperforms multiples-based methods for long-horizon investments.
 
-DCF forces explicit assumptions about growth, margins, and risk, making them auditable. Unlike comparable-company analysis, DCF anchors value to fundamental cash generation rather than market sentiment. Proper WACC construction links capital structure to the discount rate, keeping the model internally consistent.
+**Why best:** DCF forces explicit assumptions about growth, margins, and risk, making them auditable. Unlike comparable-company analysis, DCF anchors value to fundamental cash generation rather than market sentiment. Proper WACC construction links capital structure to the discount rate, keeping the model internally consistent.
 
 ## Steps
 
