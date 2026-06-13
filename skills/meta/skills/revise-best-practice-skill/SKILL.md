@@ -39,7 +39,15 @@ Get the finding set:
 | Scope too shallow (<50 lines) | Expand Steps with concrete examples |
 | Domain safety footer missing | Add footer only |
 
-### 3. Fix each finding in isolation
+### 3. Order revisions: structural before content
+
+**Structural before content:** Always apply structural revisions before content revisions.
+1. First: fix step ordering, add/remove steps, fix routing logic, add missing required fields
+2. Then: improve wording, strengthen examples, tighten descriptions
+
+Structural changes invalidate content — if you improve wording in a step that will be removed, the content work is wasted. Structure is the skeleton; content is the flesh.
+
+### 4. Fix each finding in isolation
 
 Fix the flagged item. Don't touch adjacent text that wasn't flagged.
 
@@ -55,7 +63,7 @@ Fix the flagged item. Don't touch adjacent text that wasn't flagged.
 
 If fixing a citation requires changing the surrounding sentence for grammatical coherence, that is acceptable. Touching unrelated paragraphs is not.
 
-### 4. Scope fix: splitting
+### 5. Scope fix: splitting
 
 If the finding is "skill covers two separable concepts":
 
@@ -67,7 +75,7 @@ If the finding is "skill covers two separable concepts":
 
 This is a scope reduction, not a deprecation. Do not add a deprecation notice to the concept A skill.
 
-### 5. Verify: re-run review-best-practice-skill
+### 6. Verify: re-run review-best-practice-skill
 
 After all fixes are applied, run `review-best-practice-skill` on the updated file:
 
@@ -75,11 +83,16 @@ After all fixes are applied, run `review-best-practice-skill` on the updated fil
 - New ❌ introduced by the fix → resolve before opening PR
 - Previously PASS criteria now ❌ → the fix caused a regression; revert that change
 
-### 6. Open a PR
+### 7. Open a PR
 
 PR title: `fix(<domain>/<skill-name>): <one-line description of what changed>`
 
 PR description: one line per finding, stating what it was and how it was resolved.
+
+**PR template:** When submitting a skill revision as a PR, title format: `fix(skills): [what was fixed] in [skill-name]`. Body must include:
+- What finding triggered this revision (quote the NEEDS-REVISION finding)
+- What was changed (structural or content)
+- Any STANDARD.md criteria newly passing after the revision
 
 ## Rules
 

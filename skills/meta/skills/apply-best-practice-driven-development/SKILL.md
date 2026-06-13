@@ -39,6 +39,8 @@ session pins
 - Apply `disabled` entries — remove those skills from the spec
 - Drop any practice overridden by a higher-precedence layer
 
+**Empty spec guard:** If the resolved spec contains zero practices (all domains empty or settings file missing), stop immediately. Do not proceed to Step 2. Output: "No practices are configured. Run `/pin-best-practice-preference` or `/apply-best-practice-profile` to set preferences first, then retry BPDD."
+
 ---
 
 ### 2. Show the resolved spec
@@ -56,7 +58,7 @@ Effective spec — 5 practices
   ⊘ apply-law-of-demeter       [disabled by .grimoire/settings.toml]
 ```
 
-Wait for confirmation. If settings are empty, stop and direct user to `pin-best-practice-preference` or `apply-best-practice-profile` first.
+If settings are empty, stop and direct user to `pin-best-practice-preference` or `apply-best-practice-profile` first. Otherwise, proceed automatically — user invoked BPDD explicitly, no confirmation needed.
 
 ---
 
@@ -101,7 +103,7 @@ If all pass and threshold met: codebase already aligns with spec. Report and sto
 
 Priority order (explicit, shown to user):
 
-1. Practices that are causing a threshold violation (blocking — fix these first)
+1. **Blocking practices** (fix these first) — a practice is blocking when: (a) its current coverage % is the lowest among all FAILing practices, AND (b) if it were to pass, overall coverage would meet or exceed the threshold. Compute: `(passing_criteria + this_practice_total_criteria) / total_criteria × 100 ≥ threshold`. If multiple practices meet this condition, fix the one with lowest coverage % first.
 2. FAIL before PARTIAL
 3. Within same status: settings array order (index 0 = highest priority)
 4. User override: "fix X next" accepted at any point in the cycle
@@ -131,7 +133,7 @@ Clean up the implementation while keeping the check green. Re-run to confirm no 
 
 ### 8. Commit
 
-Record progress. Return to step 5 for the next failing practice. Continue until all practices pass and threshold is met.
+If no changes were made during this BPDD cycle (all criteria passed), skip the commit step entirely. If changes were made, commit message format: `fix(bpdd): align [artifact/scope] to [practice-name] preferences`. Return to step 5 for the next failing practice. Continue until all practices pass and threshold is met.
 
 ---
 

@@ -69,6 +69,12 @@ For each collected skill name, check it exists in installed grimoire skills.
 - **Found**: mark ✓, include
 - **Not found**: warn — ask user to confirm inclusion anyway (may be a skill they plan to install later). Use a platform-aware confirm per skill: "Include [skill-name] even though it's not installed?" (Claude Code/OpenCode: `AskUserQuestion`; Gemini CLI: `ask_user type: confirm`; other: `[y/n]`).
 
+**Installed vs not-found distinction:** When listing skills in the profile, check each against the installed skills index:
+- **Installed** — include as-is
+- **Not found** — flag with: `[skill-name] ⚠️ not installed — users will need to install [domain] domain`
+
+Do not silently include skills that aren't installed — the profile will fail to apply for users who haven't installed those domains.
+
 Example output (other platforms):
 ```
 Validating skills...
@@ -114,6 +120,14 @@ Confirm: `✓ Written to .grimoire/profiles/my-team.toml`
 ---
 
 ### 6. Next steps
+
+**Auto-invoke review:** After writing the profile, offer: 'Profile written. Run review-best-practice-profile now? [y/n]'
+
+- **User says n / declines**: save as-is with `status: draft` in frontmatter. Draft profiles are not applied by suggest-best-practice or apply-best-practice-profile until status is changed to `active`.
+- **User says y, review passes**: set `status: active`, profile is ready to use.
+- **User says y, review produces FAIL findings**: show the findings, then offer: 'Fix now or save as draft? [fix / draft]'
+  - fix: stay in this skill and apply revisions to the profile file, then re-run review
+  - draft: save with `status: draft`, user can fix later via revise-best-practice-skill
 
 ```
 Activate now?     profiles = ["my-team"] in .grimoire/settings.toml

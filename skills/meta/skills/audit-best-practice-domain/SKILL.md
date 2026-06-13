@@ -52,6 +52,8 @@ If zero files found: report "Domain has no skills yet" and stop.
 
 ### 3. Apply `review-best-practice-skill` to each file
 
+**Error handling:** If a domain referenced in the audit target does not exist in the installed skills index, stop and output: 'Domain not found: [domain-name]. Run /discover-best-practices to see installed domains.' If a skill file is missing or malformed (can't be parsed), mark it as UNREADABLE in the report and continue with remaining skills — do not abort the entire audit.
+
 For each SKILL.md, run the full `review-best-practice-skill` evaluation:
 - Check frontmatter (name, description, source, tags)
 - Check required sections (`## Why This Is Best Practice`, `## Steps`)
@@ -102,6 +104,13 @@ After the report:
 - If all PASS: "Domain is release-ready."
 - If any REJECT: "Domain blocked — N skill(s) must be fixed or removed before release."
 - If NEEDS-REVISION only: "Domain releasable with known debt — N skill(s) need improvement."
+
+**Recommendation criteria:** Only include a recommendation if:
+- A skill has a REJECT or NEEDS-REVISION finding (not just WARNING)
+- OR a skill is missing required frontmatter fields (name, description, source, tags)
+- OR a skill's description doesn't start with 'Use when'
+
+Do not recommend action for WARNING-only findings — warnings are informational. Recommendations must be actionable: 'Add `source:` field to [skill-name]' not 'Improve skill quality.'
 
 ## Rules
 

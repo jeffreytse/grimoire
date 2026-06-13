@@ -105,9 +105,13 @@ One file per sub-domain at `<subdomain>/.claude-plugin/plugin.json`:
 
 ### 6. Write seed skills
 
-Minimum 2 seed skills before opening a PR. Use `write-best-practice-skill` for each.
+Use `write-best-practice-skill` for each seed skill.
 
-One skill per sub-domain for hierarchical; two directly for flat. A domain with 1 skill signals an abandoned stub — 2 skills demonstrates real coverage depth and gives contributors a pattern to follow.
+One skill per sub-domain for hierarchical; seed skills distributed across sub-domains for flat.
+
+**Minimum seed skills:** A domain must have at least 3 seed skills before being registered. A domain with fewer than 3 skills does not have enough definition to be useful — add more seeds or merge into an existing domain.
+
+A single-skill domain is almost always a misclassified subdomain — verify the new domain genuinely needs its own top-level namespace before proceeding.
 
 ### 7. Add marketplace.json entries
 
@@ -134,9 +138,11 @@ Add a row to the domains table in `README.md`:
 | [Domain](./skills/<domain>/) | Subdomain 1, Subdomain 2, ... | `/plugin install grimoire-<domain>@grimoire` |
 ```
 
-### 9. Run audit-best-practice-domain
+### 9. Audit the domain design
 
-Invoke `audit-best-practice-domain` on the new domain path. All seed skills must PASS before opening a PR. A NEEDS-REVISION or REJECT on any seed skill blocks the domain PR.
+Invoke `audit-best-practice-domain` on the new domain path. All seed skills must PASS before proceeding to registration or opening a PR. A NEEDS-REVISION or REJECT on any seed skill blocks the domain PR.
+
+**Audit before registration:** Run the quality audit (check against STANDARD.md criteria) before registering the domain in SKILLS.md. Registration is the commitment — audit first to avoid registering a domain that immediately needs correction.
 
 ### 10. Open a PR
 

@@ -24,6 +24,8 @@ Sources: npm `eslint-config-*` ecosystem; VS Code extension pack format; Grimoir
 
 If `review-best-practice-profile` has not been run on this profile, run it now and resolve any `FAIL` results before continuing. Warnings are acceptable.
 
+**Review gate:** Before sharing, `review-best-practice-profile` MUST have been run against this profile. If it hasn't been run this session, run it now. Do not skip this step — a profile shared without review may contain conflicts or missing fields that will confuse recipients. If the review produces FAIL findings, show them and require explicit user confirmation ('Share anyway? [y/n]') before proceeding.
+
 ---
 
 ### 2. Choose sharing format
@@ -81,6 +83,11 @@ profiles = ["my-team"]
 
 ### 4. Publish
 
+**Auth check:** Before running any `gh` command:
+1. Check `gh auth status` — if not authenticated, stop: 'Run `gh auth login` first, then re-run this skill.'
+2. Check `gh` is installed — if not: 'Install GitHub CLI (`brew install gh` or https://cli.github.com), then re-run. Alternatively, share the profile file manually: attach `.grimoire/profiles/[profile-name].toml` to your PR or send directly.'
+3. If the `gh` command fails after auth check passes: show the error and output: 'Manual fallback: commit the profile file and open a PR manually.'
+
 **Gist:**
 ```bash
 gh gist create .grimoire/profiles/my-team.toml --public --desc "grimoire profile: my-team"
@@ -108,6 +115,17 @@ Others install with:
 Then activate:
   profiles = ["my-team"]   # in .grimoire/settings.toml
 ```
+
+**Install command:** Include the exact version or commit in the install command so recipients get the exact profile reviewed:
+```
+/plugin install [profile-name]@[version-or-commit]
+```
+If no version is tagged, include the Git commit SHA. A profile install without a version pin can drift as the source changes.
+
+**Profile versioning strategy:**
+1. **Git tag** (preferred): tag the commit that contains the profile with a semver tag: `git tag profiles/[profile-name]/v1.0.0`. Install command: `/plugin install [profile-name]@v1.0.0`
+2. **Commit SHA** (fallback): if no tag exists, use the full commit SHA. Install command: `/plugin install [profile-name]@[sha]`
+3. **No version** (not recommended): omit version only if the profile is in active development and recipients should always get latest. Note this in the install instructions.
 
 ## Common Mistakes
 

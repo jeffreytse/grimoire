@@ -60,6 +60,10 @@ Then ask the user using the best available method for your platform:
 **If no skill scores ≥ 0.5:**
 Proceed with default Steps 1–6 below. No announcement needed.
 
+**If a domain skill ran and produced a problem statement:** skip Step 1 — trust the domain skill's output. Use its problem statement and map directly in Step 4.
+
+**Domain skill lookup:** If a domain skill ran before this skill and produced a structured problem statement, use its output directly — skip Step 1 (re-elicitation). The domain skill's problem description is authoritative. This avoids asking the user to re-describe a problem already captured by a domain-specific skill.
+
 ### Step 1: Assess problem definition
 
 From what the user said, check if all three criteria are satisfiable without asking:
@@ -135,6 +139,8 @@ Common route types to adapt to domain context:
 - Prevent recurrence (proactive; investment up front, eliminates future occurrences)
 - Restructure to eliminate the problem class (architectural; highest effort, highest leverage)
 - Delegate / outsource (shift ownership; works when it's not a core competency)
+
+**Step 5→6 handoff:** After outputting the possible routes above, this skill's analytical work is complete. Do not proceed to score or suggest practices — that is `suggest-best-practice`'s job. Return the problem statement and routes as output. The calling skill (suggest-best-practice or the user) uses them as input to their next step.
 
 ### Step 6: Handoff
 

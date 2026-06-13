@@ -23,7 +23,16 @@ Sources: Hersey & Blanchard (1969) "Management of Organizational Behavior"; Woma
 
 From user input: "apply X but we're a 2-person team", "we're in a regulated industry", "we don't have budget for Y", "our team is new to this."
 
-If the practice is named, match against installed skills. If constraints aren't stated, ask ONE question:
+If the practice is named, match against installed skills. **Missing-practice fallback:** If the named practice does not exist in the installed skills index, do not invent one. Output:
+```
+Practice not found: [practice-name]
+Closest match: [similar-skill-name] ([domain]) — is this what you meant?
+```
+If no close match exists: 'No installed practice matches [practice-name]. Run /discover-best-practices to find available practices for [domain].'
+
+Do not proceed with adaptation until the source practice is confirmed.
+
+If constraints aren't stated, ask ONE question:
 ```
 What's the main constraint that makes the standard approach difficult?
 ```
@@ -47,7 +56,20 @@ Read the matched skill's Steps section. For each step, classify:
 | **Adjustable** | Can be scaled, simplified, substituted, or done differently without losing core value. The form can change; the substance stays. |
 | **Optional** | Adds value in the ideal case but can be skipped under constraints without undermining the core outcome. |
 
-A step is Core if skipping it would mean the practice no longer achieves its primary purpose. When in doubt, classify as Core — err toward preserving the practice.
+**Classification rubric:**
+- **Core** — step directly implements the practice's defining principle; removing it means the practice is no longer being applied (e.g., in TDD: 'write the test before the code' is Core — without it, it's not TDD)
+- **Adjustable** — step implements the principle but the mechanism can vary by context (e.g., naming conventions, tool choices, team size thresholds)
+- **Optional** — step adds quality or polish; the practice works correctly without it (e.g., adding inline comments, creating summary reports)
+
+Test: ask 'If I remove this step, is the practice still being applied?' Yes → Optional or Adjustable. No → Core.
+
+**Core-step confirmation:** Before adapting, explicitly state which steps are core (must be preserved) and which are context-specific (can be adapted). Show this to the user:
+```
+Core steps (preserved): [list]
+Adaptable steps (context-specific): [list]
+Adapting: [what will change and why]
+```
+This makes the adaptation principled rather than arbitrary — the user can see what's being treated as non-negotiable.
 
 ### Step 3: Map constraints to adjustments
 

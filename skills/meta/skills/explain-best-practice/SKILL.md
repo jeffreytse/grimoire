@@ -29,6 +29,14 @@ If the practice name is ambiguous, match against installed skills using the stan
 
 Present each section with a header. Keep each section concrete — one specific example beats three abstract principles.
 
+**Section prioritization:** When explaining a skill, prioritize sections in this order:
+1. **Why This Is Best Practice** — establishes credibility and motivation
+2. **Steps** — the actionable how-to
+3. **Common Mistakes** — what goes wrong without it
+4. **When NOT to Use** — scope limitations
+
+If the user asks for a quick explanation, cover #1 and #2 only. If they ask for full detail, cover all four. Default to quick unless the user signals they want depth.
+
 **The problem**
 What goes wrong without this practice? Give a concrete failure case — not "things go wrong" but a specific type of incident, mistake, or waste that this practice was designed to prevent.
 
@@ -69,6 +77,8 @@ Want to apply [practice] now? (y/n)
 ```
 
 If yes, load the skill and follow its steps. If no, end gracefully — explanation was the goal.
+
+**Apply handoff:** If the user says 'apply this', 'use this', 'let's do this', or similar after the explanation, invoke `suggest-best-practice` with the explained skill pre-selected as the match. Pass the skill name as context so suggest-best-practice skips scoring and goes directly to application. Do not re-explain — the explanation is complete; just apply.
 
 ## Rules
 

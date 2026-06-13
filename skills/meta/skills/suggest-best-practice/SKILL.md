@@ -107,7 +107,7 @@ Situation matches: [skill-name] ([domain/subdomain])
 Applying now...
 ```
 
-**Multiple matches** — 2+ skills score ≥ 0.4 (regardless of whether the top score reaches 0.7):
+**Multiple matches** — 2+ skills score ≥ 0.5 (regardless of whether the top score reaches 0.7):
 
 Present a ranked list with recommendation and wait for user selection:
 ```
@@ -139,6 +139,8 @@ After user selects, load and apply the chosen skill.
 **Browse mode** — user explicitly says "show me options", "what practices exist for X",
 or "what should I know about Y" without wanting to act yet:
 
+If the user's intent is pure discovery with no problem to solve (e.g., "what practices exist for X", "show me what grimoire can do"), defer to `discover-best-practices` instead — that skill is purpose-built for domain browsing without a problem context.
+
 Present the ranked list only, do not apply any skill:
 ```
 Best practices for: [topic]
@@ -154,6 +156,8 @@ After listing, collect the user's choice using the best available method for you
 - **All other platforms**: `"Say the number or skill name to apply one."`
 
 **No match** — all skills score < 0.3:
+
+Threshold for "no match": top score < 0.3. Template clarifying question: "Is this about your [inferred-domain-guess], or something else — [alternative-domain]?"
 
 State clearly that no skills currently cover this area, then ask ONE targeted
 clarifying question to narrow the domain:
@@ -173,6 +177,8 @@ domains with independent high-confidence matches?
 
 - **1 additional domain**: ask once: "This situation also touches [domain] — [skill-name] applies to that aspect. Want me to apply it?"
 - **2+ additional domains**: delegate to `plan-best-practice-solution` — "This situation spans multiple domains. Want me to build a full solution plan?"
+
+Cross-domain notice format: state it as a follow-up after the primary skill completes — "This situation also touches [domain]. Want me to apply [skill-name] for that aspect?"
 
 Do not chain more than 2 skills without user confirmation. If 3+ skills are needed, use `plan-best-practice-solution`.
 

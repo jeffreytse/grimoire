@@ -64,6 +64,13 @@ For each `skills[].name`, check it exists in installed grimoire skills:
 
 Read the `related:` frontmatter of each found skill. If two skills in the profile list each other as conflicting (or share a known-conflicting tag pairing), flag as warning. This is a soft check — conflicts are context-dependent.
 
+**Conflict detection mechanism:** Two skills conflict if:
+1. They prescribe contradictory behavior for the same trigger (e.g., two formatting skills with opposing rules)
+2. One skill's tags or description explicitly contradicts another's (e.g., 'prefer immutability' vs 'prefer mutation for performance')
+3. The user has a pinned preference for one practice that this profile would override
+
+For each detected conflict, show: '[skill-A] ↔ [skill-B]: [reason they conflict] — cannot apply both simultaneously.'
+
 ---
 
 ### 6. Report result
@@ -84,7 +91,9 @@ Result: PASS with 1 warning
 Next: /share-best-practice-profile my-team
 ```
 
-If errors exist (missing required fields, zero valid skills), result is `FAIL` — do not proceed to share.
+If errors exist (missing required fields, zero valid skills), result is `FAIL`.
+
+**FAIL is advisory, not a blocker:** A FAIL result means the profile has issues worth fixing before sharing, but the user can still apply it. After showing the FAIL findings, offer: 'Fix issues before applying? [y] or apply anyway? [n]'. Never silently block application.
 
 ## Common Mistakes
 

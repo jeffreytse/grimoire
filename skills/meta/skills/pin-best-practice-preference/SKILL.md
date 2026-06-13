@@ -37,18 +37,9 @@ If domain is ambiguous, ask ONE question:
 Which domain is this for? (e.g. engineering/testing, finance/personal-finance, health/fitness)
 ```
 
-Confirm before writing using a platform-aware prompt:
-- **Claude Code / OpenCode**: `AskUserQuestion` — options: "Pin [practice] for [domain] (Recommended)", "Edit details first", "Cancel"
-- **Gemini CLI**: `ask_user` — `type: "select"`, same three options
-- **Other**:
-  ```
-  Pin "[practice]" as your preference for [domain]?
-  [y] yes  [n] cancel  [e] edit details first
-  ```
+Proceed to Step 3 directly — no confirmation needed. User invoked this skill explicitly; the intent is clear.
 
-If user selects "Edit details first" (or `[e]`), ask: "Describe the preference in more detail (e.g. tool name, version, key parameters):"
-
-After confirmation, proceed to Step 3.
+Only pause if the user said something like "edit" or "add more detail" — then ask: "Describe the preference in more detail (e.g. tool name, version, key parameters):"
 
 ### Step 2b: Session promotion
 
@@ -92,6 +83,8 @@ Save to:
 ```
 
 ### Step 4: Write
+
+**Pre-write conflict check:** Before writing, check if a pin for this domain+subdomain already exists in the target file. If one exists: show both values and ask: 'Replace [existing] with [new] for [domain]? [y/n]'. Do not silently overwrite.
 
 Write to selected location(s) using TOML format. Domain/subdomain path uses dots (`[engineering.architecture]`). Array order = priority (index 0 = highest).
 
@@ -160,6 +153,8 @@ If the domain is already pinned in the file, ask before overwriting using a plat
   ```
 
 To add rankings or resolve conflicts between existing preferences, use `resolve-best-practice-conflict`.
+
+**Session pin store:** Session pins are held in the assistant's working memory for this conversation only — not written to any file. They override all file-based settings for the duration of the session. On session end, they are lost. To persist a session pin, invoke this skill again and choose a file-based storage option.
 
 For session-level (option 0): store in session memory only — do not write any file.
 

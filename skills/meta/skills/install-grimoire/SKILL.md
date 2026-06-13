@@ -36,21 +36,28 @@ Sources: Homebrew documentation; npm CLI documentation; grimoire `scripts/grimoi
 
 For `install` and `uninstall`, determine scope:
 
-| Scope | Flag |
-|-------|------|
-| All skills | *(no domain flag)* |
-| One domain (e.g. "engineering") | `--domain engineering` |
-| One subdomain | `--domain engineering --subdomain development` |
-| One skill | `--skill engineering/development/apply-kiss-principle` |
+```
+# Install all skills
+./scripts/grimoire                                                        # installs everything
+
+# Install one domain
+./scripts/grimoire --domain engineering                                   # only engineering skills
+
+# Install one subdomain
+./scripts/grimoire --domain engineering --subdomain development           # one subdomain
+
+# Install one skill
+./scripts/grimoire --skill engineering/development/apply-kiss-principle   # one skill
+```
 
 For `install`, also determine target agent:
 
-| Target | Flag |
-|--------|------|
-| All detected agents | `--target all` *(default)* |
-| Claude Code only | `--target claude` |
-| Codex only | `--target codex` |
-| Gemini CLI only | `--target gemini` |
+```
+./scripts/grimoire --domain engineering --target all      # all detected agents (default)
+./scripts/grimoire --domain engineering --target claude   # Claude Code only
+./scripts/grimoire --domain engineering --target codex    # Codex only
+./scripts/grimoire --domain engineering --target gemini   # Gemini CLI only
+```
 
 If scope or target is ambiguous, ask one question before proceeding.
 
@@ -99,6 +106,21 @@ Run the confirmed command via Bash. Stream or capture output.
 ---
 
 ### Step 5: Report result
+
+**Partial-failure handling:** After running the install command, verify each requested component installed successfully. If some domains installed and others failed:
+1. List what succeeded and what failed with error reason
+2. Do not report 'installation complete' if any component failed
+3. Offer retry for failed components: 'Retry failed installs? [y/n]'
+4. If a domain fails due to network/permission error vs. not-found error, distinguish them — not-found means the domain name is wrong; network/permission means retry may work.
+
+**Terminal conditions:**
+- Max retries: 2 per failed component
+- After 2 failures: mark component as FAILED, continue with remaining components
+- Error type routing:
+  - `404 / not found / unknown domain`: wrong name — do NOT retry; ask user to verify the domain name
+  - `network timeout / 503`: transient — retry up to 2×
+  - `403 / permission denied`: stop retrying; output manual install command: `./scripts/grimoire --skill [failed-component]`
+  - Any other error: retry once; if still failing, mark FAILED and continue
 
 ```
 ✅ Installed 101 skills from engineering domain to Claude Code.
@@ -152,23 +174,6 @@ Grimoire health check
 
   Summary: 1 warning.
 ```
-
----
-
-## grimoire flag reference
-
-| Flag | Effect |
-|------|--------|
-| `--domain <name>` | Scope to one domain (e.g. `engineering`) |
-| `--subdomain <name>` | Scope to one subdomain — requires `--domain` |
-| `--skill <path>` | One skill (e.g. `engineering/development/apply-kiss-principle`) |
-| `--target <agent>` | `claude`, `codex`, `gemini`, or `all` |
-| `--uninstall` | Remove instead of install |
-| `--upgrade` | `git pull` latest + refresh all symlinks |
-| `--clean` | Remove broken symlinks from all agent skill dirs |
-| `--list` | List available domains, subdomains, and skills |
-| `--doctor` | Read-only health check: git repo, symlinks per agent, config files |
-| `--copy` | Copy files instead of symlinking (for environments where symlinks don't work) |
 
 ## When NOT to Use
 

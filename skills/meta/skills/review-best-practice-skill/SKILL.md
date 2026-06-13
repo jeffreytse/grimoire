@@ -86,6 +86,8 @@ Extract: full frontmatter, all `##` section headers, full body content.
 | finance / investing | Risk disclosure where relevant; "not financial advice" footer |
 | psychology / mental health | No diagnosis/prescription; mental health professional footer |
 
+**Domain safety list:** Valid domains are defined in CLAUDE.md's domain table. If the skill's domain field does not match one of the listed domains, flag it: 'Unknown domain: [domain]. Valid domains: engineering, business, science, health, writing, design, marketing, finance, law, film, music, art, sports, psychology, language, education, cooking, travel, home, parenting, automotive, pets, fashion, environment, photography, productivity, meta.'
+
 ### 7. Check size
 
 - Under 50 lines: too shallow — flag for expansion
@@ -139,3 +141,10 @@ Extract: full frontmatter, all `##` section headers, full body content.
 - NEEDS-REVISION for vague claims that can be strengthened with specifics
 - PASS only when all criteria are ✅ — no unchecked items
 - When flagging a FAIL or REVISION, always state exactly what fix is needed
+
+**REJECT vs NEEDS-REVISION criteria:**
+- **REJECT** — use when: the skill's core premise is wrong (bad source, disproven claim), the skill is a duplicate of an existing skill, or the skill violates STANDARD.md in a way that requires a complete rewrite (not iteration)
+- **NEEDS-REVISION** — use when: the skill's premise is sound but execution has fixable issues (missing fields, weak examples, unclear steps, threshold not defined)
+- **PASS** — use when: all STANDARD.md criteria are met or only trivial formatting issues remain
+
+Do not REJECT a skill that merely needs improvement — that wastes the author's work. REJECT is for fundamental problems.

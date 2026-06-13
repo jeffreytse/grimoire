@@ -25,6 +25,8 @@ Sources: XDG Base Directory Specification (freedesktop.org); RFC 2119 (IETF); VS
 
 **Mode B — proactive scan:** User asks to scan their preferences file for conflicts, OR you are about to apply two skills and notice they give contradictory guidance.
 
+**Mode B trigger:** This skill also applies when a user observes two practices being applied inconsistently in a project (e.g., 'sometimes we use X, sometimes Y'). The conflict need not be explicitly stated — if the user describes inconsistency or asks 'should we use X or Y?', treat it as a conflict to resolve.
+
 For Mode B, load the active settings files and merge in resolution order:
 
 ```
@@ -87,6 +89,8 @@ If no priorities exist yet for that domain, say so.
 
 ### Step 4: Ask which wins
 
+If existing priority already found in Step 3, use it silently — skip this step.
+
 If user hasn't already stated a preference:
 
 ```
@@ -104,6 +108,8 @@ If user already stated a preference earlier in the conversation, use it directly
 ---
 
 ### Step 5: Update settings.toml
+
+**Duplicate-write check:** Before writing the resolution, check if the exact same domain+practice pair already has a pinned preference. If yes, show the existing pin and confirm: 'This conflict was already resolved: [existing-pin]. Overwrite with new decision? [y/n]'. Do not silently re-pin.
 
 Write the priority into the correct domain section using TOML. Default to `<project>/.grimoire/settings.toml` (shared) — ask if user wants `settings.local.toml` (personal) or global (`~/.config/grimoire/settings.toml`).
 

@@ -88,7 +88,11 @@ Parse the requested change from user input. Show what will change, then ask whic
     [2] All projects (global)    → ~/.config/grimoire/settings.toml
   ```
 
+**Higher-precedence warning:** Before writing to a settings file, check if a higher-precedence layer already sets this key. Precedence order (highest to lowest): session pins → settings.local.toml → settings.toml → global settings.toml. If a higher-precedence layer already defines this key, the edit to the lower layer will have no effect. Warn: 'Note: [higher-layer] already sets [key]=[value]. Your change to [lower-layer] will be overridden until you remove or update the higher-precedence setting.'
+
 After file selection, confirm and write. Never write invalid TOML.
+
+**Post-edit validate:** After writing the settings change, offer: 'Validate settings now? This will show the resolved effective spec and confirm your change took effect. [y/n]'. If yes, invoke `check-best-practice-compliance` with scope=[current project] to show the resolved spec.
 
 ---
 

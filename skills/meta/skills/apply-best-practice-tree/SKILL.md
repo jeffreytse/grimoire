@@ -19,6 +19,13 @@ Sources: Knuth, *The Art of Computer Programming* (1968); Aamodt & Plaza, "Case-
 
 ## Steps
 
+### Step 0: Problem clarity check (silent)
+
+Before classifying, check if the problem is defined enough to decompose:
+
+- **Goal inferable AND scope at least partially known** → proceed to Step 1
+- **Goal completely uninferable, or input is clearly a symptom with no surrounding context** → invoke `analyze-best-practice-problem` first; use its problem statement and problem space map as input to Step 1. Do not announce this check.
+
 ### 1. Classify the problem (silent)
 
 Before matching any skill, silently determine:
@@ -43,10 +50,20 @@ Route by result:
 
 | Result | Condition | Action |
 |--------|-----------|--------|
-| **Sole clear match** | 1 skill ≥ 0.7, second < 0.4 | Apply directly |
-| **Multiple candidates** | 2+ skills ≥ 0.4 | Present ranked list with ★ recommendation, wait for user choice |
-| **Fuzzy match** | 1 skill 0.4–0.69, no others ≥ 0.4 | Offer with adaptation note |
+| **Sole clear match** | 1 skill ≥ 0.7, second < 0.5 | Apply directly |
+| **Multiple candidates** | 2+ skills ≥ 0.5 | Present ranked list with ★ recommendation, wait for user choice |
+| **Fuzzy match** | 1 skill 0.5–0.69, no others ≥ 0.5 | Offer with adaptation note |
 | **No match** | All < 0.4 | Decompose manually → step 4 |
+
+**No match at root (all < 0.4):**
+```
+No grimoire skill covers this problem area. Decomposition cannot begin without a root skill.
+
+Suggested next steps:
+  - /discover-best-practices — check if relevant skills exist in this domain
+  - /write-best-practice-skill — author a skill for this problem area
+```
+Stop — do not proceed to Steps 3–6.
 
 When multiple candidates exist, present:
 ```
@@ -91,7 +108,7 @@ For each sub-problem, apply the same matching logic:
 Sub-problem A → [skill-name] (confidence 0.82). Applying now...
 ```
 
-**Multiple candidates (2+ skills ≥ 0.4)** — present options with ★ recommendation, wait for choice:
+**Multiple candidates (2+ skills ≥ 0.5)** — present options with ★ recommendation, wait for choice:
 ```
 Sub-problem B → multiple practices apply:
   ★ [top-skill] — [one sentence]  ← recommended
@@ -126,22 +143,19 @@ Sub-problem D → no close match (best: 0.28). Decomposing further:
 ⚠ [sub-problem]: recursion limit reached. Manual research needed — no installed skill covers this.
 ```
 
-### 5. Confirm before each skill application
+### 5. Execute and reassess
 
-Never apply more than one skill without user confirmation:
-```
-Ready to apply [skill-name] for [sub-problem]. Continue?
-```
-
-Wait for confirmation. After completion, reassess:
-- Did the skill output reveal new sub-problems?
+Apply each sub-problem's matched skill in sequence — no confirmation between skills unless the plan changes. After each skill completes, silently reassess:
+- Did the skill reveal new sub-problems?
 - Are any remaining sub-problems now resolved?
 - Does the sequence still make sense?
 
-State any changes before continuing:
+Only pause if the plan changes:
 ```
-[skill-name] revealed [new constraint]. Adding [sub-problem D] to the queue. Continue?
+[skill-name] revealed [new constraint]. Revised plan: adding [sub-problem D], removing [sub-problem B]. Continue with revised plan?
 ```
+
+If nothing unexpected: proceed to the next sub-problem without prompting.
 
 ### 6. Terminate when resolved
 
@@ -150,23 +164,22 @@ Stop when:
 - A sub-problem is concrete and actionable without a skill (a direct answer, a decision, a command)
 - Recursion depth reaches 3
 
-Summarize what was covered and what (if anything) requires manual follow-up:
+Summarize the applied tree:
 ```
-Solved:
+Applied:
   ✅ [sub-problem A] → [skill-name]
-  ✅ [sub-problem B] → [skill-name] (adapted)
-  ✅ [sub-problem C1] → [skill-name]
-  ✅ [sub-problem C2] → direct resolution
+  ✅ [sub-problem B] → [skill-name] (adapted: [note])
 
 Needs manual research:
-  ⚠ [sub-problem C3] — no installed skill covers this area
+  ⚠ [sub-problem C] — no installed skill covers this area
 ```
+Omit the "Needs manual research" section if everything resolved cleanly.
 
 ## Rules
 
 - Defer to `suggest-best-practice` if one skill clearly covers the full problem (≥ 0.7, no decomposition needed)
 - Defer to `plan-best-practice-solution` if the problem spans 3+ independent domains
-- Never apply two skills back-to-back without user confirmation
+- Only pause for confirmation when a skill reveals new constraints that change the plan — not between every skill
 - Never hallucinate skill names — only reference skills that exist in installed domains
 - State the confidence level when applying a fuzzy match — never silently adapt
 - Maximum recursion depth: 3 — flag anything deeper as needing manual research

@@ -54,14 +54,19 @@ revise it instead.
 
 ### 3. Add a deprecation notice to the skill file
 
-At the very top of the SKILL.md body (after frontmatter, before the title), add:
-
-```markdown
-> **Deprecated:** This skill is outdated. [Reason in one sentence.]
-> Use [`replacement-skill-name`](../../replacement-path/SKILL.md) instead.
+**Notice placement:** The deprecation notice must appear in the YAML frontmatter as a `deprecated:` field AND as a banner at the top of the skill body (immediately after the H1 heading), before any other content:
+```yaml
+deprecated: 'Replaced by [skill-name] — [brief reason]. Migrate by [date].'
 ```
+```markdown
+> **Deprecated:** This skill is replaced by [skill-name]. See [skill-name] for the same functionality. Migration deadline: [date].
+```
+Placement in frontmatter ensures tooling can filter deprecated skills. Placement in body ensures users see it immediately.
 
-If no replacement exists:
+If no replacement exists, omit the replacement reference and use:
+```yaml
+deprecated: '[Brief reason]. No direct replacement — see [domain]/[subdomain] for related skills.'
+```
 ```markdown
 > **Deprecated:** This skill is outdated. [Reason in one sentence.]
 > No direct replacement — see [domain]/[subdomain] for related skills.
@@ -94,6 +99,13 @@ PR description must include:
 - Whether a new skill needs to be written to cover the replacement practice
 
 ### 6. Removal (maintainers only)
+
+**Cooling-off period:** A deprecated skill must remain installed and functional for at least 30 days after the deprecation notice is added. Do not delete the skill file until:
+1. The replacement skill is confirmed installed
+2. 30 days have passed since the deprecation notice
+3. The migration deadline (if specified) has passed
+
+Premature deletion breaks any user with the old skill in their workflow.
 
 Maintainers remove deprecated skills in the next release cycle after the PR merges.
 Removal steps:

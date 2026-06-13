@@ -87,6 +87,22 @@ score = (tag_overlap × 2) + (description_match × 3) + (domain_plausibility × 
 
 Surface only matches scoring ≥ 0.5. Group by domain.
 
+**Step 3 evaluation criteria:** For each practice that was applied, check:
+1. **Completeness** — were all required steps of the practice executed, or were some skipped?
+2. **Correctness** — does the outcome match what the practice prescribes? (Read the skill's expected output or criteria)
+3. **Scope** — was the practice applied to the full intended scope, or only partially?
+4. **Evidence** — is there verifiable evidence the practice ran? (commit message, output artifact, report file)
+
+Rate each practice: FULL (all criteria met), PARTIAL (some criteria met), MISSING (no evidence of application), or NOT-APPLICABLE (practice doesn't apply to this artifact).
+
+**Rating thresholds:**
+- **FULL** — all 4 criteria met (Completeness, Correctness, Scope, Evidence)
+- **PARTIAL** — 2–3 of 4 criteria met, OR all 4 partially met (some steps done, some skipped)
+- **MISSING** — 0–1 criteria met, OR no evidence the practice was applied at all
+- **NOT-APPLICABLE** — the practice's domain does not apply to this artifact (e.g., GDPR compliance on a local dev script with no user data)
+
+When multiple criteria conflict (e.g., evidence exists but correctness fails): use the lowest-passing criterion to determine the rating.
+
 ### Step 4: Report applied practices
 
 Present findings:
@@ -161,6 +177,8 @@ If file already exists at the target path: append new domain sections only. Neve
   ```
   You already have [existing-skill] pinned for [domain]. Replace it with [new-skill]? [y/n]
   ```
+
+**Create-if-absent:** If no prior audit report exists for this artifact (no `.grimoire/audits/` file), create the initial report baseline. This is the first audit — note it as 'baseline' rather than 'regression check' in the report header.
 
 After writing, confirm:
 ```

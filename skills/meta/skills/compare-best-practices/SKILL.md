@@ -42,6 +42,14 @@ For each practice, extract from its SKILL.md:
 | **Not ideal when** | Conditions where it underperforms or fails |
 | **Trade-off** | What you gain and what you give up by choosing this one |
 | **Adoption cost** | Low (< 1 day to start) / Medium (days to weeks) / High (structural change required) |
+| **Constraints fit** | How well it fits the user's stated constraints: team size, timeline, existing stack, budget |
+
+**Constraint dimension:** Always include a 'Constraints fit' row in the comparison table:
+| Dimension | Practice A | Practice B |
+|---|---|---|
+| Constraints fit | [how well it fits user's stated constraints: team size, time, resources] | [same] |
+
+User constraints (team size, timeline, existing stack, budget) often determine the choice more than abstract quality. If the user stated constraints, they must appear as a comparison dimension — not just an afterthought in the recommendation.
 
 If a practice isn't installed, note it and compare abstractly from its description field only.
 
@@ -80,13 +88,25 @@ Both are valid here. Deciding factor: [the one dimension that would tip it — i
 
 Never refuse to recommend. A recommendation with stated reasoning is always more useful than "it depends."
 
-### Step 5: Offer to apply
+### Step 5: Apply recommendation
 
+**Auto-apply condition:** Apply the recommendation silently ONLY when BOTH are true:
+1. User explicitly asked for a decision ('which should I use?', 'help me choose', 'recommend one')
+2. One practice rated higher on ≥ 3 of the comparison criteria (not just overall — must win on at least 3 individual dimensions)
+
+Do NOT auto-apply when:
+- Request was exploratory ('what's the difference between X and Y?', 'compare X and Y')
+- Neither practice wins ≥ 3 criteria
+- User's constraints favor different practices for different situations
+
+When in doubt about request type: present recommendation with rationale, do not auto-apply.
+
+When the auto-apply condition is met, announce before applying:
 ```
-Apply [recommended-practice]? (y/n — or name the other to apply that instead)
+Applying [recommended-practice]... (say "no" or name the other to switch)
 ```
 
-If user confirms, load the chosen skill and follow its steps.
+Load and follow the chosen skill's steps.
 
 ## Rules
 

@@ -124,10 +124,20 @@ Collect all choices before starting execution. Only proceed once every step has 
 For each skill in the sequence (using user-decided skills from Step 5):
 1. Announce: `Applying step N: [skill-name]`
 2. Load and run the skill fully
-3. After completion, ask: `Step N done. Continue to step N+1 ([skill-name])?`
-4. Wait for confirmation before proceeding
+3. After completion, silently proceed to the next step
 
-Never chain skills without confirmation between each.
+**Failure-handling rule:** If a skill in the plan sequence fails to complete (errors, produces no output, or the user abandons it mid-way), do not silently skip to the next skill. Instead:
+1. Show what failed: `[skill-name] did not complete — [reason if known]`
+2. Offer: `Retry [skill-name], skip it, or stop the plan? [retry / skip / stop]`
+3. If skipped: note in the final plan summary that [skill-name] was skipped and its dependencies may be incomplete
+
+A plan with silent failures is worse than a failed plan — the user thinks they applied all practices but they didn't.
+
+Only pause if the plan changes — new constraints revealed, a step becomes unnecessary, or a dependency changes:
+```
+Step N revealed [new constraint]. Revised plan: removing step M, adding [skill-name].
+Continue with revised plan?
+```
 
 ### 7. Adapt after each step
 
@@ -142,15 +152,22 @@ Step 2 revealed [new constraint]. Adjusting: removing step 4, adding [skill-name
 Continue?
 ```
 
+### 8. Execute the plan
+
+Invoke each skill in the plan sequence in the order shown in Step 5. Proceed to the next skill as soon as the current one completes — no confirmation needed between skills unless the plan changes.
+
+Follow the failure-handling rule: if any skill fails to complete, show what failed, offer retry/skip/stop, and note any skipped skill in the final summary.
+
 ## Rules
 
 - If the problem is single-domain and maps to one skill, defer to `suggest-best-practice` — don't over-engineer
-- Never apply more than one skill without user confirmation between each
+- Only pause between skills if the plan changes — not between every skill
 - Never hallucinate skill names — only reference skills that exist in installed grimoire domains
 - Flag sub-problems with no matching skill explicitly — don't skip them silently
 - State the reason for sequencing decisions — don't just present an order without explaining why
 - Maximum 7 sub-problems — group if more emerge
 - If a sub-problem is itself complex and single-domain, delegate to `apply-best-practice-tree` for recursive drill-down rather than forcing it into the flat sequence
+- **Boundary with apply-best-practice-tree:** Use `plan-best-practice-solution` when the problem spans multiple independent domains (law + engineering, or finance + marketing). Use `apply-best-practice-tree` when the problem is complex but stays within one domain. The distinction: cross-domain problems need coordination between separate skill chains; single-domain complex problems need recursive decomposition within one chain.
 
 ## Examples
 

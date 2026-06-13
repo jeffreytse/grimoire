@@ -40,6 +40,11 @@ Who are you explaining this to, and what do they care about most?
 
 If the audience type is ambiguous, infer from context clues (role titles, stated concerns, relationship to the user).
 
+**Audience fallback:** If audience level cannot be inferred from context (no role mentioned, no prior conversation signals, no domain expertise cues), ask ONE question before proceeding:
+'Who is this for? [beginner / intermediate / expert — or describe the audience]'
+
+Do not guess expertise level when teaching — wrong level means the explanation is either too basic (wastes expert's time) or too advanced (loses beginner). This is the one question worth asking.
+
 ### Step 3: Structure the explanation for the audience
 
 Use this structure, translated into the audience's language and priorities:
@@ -77,6 +82,14 @@ Choose the format based on context. If not obvious, ask:
 ```
 What format works best? Talking points (conversation), brief (written message), or slide outline (presentation)?
 ```
+
+**Format selection:** Choose format based on audience and goal:
+- **Walkthrough** — beginner, unfamiliar with the practice
+- **Example-first** — intermediate, learns by seeing concrete cases
+- **Socratic** — expert, benefits from being guided to the answer rather than told
+- **Comparison** — when the user asked 'why X instead of Y?' — contrast is the teaching vehicle
+
+Default to walkthrough for unknown audience. State the chosen format at the start: 'Teaching [practice] using [format] format for [audience].'
 
 **Talking points** (default — for conversations):
 5–7 bullet points, each one sentence, sequenced hook → what → why → evidence → how to start. Include one objection response per likely pushback.

@@ -28,13 +28,14 @@ Apply all settings layers in precedence order (session > project-local > project
 
 ### 2. Select scope
 
-```
-Scope:
-  [s] Specific artifact   — a file, document, section, or component
-  [r] Region / scope      — a directory, chapter, module, or area
-  [c] Changed only        — diff-based, checks only modified parts (fast, for CI/pre-commit)
-  [a] Full project        — everything in scope of the settings
-```
+Default: `[a] Full project`. Infer from context if user specified a file, directory, or "changed only" — no need to ask. Only ask if scope is genuinely ambiguous.
+
+| Keyword in request | Inferred scope |
+|--------------------|---------------|
+| names a file/component | `[s]` specific artifact |
+| names a directory/module | `[r]` region |
+| "changed", "diff", "PR", "commit" | `[c]` changed only |
+| no specific target | `[a]` full project (default) |
 
 ---
 
@@ -53,11 +54,17 @@ class LegacyAdapter:  ...  # intentional god class — refactor blocked by contr
 # grimoire-ignore-end
 ```
 
+**Configuring suppressions:** Findings can be suppressed two ways:
+1. Inline annotation: add `# grimoire-ignore: [practice]/[criterion]` on the line before the violation
+2. Settings entry: add the practice to the `disabled` array in `.grimoire/settings.toml` for the relevant domain
+
+Suppressed findings always appear in JSON output with `"status": "suppressed"` — they are never silently dropped.
+
 ---
 
 ### 4. JSON output (primary)
 
-Always written to `.grimoire/reports/compliance-<timestamp>.json` and `.grimoire/reports/compliance-latest.json`.
+Always written to `.grimoire/reports/compliance-<timestamp>.json` (e.g., `.grimoire/reports/compliance-2026-06-14T143000.json`). Also write a symlink `.grimoire/reports/compliance-latest.json` pointing to the most recent report.
 
 LSP-compatible schema — consumable by editors, CI pipelines, LSP servers, dashboards:
 
@@ -160,6 +167,8 @@ Fix with:
   [2] apply-domain-driven-design — extract domain model
   [a] Run full BPDD cycle      → /apply-best-practice-driven-development
 ```
+
+**Routing:** Auto-invoke only the top-priority FAIL (highest severity, lowest coverage %). For all other FAILs: list them in the output but do not invoke — wait for user to select. User can type a number to fix that specific finding, or [a] to run the full BPDD cycle.
 
 ## Common Mistakes
 

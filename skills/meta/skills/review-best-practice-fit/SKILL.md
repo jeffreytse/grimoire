@@ -63,6 +63,14 @@ Select all practices scoring ≥ 0.4. Cap at 7 practices — if more qualify, ta
 
 If no practice scores ≥ 0.4: state "No installed skills closely match this solution's domain. Install relevant domain skills first."
 
+**No-practices early exit:** After resolving which practices apply to the artifact, if zero practices match (no installed skills cover this domain, or artifact type has no applicable practices), exit immediately. Output:
+```
+No applicable practices found for [artifact-type/domain].
+[If no domain installed]: Install practices with: /plugin install grimoire-[domain]@grimoire
+[If domain installed but no match]: This artifact type may not have grimoire coverage yet.
+```
+Do not proceed to review with zero practices — the review would be empty and misleading.
+
 ### 3. Evaluate fit for each practice
 
 For each applicable practice, evaluate the solution against the practice's core criteria:
@@ -87,6 +95,14 @@ Classify each gap by impact:
 | ⚪ **Minor** | Polish or optimization; solution works without it |
 
 Order: Critical → Significant → Minor within the report.
+
+**Fix sequencing:** Recommend fixes in this order:
+1. Gaps that block correctness (the artifact won't work / will cause harm without this)
+2. Gaps that affect reliability (will likely fail under real conditions)
+3. Gaps that affect maintainability (creates future debt)
+4. Gaps that affect polish (nice to have)
+
+Do not recommend all gaps as equal priority — users need to know what to fix first.
 
 ### 5. Produce the gap report
 
@@ -159,7 +175,7 @@ Then collect the user's choice using the best available method for your platform
   Which would you like to apply? (Enter number, "all" to apply in sequence, or "skip")
   ```
 
-After user selects, load the chosen skill and follow its steps. If user chooses "all", apply each in ranked order, confirming after each before proceeding to the next.
+After user selects, load the chosen skill and follow its steps. If user chooses "all", apply each in ranked order silently — no confirmation between steps unless a skill reveals new constraints that change the remaining sequence.
 
 ## Rules
 

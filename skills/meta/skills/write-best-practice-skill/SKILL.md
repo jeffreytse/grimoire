@@ -153,8 +153,11 @@ Size check: 50–300 lines total. Under 50 = too shallow. Over 300 = split into 
 
 ### 8. Run `review-best-practice-skill`
 
-Before opening a PR, invoke `review-best-practice-skill` on your file. Fix every REJECT and
-NEEDS-REVISION finding until the verdict is PASS.
+Invoke `review-best-practice-skill` on your draft file.
+
+**Revision gate before PR:** Before creating a PR or outputting the final SKILL.md, run `review-best-practice-skill` against the draft. If the review produces REJECT or NEEDS-REVISION findings, fix them before proceeding. Do not submit a skill that fails its own quality gate.
+
+Fix every REJECT and NEEDS-REVISION finding until the verdict is PASS.
 
 Common first-draft failures:
 - "Adopted by" says "many companies" → name them
@@ -170,6 +173,12 @@ in alphabetical order among peers:
 ```markdown
 - [`skill-name`](./skills/<domain>/<subdomain>/skills/<skill-name>/) — <description field verbatim>
 ```
+
+**SKILLS.md entry format:** When adding the skill to SKILLS.md, use this format:
+```
+| skill-name | domain/subdomain | One sentence: what problem it solves | [source-author, year] |
+```
+The description column must complete the sentence 'Use this when...' and reference the triggering situation, not the skill's method.
 
 Then increment the domain count in the section header:
 

@@ -54,7 +54,12 @@ For each name, check in this order (first match wins):
 5. Tag query — all installed skills where `tags` contains `<name>`
 
 If a TOML file is found, read its `[[skills]]` list.
-If no file is found and the tag query returns no skills for a name, warn the user but continue resolving the remaining profiles.
+If no file is found and the tag query returns no skills for a name, **stop immediately** — do not guess or invent a profile. Output:
+```
+Profile not found: [profile-name]
+Available profiles: [list installed profiles, or 'none installed — run /discover-best-practices to see what's available']
+```
+Do not continue resolving remaining profiles while a named profile is unresolvable — surface the error first so the user can correct the name or install the missing profile.
 
 ---
 
@@ -93,12 +98,9 @@ Priority: clean-architecture > tdd (array order)
 Scope: [s] session  [p] project  [g] global
 ```
 
-Wait for scope using a platform-aware prompt:
-- **Claude Code / OpenCode**: `AskUserQuestion` — options: "Session only (Recommended)", "This project", "All projects (global)"
-- **Gemini CLI**: `ask_user` — `type: "select"`, same three options
-- **Other**: numbered list above — wait for `[s]`, `[p]`, or `[g]`
-
-Default: session.
+Default to session — no prompt needed. Infer scope from context:
+- User says "save", "persist", "always", "for this project" → ask once to confirm scope
+- No such signal → apply as session silently
 
 ---
 
@@ -106,6 +108,11 @@ Default: session.
 
 For each skill in the merged list, call `pin-best-practice-preference` at the confirmed scope.
 Pass the full ordered list as the `practices` array — index 0 = first-profile skill = highest conflict priority.
+
+**User-decline branch:** If at any point (during confirmation in Step 4 or after) the user says "skip [skill-name]" or "not [skill-name]", remove that skill from the application sequence and continue with the remainder. Do not require full re-invocation to skip one skill. Acknowledge the skip inline:
+```
+Skipping [skill-name] — continuing with remaining [n] skills.
+```
 
 ---
 

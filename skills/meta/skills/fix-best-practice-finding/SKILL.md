@@ -40,11 +40,26 @@ Multiple findings match apply-solid-principles/srp:
 Which finding to fix?
 ```
 
+**Normalize to structured finding (if input is free-text):**
+
+If the finding came from a JSON compliance report, fields are already present — proceed to Step 2.
+
+If the finding came from a user description or inline comment, extract the four required fields before Step 2:
+
+| Field | Extract from |
+|-------|-------------|
+| `practice` | Named skill or practice (e.g., "SRP", "apply-solid-principles") |
+| `uri` | File or location mentioned (e.g., "src/UserService.ts") |
+| `range` | Line range if mentioned; omit if not stated |
+| `criterion` | The specific rule violated (e.g., "class handles 3 concerns") |
+
+If `practice` or `uri` cannot be inferred, ask ONE question: "Which file and practice should I fix?"
+
 ---
 
 ### 2. Show the finding
 
-Confirm what will be fixed before acting:
+Display what will be fixed — no confirmation needed if finding is unambiguous (explicit skill + location). Only pause if multiple findings match or finding is vague:
 
 ```
 Finding:  apply-solid-principles/srp
@@ -74,6 +89,8 @@ Example: for `"practice": "apply-solid-principles"` with `"criterion": "srp"` at
 Re-run `check-best-practice-compliance` scoped to:
 - The affected artifact (`[s] Specific artifact`)
 - Filtered to the affected practice
+
+Scope: re-check only the `uri` + `range` from the original finding — not the full artifact. If the re-check surfaces new findings elsewhere, list them but do not fix them now — route to a fresh `/check-best-practice-compliance` run.
 
 Confirm the specific finding is resolved — no longer appears in diagnostics with matching `uri` + `code`.
 

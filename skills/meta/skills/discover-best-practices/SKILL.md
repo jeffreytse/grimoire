@@ -39,6 +39,8 @@ What area are you working in? (e.g. software engineering, personal finance, cont
 
 Scan installed grimoire skills for the detected domain. Group by subdomain. For each skill, present one sentence framed as "why you should know this exists" — the gap it closes or what goes wrong without it:
 
+**Installed-only listing:** Only list skills from installed domains. Do not list or reference skills from uninstalled domains — they cannot be applied and listing them creates false expectations. If the user's domain has no installed skills, say: 'No skills installed for [domain]. Install with: `/plugin install grimoire-[domain]@grimoire`'
+
 ```
 Best practices available for [domain]:
 
@@ -67,23 +69,13 @@ Selection criteria for this list (in priority order):
 2. Practices with compliance or legal implications
 3. Practices where skipping creates compounding debt (testing strategy, architecture decisions)
 
-### Step 4: Offer to apply or explore
+### Step 4: Close
 
-```
-```
+**Direct invocation with skill name:** If invoked directly with a specific skill name (e.g., `/discover-best-practices adapt-best-practice`), skip Steps 1–3 and go directly to showing that skill's full description including Why This Is Best Practice, Steps summary, and When NOT to Use.
 
-Then collect the user's choice using the best available method for your platform:
-- **Claude Code / OpenCode**: use `AskUserQuestion` / `question` — question: "Want to apply any of these now, or learn more about one?", list all discovered skills as options plus "View all full descriptions" and "Skip" as last two options, `multiSelect: false`
-- **Gemini CLI**: use `ask_user` — `type: "select"`, same options
-- **All other platforms**: present:
-  ```
-  Want to apply any of these now, or learn more about one?
-  (Enter skill name or number — or "all" for full descriptions, or "skip" to end)
-  ```
+End after presenting the list. Awareness was the goal — no prompt needed.
 
-If user selects a specific skill: invoke `suggest-best-practice` with that skill pre-selected as the match.
-If user says "all": present each skill's full `description` field in sequence, grouped by subdomain.
-If user says "skip" or does not engage: end gracefully — awareness was the goal, not enforcement.
+If the user follows up with "apply X", "tell me more about Y", or "how do I use Z": respond to that naturally. If they ask to apply a skill, invoke `suggest-best-practice` with that skill pre-selected.
 
 ## Rules
 
