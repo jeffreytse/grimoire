@@ -309,7 +309,9 @@ Or invoke a skill directly:
 | Align any project or artifact to stated best practice preferences (BPDD) | `/apply-best-practice-driven-development` |
 | Check if any artifact aligns with stated best practice preferences | `/check-best-practice-compliance` |
 | Have a specific compliance finding to fix | `/fix-best-practice-finding` |
-| Two practices conflict (e.g., Google vs IBM) | `/pin-best-practice-preference` |
+| Two practices exist — want side-by-side comparison | `/compare-best-practices` |
+| Two practices conflict — want to reason through which fits | `/resolve-best-practice-conflict` |
+| Resolved a conflict — want to save the decision for future sessions | `/pin-best-practice-preference` |
 
 → [BPDD guide](./docs/bpdd.md) — cycle, compliance linter, LSP output, suppression, CI integration
 
@@ -343,7 +345,22 @@ Claude: Situation spans 4 domains. Solution plan:
         Apply in order? I'll pause for confirmation after each step.
 ```
 
+### Learning workflows
+
+| Want to... | Start here |
+|------------|------------|
+| Understand what a skill does and why it exists | `/explain-best-practice` |
+| Adapt a skill to a different context or constraint | `/adapt-best-practice` |
+| Teach a practice to someone else (structured walkthrough) | `/teach-best-practice` |
+
 ### Contributor workflows
+
+**Setup**
+
+```
+/install-grimoire              # first-time setup
+/configure-grimoire            # customize behavior for your context
+```
 
 **Adding a skill**
 
@@ -354,12 +371,22 @@ Claude: Situation spans 4 domains. Solution plan:
 → open PR
 ```
 
+**Adding a profile (named practice set)**
+
+```
+/write-best-practice-profile   # author a named profile (e.g., "oop", "tdd")
+/review-best-practice-profile  # validate it
+/share-best-practice-profile   # publish to others
+```
+
 **Maintaining a domain**
 
 ```
-/audit-best-practice-domain    # batch health check — surfaces outdated or weak-sourced skills
-/revise-best-practice-skill    # update stale or under-sourced skills
-/deprecate-best-practice-skill # retire skills superseded by newer practices
+/audit-best-practice-domain        # batch health check — surfaces outdated or weak-sourced skills
+/audit-applied-best-practices      # audit what practices have actually been applied to a project
+/design-best-practice-domain       # design a new domain from scratch
+/revise-best-practice-skill        # update stale or under-sourced skills
+/deprecate-best-practice-skill     # retire skills superseded by newer practices
 ```
 
 ## ⚙️ Settings
