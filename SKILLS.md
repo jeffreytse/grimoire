@@ -1,6 +1,6 @@
 # Skills Directory
 
-823 skills across 27 domains.
+843 skills across 27 domains.
 
 [Install](./README.md#%EF%B8%8F-install) · [Contribute](./CONTRIBUTING.md) · [Standard](./STANDARD.md)
 
@@ -19,7 +19,7 @@
 - [Fashion (10)](#fashion)
 - [Film (10)](#film)
 - [Finance (45)](#finance)
-- [Health (30)](#health)
+- [Health (50)](#health)
 - [Home (10)](#home)
 - [Language (11)](#language)
 - [Law (25)](#law)
@@ -804,7 +804,7 @@
 
 ---
 
-## Health (30) <a name="health"></a>
+## Health (50) <a name="health"></a>
 
 ### fitness
 
@@ -850,6 +850,29 @@
 - [`design-sleep-hygiene-protocol`](./skills/health/sleep/skills/design-sleep-hygiene-protocol/) — Use when creating individualized sleep hygiene recommendations to improve sleep onset, duration, and quality for someone with poor sleep habits
 - [`design-sleep-protocol`](./skills/health/sleep/skills/design-sleep-protocol/) — Use when building or improving a personal sleep routine to maximize sleep quality, duration, and consistency
 - [`diagnose-sleep-issue`](./skills/health/sleep/skills/diagnose-sleep-issue/) — Use when identifying the likely cause and type of a sleep problem to guide appropriate intervention or referral
+
+### pregnancy
+
+- [`apply-pelvic-floor-training`](./skills/health/pregnancy/skills/apply-pelvic-floor-training/) — Use when doing pelvic floor exercises during pregnancy — e.g., Kegel exercises while pregnant, pelvic floor strengthening for birth prep, or preventing postpartum incontinence
+- [`audit-pregnancy-medication-safety`](./skills/health/pregnancy/skills/audit-pregnancy-medication-safety/) — Use when reviewing medication safety during pregnancy — e.g., checking whether ibuprofen, antidepressants, or OTC drugs are safe during pregnancy
+- [`calculate-gestational-weight-gain-target`](./skills/health/pregnancy/skills/calculate-gestational-weight-gain-target/) — Use when determining how much weight to gain during pregnancy by pre-pregnancy BMI using IOM guidelines
+- [`design-birth-plan`](./skills/health/pregnancy/skills/design-birth-plan/) — Use when creating a birth plan — e.g., structuring labor and delivery preferences, pain management wishes, and immediate newborn care preferences
+- [`design-breastfeeding-preparation-plan`](./skills/health/pregnancy/skills/design-breastfeeding-preparation-plan/) — Use when preparing to breastfeed — e.g., prenatal lactation education, breast pump setup, colostrum harvesting, or contacting a lactation consultant before birth
+- [`design-fetal-movement-monitoring`](./skills/health/pregnancy/skills/design-fetal-movement-monitoring/) — Use when tracking fetal movements during pregnancy — e.g., setting up a kick counting routine, using the count-to-10 method, or responding to decreased fetal movement
+- [`design-group-b-strep-protocol`](./skills/health/pregnancy/skills/design-group-b-strep-protocol/) — Use when managing Group B Streptococcus in pregnancy — e.g., understanding GBS screening at 35–37 weeks and the intrapartum antibiotic plan if positive
+- [`design-labor-pain-management-plan`](./skills/health/pregnancy/skills/design-labor-pain-management-plan/) — Use when planning pain management for labor — e.g., comparing epidural vs. natural birth vs. nitrous oxide options and tradeoffs
+- [`design-perinatal-mental-health-plan`](./skills/health/pregnancy/skills/design-perinatal-mental-health-plan/) — Use when addressing mental health during pregnancy or postpartum — e.g., EPDS screening, perinatal depression, or anxiety treatment pathways
+- [`design-postpartum-recovery-plan`](./skills/health/pregnancy/skills/design-postpartum-recovery-plan/) — Use when planning recovery after childbirth — e.g., vaginal birth or C-section healing timeline, return to exercise, pelvic floor physiotherapy
+- [`design-preeclampsia-prevention-protocol`](./skills/health/pregnancy/skills/design-preeclampsia-prevention-protocol/) — Use when managing preeclampsia risk — e.g., low-dose aspirin timing, blood pressure monitoring, and recognizing warning signs
+- [`design-pregnancy-complication-action-plan`](./skills/health/pregnancy/skills/design-pregnancy-complication-action-plan/) — Use when learning pregnancy warning signs — e.g., when to call the OB vs. go to the ER, HELLP syndrome symptoms, or decreased fetal movement
+- [`design-pregnancy-nutrition-plan`](./skills/health/pregnancy/skills/design-pregnancy-nutrition-plan/) — Use when planning diet during pregnancy — e.g., calorie targets by trimester, foods to avoid, and key nutrients like choline and DHA
+- [`design-pregnancy-sleep-protocol`](./skills/health/pregnancy/skills/design-pregnancy-sleep-protocol/) — Use when addressing sleep issues during pregnancy — e.g., SOS positioning after 28 weeks, pregnancy pillow setup, or restless legs syndrome management
+- [`design-prenatal-exercise-program`](./skills/health/pregnancy/skills/design-prenatal-exercise-program/) — Use when planning safe exercise during pregnancy — e.g., ACOG 150-minute guideline, trimester-specific modifications, or contraindications
+- [`design-prenatal-genetic-screening-plan`](./skills/health/pregnancy/skills/design-prenatal-genetic-screening-plan/) — Use when planning genetic testing during pregnancy — e.g., NIPT vs. amniocentesis, anatomy scan timing, or Down syndrome screening options
+- [`design-prenatal-supplementation-plan`](./skills/health/pregnancy/skills/design-prenatal-supplementation-plan/) — Use when choosing prenatal supplements — e.g., folate vs. folic acid, DHA dosing, iron and iodine targets, or when to start prenatal vitamins
+- [`design-prenatal-visit-schedule`](./skills/health/pregnancy/skills/design-prenatal-visit-schedule/) — Use when planning OB/midwife visit cadence during pregnancy — e.g., setting up the full trimester visit schedule with key screenings and tests
+- [`design-preterm-labor-prevention-plan`](./skills/health/pregnancy/skills/design-preterm-labor-prevention-plan/) — Use when managing preterm birth risk — e.g., progesterone therapy, cervical length monitoring, or cerclage criteria for prior preterm birth
+- [`prevent-gestational-diabetes`](./skills/health/pregnancy/skills/prevent-gestational-diabetes/) — Use when managing gestational diabetes risk — e.g., GDM prevention diet, failed glucose test next steps, or blood sugar monitoring targets
 
 ---
 

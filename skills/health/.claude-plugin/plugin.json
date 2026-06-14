@@ -1,6 +1,6 @@
 {
   "name": "grimoire-health",
-  "description": "Health skills: fitness, nutrition, mental health, wellness, sleep, recovery, habit formation.",
+  "description": "Health skills: fitness, nutrition, pregnancy, mental health, wellness, sleep, recovery, habit formation.",
   "version": "1.0.0",
   "author": { "name": "Jeffrey Tse", "email": "jeffreytse.mail@gmail.com" },
   "homepage": "https://github.com/jeffreytse/grimoire",
@@ -11,6 +11,7 @@
     "./nutrition/skills",
     "./mental-health/skills",
     "./sleep/skills",
-    "./medicine/skills"
+    "./medicine/skills",
+    "./pregnancy/skills"
   ]
 }
