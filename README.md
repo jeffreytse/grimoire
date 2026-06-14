@@ -215,7 +215,7 @@ or tells you exactly what to install if the skill isn't in your library yet.
 curl -fsSL https://raw.githubusercontent.com/jeffreytse/grimoire/main/scripts/grimoire | bash
 ```
 
-Auto-detects Claude Code, Codex, and Gemini CLI. Installs to every agent found. Also creates a global `grimoire` command for future installs and upgrades.
+Auto-detects Claude Code, Codex, Gemini CLI, and OpenClaw. Installs to every agent found. Also creates a global `grimoire` command for future installs and upgrades.
 
 **Windows (PowerShell):**
 
@@ -268,6 +268,20 @@ gemini extensions update grimoire                                         # upda
 ```json
 { "plugin": ["grimoire@git+https://github.com/jeffreytse/grimoire.git"] }
 ```
+
+**OpenClaw:** see [`.openclaw/INSTALL.md`](./.openclaw/INSTALL.md) or run `./scripts/grimoire --target openclaw`.
+
+## 🤖 Agent Support
+
+| Agent | Plugin install | Script install |
+| ----- | -------------- | -------------- |
+| Claude Code | `/plugin marketplace add jeffreytse/grimoire` then `/plugin install grimoire@grimoire` | `--target claude` |
+| GitHub Copilot CLI | `copilot plugin marketplace add jeffreytse/grimoire` then `copilot plugin install grimoire@grimoire` | `--target all` |
+| Gemini CLI | `gemini extensions install https://github.com/jeffreytse/grimoire` | `--target gemini` |
+| OpenCode | See [`.opencode/INSTALL.md`](./.opencode/INSTALL.md) | `--target all` |
+| OpenClaw | See [`.openclaw/INSTALL.md`](./.openclaw/INSTALL.md) | `--target openclaw` |
+| Codex CLI | `AGENTS.md` auto-loaded; browse `/plugins` in CLI | `--target codex` |
+| Cursor | `AGENTS.md` context injection | `--target cursor` |
 
 ## 🚀 Quick Start
 
@@ -600,18 +614,6 @@ grimoire is a framework + reference skills. The domain structure is ready — co
 | [fashion](./skills/fashion/) | [styling](./skills/fashion/styling/skills/), [wardrobe](./skills/fashion/wardrobe/skills/), [design](./skills/fashion/design/skills/), [sustainability](./skills/fashion/sustainability/skills/), [accessories](./skills/fashion/accessories/skills/) |
 | [parenting](./skills/parenting/) | [infant](./skills/parenting/infant/skills/), [toddler](./skills/parenting/toddler/skills/), [school-age](./skills/parenting/school-age/skills/), [teen](./skills/parenting/teen/skills/) |
 | [automotive](./skills/automotive/) | [maintenance](./skills/automotive/maintenance/skills/), [troubleshooting](./skills/automotive/troubleshooting/skills/), [buying](./skills/automotive/buying/skills/), [modifications](./skills/automotive/modifications/skills/), [ev](./skills/automotive/ev/skills/) |
-
-## 🤖 Agent Support
-
-| Agent | Plugin install | Script install |
-| ----- | -------------- | -------------- |
-| Claude Code | `/plugin marketplace add jeffreytse/grimoire` then `/plugin install grimoire@grimoire` | `--target claude` |
-| GitHub Copilot CLI | `copilot plugin marketplace add jeffreytse/grimoire` then `copilot plugin install grimoire@grimoire` | `--target all` |
-| Gemini CLI | `gemini extensions install https://github.com/jeffreytse/grimoire` | `--target gemini` |
-| OpenCode | See [`.opencode/INSTALL.md`](./.opencode/INSTALL.md) | `--target all` |
-| OpenClaw | See [`.openclaw/INSTALL.md`](./.openclaw/INSTALL.md) | `--target openclaw` |
-| Codex CLI | `AGENTS.md` auto-loaded; browse `/plugins` in CLI | `--target codex` |
-| Cursor | `AGENTS.md` context injection | `--target cursor` |
 
 ## ❓ FAQ
 
