@@ -48,7 +48,8 @@ Multiple problem analysis practices apply:
 ```
 
 Then ask the user using the best available method for your platform:
-- **Claude Code / OpenCode**: use `AskUserQuestion` / `question` — question: "Which analysis practice should I use first?", ★ recommended first with "(Recommended)" appended, `multiSelect: false`
+- **Claude Code**: use `AskUserQuestion` — question: "Which analysis practice should I use first?", ★ recommended first with "(Recommended)" appended, `multiSelect: false`
+- **OpenCode**: use `question` — same schema as `AskUserQuestion`
 - **Gemini CLI**: use `ask_user` — question: "Which analysis practice should I use first?", `type: "select"`, ★ recommended first
 - **All other platforms**: numbered list:
   ```

@@ -145,9 +145,10 @@ Each level overrides the level below for the same preference. `[engineering.arch
 If file exists: append new domain section only. Never silently overwrite.
 
 If the domain is already pinned in the file, ask before overwriting using a platform-aware confirm:
-- **Claude Code / OpenCode**: `AskUserQuestion` — options: "Replace with [new-skill] (Recommended)" and "Keep [existing-skill]"
+- **Claude Code**: use `AskUserQuestion` — options: "Replace with [new-skill] (Recommended)" and "Keep [existing-skill]"
+- **OpenCode**: use `question` — same schema as `AskUserQuestion`
 - **Gemini CLI**: `ask_user` — `type: "confirm"`, question: `[domain] already has "[existing-skill]" pinned. Replace with "[new-skill]"?`
-- **Other**:
+- **All other platforms**:
   ```
   [domain] already has "[existing-skill]" pinned. Replace with "[new-skill]"? [y/n]
   ```

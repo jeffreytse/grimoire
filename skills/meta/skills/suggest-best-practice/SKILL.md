@@ -45,8 +45,8 @@ Resolution order — first match wins:
 
 For the relevant domain, check if a practice is already pinned:
 - **Pinned match (file)** → apply the pinned practice directly; skip scoring entirely. No further action needed — already persisted.
-- **Pinned match (session)** → apply the pinned practice directly; skip scoring. After applying, offer once per session per domain using a platform-aware confirm: "Save [practice] for future sessions?" (Claude Code/OpenCode: `AskUserQuestion`; Gemini CLI: `ask_user type: confirm`; other: `[y/n]`). If yes, invoke `pin-best-practice-preference`.
-- **Pinned conflict** → warn before suggesting an alternative using a platform-aware confirm: "You have [X] pinned for [domain]. Suggest changing it?" (Claude Code/OpenCode: `AskUserQuestion`; Gemini CLI: `ask_user type: confirm`; other: `[y/n]`).
+- **Pinned match (session)** → apply the pinned practice directly; skip scoring. After applying, offer once per session per domain using a platform-aware confirm: "Save [practice] for future sessions?" (Claude Code: `AskUserQuestion`; OpenCode: `question`; Gemini CLI: `ask_user type: confirm`; other: `[y/n]`). If yes, invoke `pin-best-practice-preference`.
+- **Pinned conflict** → warn before suggesting an alternative using a platform-aware confirm: "You have [X] pinned for [domain]. Suggest changing it?" (Claude Code: `AskUserQuestion`; OpenCode: `question`; Gemini CLI: `ask_user type: confirm`; other: `[y/n]`).
 - **No pin** → proceed to Step 1.
 
 ### 1. Extract intent signals (no clarifying questions yet)
@@ -128,7 +128,8 @@ Multiple best practices apply. Recommended: [top-skill-name]
 ```
 
 Then collect the user's choice using the best available method for your platform:
-- **Claude Code / OpenCode**: use `AskUserQuestion` / `question` — ★ recommended first with "(Recommended)" appended, include "Apply all in sequence" and "Skip" as last two options, `multiSelect: false`
+- **Claude Code**: use `AskUserQuestion` — ★ recommended first with "(Recommended)" appended, include "Apply all in sequence" and "Skip" as last two options, `multiSelect: false`
+- **OpenCode**: use `question` — same schema as `AskUserQuestion`
 - **Gemini CLI**: use `ask_user` — `type: "select"`, same options including "Apply all in sequence" and "Skip"
 - **All other platforms**: numbered list:
   ```
@@ -154,7 +155,8 @@ Best practices for: [topic]
 2. ...
 ```
 After listing, collect the user's choice using the best available method for your platform:
-- **Claude Code / OpenCode**: use `AskUserQuestion` / `question` — list all skills as options (no ★ in browse mode), `multiSelect: false`
+- **Claude Code**: use `AskUserQuestion` — list all skills as options (no ★ in browse mode), `multiSelect: false`
+- **OpenCode**: use `question` — same schema as `AskUserQuestion`
 - **Gemini CLI**: use `ask_user` — `type: "select"`, list all skills as options
 - **All other platforms**: `"Say the number or skill name to apply one."`
 

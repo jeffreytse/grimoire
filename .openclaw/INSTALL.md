@@ -83,4 +83,4 @@ Check precedence. Skills in `~/.openclaw/workspace/skills/` override `~/.opencla
 When skills reference Claude Code tools:
 - `Skill` tool → OpenClaw loads `SKILL.md` natively
 - `Read`, `Write`, `Edit`, `Bash` → your configured tools
-- `AskUserQuestion` → OpenClaw's interactive prompt
+- `AskUserQuestion` → not available; skills fall back to plain numbered list via chat message

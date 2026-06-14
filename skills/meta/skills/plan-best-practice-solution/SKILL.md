@@ -109,9 +109,9 @@ the best available method for your platform:
 
 - **Claude Code**: use `AskUserQuestion` — one question per ambiguous step,
   ★ recommended option first with "(Recommended)" appended, `multiSelect: false`
+- **OpenCode**: use `question` — same schema as `AskUserQuestion`
 - **Gemini CLI**: use `ask_user` — same structure, `type: "select"`, options list,
   ★ recommended first
-- **OpenCode**: use `question` — same schema as `AskUserQuestion`
 - **All other platforms** (Codex, Cursor, Copilot, etc.): present numbered list
   and wait for user to type a number or skill name:
   ```

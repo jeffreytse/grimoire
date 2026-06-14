@@ -75,7 +75,8 @@ Multiple best practices match this problem:
 ```
 
 Then collect the user's choice using the best available method for your platform:
-- **Claude Code / OpenCode**: use `AskUserQuestion` / `question` — ★ recommended first with "(Recommended)" appended, `multiSelect: false`
+- **Claude Code**: use `AskUserQuestion` — ★ recommended first with "(Recommended)" appended, `multiSelect: false`
+- **OpenCode**: use `question` — same schema as `AskUserQuestion`
 - **Gemini CLI**: use `ask_user` — `type: "select"`, ★ recommended first
 - **All other platforms**: numbered list, wait for user to type a number or name:
   ```
@@ -116,7 +117,8 @@ Sub-problem B → multiple practices apply:
 ```
 
 Then collect the user's choice using the best available method for your platform:
-- **Claude Code / OpenCode**: use `AskUserQuestion` / `question` — ★ recommended first with "(Recommended)" appended, `multiSelect: false`
+- **Claude Code**: use `AskUserQuestion` — ★ recommended first with "(Recommended)" appended, `multiSelect: false`
+- **OpenCode**: use `question` — same schema as `AskUserQuestion`
 - **Gemini CLI**: use `ask_user` — `type: "select"`, ★ recommended first
 - **All other platforms**: numbered list, wait for user to type a number or name:
   ```

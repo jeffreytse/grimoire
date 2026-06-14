@@ -144,9 +144,10 @@ If yes, for each undetected domain, ask: "Which practice do you use for [domain]
 ### Step 6: Write preferences file
 
 Ask where to save using a platform-aware prompt:
-- **Claude Code / OpenCode**: `AskUserQuestion` — options: "This session only (Recommended)", "This project only → .grimoire/preferences.md", "All my projects → ~/.grimoire/preferences.md", "Both (project + global)"
-- **Gemini CLI**: `ask_user` — `type: "select"`, same four options
-- **Other**:
+- **Claude Code**: use `AskUserQuestion` — options: "This session only (Recommended)", "This project only → .grimoire/preferences.md", "All my projects → ~/.grimoire/preferences.md", "Both (project + global)"
+- **OpenCode**: use `question` — same schema as `AskUserQuestion`
+- **Gemini CLI**: use `ask_user` — `type: "select"`, same four options
+- **All other platforms**:
   ```
   Save preferences to:
     [0] This session only  → in memory; not written to disk; resets when session ends
@@ -173,9 +174,10 @@ Write to selected location(s) in this format:
 ```
 
 If file already exists at the target path: append new domain sections only. Never silently overwrite existing pins. If a domain conflict exists, ask using a platform-aware confirm:
-- **Claude Code / OpenCode**: `AskUserQuestion` — options: "Replace with [new-skill] (Recommended)" and "Keep [existing-skill]"
-- **Gemini CLI**: `ask_user` — `type: "confirm"`, question: `[domain] already has "[existing-skill]" pinned. Replace with "[new-skill]"?`
-- **Other**:
+- **Claude Code**: use `AskUserQuestion` — options: "Replace with [new-skill] (Recommended)" and "Keep [existing-skill]"
+- **OpenCode**: use `question` — same schema as `AskUserQuestion`
+- **Gemini CLI**: use `ask_user` — `type: "confirm"`, question: `[domain] already has "[existing-skill]" pinned. Replace with "[new-skill]"?`
+- **All other platforms**:
   ```
   You already have [existing-skill] pinned for [domain]. Replace it with [new-skill]? [y/n]
   ```

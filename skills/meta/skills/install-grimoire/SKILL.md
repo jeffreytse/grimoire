@@ -66,9 +66,10 @@ If scope or target is ambiguous, ask one question before proceeding.
 ### Step 3: Show command and confirm
 
 Construct the `scripts/grimoire` command and show it before running. Use a platform-aware confirm:
-- **Claude Code / OpenCode**: `AskUserQuestion` — options: "Continue (Recommended)" and "Cancel"
-- **Gemini CLI**: `ask_user` — `type: "confirm"`
-- **Other**: show the block below and wait for `[y/n]`
+- **Claude Code**: use `AskUserQuestion` — options: "Continue (Recommended)" and "Cancel"
+- **OpenCode**: use `question` — same schema as `AskUserQuestion`
+- **Gemini CLI**: use `ask_user` — `type: "confirm"`
+- **All other platforms**: show the block below and wait for `[y/n]`
 
 Install example (other platforms):
 ```
@@ -79,7 +80,7 @@ This will install all engineering skills (~101 skills) to Claude Code.
 Continue? [y/n]
 ```
 
-For `uninstall`, flag it explicitly (same platform-aware confirm — Claude Code/OpenCode/Gemini use their native tool):
+For `uninstall`, flag it explicitly (same platform-aware confirm — Claude Code/OpenCode/Gemini CLI use their native tool):
 ```
 Will run:
   ./scripts/grimoire --domain business --uninstall --target all

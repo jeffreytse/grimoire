@@ -74,9 +74,10 @@ Show which file each key came from if multiple files contribute.
 **TOML parse guard:** If the target settings file exists but cannot be parsed as valid TOML (syntax error), stop immediately. Output: 'Settings file at [path] has a syntax error — cannot edit safely. Fix the TOML syntax first (e.g., unclosed quote, missing `=`, invalid array). Inspect with: `cat [path]`.' Do not overwrite a malformed file.
 
 Parse the requested change from user input. Show what will change, then ask which file to write to using a platform-aware prompt:
-- **Claude Code / OpenCode**: `AskUserQuestion` — options: "This project (shared) → settings.toml (Recommended)", "This project (personal) → settings.local.toml", "All projects (global) → ~/.config/grimoire/settings.toml"
+- **Claude Code**: use `AskUserQuestion` — options: "This project (shared) → settings.toml (Recommended)", "This project (personal) → settings.local.toml", "All projects (global) → ~/.config/grimoire/settings.toml"
+- **OpenCode**: use `question` — same schema as `AskUserQuestion`
 - **Gemini CLI**: `ask_user` — `type: "select"`, same three options, first recommended
-- **Other**: numbered list:
+- **All other platforms**: numbered list:
   ```
   Change:
 
@@ -101,9 +102,10 @@ After file selection, confirm and write. Never write invalid TOML.
 ### Step 3c: Remove
 
 Ask which file to remove from using a platform-aware prompt:
-- **Claude Code / OpenCode**: `AskUserQuestion` — options: "This project (shared) → settings.toml (Recommended)", "This project (personal) → settings.local.toml", "All projects (global) → ~/.config/grimoire/settings.toml"
+- **Claude Code**: use `AskUserQuestion` — options: "This project (shared) → settings.toml (Recommended)", "This project (personal) → settings.local.toml", "All projects (global) → ~/.config/grimoire/settings.toml"
+- **OpenCode**: use `question` — same schema as `AskUserQuestion`
 - **Gemini CLI**: `ask_user` — `type: "select"`, same three options
-- **Other**:
+- **All other platforms**:
   ```
   Remove from:
     [1] This project (shared)    → .grimoire/settings.toml       (committed to repo)
@@ -112,9 +114,10 @@ Ask which file to remove from using a platform-aware prompt:
   ```
 
 After file selection, show what will be removed and ask key vs section using a platform-aware prompt:
-- **Claude Code / OpenCode**: `AskUserQuestion` — options: "Remove this key only (Recommended)", "Remove the entire section", "Cancel"
+- **Claude Code**: use `AskUserQuestion` — options: "Remove this key only (Recommended)", "Remove the entire section", "Cancel"
+- **OpenCode**: use `question` — same schema as `AskUserQuestion`
 - **Gemini CLI**: `ask_user` — `type: "select"`, same options
-- **Other**:
+- **All other platforms**:
   ```
   Remove from .grimoire/settings.toml:
 
@@ -126,7 +129,7 @@ After file selection, show what will be removed and ask key vs section using a p
 
 If removing from the project file would expose a global default the user didn't intend, show the effective value after removal before confirming.
 
-After confirmation, remove the key or section. If the domain section becomes empty, use a platform-aware confirm (Claude Code/OpenCode: `AskUserQuestion`; Gemini: `ask_user type: confirm`; other: `[y/n]`) to ask whether to remove the section header too.
+After confirmation, remove the key or section. If the domain section becomes empty, use a platform-aware confirm (Claude Code: `AskUserQuestion`; OpenCode: `question` — same schema as `AskUserQuestion`; Gemini: `ask_user type: confirm`; other: `[y/n]`) to ask whether to remove the section header too.
 
 ---
 
@@ -176,7 +179,7 @@ Validating settings files...
     ✅  engineering/architecture: OK
 
   .grimoire/settings.toml (project shared)
-    ⚠️  engineering/architecture: expires "2026-09-01" is past — still apply? (platform-aware confirm: Claude Code/OpenCode `AskUserQuestion` with "Keep" and "Remove"; Gemini `ask_user type: confirm`; other `[keep / remove]`)
+    ⚠️  engineering/architecture: expires "2026-09-01" is past — still apply? (platform-aware confirm: Claude Code `AskUserQuestion` with "Keep" and "Remove"; OpenCode `question` — same schema as `AskUserQuestion`; Gemini `ask_user type: confirm`; other `[keep / remove]`)
     ❌  engineering/testing: "apply-tdd" is in both require and disabled — contradiction
     ✅  engineering/development: OK
 

@@ -67,7 +67,7 @@ Select skills to include (toggle with number, confirm with Enter)
 For each collected skill name, check it exists in installed grimoire skills.
 
 - **Found**: mark ✓, include
-- **Not found**: warn — ask user to confirm inclusion anyway (may be a skill they plan to install later). Use a platform-aware confirm per skill: "Include [skill-name] even though it's not installed?" (Claude Code/OpenCode: `AskUserQuestion`; Gemini CLI: `ask_user type: confirm`; other: `[y/n]`).
+- **Not found**: warn — ask user to confirm inclusion anyway (may be a skill they plan to install later). Use a platform-aware confirm per skill: "Include [skill-name] even though it's not installed?" (Claude Code: `AskUserQuestion`; OpenCode: `question` — same schema as `AskUserQuestion`; Gemini CLI: `ask_user type: confirm`; other: `[y/n]`).
 
 **Installed vs not-found distinction:** When listing skills in the profile, check each against the installed skills index:
 - **Installed** — include as-is
@@ -88,7 +88,8 @@ Validating skills...
 ### 4. Choose save location
 
 Use a platform-aware prompt:
-- **Claude Code / OpenCode**: `AskUserQuestion` — options: "This project → .grimoire/profiles/ (share with team) (Recommended)", "My user level → ~/.grimoire/profiles/ (personal)"
+- **Claude Code**: `AskUserQuestion` — options: "This project → .grimoire/profiles/ (share with team) (Recommended)", "My user level → ~/.grimoire/profiles/ (personal)"
+- **OpenCode**: use `question` — same schema as `AskUserQuestion`
 - **Gemini CLI**: `ask_user` — `type: "select"`, same two options
 - **Other**:
   ```
