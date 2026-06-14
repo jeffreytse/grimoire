@@ -296,9 +296,9 @@ When a skill presents a choice to the user (multiple candidates, confirm/skip, b
 ```markdown
 Collect choice via platform-aware prompt:
 - **Claude Code**: `AskUserQuestion` — mark recommended option with `(Recommended)` suffix, `multiSelect: false`
-- **Gemini CLI**: `ask_user` — `type: "select"`, recommended option first
 - **OpenCode**: `question` — same schema as `AskUserQuestion`
-- **All other platforms**: numbered list, wait for user to type number or name:
+- **Gemini CLI**: `ask_user` — `type: "select"`, recommended option first
+- **All other platforms** (Codex, Copilot, OpenClaw, etc.): numbered list, wait for user to type number or name:
   ```
   Options:
     1. [top option] ★ (recommended)
@@ -312,8 +312,8 @@ Collect choice via platform-aware prompt:
 ```markdown
 Collect confirm via platform-aware prompt:
 - **Claude Code**: `AskUserQuestion` with two options: `"[action] (Recommended)"` and `"Skip — continue without"`
-- **Gemini CLI**: `ask_user` with `type: "confirm"`
 - **OpenCode**: `question` with two options
+- **Gemini CLI**: `ask_user` with `type: "confirm"`
 - **Other**: `Apply [X]? [y/n — or just continue]`
 ```
 
