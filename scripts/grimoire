@@ -768,6 +768,7 @@ _upgrade_stable() {
   git -C "${_UPGRADE_DIR}" checkout "${_latest_tag}" --quiet
 
   _upgrade_show_result "${_cur_commit}" "${_cur_ver}" "${_cur_date}" "${_tag_short}" "${_tag_ver}" "${_tag_date}"
+  _upgrade_link_new_skills
   printf 'Cleaning broken symlinks...\n'
   do_clean
 }
@@ -816,8 +817,44 @@ _upgrade_unstable() {
   _pulled_ver="$(cat "${_UPGRADE_DIR}/VERSION" 2>/dev/null | tr -d '[:space:]')" || _pulled_ver="unknown"
 
   _upgrade_show_result "${_cur_commit}" "${_cur_ver}" "${_cur_date}" "${_pulled_commit}" "${_pulled_ver}" "${_pulled_date}"
+  _upgrade_link_new_skills
   printf 'Cleaning broken symlinks...\n'
   do_clean
+}
+
+_upgrade_link_new_skills() {
+  local _agents=()
+  [[ -d "${CLAUDE_SKILLS_DIR}" ]]   && _agents+=("claude")
+  [[ -d "${AGENTS_SKILLS_DIR}" ]]   && _agents+=("codex")
+  [[ -d "${GEMINI_SKILLS_DIR}" ]]   && _agents+=("gemini")
+  [[ -d "${OPENCLAW_SKILLS_DIR}" ]] && _agents+=("openclaw")
+  [[ -d "${OPENCODE_SKILLS_DIR}" ]] && _agents+=("opencode")
+  [[ ${#_agents[@]} -eq 0 ]] && return 0
+
+  local _before=${_installed_count}
+  local _agent domain_dir sub_dir skill_dir
+  for _agent in "${_agents[@]}"; do
+    for domain_dir in "${SKILLS_ROOT}"/*/; do
+      [[ "$(basename "${domain_dir}")" == .* ]] && continue
+      if is_nested "${domain_dir}"; then
+        for sub_dir in "${domain_dir}"/*/; do
+          [[ "$(basename "${sub_dir}")" == .* ]] && continue
+          [[ ! -d "${sub_dir}/skills" ]] && continue
+          for skill_dir in "${sub_dir}/skills"/*/; do
+            [[ -f "${skill_dir}/SKILL.md" ]] || continue
+            do_install "${skill_dir}" "${_agent}"
+          done
+        done
+      else
+        for skill_dir in "${domain_dir}/skills"/*/; do
+          [[ -f "${skill_dir}/SKILL.md" ]] || continue
+          do_install "${skill_dir}" "${_agent}"
+        done
+      fi
+    done
+  done
+  local _new=$(( _installed_count - _before ))
+  [[ ${_new} -gt 0 ]] && printf '  ✅ %d new skill(s) linked\n\n' "${_new}"
 }
 
 # resolved once by do_upgrade; shared with helper functions above

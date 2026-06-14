@@ -258,6 +258,13 @@ function Install-SkillDir([string]$Src, [string]$DestDir) {
     $skillName = Split-Path -Leaf $Src
     $dest = Join-Path $DestDir $skillName
     if (-not (Test-Path $DestDir)) { New-Item -ItemType Directory -Force -Path $DestDir | Out-Null }
+    if ($script:Link) {
+        $existing = Get-Item $dest -ErrorAction SilentlyContinue
+        if ($existing -and ($existing.Attributes -band [System.IO.FileAttributes]::ReparsePoint)) {
+            $t = $existing.Target; if ($t -is [array]) { $t = $t[0] }
+            if ($t -eq $Src) { return }
+        }
+    }
     if (Test-Path $dest -ErrorAction SilentlyContinue) { Remove-Item -Recurse -Force $dest }
     if ($script:Link) {
         New-Item -ItemType Junction -Path $dest -Target $Src | Out-Null
@@ -441,6 +448,45 @@ function Confirm-Upgrade {
     return $ans -match '^[Yy]$'
 }
 
+function Invoke-UpgradeLinkNewSkills {
+    $agents = @()
+    if (Test-Path $ClaudeSkillsDir)   { $agents += "claude" }
+    if (Test-Path $AgentsSkillsDir)   { $agents += "codex" }
+    if (Test-Path $GeminiSkillsDir)   { $agents += "gemini" }
+    if (Test-Path $OpenClawSkillsDir) { $agents += "openclaw" }
+    if (Test-Path $OpenCodeSkillsDir) { $agents += "opencode" }
+    if ($agents.Count -eq 0) { return }
+
+    $before = $script:InstalledCount
+    foreach ($agent in $agents) {
+        foreach ($domainDir in Get-ChildItem $SkillsRoot -Directory | Sort-Object Name) {
+            if ($domainDir.Name.StartsWith(".")) { continue }
+            if (Test-IsNested $domainDir.FullName) {
+                foreach ($subDir in Get-ChildItem $domainDir.FullName -Directory | Sort-Object Name) {
+                    if ($subDir.Name.StartsWith(".")) { continue }
+                    $skillsDir = Join-Path $subDir.FullName "skills"
+                    if (-not (Test-Path $skillsDir)) { continue }
+                    foreach ($sd in Get-ChildItem $skillsDir -Directory) {
+                        if (Test-Path (Join-Path $sd.FullName "SKILL.md")) { Invoke-Install $sd.FullName $agent }
+                    }
+                }
+            } else {
+                $skillsDir = Join-Path $domainDir.FullName "skills"
+                if (-not (Test-Path $skillsDir)) { continue }
+                foreach ($sd in Get-ChildItem $skillsDir -Directory) {
+                    if (Test-Path (Join-Path $sd.FullName "SKILL.md")) { Invoke-Install $sd.FullName $agent }
+                }
+            }
+        }
+    }
+    $new = $script:InstalledCount - $before
+    if ($new -gt 0) {
+        $e = [char]27; $ok = "${e}[0;32m✅${e}[0m"
+        Write-Host "  $ok $new new skill(s) linked"
+        Write-Host ""
+    }
+}
+
 function Invoke-UpgradeStable {
     $e  = [char]27
     $ok = "${e}[0;32m✅${e}[0m"
@@ -482,6 +528,7 @@ function Invoke-UpgradeStable {
     git -C $ud checkout $latestTag --quiet
 
     Show-UpgradeResult $curCommit $curVer $curDate $tagShort $tagVer $tagDate
+    Invoke-UpgradeLinkNewSkills
     Write-Host "Cleaning broken junctions..."
     Invoke-Clean
 }
@@ -531,6 +578,7 @@ function Invoke-UpgradeUnstable {
     try { $pulledVer    = (Get-Content (Join-Path $ud "VERSION") -Raw -ErrorAction Stop).Trim() } catch {}
 
     Show-UpgradeResult $curCommit $curVer $curDate $pulledCommit $pulledVer $pulledDate
+    Invoke-UpgradeLinkNewSkills
     Write-Host "Cleaning broken junctions..."
     Invoke-Clean
 }
