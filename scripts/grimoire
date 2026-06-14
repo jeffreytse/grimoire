@@ -30,6 +30,7 @@ CLAUDE_SKILLS_DIR="${HOME}/.claude/skills"
 AGENTS_SKILLS_DIR="${HOME}/.agents/skills"
 GEMINI_SKILLS_DIR="${HOME}/.gemini/skills"
 OPENCLAW_SKILLS_DIR="${HOME}/.openclaw/skills"
+OPENCODE_SKILLS_DIR="${HOME}/.config/opencode/skills"
 
 usage() {
   cat <<EOF
@@ -39,7 +40,7 @@ Options:
   --domain <name>       Install/uninstall all skills for a domain
   --subdomain <name>    Restrict to one sub-domain within a domain
   --skill <path>        Install/uninstall one skill (e.g. engineering/development/propose-conventional-commit)
-  --target <agent>      Target: claude, codex, gemini, openclaw, all
+  --target <agent>      Target: claude, codex, gemini, openclaw, opencode, all
   --copy                Copy skill files instead of symlinking
   --upgrade             Pull latest grimoire at GRIMOIRE_HOME (symlinks update automatically)
   --clean               Remove broken symlinks from all agent skill dirs
@@ -61,10 +62,12 @@ Examples:
   grimoire --clean                                          # Remove broken symlinks
   grimoire --domain engineering --target claude
   grimoire --domain engineering --target openclaw
+  grimoire --domain engineering --target opencode
   grimoire --domain engineering --copy                      # Copy instead of symlink
   grimoire --skill engineering/development/propose-conventional-commit
   grimoire --uninstall --domain engineering --target claude
   grimoire --uninstall --domain engineering --target openclaw
+  grimoire --uninstall --domain engineering --target opencode
   grimoire --uninstall --skill engineering/development/propose-conventional-commit
 EOF
 }
@@ -342,6 +345,7 @@ detect_agents() {
   command -v codex    >/dev/null 2>&1 && detected+=("codex")
   command -v gemini   >/dev/null 2>&1 && detected+=("gemini")
   command -v openclaw >/dev/null 2>&1 && detected+=("openclaw")
+  command -v opencode >/dev/null 2>&1 && detected+=("opencode")
   echo "${detected[@]:-}"
 }
 
@@ -351,6 +355,7 @@ agent_display_name() {
     codex)    echo "Codex" ;;
     gemini)   echo "Gemini CLI" ;;
     openclaw) echo "OpenClaw" ;;
+    opencode) echo "OpenCode" ;;
     *)        echo "$1" ;;
   esac
 }
@@ -361,6 +366,7 @@ agent_from_display() {
     "Codex")       echo "codex"  ;;
     "Gemini CLI")  echo "gemini" ;;
     "OpenClaw")    echo "openclaw" ;;
+    "OpenCode")    echo "opencode" ;;
     *)             echo "$1" ;;
   esac
 }
@@ -372,11 +378,13 @@ do_install() {
     codex)    install_skill_dir "${src}" "${AGENTS_SKILLS_DIR}" ;;
     gemini)   install_skill_dir "${src}" "${GEMINI_SKILLS_DIR}" ;;
     openclaw) install_skill_dir "${src}" "${OPENCLAW_SKILLS_DIR}" ;;
+    opencode) install_skill_dir "${src}" "${OPENCODE_SKILLS_DIR}" ;;
     all)
       install_skill_dir "${src}" "${CLAUDE_SKILLS_DIR}"
       install_skill_dir "${src}" "${AGENTS_SKILLS_DIR}"
       install_skill_dir "${src}" "${GEMINI_SKILLS_DIR}"
       install_skill_dir "${src}" "${OPENCLAW_SKILLS_DIR}"
+      install_skill_dir "${src}" "${OPENCODE_SKILLS_DIR}"
       ;;
   esac
 }
@@ -470,9 +478,11 @@ uninstall_skill_dir() {
   local skill_name="$1" target="$2"
   local dest_dir
   case "${target}" in
-    claude) dest_dir="${CLAUDE_SKILLS_DIR}" ;;
-    codex)  dest_dir="${AGENTS_SKILLS_DIR}" ;;
-    gemini) dest_dir="${GEMINI_SKILLS_DIR}" ;;
+    claude)   dest_dir="${CLAUDE_SKILLS_DIR}" ;;
+    codex)    dest_dir="${AGENTS_SKILLS_DIR}" ;;
+    gemini)   dest_dir="${GEMINI_SKILLS_DIR}" ;;
+    openclaw) dest_dir="${OPENCLAW_SKILLS_DIR}" ;;
+    opencode) dest_dir="${OPENCODE_SKILLS_DIR}" ;;
     *) return ;;
   esac
   if [[ -L "${dest_dir}/${skill_name}" ]]; then
@@ -489,13 +499,17 @@ uninstall_skill_dir() {
 do_uninstall() {
   local skill_name="$1" target="$2"
   case "${target}" in
-    claude) uninstall_skill_dir "${skill_name}" "claude" ;;
-    codex)  uninstall_skill_dir "${skill_name}" "codex"  ;;
-    gemini) uninstall_skill_dir "${skill_name}" "gemini" ;;
+    claude)   uninstall_skill_dir "${skill_name}" "claude" ;;
+    codex)    uninstall_skill_dir "${skill_name}" "codex"  ;;
+    gemini)   uninstall_skill_dir "${skill_name}" "gemini" ;;
+    openclaw) uninstall_skill_dir "${skill_name}" "openclaw" ;;
+    opencode) uninstall_skill_dir "${skill_name}" "opencode" ;;
     all)
       uninstall_skill_dir "${skill_name}" "claude"
       uninstall_skill_dir "${skill_name}" "codex"
       uninstall_skill_dir "${skill_name}" "gemini"
+      uninstall_skill_dir "${skill_name}" "openclaw"
+      uninstall_skill_dir "${skill_name}" "opencode"
       ;;
   esac
 }
@@ -514,7 +528,8 @@ uninstall_subdomain() {
 
 has_any_skills_installed() {
   local _dir
-  for _dir in "${CLAUDE_SKILLS_DIR}" "${AGENTS_SKILLS_DIR}" "${GEMINI_SKILLS_DIR}"; do
+  for _dir in "${CLAUDE_SKILLS_DIR}" "${AGENTS_SKILLS_DIR}" "${GEMINI_SKILLS_DIR}" \
+              "${OPENCLAW_SKILLS_DIR}" "${OPENCODE_SKILLS_DIR}"; do
     [[ -d "${_dir}" ]] || continue
     local _any
     _any=$(find "${_dir}" -mindepth 1 -maxdepth 1 2>/dev/null | head -1)
@@ -526,9 +541,11 @@ has_any_skills_installed() {
 has_agent_skills_installed() {
   local _dir
   case "$1" in
-    claude) _dir="${CLAUDE_SKILLS_DIR}" ;;
-    codex)  _dir="${AGENTS_SKILLS_DIR}" ;;
-    gemini) _dir="${GEMINI_SKILLS_DIR}" ;;
+    claude)   _dir="${CLAUDE_SKILLS_DIR}" ;;
+    codex)    _dir="${AGENTS_SKILLS_DIR}" ;;
+    gemini)   _dir="${GEMINI_SKILLS_DIR}" ;;
+    openclaw) _dir="${OPENCLAW_SKILLS_DIR}" ;;
+    opencode) _dir="${OPENCODE_SKILLS_DIR}" ;;
     *) return 1 ;;
   esac
   [[ -d "${_dir}" ]] || return 1
@@ -569,6 +586,7 @@ _agent_config_file() {
     codex)    echo "${HOME}/.agents/AGENTS.md" ;;
     gemini)   echo "${HOME}/.gemini/GEMINI.md" ;;
     openclaw) echo "${HOME}/.openclaw/workspace/AGENTS.md" ;;
+    opencode) echo "${HOME}/.config/opencode/AGENTS.md" ;;
   esac
 }
 
@@ -578,6 +596,7 @@ _agent_config_dir() {
     codex)    echo "${HOME}/.agents" ;;
     gemini)   echo "${HOME}/.gemini" ;;
     openclaw) echo "${HOME}/.openclaw/workspace" ;;
+    opencode) echo "${HOME}/.config/opencode" ;;
   esac
 }
 
@@ -867,12 +886,14 @@ do_doctor() {
   printf '\n  AI agents\n'
 
   # Grimoire-integrated agents: show detection + version + skill counts
-  for _agent in claude codex gemini; do
+  for _agent in claude codex gemini openclaw opencode; do
     local _dir _label _ver _vs
     case "${_agent}" in
-      claude) _dir="${CLAUDE_SKILLS_DIR}"; _label="Claude Code" ;;
-      codex)  _dir="${AGENTS_SKILLS_DIR}"; _label="Codex" ;;
-      gemini) _dir="${GEMINI_SKILLS_DIR}"; _label="Gemini CLI" ;;
+      claude)   _dir="${CLAUDE_SKILLS_DIR}";   _label="Claude Code" ;;
+      codex)    _dir="${AGENTS_SKILLS_DIR}";   _label="Codex" ;;
+      gemini)   _dir="${GEMINI_SKILLS_DIR}";   _label="Gemini CLI" ;;
+      openclaw) _dir="${OPENCLAW_SKILLS_DIR}"; _label="OpenClaw" ;;
+      opencode) _dir="${OPENCODE_SKILLS_DIR}"; _label="OpenCode" ;;
     esac
     if command -v "${_agent}" >/dev/null 2>&1; then
       _ver="$(_query_version "${_agent}")"
@@ -922,7 +943,7 @@ do_doctor() {
     printf '    ⬜  %-16s not found\n' "GitHub Copilot"
   fi
 
-  for _spec in "OpenCode:opencode" "Cursor:cursor" "Windsurf:windsurf" "Aider:aider"; do
+  for _spec in "Cursor:cursor" "Windsurf:windsurf" "Aider:aider"; do
     local _label _cmd _ver _vs
     _label="${_spec%%:*}"
     _cmd="${_spec#*:}"
@@ -1336,7 +1357,7 @@ else
     has_any_skills_installed || remove_global_bin
     local _rm_targets=()
     if [[ "${TARGET}" == "auto" ]]; then _rm_targets=("${_detected[@]}")
-    elif [[ "${TARGET}" == "all" ]]; then _rm_targets=(claude codex gemini openclaw)
+    elif [[ "${TARGET}" == "all" ]]; then _rm_targets=(claude codex gemini openclaw opencode)
     else _rm_targets=("${TARGET}"); fi
     for _agent in "${_rm_targets[@]}"; do
       has_agent_skills_installed "${_agent}" || remove_agent_md_config "${_agent}"
@@ -1345,7 +1366,7 @@ else
     install_global_bin
     local _cfg_targets=()
     if [[ "${TARGET}" == "auto" ]]; then _cfg_targets=("${_detected[@]}")
-    elif [[ "${TARGET}" == "all" ]]; then _cfg_targets=(claude codex gemini)
+    elif [[ "${TARGET}" == "all" ]]; then _cfg_targets=(claude codex gemini openclaw opencode)
     else _cfg_targets=("${TARGET}"); fi
     for _agent in "${_cfg_targets[@]}"; do configure_agent_md "${_agent}"; done
   fi

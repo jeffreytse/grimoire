@@ -215,7 +215,7 @@ or tells you exactly what to install if the skill isn't in your library yet.
 curl -fsSL https://raw.githubusercontent.com/jeffreytse/grimoire/main/scripts/grimoire | bash
 ```
 
-Auto-detects Claude Code, Codex, Gemini CLI, and OpenClaw. Installs to every agent found. Also creates a global `grimoire` command for future installs and upgrades.
+Auto-detects Claude Code, Codex, Gemini CLI, OpenClaw, and OpenCode. Installs to every agent found. Also creates a global `grimoire` command for future installs and upgrades.
 
 **Windows (PowerShell):**
 
@@ -264,7 +264,13 @@ gemini extensions update grimoire                                         # upda
 ./scripts/grimoire --target cursor
 ```
 
-**OpenCode:** add to `opencode.json`:
+**OpenCode:**
+
+```bash
+./scripts/grimoire --target opencode
+```
+
+Or via plugin in `opencode.json`:
 ```json
 { "plugin": ["grimoire@git+https://github.com/jeffreytse/grimoire.git"] }
 ```
@@ -278,7 +284,7 @@ gemini extensions update grimoire                                         # upda
 | Claude Code | `/plugin marketplace add jeffreytse/grimoire` then `/plugin install grimoire@grimoire` | `--target claude` |
 | GitHub Copilot CLI | `copilot plugin marketplace add jeffreytse/grimoire` then `copilot plugin install grimoire@grimoire` | `--target all` |
 | Gemini CLI | `gemini extensions install https://github.com/jeffreytse/grimoire` | `--target gemini` |
-| OpenCode | See [`.opencode/INSTALL.md`](./.opencode/INSTALL.md) | `--target all` |
+| OpenCode | See [`.opencode/INSTALL.md`](./.opencode/INSTALL.md) | `--target opencode` |
 | OpenClaw | See [`.openclaw/INSTALL.md`](./.openclaw/INSTALL.md) | `--target openclaw` |
 | Codex CLI | `AGENTS.md` auto-loaded; browse `/plugins` in CLI | `--target codex` |
 | Cursor | `AGENTS.md` context injection | `--target cursor` |

@@ -38,6 +38,7 @@ $ClaudeSkillsDir   = Join-Path $HOME ".claude\skills"
 $AgentsSkillsDir   = Join-Path $HOME ".agents\skills"
 $GeminiSkillsDir   = Join-Path $HOME ".gemini\skills"
 $OpenClawSkillsDir = Join-Path $HOME ".openclaw\skills"
+$OpenCodeSkillsDir = Join-Path $HOME ".config\opencode\skills"
 
 # Enable ANSI/VT processing on Windows PS5.1
 if ($PSVersionTable.PSVersion.Major -lt 7) {
@@ -64,7 +65,7 @@ Options:
   -Domain <name>       Install/uninstall all skills for a domain
   -Subdomain <name>    Restrict to one sub-domain within a domain
   -Skill <path>        Install/uninstall one skill (e.g. engineering/development/propose-conventional-commit)
-  -Target <agent>      Target: claude, codex, gemini, openclaw, all
+  -Target <agent>      Target: claude, codex, gemini, openclaw, opencode, all
   -Uninstall           Remove skills instead of installing
   -Copy                Use copy mode instead of junctions
   -Upgrade             Pull latest grimoire at GrimoireHome (junctions update automatically)
@@ -87,7 +88,9 @@ Examples:
   .\grimoire.ps1 -Domain engineering -Copy                        # Copy instead of junction
   .\grimoire.ps1 -Skill engineering/development/propose-conventional-commit
   .\grimoire.ps1 -Domain engineering -Target openclaw
+  .\grimoire.ps1 -Domain engineering -Target opencode
   .\grimoire.ps1 -Uninstall -Domain engineering -Target openclaw
+  .\grimoire.ps1 -Uninstall -Domain engineering -Target opencode
   .\grimoire.ps1 -Uninstall -Domain engineering -Target claude
   .\grimoire.ps1 -Uninstall -Skill engineering/development/propose-conventional-commit
 "@
@@ -272,6 +275,7 @@ function Get-DetectedAgents {
     if ($null -ne (Get-Command "codex"    -ErrorAction SilentlyContinue)) { $d += "codex"    }
     if ($null -ne (Get-Command "gemini"   -ErrorAction SilentlyContinue)) { $d += "gemini"   }
     if ($null -ne (Get-Command "openclaw" -ErrorAction SilentlyContinue)) { $d += "openclaw" }
+    if ($null -ne (Get-Command "opencode" -ErrorAction SilentlyContinue)) { $d += "opencode" }
     return $d
 }
 
@@ -281,6 +285,7 @@ function Get-AgentDisplayName([string]$Agent) {
         "codex"    { return "Codex" }
         "gemini"   { return "Gemini CLI" }
         "openclaw" { return "OpenClaw" }
+        "opencode" { return "OpenCode" }
         default    { return $Agent }
     }
 }
@@ -291,6 +296,7 @@ function Get-AgentFromDisplay([string]$Display) {
         "Codex"       { return "codex"    }
         "Gemini CLI"  { return "gemini"   }
         "OpenClaw"    { return "openclaw" }
+        "OpenCode"    { return "opencode" }
         default       { return $Display }
     }
 }
@@ -310,7 +316,7 @@ function Get-GrimoireVersion {
 }
 
 function Test-AnySkillsInstalled {
-    foreach ($dir in @($ClaudeSkillsDir, $AgentsSkillsDir, $GeminiSkillsDir, $OpenClawSkillsDir)) {
+    foreach ($dir in @($ClaudeSkillsDir, $AgentsSkillsDir, $GeminiSkillsDir, $OpenClawSkillsDir, $OpenCodeSkillsDir)) {
         if (-not (Test-Path $dir)) { continue }
         if ((Get-ChildItem $dir -Force -ErrorAction SilentlyContinue | Measure-Object).Count -gt 0) { return $true }
     }
@@ -363,6 +369,7 @@ function Get-AgentConfigFile([string]$Agent) {
         "codex"    { return Join-Path $HOME ".agents\AGENTS.md" }
         "gemini"   { return Join-Path $HOME ".gemini\GEMINI.md" }
         "openclaw" { return Join-Path $HOME ".openclaw\workspace\AGENTS.md" }
+        "opencode" { return Join-Path $HOME ".config\opencode\AGENTS.md" }
         default    { return "" }
     }
 }
@@ -373,6 +380,7 @@ function Get-AgentConfigDir([string]$Agent) {
         "codex"    { return Join-Path $HOME ".agents" }
         "gemini"   { return Join-Path $HOME ".gemini" }
         "openclaw" { return Join-Path $HOME ".openclaw\workspace" }
+        "opencode" { return Join-Path $HOME ".config\opencode" }
         default    { return "" }
     }
 }
@@ -604,6 +612,7 @@ function Invoke-Doctor {
         @{ name = "codex";    cmd = "codex";    dir = $AgentsSkillsDir;   home = (Join-Path $HOME ".agents") }
         @{ name = "gemini";   cmd = "gemini";   dir = $GeminiSkillsDir;   home = (Join-Path $HOME ".gemini") }
         @{ name = "openclaw"; cmd = "openclaw"; dir = $OpenClawSkillsDir; home = (Join-Path $HOME ".openclaw") }
+        @{ name = "opencode"; cmd = "opencode"; dir = $OpenCodeSkillsDir; home = (Join-Path $HOME ".config\opencode") }
     )
     foreach ($entry in $skillAgents) {
         $hasBin  = $null -ne (Get-Command $entry.cmd -ErrorAction SilentlyContinue)
@@ -630,7 +639,6 @@ function Invoke-Doctor {
     }
     $detectOnly = @(
         @{ name = "copilot";  cmd = "gh"       }
-        @{ name = "opencode"; cmd = "opencode" }
         @{ name = "cursor";   cmd = "cursor"   }
         @{ name = "windsurf"; cmd = "windsurf" }
         @{ name = "aider";    cmd = "aider"    }
@@ -685,11 +693,13 @@ function Invoke-Install([string]$Src, [string]$TargetAgent) {
         "codex"    { Install-SkillDir $Src $AgentsSkillsDir }
         "gemini"   { Install-SkillDir $Src $GeminiSkillsDir }
         "openclaw" { Install-SkillDir $Src $OpenClawSkillsDir }
+        "opencode" { Install-SkillDir $Src $OpenCodeSkillsDir }
         "all" {
             Install-SkillDir $Src $ClaudeSkillsDir
             Install-SkillDir $Src $AgentsSkillsDir
             Install-SkillDir $Src $GeminiSkillsDir
             Install-SkillDir $Src $OpenClawSkillsDir
+            Install-SkillDir $Src $OpenCodeSkillsDir
         }
     }
 }
@@ -744,7 +754,7 @@ function Uninstall-SkillDir([string]$SkillName, [string]$DestDir) {
 
 function Invoke-Clean {
     $cleaned = 0
-    $dirs = @($ClaudeSkillsDir, $AgentsSkillsDir, $GeminiSkillsDir, $OpenClawSkillsDir)
+    $dirs = @($ClaudeSkillsDir, $AgentsSkillsDir, $GeminiSkillsDir, $OpenClawSkillsDir, $OpenCodeSkillsDir)
     foreach ($dir in $dirs) {
         if (-not (Test-Path $dir)) { continue }
         foreach ($item in Get-ChildItem $dir -Force -ErrorAction SilentlyContinue) {
@@ -767,11 +777,13 @@ function Invoke-Uninstall([string]$SkillName, [string]$TargetAgent) {
         "codex"    { Uninstall-SkillDir $SkillName $AgentsSkillsDir }
         "gemini"   { Uninstall-SkillDir $SkillName $GeminiSkillsDir }
         "openclaw" { Uninstall-SkillDir $SkillName $OpenClawSkillsDir }
+        "opencode" { Uninstall-SkillDir $SkillName $OpenCodeSkillsDir }
         "all" {
             Uninstall-SkillDir $SkillName $ClaudeSkillsDir
             Uninstall-SkillDir $SkillName $AgentsSkillsDir
             Uninstall-SkillDir $SkillName $GeminiSkillsDir
             Uninstall-SkillDir $SkillName $OpenClawSkillsDir
+            Uninstall-SkillDir $SkillName $OpenCodeSkillsDir
         }
     }
 }
@@ -1024,12 +1036,12 @@ if ($isInteractive) {
     Invoke-Clean
     if ($Uninstall) {
         if ($Target -eq "auto")  { foreach ($a in $detected)                               { Remove-AgentMdConfig $a } }
-        elseif ($Target -eq "all") { foreach ($a in @("claude","codex","gemini","openclaw")) { Remove-AgentMdConfig $a } }
+        elseif ($Target -eq "all") { foreach ($a in @("claude","codex","gemini","openclaw","opencode")) { Remove-AgentMdConfig $a } }
         else                     { Remove-AgentMdConfig $Target }
         if (-not (Test-AnySkillsInstalled)) { Remove-GlobalBin }
     } else {
         if ($Target -eq "auto")  { foreach ($a in $detected)                               { Set-AgentMdConfig $a } }
-        elseif ($Target -eq "all") { foreach ($a in @("claude","codex","gemini","openclaw")) { Set-AgentMdConfig $a } }
+        elseif ($Target -eq "all") { foreach ($a in @("claude","codex","gemini","openclaw","opencode")) { Set-AgentMdConfig $a } }
         else                     { Set-AgentMdConfig $Target }
         Install-GlobalBin
     }
