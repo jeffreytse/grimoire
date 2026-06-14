@@ -42,7 +42,7 @@ Options:
   --skill <path>        Install/uninstall one skill (e.g. engineering/development/propose-conventional-commit)
   --target <agent>      Target: claude, codex, gemini, openclaw, opencode, all
   --copy                Copy skill files instead of symlinking
-  --upgrade             Pull latest grimoire at GRIMOIRE_HOME (symlinks update automatically)
+  --upgrade|--update    Pull latest grimoire at GRIMOIRE_HOME (symlinks update automatically)
   --clean               Remove broken symlinks from all agent skill dirs
   --uninstall           Remove skills instead of installing
   --list                List available domains, sub-domains, and skills
@@ -58,7 +58,7 @@ Environment:
 Examples:
   grimoire                                                  # Interactive TUI
   grimoire --yes                                            # Install everything, no prompts
-  grimoire --upgrade                                        # Pull latest grimoire
+  grimoire --update                                         # Pull latest grimoire
   grimoire --clean                                          # Remove broken symlinks
   grimoire --domain engineering --target claude
   grimoire --domain engineering --target openclaw
@@ -1024,7 +1024,7 @@ while [[ $# -gt 0 ]]; do
     --target)     TARGET="$2";    shift 2 ;;
     --yes|-y)     YES=1;          shift   ;;
     --copy)       LINK=0;         shift   ;;
-    --upgrade)    UPGRADE=1;      shift   ;;
+    --upgrade|--update)  UPGRADE=1;  shift   ;;
     --clean)      CLEAN=1;        shift   ;;
     --uninstall)  UNINSTALL=1;    shift   ;;
     --list)       list_skills; exit 0 ;;
@@ -1057,13 +1057,13 @@ if [[ -z "${DOMAIN}" && -z "${SKILL}" && -z "${TARGET}" && ${YES} -eq 0 && ${UNI
   print_banner
 
   # Mode selection
-  select_one _tui_mode "⚙️  What would you like to do?" "📥 Install" "🗑  Uninstall" "🚀 Upgrade" "🩺 Doctor" "🚪 Exit"
+  select_one _tui_mode "⚙️  What would you like to do?" "📥 Install" "🗑  Uninstall" "🚀 Update" "🩺 Doctor" "🚪 Exit"
 
   if [[ "${_tui_mode}" == *Doctor* ]]; then
     do_doctor
     exit 0
   fi
-  if [[ "${_tui_mode}" == *Upgrade* ]]; then
+  if [[ "${_tui_mode}" == *Update* ]]; then
     do_upgrade
     exit 0
   fi

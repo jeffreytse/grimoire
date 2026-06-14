@@ -8,6 +8,7 @@ param(
     [switch]$Uninstall,
     [switch]$Copy,
     [switch]$Upgrade,
+    [switch]$Update,
     [switch]$Clean,
     [switch]$Yes,
     [switch]$List,
@@ -68,7 +69,7 @@ Options:
   -Target <agent>      Target: claude, codex, gemini, openclaw, opencode, all
   -Uninstall           Remove skills instead of installing
   -Copy                Use copy mode instead of junctions
-  -Upgrade             Pull latest grimoire at GrimoireHome (junctions update automatically)
+  -Upgrade|-Update     Pull latest grimoire at GrimoireHome (junctions update automatically)
   -Clean               Remove broken junctions from all agent skill dirs
   -Yes                 Non-interactive: install all skills to all detected agents
   -List                List available domains, sub-domains, and skills
@@ -828,7 +829,7 @@ if ($List)    { Get-SkillList;  exit 0 }
 if ($Version) { Invoke-Version; exit 0 }
 if ($Doctor)  { Invoke-Doctor;  exit 0 }
 
-if ($Upgrade) { Invoke-Upgrade; exit 0 }
+if ($Upgrade -or $Update) { Invoke-Upgrade; exit 0 }
 
 if ($Clean -and -not $Uninstall -and -not $Domain -and -not $Skill) {
     Write-Host "Cleaning broken junctions..."
@@ -842,9 +843,9 @@ $isInteractive = (-not $Domain -and -not $Skill -and -not $Target -and -not $Yes
 if ($isInteractive) {
     Print-Banner
 
-    $tuiMode = Select-One "⚙️  What would you like to do?" @("📥 Install", "🗑  Uninstall", "🚀 Upgrade", "🩺 Doctor", "🚪 Exit")
+    $tuiMode = Select-One "⚙️  What would you like to do?" @("📥 Install", "🗑  Uninstall", "🚀 Update", "🩺 Doctor", "🚪 Exit")
     if ($tuiMode -like "*Doctor*")  { Invoke-Doctor;  exit 0 }
-    if ($tuiMode -like "*Upgrade*") { Invoke-Upgrade; exit 0 }
+    if ($tuiMode -like "*Update*")  { Invoke-Upgrade; exit 0 }
     if ($tuiMode -like "*Exit*")    { exit 0 }
 
     $detected = Get-DetectedAgents
