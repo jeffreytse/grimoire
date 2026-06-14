@@ -609,6 +609,7 @@ grimoire is a framework + reference skills. The domain structure is ready — co
 | GitHub Copilot CLI | `copilot plugin marketplace add jeffreytse/grimoire` then `copilot plugin install grimoire@grimoire` | `--target all` |
 | Gemini CLI | `gemini extensions install https://github.com/jeffreytse/grimoire` | `--target gemini` |
 | OpenCode | See [`.opencode/INSTALL.md`](./.opencode/INSTALL.md) | `--target all` |
+| OpenClaw | See [`.openclaw/INSTALL.md`](./.openclaw/INSTALL.md) | `--target openclaw` |
 | Codex CLI | `AGENTS.md` auto-loaded; browse `/plugins` in CLI | `--target codex` |
 | Cursor | `AGENTS.md` context injection | `--target cursor` |
 

@@ -34,9 +34,10 @@ if (Test-Path (Join-Path $_localRepoRoot ".git")) {
     $RepoRoot = $GrimoireHome
 }
 $SkillsRoot      = Join-Path $RepoRoot "skills"
-$ClaudeSkillsDir = Join-Path $HOME ".claude\skills"
-$AgentsSkillsDir = Join-Path $HOME ".agents\skills"
-$GeminiSkillsDir = Join-Path $HOME ".gemini\skills"
+$ClaudeSkillsDir   = Join-Path $HOME ".claude\skills"
+$AgentsSkillsDir   = Join-Path $HOME ".agents\skills"
+$GeminiSkillsDir   = Join-Path $HOME ".gemini\skills"
+$OpenClawSkillsDir = Join-Path $HOME ".openclaw\skills"
 
 # Enable ANSI/VT processing on Windows PS5.1
 if ($PSVersionTable.PSVersion.Major -lt 7) {
@@ -63,7 +64,7 @@ Options:
   -Domain <name>       Install/uninstall all skills for a domain
   -Subdomain <name>    Restrict to one sub-domain within a domain
   -Skill <path>        Install/uninstall one skill (e.g. engineering/development/propose-conventional-commit)
-  -Target <agent>      Target: claude, codex, gemini, all
+  -Target <agent>      Target: claude, codex, gemini, openclaw, all
   -Uninstall           Remove skills instead of installing
   -Copy                Use copy mode instead of junctions
   -Upgrade             Pull latest grimoire at GrimoireHome (junctions update automatically)
@@ -85,6 +86,8 @@ Examples:
   .\grimoire.ps1 -Domain engineering -Target claude
   .\grimoire.ps1 -Domain engineering -Copy                        # Copy instead of junction
   .\grimoire.ps1 -Skill engineering/development/propose-conventional-commit
+  .\grimoire.ps1 -Domain engineering -Target openclaw
+  .\grimoire.ps1 -Uninstall -Domain engineering -Target openclaw
   .\grimoire.ps1 -Uninstall -Domain engineering -Target claude
   .\grimoire.ps1 -Uninstall -Skill engineering/development/propose-conventional-commit
 "@
@@ -265,26 +268,29 @@ function Install-SkillDir([string]$Src, [string]$DestDir) {
 
 function Get-DetectedAgents {
     $d = @()
-    if ($null -ne (Get-Command "claude"  -ErrorAction SilentlyContinue)) { $d += "claude" }
-    if ($null -ne (Get-Command "codex"   -ErrorAction SilentlyContinue)) { $d += "codex"  }
-    if ($null -ne (Get-Command "gemini"  -ErrorAction SilentlyContinue)) { $d += "gemini" }
+    if ($null -ne (Get-Command "claude"   -ErrorAction SilentlyContinue)) { $d += "claude"   }
+    if ($null -ne (Get-Command "codex"    -ErrorAction SilentlyContinue)) { $d += "codex"    }
+    if ($null -ne (Get-Command "gemini"   -ErrorAction SilentlyContinue)) { $d += "gemini"   }
+    if ($null -ne (Get-Command "openclaw" -ErrorAction SilentlyContinue)) { $d += "openclaw" }
     return $d
 }
 
 function Get-AgentDisplayName([string]$Agent) {
     switch ($Agent) {
-        "claude" { return "Claude Code" }
-        "codex"  { return "Codex" }
-        "gemini" { return "Gemini CLI" }
-        default  { return $Agent }
+        "claude"   { return "Claude Code" }
+        "codex"    { return "Codex" }
+        "gemini"   { return "Gemini CLI" }
+        "openclaw" { return "OpenClaw" }
+        default    { return $Agent }
     }
 }
 
 function Get-AgentFromDisplay([string]$Display) {
     switch ($Display) {
-        "Claude Code" { return "claude" }
-        "Codex"       { return "codex"  }
-        "Gemini CLI"  { return "gemini" }
+        "Claude Code" { return "claude"   }
+        "Codex"       { return "codex"    }
+        "Gemini CLI"  { return "gemini"   }
+        "OpenClaw"    { return "openclaw" }
         default       { return $Display }
     }
 }
@@ -304,7 +310,7 @@ function Get-GrimoireVersion {
 }
 
 function Test-AnySkillsInstalled {
-    foreach ($dir in @($ClaudeSkillsDir, $AgentsSkillsDir, $GeminiSkillsDir)) {
+    foreach ($dir in @($ClaudeSkillsDir, $AgentsSkillsDir, $GeminiSkillsDir, $OpenClawSkillsDir)) {
         if (-not (Test-Path $dir)) { continue }
         if ((Get-ChildItem $dir -Force -ErrorAction SilentlyContinue | Measure-Object).Count -gt 0) { return $true }
     }
@@ -349,6 +355,54 @@ function Remove-GlobalBin {
             try { Remove-Item $target -Force; Write-Host "  unlinked: $target" } catch {}
         }
     }
+}
+
+function Get-AgentConfigFile([string]$Agent) {
+    switch ($Agent) {
+        "claude"   { return Join-Path $HOME ".claude\CLAUDE.md" }
+        "codex"    { return Join-Path $HOME ".agents\AGENTS.md" }
+        "gemini"   { return Join-Path $HOME ".gemini\GEMINI.md" }
+        "openclaw" { return Join-Path $HOME ".openclaw\workspace\AGENTS.md" }
+        default    { return "" }
+    }
+}
+
+function Get-AgentConfigDir([string]$Agent) {
+    switch ($Agent) {
+        "claude"   { return Join-Path $HOME ".claude" }
+        "codex"    { return Join-Path $HOME ".agents" }
+        "gemini"   { return Join-Path $HOME ".gemini" }
+        "openclaw" { return Join-Path $HOME ".openclaw\workspace" }
+        default    { return "" }
+    }
+}
+
+function Set-AgentMdConfig([string]$Agent) {
+    $cfgFile = Get-AgentConfigFile $Agent
+    $cfgDir  = Get-AgentConfigDir  $Agent
+    if (-not $cfgFile -or -not (Test-Path $cfgDir)) { return }
+    if ((Test-Path $cfgFile) -and (Select-String -Path $cfgFile -SimpleMatch "start-best-practice" -Quiet)) {
+        $e = [char]27
+        Write-Host "  ${e}[2m✓ start-best-practice already active → $cfgFile${e}[0m"
+        return
+    }
+    New-Item -ItemType Directory -Force -Path $cfgDir | Out-Null
+    Add-Content -Path $cfgFile -Value "`n## Grimoire`nAlways invoke ``start-best-practice`` before responding to any user request."
+    Write-Host "  ✓ Configured: start-best-practice auto-trigger → $cfgFile"
+}
+
+function Remove-AgentMdConfig([string]$Agent) {
+    $cfgFile = Get-AgentConfigFile $Agent
+    if (-not $cfgFile -or -not (Test-Path $cfgFile)) { return }
+    $content = Get-Content $cfgFile -Raw -ErrorAction SilentlyContinue
+    if (-not $content -or $content -notmatch "start-best-practice") { return }
+    $lines    = Get-Content $cfgFile -ErrorAction SilentlyContinue
+    $filtered = $lines | Where-Object {
+        $_ -notmatch "^## Grimoire$" -and
+        $_ -notmatch "^Always invoke ``start-best-practice`` before responding to any user request\.$"
+    }
+    Set-Content -Path $cfgFile -Value ($filtered -join "`n") -NoNewline
+    Write-Host "  ✓ Removed Grimoire config from $cfgFile"
 }
 
 $script:UpgradeDir = ""
@@ -546,9 +600,10 @@ function Invoke-Doctor {
     Write-Host ""
     Write-Host "  AI agents"
     $skillAgents = @(
-        @{ name = "claude"; cmd = "claude"; dir = $ClaudeSkillsDir; home = (Join-Path $HOME ".claude") }
-        @{ name = "codex";  cmd = "codex";  dir = $AgentsSkillsDir; home = (Join-Path $HOME ".agents") }
-        @{ name = "gemini"; cmd = "gemini"; dir = $GeminiSkillsDir; home = (Join-Path $HOME ".gemini") }
+        @{ name = "claude";   cmd = "claude";   dir = $ClaudeSkillsDir;   home = (Join-Path $HOME ".claude") }
+        @{ name = "codex";    cmd = "codex";    dir = $AgentsSkillsDir;   home = (Join-Path $HOME ".agents") }
+        @{ name = "gemini";   cmd = "gemini";   dir = $GeminiSkillsDir;   home = (Join-Path $HOME ".gemini") }
+        @{ name = "openclaw"; cmd = "openclaw"; dir = $OpenClawSkillsDir; home = (Join-Path $HOME ".openclaw") }
     )
     foreach ($entry in $skillAgents) {
         $hasBin  = $null -ne (Get-Command $entry.cmd -ErrorAction SilentlyContinue)
@@ -626,13 +681,15 @@ function Invoke-Doctor {
 
 function Invoke-Install([string]$Src, [string]$TargetAgent) {
     switch ($TargetAgent) {
-        "claude" { Install-SkillDir $Src $ClaudeSkillsDir }
-        "codex"  { Install-SkillDir $Src $AgentsSkillsDir }
-        "gemini" { Install-SkillDir $Src $GeminiSkillsDir }
+        "claude"   { Install-SkillDir $Src $ClaudeSkillsDir }
+        "codex"    { Install-SkillDir $Src $AgentsSkillsDir }
+        "gemini"   { Install-SkillDir $Src $GeminiSkillsDir }
+        "openclaw" { Install-SkillDir $Src $OpenClawSkillsDir }
         "all" {
             Install-SkillDir $Src $ClaudeSkillsDir
             Install-SkillDir $Src $AgentsSkillsDir
             Install-SkillDir $Src $GeminiSkillsDir
+            Install-SkillDir $Src $OpenClawSkillsDir
         }
     }
 }
@@ -687,7 +744,7 @@ function Uninstall-SkillDir([string]$SkillName, [string]$DestDir) {
 
 function Invoke-Clean {
     $cleaned = 0
-    $dirs = @($ClaudeSkillsDir, $AgentsSkillsDir, $GeminiSkillsDir)
+    $dirs = @($ClaudeSkillsDir, $AgentsSkillsDir, $GeminiSkillsDir, $OpenClawSkillsDir)
     foreach ($dir in $dirs) {
         if (-not (Test-Path $dir)) { continue }
         foreach ($item in Get-ChildItem $dir -Force -ErrorAction SilentlyContinue) {
@@ -706,13 +763,15 @@ function Invoke-Clean {
 
 function Invoke-Uninstall([string]$SkillName, [string]$TargetAgent) {
     switch ($TargetAgent) {
-        "claude" { Uninstall-SkillDir $SkillName $ClaudeSkillsDir }
-        "codex"  { Uninstall-SkillDir $SkillName $AgentsSkillsDir }
-        "gemini" { Uninstall-SkillDir $SkillName $GeminiSkillsDir }
+        "claude"   { Uninstall-SkillDir $SkillName $ClaudeSkillsDir }
+        "codex"    { Uninstall-SkillDir $SkillName $AgentsSkillsDir }
+        "gemini"   { Uninstall-SkillDir $SkillName $GeminiSkillsDir }
+        "openclaw" { Uninstall-SkillDir $SkillName $OpenClawSkillsDir }
         "all" {
             Uninstall-SkillDir $SkillName $ClaudeSkillsDir
             Uninstall-SkillDir $SkillName $AgentsSkillsDir
             Uninstall-SkillDir $SkillName $GeminiSkillsDir
+            Uninstall-SkillDir $SkillName $OpenClawSkillsDir
         }
     }
 }
@@ -849,6 +908,7 @@ if ($isInteractive) {
         if ($agentList.Count -gt 1) { Write-Host "🗑️  $unique skills uninstalled × $($agentList.Count) agents ($($script:UninstalledCount) total) → $($agentList -join ' ')" }
         else                        { Write-Host "🗑️  $unique skills uninstalled → $($agentList -join ' ')" }
         Invoke-Clean
+        foreach ($agent in $agentList) { Remove-AgentMdConfig $agent }
         if (-not (Test-AnySkillsInstalled)) { Remove-GlobalBin }
 
     } else {
@@ -901,6 +961,7 @@ if ($isInteractive) {
         if ($agentList.Count -gt 1) { Write-Host "✅ $unique skills installed × $($agentList.Count) agents ($($script:InstalledCount) total) → $($agentList -join ' ')" }
         else                        { Write-Host "✅ $unique skills installed → $($agentList -join ' ')" }
         Invoke-Clean
+        foreach ($agent in $agentList) { Set-AgentMdConfig $agent }
         Install-GlobalBin
     }
 
@@ -962,8 +1023,14 @@ if ($isInteractive) {
     }
     Invoke-Clean
     if ($Uninstall) {
+        if ($Target -eq "auto")  { foreach ($a in $detected)                               { Remove-AgentMdConfig $a } }
+        elseif ($Target -eq "all") { foreach ($a in @("claude","codex","gemini","openclaw")) { Remove-AgentMdConfig $a } }
+        else                     { Remove-AgentMdConfig $Target }
         if (-not (Test-AnySkillsInstalled)) { Remove-GlobalBin }
     } else {
+        if ($Target -eq "auto")  { foreach ($a in $detected)                               { Set-AgentMdConfig $a } }
+        elseif ($Target -eq "all") { foreach ($a in @("claude","codex","gemini","openclaw")) { Set-AgentMdConfig $a } }
+        else                     { Set-AgentMdConfig $Target }
         Install-GlobalBin
     }
 }

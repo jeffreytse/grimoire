@@ -29,6 +29,7 @@ SKILLS_ROOT="${REPO_ROOT}/skills"
 CLAUDE_SKILLS_DIR="${HOME}/.claude/skills"
 AGENTS_SKILLS_DIR="${HOME}/.agents/skills"
 GEMINI_SKILLS_DIR="${HOME}/.gemini/skills"
+OPENCLAW_SKILLS_DIR="${HOME}/.openclaw/skills"
 
 usage() {
   cat <<EOF
@@ -38,7 +39,7 @@ Options:
   --domain <name>       Install/uninstall all skills for a domain
   --subdomain <name>    Restrict to one sub-domain within a domain
   --skill <path>        Install/uninstall one skill (e.g. engineering/development/propose-conventional-commit)
-  --target <agent>      Target: claude, codex, gemini, all
+  --target <agent>      Target: claude, codex, gemini, openclaw, all
   --copy                Copy skill files instead of symlinking
   --upgrade             Pull latest grimoire at GRIMOIRE_HOME (symlinks update automatically)
   --clean               Remove broken symlinks from all agent skill dirs
@@ -59,9 +60,11 @@ Examples:
   grimoire --upgrade                                        # Pull latest grimoire
   grimoire --clean                                          # Remove broken symlinks
   grimoire --domain engineering --target claude
+  grimoire --domain engineering --target openclaw
   grimoire --domain engineering --copy                      # Copy instead of symlink
   grimoire --skill engineering/development/propose-conventional-commit
   grimoire --uninstall --domain engineering --target claude
+  grimoire --uninstall --domain engineering --target openclaw
   grimoire --uninstall --skill engineering/development/propose-conventional-commit
 EOF
 }
@@ -335,18 +338,20 @@ install_skill_dir() {
 
 detect_agents() {
   local detected=()
-  command -v claude  >/dev/null 2>&1 && detected+=("claude")
-  command -v codex   >/dev/null 2>&1 && detected+=("codex")
-  command -v gemini  >/dev/null 2>&1 && detected+=("gemini")
+  command -v claude   >/dev/null 2>&1 && detected+=("claude")
+  command -v codex    >/dev/null 2>&1 && detected+=("codex")
+  command -v gemini   >/dev/null 2>&1 && detected+=("gemini")
+  command -v openclaw >/dev/null 2>&1 && detected+=("openclaw")
   echo "${detected[@]:-}"
 }
 
 agent_display_name() {
   case "$1" in
-    claude) echo "Claude Code" ;;
-    codex)  echo "Codex" ;;
-    gemini) echo "Gemini CLI" ;;
-    *)      echo "$1" ;;
+    claude)   echo "Claude Code" ;;
+    codex)    echo "Codex" ;;
+    gemini)   echo "Gemini CLI" ;;
+    openclaw) echo "OpenClaw" ;;
+    *)        echo "$1" ;;
   esac
 }
 
@@ -355,6 +360,7 @@ agent_from_display() {
     "Claude Code") echo "claude" ;;
     "Codex")       echo "codex"  ;;
     "Gemini CLI")  echo "gemini" ;;
+    "OpenClaw")    echo "openclaw" ;;
     *)             echo "$1" ;;
   esac
 }
@@ -362,13 +368,15 @@ agent_from_display() {
 do_install() {
   local src="$1" target="$2"
   case "${target}" in
-    claude) install_skill_dir "${src}" "${CLAUDE_SKILLS_DIR}" ;;
-    codex)  install_skill_dir "${src}" "${AGENTS_SKILLS_DIR}" ;;
-    gemini) install_skill_dir "${src}" "${GEMINI_SKILLS_DIR}" ;;
+    claude)   install_skill_dir "${src}" "${CLAUDE_SKILLS_DIR}" ;;
+    codex)    install_skill_dir "${src}" "${AGENTS_SKILLS_DIR}" ;;
+    gemini)   install_skill_dir "${src}" "${GEMINI_SKILLS_DIR}" ;;
+    openclaw) install_skill_dir "${src}" "${OPENCLAW_SKILLS_DIR}" ;;
     all)
       install_skill_dir "${src}" "${CLAUDE_SKILLS_DIR}"
       install_skill_dir "${src}" "${AGENTS_SKILLS_DIR}"
       install_skill_dir "${src}" "${GEMINI_SKILLS_DIR}"
+      install_skill_dir "${src}" "${OPENCLAW_SKILLS_DIR}"
       ;;
   esac
 }
@@ -557,17 +565,19 @@ remove_global_bin() {
 
 _agent_config_file() {
   case "$1" in
-    claude) echo "${HOME}/.claude/CLAUDE.md" ;;
-    codex)  echo "${HOME}/.agents/AGENTS.md" ;;
-    gemini) echo "${HOME}/.gemini/GEMINI.md" ;;
+    claude)   echo "${HOME}/.claude/CLAUDE.md" ;;
+    codex)    echo "${HOME}/.agents/AGENTS.md" ;;
+    gemini)   echo "${HOME}/.gemini/GEMINI.md" ;;
+    openclaw) echo "${HOME}/.openclaw/workspace/AGENTS.md" ;;
   esac
 }
 
 _agent_config_dir() {
   case "$1" in
-    claude) echo "${HOME}/.claude" ;;
-    codex)  echo "${HOME}/.agents" ;;
-    gemini) echo "${HOME}/.gemini" ;;
+    claude)   echo "${HOME}/.claude" ;;
+    codex)    echo "${HOME}/.agents" ;;
+    gemini)   echo "${HOME}/.gemini" ;;
+    openclaw) echo "${HOME}/.openclaw/workspace" ;;
   esac
 }
 
@@ -1326,7 +1336,7 @@ else
     has_any_skills_installed || remove_global_bin
     local _rm_targets=()
     if [[ "${TARGET}" == "auto" ]]; then _rm_targets=("${_detected[@]}")
-    elif [[ "${TARGET}" == "all" ]]; then _rm_targets=(claude codex gemini)
+    elif [[ "${TARGET}" == "all" ]]; then _rm_targets=(claude codex gemini openclaw)
     else _rm_targets=("${TARGET}"); fi
     for _agent in "${_rm_targets[@]}"; do
       has_agent_skills_installed "${_agent}" || remove_agent_md_config "${_agent}"
