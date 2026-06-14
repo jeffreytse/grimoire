@@ -3,21 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Grimoire — Best Practices Skills for Claude, Codex, Every AI Assistant</title>
+  <title>Grimoire — Best Practices for Claude, OpenCode, OpenClaw &amp; Every AI</title>
   <link rel="icon" href="https://raw.githubusercontent.com/jeffreytse/grimoire/main/assets/icon-book.svg" type="image/svg+xml" />
   <meta name="description" content="1000+ best practices skills for Claude, Codex, Copilot, OpenCode, Gemini &amp; every AI assistant. Free and open-source on GitHub — expert frameworks for engineering, law, medicine, finance, and 27 domains." />
 
   <!-- Open Graph -->
-  <meta property="og:title" content="Grimoire — Best Practices Skills for Claude, Codex &amp; AI" />
-  <meta property="og:description" content="1000+ best practices skills for Claude, Codex, Copilot, OpenCode, Gemini, and every AI assistant. Free on GitHub — engineering, law, medicine, finance, and 27 domains. Start in 60 seconds." />
+  <meta property="og:title" content="Grimoire — Best Practices for Claude, OpenCode, OpenClaw &amp; Every AI" />
+  <meta property="og:description" content="1000+ best practices skills for Claude, Codex, Copilot, OpenCode, OpenClaw, Gemini, and every AI assistant. Free on GitHub — engineering, law, medicine, finance, and 27 domains. Start in 60 seconds." />
   <meta property="og:image" content="https://raw.githubusercontent.com/jeffreytse/grimoire/main/assets/banner-1280x640.svg" />
   <meta property="og:url" content="https://grimoire.jeffreytse.net/" />
   <meta property="og:type" content="website" />
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Grimoire — Best Practices Skills for Claude, Codex &amp; AI" />
-  <meta name="twitter:description" content="Claude, Codex, Copilot &amp; OpenCode best practices skills, organized. 1000+ expert frameworks for every AI assistant — free and open-source on GitHub." />
+  <meta name="twitter:title" content="Grimoire — Best Practices for Claude, OpenCode, OpenClaw &amp; Every AI" />
+  <meta name="twitter:description" content="Claude, Codex, Gemini, Copilot, OpenCode &amp; OpenClaw best practices skills, organized. 1000+ expert frameworks for every AI assistant — free and open-source on GitHub." />
   <meta name="twitter:image" content="https://raw.githubusercontent.com/jeffreytse/grimoire/main/assets/banner-1280x640.svg" />
 
   <!-- SEO -->
@@ -47,7 +47,7 @@
     },
     "license": "https://opensource.org/licenses/MIT",
     "codeRepository": "https://github.com/jeffreytse/grimoire",
-    "keywords": "claude best practices, codex best practices, copilot best practices, opencode best practices, gemini best practices, best practices skills, best practices github, AI skills, open source, engineering, law, medicine, finance",
+    "keywords": "claude best practices, codex best practices, copilot best practices, opencode best practices, openclaw best practices, gemini best practices, best practices skills, best practices github, AI skills, open source, engineering, law, medicine, finance",
     "image": "https://raw.githubusercontent.com/jeffreytse/grimoire/main/assets/banner-1280x640.svg"
   }
   </script>
@@ -58,7 +58,39 @@
     "@type": "WebSite",
     "name": "Grimoire",
     "url": "https://grimoire.jeffreytse.net/",
-    "description": "Best practices skills for Claude, Codex, Copilot, OpenCode, Gemini and every AI assistant"
+    "description": "Best practices skills for Claude, Codex, Copilot, OpenCode, OpenClaw, Gemini and every AI assistant"
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "How to install Grimoire best practices skills",
+    "description": "Install 1000+ best practices skills into Claude Code, Codex, Gemini CLI, Copilot, OpenCode, or OpenClaw in one command.",
+    "totalTime": "PT1M",
+    "supply": [],
+    "tool": [],
+    "step": [
+      {
+        "@type": "HowToStep",
+        "name": "Run the install command",
+        "text": "Run: curl -fsSL https://raw.githubusercontent.com/jeffreytse/grimoire/main/scripts/grimoire | bash",
+        "position": 1
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Select your AI agent",
+        "text": "The interactive TUI auto-detects installed agents (Claude Code, Codex, Gemini CLI, OpenCode, OpenClaw). Select which agents to install skills into.",
+        "position": 2
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Start using best practices",
+        "text": "Describe any task to your AI assistant. Grimoire automatically routes to the matching best practices skill and applies expert-level guidance.",
+        "position": 3
+      }
+    ]
   }
   </script>
 
@@ -106,10 +138,64 @@
           "@type": "Answer",
           "text": "Yes. Grimoire provides best practices skills for Codex, Copilot, OpenCode, Claude, Gemini CLI, Cursor, and every major AI assistant. Install once with the grimoire script and all supported agents detect it automatically."
         }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I install Grimoire for Claude Code?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Run /plugin marketplace add jeffreytse/grimoire, then /plugin install grimoire@grimoire inside Claude Code. Or run the grimoire script: curl -fsSL https://raw.githubusercontent.com/jeffreytse/grimoire/main/scripts/grimoire | bash"
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I install Grimoire for Codex?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Run: curl -fsSL https://raw.githubusercontent.com/jeffreytse/grimoire/main/scripts/grimoire | bash — it auto-detects Codex and installs skills to ~/.agents/skills/. Or target Codex directly: grimoire --target codex."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I install Grimoire for Gemini CLI?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Run: curl -fsSL https://raw.githubusercontent.com/jeffreytse/grimoire/main/scripts/grimoire | bash — it auto-detects Gemini CLI and installs skills to ~/.gemini/skills/. Or target Gemini directly: grimoire --target gemini."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I install Grimoire for Copilot?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Run: copilot plugin install grimoire@grimoire. Or run the grimoire script with: curl -fsSL https://raw.githubusercontent.com/jeffreytse/grimoire/main/scripts/grimoire | bash — it installs to all detected agents including Copilot."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I install Grimoire for OpenCode?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Run: curl -fsSL https://raw.githubusercontent.com/jeffreytse/grimoire/main/scripts/grimoire | bash — it auto-detects OpenCode and installs skills to ~/.config/opencode/skills/. Or target OpenCode directly: grimoire --target opencode."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I install Grimoire for OpenClaw?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Run: curl -fsSL https://raw.githubusercontent.com/jeffreytse/grimoire/main/scripts/grimoire | bash — it auto-detects OpenClaw and installs skills to ~/.openclaw/skills/. Or target OpenClaw directly: grimoire --target openclaw."
+        }
       }
     ]
   }
   </script>
+
+  <!-- Preconnect hints for faster resource loading -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://cdn.tailwindcss.com" />
+  <link rel="preconnect" href="https://raw.githubusercontent.com" />
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -320,7 +406,7 @@
       Works with every major AI assistant.
     </p>
     <p class="sr-only">
-      Claude best practices, Codex best practices, Copilot best practices, OpenCode best practices, Gemini best practices — one library, every AI assistant.
+      Claude best practices, Codex best practices, Copilot best practices, OpenCode best practices, OpenClaw best practices, Gemini best practices — one library, every AI assistant.
     </p>
 
     <!-- Install command -->
@@ -684,36 +770,46 @@
     <h2 class="mb-4 text-3xl font-bold text-white md:text-4xl">Works with every AI assistant</h2>
     <p class="mb-12 text-slate-400">Install once. Every AI agent on your system picks it up automatically.</p>
     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-      <div class="p-5 text-center rounded-xl card-hover" style="background:#111826; border:1px solid #1e2a3a">
-        <div class="mb-2 text-2xl">🤖</div>
-        <div class="text-sm font-semibold text-slate-200">Claude Code</div>
-        <div class="mt-1 text-xs text-slate-500">Anthropic</div>
-      </div>
+      <a href="claude.html" class="block" style="text-decoration:none">
+        <div class="p-5 text-center rounded-xl card-hover" style="background:#111826; border:1px solid #1e2a3a">
+          <div class="mb-2 text-2xl">🤖</div>
+          <div class="text-sm font-semibold text-slate-200">Claude Code</div>
+          <div class="mt-1 text-xs text-slate-500">Anthropic</div>
+        </div>
+      </a>
       <div class="p-5 text-center rounded-xl card-hover" style="background:#111826; border:1px solid #1e2a3a">
         <div class="mb-2 text-2xl">⌨️</div>
         <div class="text-sm font-semibold text-slate-200">Cursor</div>
         <div class="mt-1 text-xs text-slate-500">AI Editor</div>
       </div>
-      <div class="p-5 text-center rounded-xl card-hover" style="background:#111826; border:1px solid #1e2a3a">
-        <div class="mb-2 text-2xl">💻</div>
-        <div class="text-sm font-semibold text-slate-200">Codex</div>
-        <div class="mt-1 text-xs text-slate-500">OpenAI</div>
-      </div>
-      <div class="p-5 text-center rounded-xl card-hover" style="background:#111826; border:1px solid #1e2a3a">
-        <div class="mb-2 text-2xl">🔷</div>
-        <div class="text-sm font-semibold text-slate-200">Gemini CLI</div>
-        <div class="mt-1 text-xs text-slate-500">Google</div>
-      </div>
-      <div class="p-5 text-center rounded-xl card-hover" style="background:#111826; border:1px solid #1e2a3a">
-        <div class="mb-2 text-2xl">🔵</div>
-        <div class="text-sm font-semibold text-slate-200">OpenCode</div>
-        <div class="mt-1 text-xs text-slate-500">Community</div>
-      </div>
-      <div class="p-5 text-center rounded-xl card-hover" style="background:#111826; border:1px solid #1e2a3a">
-        <div class="mb-2 text-2xl">🦞</div>
-        <div class="text-sm font-semibold text-slate-200">OpenClaw</div>
-        <div class="mt-1 text-xs text-slate-500">Messaging AI</div>
-      </div>
+      <a href="codex.html" class="block" style="text-decoration:none">
+        <div class="p-5 text-center rounded-xl card-hover" style="background:#111826; border:1px solid #1e2a3a">
+          <div class="mb-2 text-2xl">💻</div>
+          <div class="text-sm font-semibold text-slate-200">Codex</div>
+          <div class="mt-1 text-xs text-slate-500">OpenAI</div>
+        </div>
+      </a>
+      <a href="gemini.html" class="block" style="text-decoration:none">
+        <div class="p-5 text-center rounded-xl card-hover" style="background:#111826; border:1px solid #1e2a3a">
+          <div class="mb-2 text-2xl">🔷</div>
+          <div class="text-sm font-semibold text-slate-200">Gemini CLI</div>
+          <div class="mt-1 text-xs text-slate-500">Google</div>
+        </div>
+      </a>
+      <a href="opencode.html" class="block" style="text-decoration:none">
+        <div class="p-5 text-center rounded-xl card-hover" style="background:#111826; border:1px solid #1e2a3a">
+          <div class="mb-2 text-2xl">🔵</div>
+          <div class="text-sm font-semibold text-slate-200">OpenCode</div>
+          <div class="mt-1 text-xs text-slate-500">Community</div>
+        </div>
+      </a>
+      <a href="openclaw.html" class="block" style="text-decoration:none">
+        <div class="p-5 text-center rounded-xl card-hover" style="background:#111826; border:1px solid #1e2a3a">
+          <div class="mb-2 text-2xl">🦞</div>
+          <div class="text-sm font-semibold text-slate-200">OpenClaw</div>
+          <div class="mt-1 text-xs text-slate-500">Messaging AI</div>
+        </div>
+      </a>
     </div>
   </div>
 </section>
@@ -862,18 +958,43 @@
         <p class="text-slate-400">Grimoire includes 1000+ best practices skills across 27 domains — engineering, law, medicine, finance, writing, design, marketing, health, and more. Each skill encodes a proven expert framework that Claude follows step-by-step.</p>
       </div>
 
+      <div class="p-6 rounded-xl" style="background:#0d1120; border:1px solid #1e2a3a">
+        <h3 class="mb-3 text-lg font-semibold text-white">How do I install Grimoire for OpenCode?</h3>
+        <p class="text-slate-400">Run <code class="text-gold-light">curl -fsSL https://raw.githubusercontent.com/jeffreytse/grimoire/main/scripts/grimoire | bash</code> — it auto-detects OpenCode and installs skills to <code class="text-gold-light">~/.config/opencode/skills/</code>. Or target directly: <code class="text-gold-light">grimoire --target opencode</code>.</p>
+      </div>
+
+      <div class="p-6 rounded-xl" style="background:#0d1120; border:1px solid #1e2a3a">
+        <h3 class="mb-3 text-lg font-semibold text-white">How do I install Grimoire for OpenClaw?</h3>
+        <p class="text-slate-400">Run <code class="text-gold-light">curl -fsSL https://raw.githubusercontent.com/jeffreytse/grimoire/main/scripts/grimoire | bash</code> — it auto-detects OpenClaw and installs skills to <code class="text-gold-light">~/.openclaw/skills/</code>. Or target directly: <code class="text-gold-light">grimoire --target openclaw</code>.</p>
+      </div>
+
     </div>
 
     <div id="faq-more" class="hidden mt-6 space-y-6">
 
       <div class="p-6 rounded-xl" style="background:#0d1120; border:1px solid #1e2a3a">
-        <h3 class="mb-3 text-lg font-semibold text-white">Is Grimoire free on GitHub?</h3>
-        <p class="text-slate-400">Yes. Grimoire is free and open-source, published at <a href="https://github.com/jeffreytse/grimoire" target="_blank" class="hover:text-gold-light transition-colors" style="color:#c9933a">github.com/jeffreytse/grimoire</a> under the MIT license. Install with one command into Claude Code, Cursor, Codex, Copilot, or Gemini CLI.</p>
+        <h3 class="mb-3 text-lg font-semibold text-white">How do I install Grimoire for Claude Code?</h3>
+        <p class="text-slate-400">Run <code class="text-gold-light">/plugin marketplace add jeffreytse/grimoire</code>, then <code class="text-gold-light">/plugin install grimoire@grimoire</code> inside Claude Code. Claude will automatically detect and apply the relevant best practices skill for any task you describe.</p>
       </div>
 
       <div class="p-6 rounded-xl" style="background:#0d1120; border:1px solid #1e2a3a">
-        <h3 class="mb-3 text-lg font-semibold text-white">How do I use best practices skills with Claude?</h3>
-        <p class="text-slate-400">Run <code class="text-gold-light">/plugin marketplace add jeffreytse/grimoire</code>, then <code class="text-gold-light">/plugin install grimoire@grimoire</code>. Claude will automatically detect and apply the relevant best practices skill for any task you describe.</p>
+        <h3 class="mb-3 text-lg font-semibold text-white">How do I install Grimoire for Codex?</h3>
+        <p class="text-slate-400">Run <code class="text-gold-light">curl -fsSL https://raw.githubusercontent.com/jeffreytse/grimoire/main/scripts/grimoire | bash</code> — it auto-detects Codex and installs skills to <code class="text-gold-light">~/.agents/skills/</code>. Or target directly: <code class="text-gold-light">grimoire --target codex</code>.</p>
+      </div>
+
+      <div class="p-6 rounded-xl" style="background:#0d1120; border:1px solid #1e2a3a">
+        <h3 class="mb-3 text-lg font-semibold text-white">How do I install Grimoire for Gemini CLI?</h3>
+        <p class="text-slate-400">Run <code class="text-gold-light">curl -fsSL https://raw.githubusercontent.com/jeffreytse/grimoire/main/scripts/grimoire | bash</code> — it auto-detects Gemini CLI and installs skills to <code class="text-gold-light">~/.gemini/skills/</code>. Or target directly: <code class="text-gold-light">grimoire --target gemini</code>.</p>
+      </div>
+
+      <div class="p-6 rounded-xl" style="background:#0d1120; border:1px solid #1e2a3a">
+        <h3 class="mb-3 text-lg font-semibold text-white">How do I install Grimoire for Copilot?</h3>
+        <p class="text-slate-400">Run <code class="text-gold-light">copilot plugin install grimoire@grimoire</code>. Or use the grimoire script: <code class="text-gold-light">curl -fsSL https://raw.githubusercontent.com/jeffreytse/grimoire/main/scripts/grimoire | bash</code> — it installs to all detected agents including Copilot.</p>
+      </div>
+
+      <div class="p-6 rounded-xl" style="background:#0d1120; border:1px solid #1e2a3a">
+        <h3 class="mb-3 text-lg font-semibold text-white">Is Grimoire free on GitHub?</h3>
+        <p class="text-slate-400">Yes. Grimoire is free and open-source, published at <a href="https://github.com/jeffreytse/grimoire" target="_blank" class="hover:text-gold-light transition-colors" style="color:#c9933a">github.com/jeffreytse/grimoire</a> under the MIT license. Install with one command into Claude Code, Cursor, Codex, Copilot, Gemini CLI, OpenCode, or OpenClaw.</p>
       </div>
 
       <div class="p-6 rounded-xl" style="background:#0d1120; border:1px solid #1e2a3a">

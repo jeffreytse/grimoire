@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Grimoire for OpenCode — Best Practices Skills</title>
+  <link rel="icon" href="https://raw.githubusercontent.com/jeffreytse/grimoire/main/assets/icon-book.svg" type="image/svg+xml" />
+  <meta name="description" content="1000+ best practices skills for OpenCode AI assistant. Install Grimoire in 60 seconds and get expert frameworks for engineering, law, medicine, finance, and 27 domains." />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Grimoire for OpenCode — Best Practices Skills" />
+  <meta property="og:description" content="Install 1000+ best practices skills into OpenCode. Expert frameworks across 27 domains — free and open-source on GitHub. Auto-detected on install." />
+  <meta property="og:image" content="https://raw.githubusercontent.com/jeffreytse/grimoire/main/assets/banner-1280x640.svg" />
+  <meta property="og:url" content="https://grimoire.jeffreytse.net/opencode" />
+  <meta property="og:type" content="website" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Grimoire for OpenCode — Best Practices Skills" />
+  <meta name="twitter:description" content="Install 1000+ best practices skills into OpenCode. Expert frameworks across 27 domains — free and open-source on GitHub. Auto-detected on install." />
+  <meta name="twitter:image" content="https://raw.githubusercontent.com/jeffreytse/grimoire/main/assets/banner-1280x640.svg" />
+
+  <!-- SEO -->
+  <link rel="canonical" href="https://grimoire.jeffreytse.net/opencode" />
+  <meta name="keywords" content="opencode best practices, opencode grimoire, opencode skills, best practices skills, AI assistant skills, grimoire, open source AI skills" />
+  <meta name="author" content="jeffreytse" />
+
+  <!-- JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "How to install Grimoire for OpenCode",
+    "description": "Install 1000+ best practices skills into OpenCode in under 60 seconds.",
+    "totalTime": "PT1M",
+    "step": [
+      { "@type": "HowToStep", "position": 1, "name": "Run the install command", "text": "grimoire --target opencode" },
+      { "@type": "HowToStep", "position": 2, "name": "Skills install to ~/.config/opencode/skills/", "text": "Grimoire installs 1000+ best practices skill files. OpenCode loads them automatically." },
+      { "@type": "HowToStep", "position": 3, "name": "Start using best practices", "text": "Describe any task. Grimoire routes to the matching expert skill and applies it before OpenCode responds." }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How do I install Grimoire for OpenCode?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Run: curl -fsSL https://raw.githubusercontent.com/jeffreytse/grimoire/main/scripts/grimoire | bash — it auto-detects OpenCode and installs skills to ~/.config/opencode/skills/. Or target directly: grimoire --target opencode." }
+      },
+      {
+        "@type": "Question",
+        "name": "Where does Grimoire install skills for OpenCode?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Skills are installed to ~/.config/opencode/skills/ (XDG config directory). OpenCode reads this directory automatically." }
+      }
+    ]
+  }
+  </script>
+
+  <!-- Preconnect -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://cdn.tailwindcss.com" />
+  <link rel="preconnect" href="https://raw.githubusercontent.com" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            gold: { DEFAULT: '#c9933a', light: '#e8d08a', dark: '#8b6220' },
+            night: { DEFAULT: '#080c18', 2: '#0d1120', 3: '#111826', 4: '#1a2233', border: '#1e2a3a' },
+          },
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+    .gold-gradient { background: linear-gradient(135deg, #c9933a, #e8d08a); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .install-block { background: #0d1120; border: 1px solid #1e2a3a; border-radius: 0.75rem; }
+    .copy-btn:hover { background: rgba(201,147,58,0.1); border-color: rgba(201,147,58,0.4); color: #e8d08a; }
+  </style>
+</head>
+<body style="background:#080c18; color:#e2e8f0; font-family:Inter,system-ui,sans-serif; margin:0">
+
+<!-- Nav -->
+<nav style="background:#0d1120; border-bottom:1px solid #1e2a3a" class="px-6 py-4">
+  <div class="max-w-4xl mx-auto flex items-center justify-between gap-4">
+    <a href="index.html" class="flex items-center gap-2 text-sm font-medium transition-colors" style="color:#94a3b8" onmouseover="this.style.color='#e8d08a'" onmouseout="this.style.color='#94a3b8'">
+      ← Grimoire
+    </a>
+    <a href="https://github.com/jeffreytse/grimoire" target="_blank" class="text-sm font-medium transition-colors" style="color:#c9933a" onmouseover="this.style.color='#e8d08a'" onmouseout="this.style.color='#c9933a'">
+      ⭐ Star on GitHub
+    </a>
+  </div>
+</nav>
+
+<main>
+
+<!-- Hero -->
+<section class="px-6 py-20 text-center" style="background:#080c18">
+  <div class="max-w-3xl mx-auto">
+    <div class="mb-4 text-5xl">🔵</div>
+    <h1 class="mb-6 text-4xl font-black leading-tight tracking-tight md:text-6xl">
+      <span class="text-white">OpenCode</span><br/>
+      <span class="gold-gradient">Best Practices Skills</span>
+    </h1>
+    <p class="max-w-xl mx-auto mb-8 text-lg text-slate-400">
+      Install 1000+ verified expert frameworks into OpenCode — engineering, law, medicine, finance, and 27 domains. Free and open-source.
+    </p>
+    <a href="https://github.com/jeffreytse/grimoire" target="_blank"
+      class="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-base font-bold transition-all"
+      style="background:linear-gradient(135deg,#c9933a,#8b6220); color:#fff; box-shadow:0 4px 24px rgba(201,147,58,0.3)"
+      onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+      View on GitHub →
+    </a>
+  </div>
+</section>
+
+<!-- Install -->
+<section class="px-6 py-16" style="background:#0d1120">
+  <div class="max-w-2xl mx-auto">
+    <p class="mb-3 text-sm font-semibold tracking-widest text-center uppercase" style="color:#c9933a">Installation</p>
+    <h2 class="mb-8 text-3xl font-bold text-center text-white">Install Grimoire for OpenCode</h2>
+    <div class="p-6 install-block">
+      <pre class="text-sm text-slate-300 overflow-x-auto">curl -fsSL https://raw.githubusercontent.com/jeffreytse/grimoire/main/scripts/grimoire | bash</pre>
+        <p class="mt-3 text-xs text-slate-500">Auto-detects OpenCode and installs to <code style="color:#e8d08a">~/.config/opencode/skills/</code>. Or target directly:</p>
+        <pre class="mt-2 text-sm text-slate-300">grimoire --target opencode</pre>
+    </div>
+    <p class="mt-4 text-sm text-center text-slate-500">Skills install to <code style="color:#e8d08a">~/.config/opencode/skills/</code> — OpenCode loads them automatically.</p>
+  </div>
+</section>
+
+<!-- Domains -->
+<section class="px-6 py-16" style="background:#080c18">
+  <div class="max-w-3xl mx-auto text-center">
+    <p class="mb-3 text-sm font-semibold tracking-widest uppercase" style="color:#c9933a">Coverage</p>
+    <h2 class="mb-6 text-3xl font-bold text-white">1000+ Skills Across 27 Domains</h2>
+    <p class="mb-10 text-slate-400">Every skill is sourced from peer-reviewed research, professional standards, or industry consensus — not generic advice.</p>
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 text-sm text-slate-400">
+      <div class="px-3 py-2 rounded-lg" style="background:#0d1120; border:1px solid #1e2a3a">Engineering</div>
+      <div class="px-3 py-2 rounded-lg" style="background:#0d1120; border:1px solid #1e2a3a">Law</div>
+      <div class="px-3 py-2 rounded-lg" style="background:#0d1120; border:1px solid #1e2a3a">Medicine</div>
+      <div class="px-3 py-2 rounded-lg" style="background:#0d1120; border:1px solid #1e2a3a">Finance</div>
+      <div class="px-3 py-2 rounded-lg" style="background:#0d1120; border:1px solid #1e2a3a">Writing</div>
+      <div class="px-3 py-2 rounded-lg" style="background:#0d1120; border:1px solid #1e2a3a">Design</div>
+      <div class="px-3 py-2 rounded-lg" style="background:#0d1120; border:1px solid #1e2a3a">Marketing</div>
+      <div class="px-3 py-2 rounded-lg" style="background:#0d1120; border:1px solid #1e2a3a">Health</div>
+      <div class="px-3 py-2 rounded-lg" style="background:#0d1120; border:1px solid #1e2a3a">Psychology</div>
+      <div class="px-3 py-2 rounded-lg" style="background:#0d1120; border:1px solid #1e2a3a">Science</div>
+      <div class="px-3 py-2 rounded-lg" style="background:#0d1120; border:1px solid #1e2a3a">Education</div>
+      <div class="px-3 py-2 rounded-lg" style="background:#0d1120; border:1px solid #1e2a3a">Business</div>
+      <div class="px-3 py-2 rounded-lg" style="background:#0d1120; border:1px solid #1e2a3a">Cooking</div>
+      <div class="px-3 py-2 rounded-lg" style="background:#0d1120; border:1px solid #1e2a3a">Travel</div>
+      <div class="px-3 py-2 rounded-lg" style="background:#0d1120; border:1px solid #1e2a3a">Home</div>
+      <div class="px-3 py-2 rounded-lg" style="background:#0d1120; border:1px solid #1e2a3a">Parenting</div>
+      <div class="px-3 py-2 rounded-lg" style="background:#0d1120; border:1px solid #1e2a3a">Automotive</div>
+      <div class="px-3 py-2 rounded-lg" style="background:#0d1120; border:1px solid #1e2a3a">Pets</div>
+      <div class="px-3 py-2 rounded-lg" style="background:#0d1120; border:1px solid #1e2a3a">Fashion</div>
+      <div class="px-3 py-2 rounded-lg" style="background:#0d1120; border:1px solid #1e2a3a">Environment</div>
+      <div class="px-3 py-2 rounded-lg" style="background:#0d1120; border:1px solid #1e2a3a">Photography</div>
+      <div class="px-3 py-2 rounded-lg" style="background:#0d1120; border:1px solid #1e2a3a">Productivity</div>
+      <div class="px-3 py-2 rounded-lg" style="background:#0d1120; border:1px solid #1e2a3a">Art</div>
+      <div class="px-3 py-2 rounded-lg" style="background:#0d1120; border:1px solid #1e2a3a">Music</div>
+      <div class="px-3 py-2 rounded-lg" style="background:#0d1120; border:1px solid #1e2a3a">Film</div>
+      <div class="px-3 py-2 rounded-lg" style="background:#0d1120; border:1px solid #1e2a3a">Sports</div>
+      <div class="px-3 py-2 rounded-lg" style="background:#0d1120; border:1px solid #1e2a3a">Language</div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="px-6 py-16" style="background:#0d1120">
+  <div class="max-w-3xl mx-auto">
+    <p class="mb-3 text-sm font-semibold tracking-widest text-center uppercase" style="color:#c9933a">FAQ</p>
+    <h2 class="mb-10 text-3xl font-bold text-center text-white">OpenCode + Grimoire</h2>
+    <div class="space-y-5">
+
+      <div class="p-6 rounded-xl" style="background:#0d1120; border:1px solid #1e2a3a">
+        <h3 class="mb-3 text-lg font-semibold text-white">Where does Grimoire install skills for OpenCode?</h3>
+        <p class="text-slate-400">Skills are installed to ~/.config/opencode/skills/. OpenCode reads AGENTS.md and skills from this XDG config directory automatically.</p>
+      </div>
+      <div class="p-6 rounded-xl" style="background:#0d1120; border:1px solid #1e2a3a">
+        <h3 class="mb-3 text-lg font-semibold text-white">Does Grimoire auto-detect OpenCode?</h3>
+        <p class="text-slate-400">Yes. The grimoire script checks for the opencode binary and installs to ~/.config/opencode/skills/ automatically when OpenCode is detected.</p>
+      </div>
+      <div class="p-6 rounded-xl" style="background:#0d1120; border:1px solid #1e2a3a">
+        <h3 class="mb-3 text-lg font-semibold text-white">Does Grimoire configure AGENTS.md for OpenCode?</h3>
+        <p class="text-slate-400">Yes. Grimoire appends the start-best-practice trigger to ~/.config/opencode/AGENTS.md so skills activate on every OpenCode session.</p>
+      </div>
+      <div class="p-6 rounded-xl" style="background:#0d1120; border:1px solid #1e2a3a">
+        <h3 class="mb-3 text-lg font-semibold text-white">Can I install only specific domains for OpenCode?</h3>
+        <p class="text-slate-400">Yes. Run grimoire --domain engineering --target opencode to install only the engineering domain.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Other agents -->
+<section class="px-6 py-16" style="background:#080c18">
+  <div class="max-w-3xl mx-auto text-center">
+    <p class="mb-3 text-sm font-semibold tracking-widest uppercase" style="color:#c9933a">Also supports</p>
+    <h2 class="mb-8 text-2xl font-bold text-white">Grimoire works with every AI assistant</h2>
+    <div class="flex flex-wrap justify-center gap-3">
+      <a href="claude.html" class="text-xs px-3 py-1.5 rounded-lg border transition-all" style="border-color:#1e2a3a; color:#94a3b8" onmouseover="this.style.borderColor='rgba(201,147,58,0.4)';this.style.color='#e8d08a'" onmouseout="this.style.borderColor='#1e2a3a';this.style.color='#94a3b8'">🤖 Claude Code</a>
+      <a href="codex.html" class="text-xs px-3 py-1.5 rounded-lg border transition-all" style="border-color:#1e2a3a; color:#94a3b8" onmouseover="this.style.borderColor='rgba(201,147,58,0.4)';this.style.color='#e8d08a'" onmouseout="this.style.borderColor='#1e2a3a';this.style.color='#94a3b8'">💻 Codex</a>
+      <a href="gemini.html" class="text-xs px-3 py-1.5 rounded-lg border transition-all" style="border-color:#1e2a3a; color:#94a3b8" onmouseover="this.style.borderColor='rgba(201,147,58,0.4)';this.style.color='#e8d08a'" onmouseout="this.style.borderColor='#1e2a3a';this.style.color='#94a3b8'">🔷 Gemini CLI</a>
+      <a href="copilot.html" class="text-xs px-3 py-1.5 rounded-lg border transition-all" style="border-color:#1e2a3a; color:#94a3b8" onmouseover="this.style.borderColor='rgba(201,147,58,0.4)';this.style.color='#e8d08a'" onmouseout="this.style.borderColor='#1e2a3a';this.style.color='#94a3b8'">🐙 Copilot</a>
+      <a href="opencode.html" class="text-xs px-3 py-1.5 rounded-lg border transition-all" style="border-color:#1e2a3a; color:#94a3b8" onmouseover="this.style.borderColor='rgba(201,147,58,0.4)';this.style.color='#e8d08a'" onmouseout="this.style.borderColor='#1e2a3a';this.style.color='#94a3b8'">🔵 OpenCode</a>
+      <a href="openclaw.html" class="text-xs px-3 py-1.5 rounded-lg border transition-all" style="border-color:#1e2a3a; color:#94a3b8" onmouseover="this.style.borderColor='rgba(201,147,58,0.4)';this.style.color='#e8d08a'" onmouseout="this.style.borderColor='#1e2a3a';this.style.color='#94a3b8'">🦞 OpenClaw</a>
+    </div>
+    <p class="mt-8 text-sm text-slate-500">Or install to all agents at once: <code style="color:#e8d08a">grimoire --target all</code></p>
+  </div>
+</section>
+
+</main>
+
+<footer class="px-6 py-10 text-center text-sm text-slate-600" style="border-top:1px solid #1e2a3a">
+  <p>Grimoire is free and open-source under the MIT license — <a href="https://github.com/jeffreytse/grimoire" target="_blank" style="color:#c9933a">github.com/jeffreytse/grimoire</a></p>
+</footer>
+
+</body>
+</html>
