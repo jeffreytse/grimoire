@@ -78,6 +78,8 @@ Want to apply [practice] now? (y/n)
 
 If yes, load the skill and follow its steps. If no, end gracefully — explanation was the goal.
 
+**Uninstalled skill fallback:** Before handing off to suggest-best-practice, verify the explained skill is installed (present in `.grimoire/` or listed in `SKILLS.md`). If not installed: 'This skill is not currently installed. Install it with `/plugin install grimoire-[domain]@grimoire`, then invoke `/[skill-name]` directly.' Do not hand off to suggest-best-practice with an uninstalled skill pre-selected — it will fail to apply.
+
 **Apply handoff:** If the user says 'apply this', 'use this', 'let's do this', or similar after the explanation, invoke `suggest-best-practice` with the explained skill pre-selected as the match. Pass the skill name as context so suggest-best-practice skips scoring and goes directly to application. Do not re-explain — the explanation is complete; just apply.
 
 ## Rules

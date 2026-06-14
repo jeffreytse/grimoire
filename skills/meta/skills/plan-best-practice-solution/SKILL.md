@@ -37,6 +37,10 @@ Do not ask the user for any of this — infer from what they wrote.
 
 **Complexity check:** If only one domain is involved and the problem maps cleanly to a single skill, delegate to `suggest-best-practice` instead. `plan-best-practice-solution` is for genuinely multi-domain or multi-step problems.
 
+**Insufficient domains:** If the goal is inferable but fewer than 2 distinct domains can be identified, AND the input signals a multi-domain problem (mentions multiple stakeholders, multiple life areas, or cross-functional concerns), ask ONE question before proceeding to Step 2:
+"What areas does this touch? (e.g., legal, technical, financial, operational, health, personal)"
+Use the answer to populate the Domains row before decomposing.
+
 ### 2. Decompose into MECE sub-problems
 
 Apply MECE decomposition:

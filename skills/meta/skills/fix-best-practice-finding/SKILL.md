@@ -80,6 +80,8 @@ Read `"practice"` from the finding — that value is the grimoire skill to invok
 
 The domain skill receives this context and focuses only on the identified violation — not a general application of the practice across the whole artifact.
 
+**Uninstalled skill fallback:** Before invoking, check if the skill named in the `practice` field is installed. If not installed, stop: '[skill-name] is not installed. Install it with `/plugin install grimoire-[domain]@grimoire`, then retry this fix.' Do not attempt to apply the practice without the skill.
+
 Example: for `"practice": "apply-solid-principles"` with `"criterion": "srp"` at `src/UserService.ts §12–45`, invoke `/apply-solid-principles` with the context: "Fix SRP violation at §12–45: UserService handles auth, email, and billing. Extract concerns into separate services."
 
 ---

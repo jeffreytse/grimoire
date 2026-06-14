@@ -87,6 +87,8 @@ score = (tag_overlap × 2) + (description_match × 3) + (domain_plausibility × 
 
 Surface only matches scoring ≥ 0.5. Group by domain.
 
+**Threshold basis (0.5):** ≥ 0.5 requires at least description_match OR tag_overlap to partially fire, not just domain_plausibility alone. Lower threshold returns too many weak matches; higher misses legitimate applied practices with indirect signals.
+
 **Step 3 evaluation criteria:** For each practice that was applied, check:
 1. **Completeness** — were all required steps of the practice executed, or were some skipped?
 2. **Correctness** — does the outcome match what the practice prescribes? (Read the skill's expected output or criteria)

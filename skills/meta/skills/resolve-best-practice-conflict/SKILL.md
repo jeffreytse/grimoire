@@ -48,6 +48,13 @@ Before scanning each domain:
 - **Skip `disabled:` skills** — don't load or analyze them; they're intentionally off
 - **Flag `require:` contradictions** — if a skill appears in both `require:` and `disabled:`, flag as contradiction before continuing
 
+**Contradiction rubric:** Two practices are in conflict (not complementary) when applying both simultaneously would require contradictory actions:
+- Same trigger, opposite prescriptions (e.g., 'always add types' vs 'prefer implicit types for brevity')
+- Mutually exclusive architectural decisions (e.g., 'prefer composition' vs 'prefer inheritance for domain hierarchy')
+- Contradictory tool or process requirements for the same step
+
+**Complementary, not conflicting:** practices that apply to different parts of the same domain (e.g., 'write unit tests' + 'write integration tests') or at different lifecycle stages. Do not raise as a conflict.
+
 For each domain (non-disabled skills), compare the "Steps" and "When NOT to Use" sections of co-listed skills. Flag pairs where one skill says "always do X" and another says "avoid X" or "do Y instead." Remember: all listed skills apply — only direct contradictions need resolution.
 
 ---

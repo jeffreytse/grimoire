@@ -30,6 +30,8 @@ User provides name or path. Search order if only a name is given:
 
 If not found, report checked locations and stop.
 
+**Multi-location conflict:** If the profile name matches files at more than one location (e.g., both project-level and user-level), note it before proceeding: 'Found [name].toml at [path1] (project) and [path2] (user). Reviewing [path1] — project takes precedence. To review the other, provide the full path.' Do not silently pick one without telling the user.
+
 ---
 
 ### 2. Parse TOML
@@ -70,6 +72,13 @@ Read the `related:` frontmatter of each found skill. If two skills in the profil
 3. The user has a pinned preference for one practice that this profile would override
 
 For each detected conflict, show: '[skill-A] ↔ [skill-B]: [reason they conflict] — cannot apply both simultaneously.'
+
+**Example conflicts (anchors for judgment):**
+- `apply-functional-programming` ↔ `apply-oop-principles` — mutually exclusive paradigms when applied globally to the same codebase
+- `prefer-immutability` ↔ a performance practice requiring mutation — philosophy conflict on data handling
+- `enforce-strict-types` ↔ `prefer-duck-typing` — type system philosophy conflict
+
+Use these as calibration anchors when evaluating novel skill pairs.
 
 ---
 

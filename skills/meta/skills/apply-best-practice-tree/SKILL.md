@@ -182,7 +182,7 @@ Omit the "Needs manual research" section if everything resolved cleanly.
 - Only pause for confirmation when a skill reveals new constraints that change the plan — not between every skill
 - Never hallucinate skill names — only reference skills that exist in installed domains
 - State the confidence level when applying a fuzzy match — never silently adapt
-- Maximum recursion depth: 3 — flag anything deeper as needing manual research
+- Maximum recursion depth: 3 — flag anything deeper as needing manual research. **Depth measurement:** Depth counts skill invocation levels — root call = depth 0, each skill it invokes = depth 1, each skill those invoke = depth 2, etc. Depth 3 = 4 total invocation levels (0→1→2→3). Breadth (number of sibling skills at the same depth) is not capped by the depth limit.
 - When called from within `plan-best-practice-solution` for a deep sub-problem, treat the sub-problem as the top-level input — do not re-classify at the multi-domain level
 - When decomposing manually (no match), limit to 2–4 sub-problems — more indicates a domain boundary, not depth
 

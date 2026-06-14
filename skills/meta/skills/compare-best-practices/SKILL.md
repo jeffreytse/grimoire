@@ -23,6 +23,8 @@ Sources: Hammond, Keeney & Raiffa (1998) "Smart Choices"; Benjamin Franklin lett
 
 From user input ("compare X and Y", "which is better — X or Y?") or carried over from a multi-match result in `suggest-best-practice`.
 
+**Infer before asking:** Before asking, try to identify practice names from the user's description — methodology names, approach descriptions, tool names, or framework mentions all count. Examples: 'debating TDD vs writing tests after' → infer test-driven-development vs post-implementation testing; 'OOP or functional for this service' → infer apply-oop-principles vs apply-functional-programming. Only ask if inference produces fewer than 2 candidates.
+
 If practices aren't named explicitly, ask ONE question:
 ```
 Which practices are you choosing between? (Names or descriptions both work)

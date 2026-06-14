@@ -127,6 +127,13 @@ If no version is tagged, include the Git commit SHA. A profile install without a
 2. **Commit SHA** (fallback): if no tag exists, use the full commit SHA. Install command: `/plugin install [profile-name]@[sha]`
 3. **No version** (not recommended): omit version only if the profile is in active development and recipients should always get latest. Note this in the install instructions.
 
+**Which version strategy to use:**
+- Profile has a stable release tag → use git tag (recipients get a known-stable version)
+- No tag but content is finalized → use commit SHA (immutable reference, won't drift)
+- Content is actively evolving → use no version, but add a warning: 'This profile is in development — recipients always get latest, which may change'
+
+Never use 'no version' for a profile others will depend on in production workflows.
+
 ## Common Mistakes
 
 **Sharing before reviewing.** Always run `review-best-practice-profile` first. A broken profile shared publicly is harder to fix than one caught before publish.

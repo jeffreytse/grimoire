@@ -43,6 +43,13 @@ Default: `[a] Full project`. Infer from context if user specified a file, direct
 
 For each practice in the resolved spec, check the target artifact against its observable criteria. Each criterion: pass, fail, partial, or suppressed (via inline annotation).
 
+**Evaluation criteria:**
+- **PASS** — the artifact satisfies this criterion with direct, observable evidence
+- **PARTIAL** — the artifact partially satisfies it (some indicators present, some absent)
+- **FAIL** — the artifact contradicts or entirely omits this criterion
+
+Apply to observable content only — do not infer intent or assume unstated behavior.
+
 **False positive suppression** — any finding can be suppressed inline. Suppressed findings are never dropped from output — they appear as `"status": "suppressed"` in JSON.
 
 ```

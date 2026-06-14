@@ -71,6 +71,8 @@ Show which file each key came from if multiple files contribute.
 
 ### Step 3b: Edit
 
+**TOML parse guard:** If the target settings file exists but cannot be parsed as valid TOML (syntax error), stop immediately. Output: 'Settings file at [path] has a syntax error — cannot edit safely. Fix the TOML syntax first (e.g., unclosed quote, missing `=`, invalid array). Inspect with: `cat [path]`.' Do not overwrite a malformed file.
+
 Parse the requested change from user input. Show what will change, then ask which file to write to using a platform-aware prompt:
 - **Claude Code / OpenCode**: `AskUserQuestion` — options: "This project (shared) → settings.toml (Recommended)", "This project (personal) → settings.local.toml", "All projects (global) → ~/.config/grimoire/settings.toml"
 - **Gemini CLI**: `ask_user` — `type: "select"`, same three options, first recommended

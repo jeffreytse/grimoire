@@ -36,9 +36,12 @@ UX guidelines, Google Search intent classification research
 
 Resolution order — first match wins:
 1. Session memory — pinned this session only; not written to disk (highest precedence)
-2. `<project-root>/.grimoire/preferences.md` — project-level
-3. `~/.config/grimoire/preferences.md` OR `~/.grimoire/preferences.md` — global-level
-4. `CLAUDE.md` `## Grimoire Preferences` section — legacy fallback
+2. `<project-root>/.grimoire/settings.local.toml` — project personal TOML (read `[domain.subdomain].practices[0]`)
+3. `<project-root>/.grimoire/settings.toml` — project shared TOML (same key)
+4. `<project-root>/.grimoire/preferences.md` — project legacy markdown
+5. `~/.config/grimoire/settings.toml` — global TOML settings
+6. `~/.config/grimoire/preferences.md` OR `~/.grimoire/preferences.md` — global legacy markdown
+7. `CLAUDE.md` `## Grimoire Preferences` section — legacy fallback
 
 For the relevant domain, check if a practice is already pinned:
 - **Pinned match (file)** → apply the pinned practice directly; skip scoring entirely. No further action needed — already persisted.
@@ -166,6 +169,8 @@ No installed skills match this situation closely.
 [One clarifying question to narrow the domain — e.g., "Is this about your code, your health, your finances, or something else?"]
 ```
 
+After the user answers, treat their answer as additional domain context and re-run Step 1 with the refined input — re-extract intent signals using the new domain information, then re-score in Step 2. If still no match after one clarification, state: "No installed skills cover this area — you may need to install a domain first."
+
 ### 4. Apply the matched skill
 
 Load the skill using the Skill tool and follow its steps exactly.
@@ -179,6 +184,8 @@ domains with independent high-confidence matches?
 - **2+ additional domains**: delegate to `plan-best-practice-solution` — "This situation spans multiple domains. Want me to build a full solution plan?"
 
 Cross-domain notice format: state it as a follow-up after the primary skill completes — "This situation also touches [domain]. Want me to apply [skill-name] for that aspect?"
+
+Always include 'No, stop here' as an explicit option in the cross-domain offer. Do not re-ask after one rejection — if user declines the first cross-domain offer, end the chain immediately and complete only the primary skill's output. Never chain to a third skill without explicit user request.
 
 Do not chain more than 2 skills without user confirmation. If 3+ skills are needed, use `plan-best-practice-solution`.
 
