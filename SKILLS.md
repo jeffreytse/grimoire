@@ -1,6 +1,6 @@
 # Skills Directory
 
-803 skills across 27 domains.
+823 skills across 27 domains.
 
 [Install](./README.md#%EF%B8%8F-install) · [Contribute](./CONTRIBUTING.md) · [Standard](./STANDARD.md)
 
@@ -18,7 +18,7 @@
 - [Environment (11)](#environment)
 - [Fashion (10)](#fashion)
 - [Film (10)](#film)
-- [Finance (22)](#finance)
+- [Finance (45)](#finance)
 - [Health (30)](#health)
 - [Home (10)](#home)
 - [Language (11)](#language)
@@ -740,20 +740,27 @@
 
 ---
 
-## Finance (25) <a name="finance"></a>
+## Finance (45) <a name="finance"></a>
 
 ### accounting
 
 - [`audit-financial-statements`](./skills/finance/accounting/skills/audit-financial-statements/) — Use when planning or executing a financial statement audit or audit preparation process for an organization
+- [`audit-internal-controls`](./skills/finance/accounting/skills/audit-internal-controls/) — Use when reviewing, designing, or stress-testing internal financial controls — e.g., "how do I prevent fraud?", "what internal controls should we have?", "SOX compliance", "reviewing controls before audit", "segregation of duties"
 - [`calculate-break-even-analysis`](./skills/finance/accounting/skills/calculate-break-even-analysis/) — Use when calculating the break-even point for a product, service, or business to determine the sales volume needed to cover all costs
+- [`calculate-profitability-ratios`](./skills/finance/accounting/skills/calculate-profitability-ratios/) — Use when evaluating a company's financial performance, comparing competitors, or assessing investment quality — e.g., "what's a good profit margin?", "how do I calculate ROIC?", "what does ROE tell me?", "interpreting gross vs. operating margin"
+- [`design-cost-allocation-system`](./skills/finance/accounting/skills/design-cost-allocation-system/) — Use when assigning overhead or shared costs to products, services, departments, or customers — e.g., "how do I allocate overhead?", "activity-based costing vs. traditional?", "which products are actually profitable?", "cost per customer segment?"
 - [`design-financial-reporting-system`](./skills/finance/accounting/skills/design-financial-reporting-system/) — Use when designing or overhauling a financial reporting system for a company, including chart of accounts, reporting cadence, and management reporting structure
 
 ### corporate
 
-- [`calculate-npv-irr`](./skills/finance/corporate/skills/calculate-npv-irr/) — Use when evaluating capital investments, projects, or acquisitions using Net Present Value and Internal Rate of Return analysis
 - [`calculate-corporate-unit-economics`](./skills/finance/corporate/skills/calculate-corporate-unit-economics/) — Use when evaluating the profitability and scalability of a business model at the per-customer or per-transaction level
+- [`calculate-customer-lifetime-value`](./skills/finance/corporate/skills/calculate-customer-lifetime-value/) — Use when calculating how much a customer is worth, pricing acquisition costs, or evaluating unit economics — e.g., "what's our LTV?", "how much can we spend to acquire a customer?", "LTV:CAC ratio?", "what's our payback period?"
+- [`calculate-npv-irr`](./skills/finance/corporate/skills/calculate-npv-irr/) — Use when evaluating capital investments, projects, or acquisitions using Net Present Value and Internal Rate of Return analysis
 - [`calculate-wacc`](./skills/finance/corporate/skills/calculate-wacc/) — Use when calculating the Weighted Average Cost of Capital for a company to use as the discount rate in valuation or capital budgeting decisions
 - [`design-capital-structure`](./skills/finance/corporate/skills/design-capital-structure/) — Use when advising on or designing the optimal capital structure for a company, including debt-equity mix, financing decisions, and leverage analysis
+- [`design-cash-flow-forecast`](./skills/finance/corporate/skills/design-cash-flow-forecast/) — Use when building a cash flow projection for a business — e.g., "will we run out of cash?", "how much runway do we have?", "13-week cash flow model", "cash flow forecast for fundraising"
+- [`design-exit-strategy`](./skills/finance/corporate/skills/design-exit-strategy/) — Use when planning or evaluating how to exit a business — e.g., "how do I sell my company?", "M&A vs. IPO?", "what's my business worth?", "how do I prepare for acquisition?", "strategic vs. financial buyer?"
+- [`design-fundraising-strategy`](./skills/finance/corporate/skills/design-fundraising-strategy/) — Use when planning to raise external capital for a business — e.g., "how do I raise a seed round?", "what should my Series A look like?", "how much dilution is acceptable?", "VC vs. angel vs. bootstrap?"
 - [`design-pricing-strategy`](./skills/finance/corporate/skills/design-pricing-strategy/) — Use when setting, revising, or validating the pricing for a product or service
 - [`write-financial-model`](./skills/finance/corporate/skills/write-financial-model/) — Use when building a three-statement financial model for a company or business unit
 
@@ -761,25 +768,38 @@
 
 - [`audit-investment-fees`](./skills/finance/investing/skills/audit-investment-fees/) — Use when auditing investment account fees, fund expenses, and advisor costs to identify excessive charges and optimize total investment cost
 - [`audit-investment-thesis`](./skills/finance/investing/skills/audit-investment-thesis/) — Use when evaluating the strength and validity of an investment thesis before committing capital
+- [`calculate-compound-interest`](./skills/finance/investing/skills/calculate-compound-interest/) — Use when projecting investment growth, understanding the time value of money, or illustrating the cost of delay — e.g., "how much will $10k grow?", "Rule of 72?", "how much do I need to save monthly to reach $1M?", "what's the cost of waiting 5 years to invest?"
 - [`calculate-dcf`](./skills/finance/investing/skills/calculate-dcf/) — Use when valuing a company, project, or asset using discounted cash flow analysis
 - [`calculate-risk-adjusted-return`](./skills/finance/investing/skills/calculate-risk-adjusted-return/) — Use when evaluating investment performance on a risk-adjusted basis using Sharpe ratio, Treynor ratio, Jensen's alpha, or Sortino ratio
+- [`design-dividend-investing-strategy`](./skills/finance/investing/skills/design-dividend-investing-strategy/) — Use when building an income-focused portfolio or deciding between dividend investing and total return — e.g., "should I invest for dividends?", "how do I build dividend income?", "dividend stocks vs index funds?"
 - [`design-portfolio-allocation`](./skills/finance/investing/skills/design-portfolio-allocation/) — Use when constructing or rebalancing an investment portfolio across asset classes
+- [`design-rebalancing-strategy`](./skills/finance/investing/skills/design-rebalancing-strategy/) — Use when deciding how or when to rebalance a portfolio — e.g., "when should I rebalance?", "how do I rebalance without selling?", "calendar vs threshold rebalancing?"
+- [`design-tax-loss-harvesting-plan`](./skills/finance/investing/skills/design-tax-loss-harvesting-plan/) — Use when reducing capital gains taxes in a taxable brokerage account — e.g., "what is tax-loss harvesting?", "how do I harvest losses?", "when should I TLH?", "wash sale rule?"
+- [`evaluate-alternative-investments`](./skills/finance/investing/skills/evaluate-alternative-investments/) — Use when considering investments outside stocks and bonds — e.g., "should I invest in private equity?", "is crypto a good portfolio diversifier?", "how do REITs compare to direct real estate?", "what about commodities?"
 
 ### personal-finance
 
 - [`audit-tax-efficiency`](./skills/finance/personal-finance/skills/audit-tax-efficiency/) — Use when reviewing an investment portfolio or financial plan for unnecessary tax drag
 - [`calculate-fire-number`](./skills/finance/personal-finance/skills/calculate-fire-number/) — Use when determining the portfolio size needed to retire early and sustain spending indefinitely
 - [`calculate-mortgage-affordability`](./skills/finance/personal-finance/skills/calculate-mortgage-affordability/) — Use when determining how much house you can actually afford — applying the 28/36 rule, stress-testing at higher rates, and calculating required down payment and cash reserves to avoid becoming house-poor
+- [`calculate-net-worth`](./skills/finance/personal-finance/skills/calculate-net-worth/) — Use when tracking financial health, setting wealth goals, or taking stock of assets and debts — e.g., "what's my net worth?", "am I on track financially?", "should I pay off debt or invest?"
 - [`design-budget`](./skills/finance/personal-finance/skills/design-budget/) — Use when creating or overhauling a personal or household budget to align spending with goals
+- [`design-charitable-giving-plan`](./skills/finance/personal-finance/skills/design-charitable-giving-plan/) — Use when planning charitable contributions to maximize tax efficiency — e.g., "how do I donate tax-efficiently?", "should I use a DAF?", "how to give appreciated stock?", "what's a QCD?"
+- [`design-college-savings-plan`](./skills/finance/personal-finance/skills/design-college-savings-plan/) — Use when planning how to save for a child's or dependent's education — e.g., "how much should I save for college?", "529 vs Roth IRA for education?", "how do I start a college fund?"
 - [`design-debt-payoff-plan`](./skills/finance/personal-finance/skills/design-debt-payoff-plan/) — Use when creating a structured debt payoff plan to eliminate consumer debt efficiently using snowball, avalanche, or hybrid methods
 - [`design-estate-plan`](./skills/finance/personal-finance/skills/design-estate-plan/) — Use when designing a comprehensive estate plan to protect assets, minimize taxes, and ensure wealth transfers according to the individual's wishes
+- [`design-insurance-coverage-plan`](./skills/finance/personal-finance/skills/design-insurance-coverage-plan/) — Use when evaluating, choosing, or gaps-checking insurance coverage — life, disability, health, property, liability, or umbrella — e.g., "how much life insurance do I need?", "am I underinsured?", "what disability coverage makes sense?"
 - [`design-tax-optimization-plan`](./skills/finance/personal-finance/skills/design-tax-optimization-plan/) — Use when planning year-round strategies to legally minimise your tax burden — maximising pre-tax accounts, harvesting losses, locating assets correctly, and timing deductions to reduce what you owe without avoiding legal obligations
 - [`negotiate-salary`](./skills/finance/personal-finance/skills/negotiate-salary/) — Use when receiving a job offer or preparing for a compensation review — researching market rate, anchoring high, and negotiating total compensation to avoid leaving money on the table
+- [`optimize-credit-score`](./skills/finance/personal-finance/skills/optimize-credit-score/) — Use when improving, building, or repairing a credit score — e.g., "how do I raise my credit score?", "my score dropped, why?", "I need good credit for a mortgage in 6 months"
 
 ### real-estate
 
 - [`calculate-cap-rate`](./skills/finance/real-estate/skills/calculate-cap-rate/) — Use when evaluating a commercial real estate investment using capitalization rate analysis to assess property value and return potential
+- [`calculate-real-estate-roi`](./skills/finance/real-estate/skills/calculate-real-estate-roi/) — Use when evaluating the total return on a real estate investment including leverage, appreciation, cash flow, and tax benefits — e.g., "what's the ROI on this rental?", "cash-on-cash vs. total return?", "how does leverage affect real estate returns?", "comparing real estate to stock market"
 - [`calculate-rental-yield`](./skills/finance/real-estate/skills/calculate-rental-yield/) — Use when evaluating a residential or commercial rental property investment by calculating gross and net rental yield
+- [`design-1031-exchange-plan`](./skills/finance/real-estate/skills/design-1031-exchange-plan/) — Use when selling investment property and wanting to defer capital gains taxes — e.g., "how does 1031 exchange work?", "defer capital gains on property sale", "like-kind exchange rules", "1031 timeline and deadlines"
+- [`design-house-hacking-strategy`](./skills/finance/real-estate/skills/design-house-hacking-strategy/) — Use when planning to reduce housing costs by renting out part of a primary residence — e.g., "what is house hacking?", "should I rent out a room?", "ADU rental strategy", "multi-family as first home"
 - [`design-real-estate-due-diligence`](./skills/finance/real-estate/skills/design-real-estate-due-diligence/) — Use when designing or executing a due diligence process for a real estate acquisition, whether residential, commercial, or development
 
 ---
