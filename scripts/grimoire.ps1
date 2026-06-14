@@ -842,7 +842,7 @@ $isInteractive = (-not $Domain -and -not $Skill -and -not $Target -and -not $Yes
 if ($isInteractive) {
     Print-Banner
 
-    $tuiMode = Select-One "⚙️  What would you like to do?" @("📥 Install", "🗑️  Uninstall", "⬆️  Upgrade", "🩺 Doctor", "🚪 Exit")
+    $tuiMode = Select-One "⚙️  What would you like to do?" @("📥 Install", "🗑  Uninstall", "🚀 Upgrade", "🩺 Doctor", "🚪 Exit")
     if ($tuiMode -like "*Doctor*")  { Invoke-Doctor;  exit 0 }
     if ($tuiMode -like "*Upgrade*") { Invoke-Upgrade; exit 0 }
     if ($tuiMode -like "*Exit*")    { exit 0 }

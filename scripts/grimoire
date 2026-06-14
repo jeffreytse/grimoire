@@ -1057,7 +1057,7 @@ if [[ -z "${DOMAIN}" && -z "${SKILL}" && -z "${TARGET}" && ${YES} -eq 0 && ${UNI
   print_banner
 
   # Mode selection
-  select_one _tui_mode "⚙️  What would you like to do?" "📥 Install" "🗑️  Uninstall" "⬆️  Upgrade" "🩺 Doctor" "🚪 Exit"
+  select_one _tui_mode "⚙️  What would you like to do?" "📥 Install" "🗑  Uninstall" "🚀 Upgrade" "🩺 Doctor" "🚪 Exit"
 
   if [[ "${_tui_mode}" == *Doctor* ]]; then
     do_doctor
