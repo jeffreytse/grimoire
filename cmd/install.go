@@ -66,7 +66,7 @@ func runInstall(cmd *cobra.Command, args []string) error {
 	}
 	targets := resolveTargets(target)
 
-	count := 0
+	perAgent := make(map[string]int) // ag → newly installed skill count
 
 	switch {
 	case flagInstallSkill != "":
@@ -80,7 +80,7 @@ func runInstall(cmd *cobra.Command, args []string) error {
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "  %s  %s: %v\n", tui.IconWarn, agent.DisplayName(ag), err)
 			}
-			count += n
+			perAgent[ag] += n
 		}
 
 	case flagInstallDomain != "":
@@ -89,7 +89,7 @@ func runInstall(cmd *cobra.Command, args []string) error {
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "  error: %v\n", err)
 			}
-			count += n
+			perAgent[ag] += n
 		}
 
 	default:
@@ -104,7 +104,7 @@ func runInstall(cmd *cobra.Command, args []string) error {
 				if err != nil {
 					fmt.Fprintf(os.Stderr, "  error: %v\n", err)
 				}
-				count += n
+				perAgent[ag] += n
 			}
 		}
 	}
@@ -123,18 +123,42 @@ func runInstall(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	unique := count / len(targets)
-	switch {
-	case len(targets) > 1:
-		fmt.Printf("\n%s  %d skills installed × %d agents (%d total) → %s\n",
-			tui.IconOK, unique, len(targets), count, joinAgentNames(targets))
-	case count > 0:
-		fmt.Printf("\n%s  %d skills installed → %s\n",
-			tui.IconOK, count, joinAgentNames(targets))
-	default:
-		fmt.Printf("\n%s  already up to date\n", tui.IconOK)
-	}
+	printInstallSummary(perAgent, targets)
 	return nil
+}
+
+func printInstallSummary(perAgent map[string]int, targets []string) {
+	var installed, skipped []string
+	for _, ag := range targets {
+		if perAgent[ag] > 0 {
+			installed = append(installed, fmt.Sprintf("%s — %d skills",
+				agent.DisplayName(ag), perAgent[ag]))
+		} else {
+			skipped = append(skipped, fmt.Sprintf("%s — already up to date",
+				agent.DisplayName(ag)))
+		}
+	}
+
+	fmt.Printf("\n%s  grimoire installed\n", tui.IconOK)
+
+	if len(installed) > 0 {
+		fmt.Println("\n  installed:")
+		for _, s := range installed {
+			fmt.Printf("    • %s\n", s)
+		}
+	}
+	if len(skipped) > 0 {
+		fmt.Println("\n  skipped:")
+		for _, s := range skipped {
+			fmt.Printf("    • %s\n", s)
+		}
+	}
+
+	fmt.Println("\n  to get started:")
+	fmt.Println("    start any AI session — grimoire skills activate automatically")
+	fmt.Println("    or run /start-best-practice in Claude Code to trigger manually")
+	fmt.Println("\n  uninstall: grimoire uninstall")
+	fmt.Println()
 }
 
 // resolveAndPersistSource resolves a --from value (local path or git URL),
