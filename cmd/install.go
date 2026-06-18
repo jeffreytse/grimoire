@@ -3,10 +3,12 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 
 	"github.com/jeffreytse/grimoire/internal/agent"
+	gitops "github.com/jeffreytse/grimoire/internal/git"
 	"github.com/jeffreytse/grimoire/internal/skills"
 	"github.com/jeffreytse/grimoire/internal/tui"
 )
@@ -19,6 +21,7 @@ var (
 	flagInstallCopy      bool
 	flagInstallYes       bool
 	flagInstallNoCfg     bool
+	flagInstallFrom      string
 )
 
 var installCmd = &cobra.Command{
@@ -35,10 +38,23 @@ func init() {
 	installCmd.Flags().BoolVar(&flagInstallCopy, "copy", false, "copy files instead of symlinking")
 	installCmd.Flags().BoolVar(&flagInstallYes, "yes", false, "non-interactive: install all skills to all detected agents")
 	installCmd.Flags().BoolVar(&flagInstallNoCfg, "no-configure", false, "skip writing start-best-practice trigger")
+	installCmd.Flags().StringVar(&flagInstallFrom, "from", "", "install from a local path or git URL (persisted to ~/.config/grimoire/settings.toml)")
 }
 
 func runInstall(cmd *cobra.Command, args []string) error {
 	root := skills.SkillsRoot()
+
+	if flagInstallFrom != "" {
+		resolved, err := resolveAndPersistSource(flagInstallFrom)
+		if err != nil {
+			return err
+		}
+		if resolved == "" {
+			return nil // user cancelled
+		}
+		root = resolved
+	}
+
 	if _, err := os.Stat(root); err != nil {
 		return fmt.Errorf("skills not found at %s — run: grimoire update", root)
 	}
@@ -119,6 +135,41 @@ func runInstall(cmd *cobra.Command, args []string) error {
 		fmt.Printf("\n%s  already up to date\n", tui.IconOK)
 	}
 	return nil
+}
+
+// resolveAndPersistSource resolves a --from value (local path or git URL),
+// clones if needed, persists to global config, and returns the skills root path.
+// Returns ("", nil) when the user cancels.
+func resolveAndPersistSource(from string) (string, error) {
+	if skills.IsGitURL(from) {
+		home := skills.GrimoireHome()
+		if _, err := os.Stat(home); err == nil {
+			chosen, ok := tui.RunSelect(
+				fmt.Sprintf("Replace existing grimoire at %s with %s?", home, from),
+				[]string{"Yes", "Cancel"},
+			)
+			if !ok || chosen == "Cancel" {
+				fmt.Println("Cancelled.")
+				return "", nil
+			}
+			if err := os.RemoveAll(home); err != nil {
+				return "", fmt.Errorf("removing %s: %w", home, err)
+			}
+		}
+		fmt.Printf("Cloning %s → %s...\n", from, home)
+		if err := gitops.Clone(from, home); err != nil {
+			return "", fmt.Errorf("cloning: %w", err)
+		}
+	}
+
+	if skills.IsGitURL(from) {
+		return skills.SkillsRoot(), nil
+	}
+	abs, err := filepath.Abs(from)
+	if err != nil {
+		return "", fmt.Errorf("resolving path %s: %w", from, err)
+	}
+	return filepath.Join(abs, "skills"), nil
 }
 
 func installDomainToAgent(root, domain, subdomain, ag string, symlink bool) (int, error) {

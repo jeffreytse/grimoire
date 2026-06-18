@@ -26,6 +26,7 @@ var rootCmd = &cobra.Command{
   grimoire clean         Remove broken skill symlinks
   grimoire init          Initialize .grimoire/ in the current project
   grimoire check         Evaluate a compliance report
+  grimoire config        Get or set grimoire configuration values
   grimoire self-update   Update the grimoire CLI binary to the latest release`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if !isatty.IsTerminal(os.Stdin.Fd()) {
@@ -52,4 +53,5 @@ func init() {
 	rootCmd.AddCommand(cleanCmd)
 	rootCmd.AddCommand(versionCmd)
 	rootCmd.AddCommand(selfUpdateCmd)
+	rootCmd.AddCommand(configCmd)
 }

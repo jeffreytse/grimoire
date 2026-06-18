@@ -43,8 +43,8 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 				return nil
 			}
 		}
-		fmt.Printf("Cloning %s...\n", skills.GrimoireRepo)
-		if err := gitops.Clone(skills.GrimoireRepo, home); err != nil {
+		fmt.Printf("Cloning %s...\n", skills.GrimoireRepoURL())
+		if err := gitops.Clone(skills.GrimoireRepoURL(), home); err != nil {
 			return fmt.Errorf("cloning grimoire: %w", err)
 		}
 		fmt.Printf("%s  Grimoire installed to %s\n", tui.IconOK, home)
