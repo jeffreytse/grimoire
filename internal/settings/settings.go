@@ -23,10 +23,16 @@ type DomainSection struct {
 	ComplianceThresholdError int     // -1 = unset; 0 = allow none; N = allow up to N
 }
 
+// RegistryConfig holds the configuration for one named skill registry.
+type RegistryConfig struct {
+	URL string
+}
+
 // FileSettings is one parsed settings.toml file.
 type FileSettings struct {
-	Core     CoreSection
-	Sections map[string]DomainSection // dotted keys: "engineering", "engineering.architecture"
+	Core       CoreSection
+	Registries map[string]RegistryConfig // name → config; "official" may be explicit or implicit
+	Sections   map[string]DomainSection  // dotted keys: "engineering", "engineering.architecture"
 }
 
 // Resolved holds the effective settings after merging all file layers.

@@ -12,8 +12,9 @@ import (
 )
 
 var (
-	flagListDomain string
-	flagListJSON   bool
+	flagListDomain   string
+	flagListJSON     bool
+	flagListRegistry string
 )
 
 var listCmd = &cobra.Command{
@@ -25,15 +26,24 @@ var listCmd = &cobra.Command{
 func init() {
 	listCmd.Flags().StringVar(&flagListDomain, "domain", "", "filter to a specific domain")
 	listCmd.Flags().BoolVar(&flagListJSON, "json", false, "output JSON array")
+	listCmd.Flags().StringVar(&flagListRegistry, "registry", "", "list skills from a specific registry only")
 }
 
 func runList(cmd *cobra.Command, args []string) error {
-	root := skills.SkillsRoot()
-	if _, err := os.Stat(root); err != nil {
+	sources := skills.AllSkillsSources()
+	if flagListRegistry != "" {
+		sources = filterSources(sources, flagListRegistry)
+		if len(sources) == 0 {
+			return fmt.Errorf("registry %q not found or not cloned", flagListRegistry)
+		}
+	}
+
+	if len(sources) == 0 {
+		root := skills.SkillsRoot()
 		return fmt.Errorf("skills not found at %s — run: grimoire update", root)
 	}
 
-	allSkills, err := skills.ListAllSkills(root)
+	allSkills, err := skills.ListAllSkillsFromSources(sources)
 	if err != nil {
 		return fmt.Errorf("listing skills: %w", err)
 	}
@@ -54,8 +64,43 @@ func runList(cmd *cobra.Command, args []string) error {
 		return enc.Encode(allSkills)
 	}
 
-	printSkillTree(allSkills)
+	printSkillTreeMulti(allSkills, len(sources) > 1)
 	return nil
+}
+
+func printSkillTreeMulti(all []skills.Skill, showRegistry bool) {
+	// group by registry → domain → subdomain → skills
+	type registryGroup struct {
+		name   string
+		skills []skills.Skill
+	}
+
+	registryOrder := []string{}
+	byRegistry := map[string][]skills.Skill{}
+	for _, s := range all {
+		reg := s.Registry
+		if reg == "" {
+			reg = skills.OfficialRegistryName
+		}
+		if _, ok := byRegistry[reg]; !ok {
+			registryOrder = append(registryOrder, reg)
+		}
+		byRegistry[reg] = append(byRegistry[reg], s)
+	}
+
+	total := 0
+	for _, reg := range registryOrder {
+		skillList := byRegistry[reg]
+		if showRegistry {
+			fmt.Printf("\n%s\n", tui.StyleGold.Render("◈ "+reg))
+		}
+		printSkillTree(skillList)
+		total += len(skillList)
+	}
+
+	if showRegistry {
+		fmt.Printf("\n%s\n", tui.StyleDim.Render(fmt.Sprintf("%d skills total across %d registries", total, len(registryOrder))))
+	}
 }
 
 func printSkillTree(all []skills.Skill) {
@@ -85,4 +130,13 @@ func printSkillTree(all []skills.Skill) {
 
 	total := len(all)
 	fmt.Printf("\n%s\n", tui.StyleDim.Render(fmt.Sprintf("%d skills total", total)))
+}
+
+func filterSources(sources []skills.SkillsSource, name string) []skills.SkillsSource {
+	for _, s := range sources {
+		if s.Name == name {
+			return []skills.SkillsSource{s}
+		}
+	}
+	return nil
 }

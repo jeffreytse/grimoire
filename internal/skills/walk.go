@@ -19,10 +19,11 @@ type Subdomain struct {
 }
 
 type Skill struct {
-	Domain    string
-	Subdomain string
-	Name      string
-	Path      string
+	Registry  string `json:"registry,omitempty"`
+	Domain    string `json:"domain"`
+	Subdomain string `json:"subdomain,omitempty"`
+	Name      string `json:"name"`
+	Path      string `json:"path"`
 }
 
 // IsNested returns true when the domain uses subdomain directories

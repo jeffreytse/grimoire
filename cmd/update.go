@@ -9,6 +9,7 @@ import (
 
 	"github.com/jeffreytse/grimoire/internal/agent"
 	gitops "github.com/jeffreytse/grimoire/internal/git"
+	"github.com/jeffreytse/grimoire/internal/settings"
 	"github.com/jeffreytse/grimoire/internal/skills"
 	"github.com/jeffreytse/grimoire/internal/tui"
 )
@@ -148,6 +149,7 @@ func updateUnstable(home string) error {
 	newState, _ := gitops.CurrentState(home)
 	printUpgradeResult(current, newState)
 	relinkNewSkills(home, current.Commit)
+	updateCustomRegistries()
 	return nil
 }
 
@@ -192,6 +194,35 @@ func relinkNewSkills(home, oldCommit string) {
 	}
 
 	fmt.Println()
+}
+
+// updateCustomRegistries pulls or clones all custom registries configured in global settings.
+func updateCustomRegistries() {
+	fs, err := settings.LoadGlobal()
+	if err != nil || len(fs.Registries) == 0 {
+		return
+	}
+	fmt.Println()
+	for name, rc := range fs.Registries {
+		if name == skills.OfficialRegistryName {
+			continue
+		}
+		dest := skills.RegistryHome(name)
+		if _, err := os.Stat(dest); err != nil {
+			fmt.Printf("  cloning registry %s...\n", name)
+			if err := gitops.Clone(rc.URL, dest); err != nil {
+				fmt.Fprintf(os.Stderr, "  warn: %s: %v\n", name, err)
+			} else {
+				fmt.Printf("  %s  %s cloned\n", tui.IconOK, name)
+			}
+		} else {
+			if err := gitops.Pull(dest); err != nil {
+				fmt.Fprintf(os.Stderr, "  warn: %s: %v\n", name, err)
+			} else {
+				fmt.Printf("  %s  %s up to date\n", tui.IconOK, name)
+			}
+		}
+	}
 }
 
 func errNotGit(dir string) error {

@@ -27,6 +27,7 @@ var rootCmd = &cobra.Command{
   grimoire init          Initialize .grimoire/ in the current project
   grimoire check         Evaluate a compliance report
   grimoire config        Get or set grimoire configuration values
+  grimoire registry      Manage skill registries (add, remove, list, update)
   grimoire self-update   Update the grimoire CLI binary to the latest release`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if !isatty.IsTerminal(os.Stdin.Fd()) {
@@ -55,4 +56,5 @@ func init() {
 	rootCmd.AddCommand(selfUpdateCmd)
 	rootCmd.AddCommand(configCmd)
 	rootCmd.AddCommand(settingsCmd)
+	rootCmd.AddCommand(registryCmd)
 }

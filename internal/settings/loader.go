@@ -83,19 +83,41 @@ func WriteFile(path string, fs FileSettings) error {
 
 // parseRaw converts a map[string]any (from toml.Unmarshal) into FileSettings.
 func parseRaw(raw map[string]any) FileSettings {
-	fs := FileSettings{Sections: make(map[string]DomainSection)}
+	fs := FileSettings{
+		Sections:   make(map[string]DomainSection),
+		Registries: make(map[string]RegistryConfig),
+	}
 	for key, val := range raw {
 		m, ok := val.(map[string]any)
 		if !ok {
 			continue
 		}
-		if key == "core" {
+		switch key {
+		case "core":
 			fs.Core = parseCoreSection(m)
-		} else {
+		case "registry":
+			fs.Registries = parseRegistries(m)
+		default:
 			parseDomainInto(key, m, &fs)
 		}
 	}
 	return fs
+}
+
+func parseRegistries(m map[string]any) map[string]RegistryConfig {
+	result := make(map[string]RegistryConfig)
+	for name, val := range m {
+		sub, ok := val.(map[string]any)
+		if !ok {
+			continue
+		}
+		rc := RegistryConfig{}
+		rc.URL, _ = sub["url"].(string)
+		if rc.URL != "" {
+			result[name] = rc
+		}
+	}
+	return result
 }
 
 func parseCoreSection(m map[string]any) CoreSection {
@@ -148,6 +170,19 @@ func parseDomainInto(prefix string, m map[string]any, fs *FileSettings) {
 // toMap converts FileSettings to a nested map[string]any for TOML marshaling.
 func toMap(fs FileSettings) map[string]any {
 	m := map[string]any{}
+
+	// registry sections
+	if len(fs.Registries) > 0 {
+		regMap := map[string]any{}
+		for name, rc := range fs.Registries {
+			if rc.URL != "" {
+				regMap[name] = map[string]any{"url": rc.URL}
+			}
+		}
+		if len(regMap) > 0 {
+			m["registry"] = regMap
+		}
+	}
 
 	core := map[string]any{}
 	if fs.Core.Home != "" {

@@ -22,6 +22,7 @@ var (
 	flagInstallYes       bool
 	flagInstallNoCfg     bool
 	flagInstallFrom      string
+	flagInstallRegistry  string
 )
 
 var installCmd = &cobra.Command{
@@ -39,42 +40,64 @@ func init() {
 	installCmd.Flags().BoolVar(&flagInstallYes, "yes", false, "non-interactive: install all skills to all detected agents")
 	installCmd.Flags().BoolVar(&flagInstallNoCfg, "no-configure", false, "skip writing start-best-practice trigger")
 	installCmd.Flags().StringVar(&flagInstallFrom, "from", "", "install from a local path or git URL (persisted to ~/.config/grimoire/settings.toml)")
+	installCmd.Flags().StringVar(&flagInstallRegistry, "registry", "", "install skills from a specific registry only")
 }
 
 func runInstall(cmd *cobra.Command, args []string) error {
-	root := skills.SkillsRoot()
-
+	// --from overrides registry search entirely
 	if flagInstallFrom != "" {
 		resolved, err := resolveAndPersistSource(flagInstallFrom)
 		if err != nil {
 			return err
 		}
 		if resolved == "" {
-			return nil // user cancelled
+			return nil
 		}
-		root = resolved
+		return runInstallFromRoot(resolved)
 	}
 
-	if _, err := os.Stat(root); err != nil {
-		return fmt.Errorf("skills not found at %s — run: grimoire update", root)
+	// determine which registry sources to use
+	sources := skills.AllSkillsSources()
+
+	// --registry filters to one source
+	if flagInstallRegistry != "" {
+		sources = filterSources(sources, flagInstallRegistry)
+		if len(sources) == 0 {
+			return fmt.Errorf("registry %q not found or not cloned — run: grimoire registry update %s",
+				flagInstallRegistry, flagInstallRegistry)
+		}
+	}
+
+	if len(sources) == 0 {
+		return fmt.Errorf("skills not found at %s — run: grimoire update", skills.SkillsRoot())
+	}
+
+	// parse optional registry: prefix from --skill flag  (e.g. "my-org:engineering/tdd")
+	skillRef := flagInstallSkill
+	if regName, ref, ok := splitRegistryPrefix(skillRef); ok {
+		skillRef = ref
+		sources = filterSources(sources, regName)
+		if len(sources) == 0 {
+			return fmt.Errorf("registry %q not found or not cloned", regName)
+		}
 	}
 
 	symlink := !flagInstallCopy
 	target := flagInstallTarget
 	if flagInstallYes && target == "" {
-		target = "auto" // install to all detected agents without prompting
+		target = "auto"
 	}
 	targets := resolveTargets(target)
 
-	perAgent := make(map[string]int) // ag → newly installed skill count
+	perAgent := make(map[string]int)
 
 	switch {
-	case flagInstallSkill != "":
-		skillPath, err := skills.ResolveSkillPath(root, flagInstallSkill)
+	case skillRef != "":
+		skillPath, src, err := resolveSkillFromSources(sources, skillRef)
 		if err != nil {
 			return err
 		}
-		fmt.Printf("Installing skill: %s\n", flagInstallSkill)
+		fmt.Printf("Installing skill: %s (from %s)\n", skillRef, src.Name)
 		for _, ag := range targets {
 			n, err := installSkillToAgent(skillPath, ag, symlink)
 			if err != nil {
@@ -84,25 +107,27 @@ func runInstall(cmd *cobra.Command, args []string) error {
 		}
 
 	case flagInstallDomain != "":
-		for _, ag := range targets {
-			n, err := installDomainToAgent(root, flagInstallDomain, flagInstallSubdomain, ag, symlink)
-			if err != nil {
-				fmt.Fprintf(os.Stderr, "  error: %v\n", err)
+		for _, src := range sources {
+			for _, ag := range targets {
+				n, err := installDomainToAgent(src.Root, flagInstallDomain, flagInstallSubdomain, ag, symlink)
+				if err != nil {
+					fmt.Fprintf(os.Stderr, "  error: %v\n", err)
+				}
+				perAgent[ag] += n
 			}
-			perAgent[ag] += n
 		}
 
 	default:
-		// install everything
-		domains, err := skills.ListDomains(root)
+		// install all skills from all sources (first-match-wins per skill name)
+		all, err := skills.ListAllSkillsFromSources(sources)
 		if err != nil {
 			return err
 		}
-		for _, d := range domains {
+		for _, sk := range all {
 			for _, ag := range targets {
-				n, err := installDomainToAgent(root, d.Name, "", ag, symlink)
+				n, err := installSkillToAgent(sk.Path, ag, symlink)
 				if err != nil {
-					fmt.Fprintf(os.Stderr, "  error: %v\n", err)
+					fmt.Fprintf(os.Stderr, "  warn: %v\n", err)
 				}
 				perAgent[ag] += n
 			}
@@ -159,6 +184,71 @@ func printInstallSummary(perAgent map[string]int, targets []string) {
 	fmt.Println("    or run /start-best-practice in Claude Code to trigger manually")
 	fmt.Println("\n  uninstall: grimoire uninstall")
 	fmt.Println()
+}
+
+// runInstallFromRoot runs a single-root install (--from path), bypassing multi-registry logic.
+func runInstallFromRoot(root string) error {
+	if _, err := os.Stat(root); err != nil {
+		return fmt.Errorf("skills not found at %s", root)
+	}
+	symlink := !flagInstallCopy
+	target := flagInstallTarget
+	if flagInstallYes && target == "" {
+		target = "auto"
+	}
+	targets := resolveTargets(target)
+	perAgent := make(map[string]int)
+
+	domains, err := skills.ListDomains(root)
+	if err != nil {
+		return err
+	}
+	for _, d := range domains {
+		for _, ag := range targets {
+			n, err := installDomainToAgent(root, d.Name, "", ag, symlink)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "  error: %v\n", err)
+			}
+			perAgent[ag] += n
+		}
+	}
+
+	for _, ag := range targets {
+		_, _ = skills.CleanBrokenSymlinks(agent.SkillsDir(ag))
+	}
+	if !flagInstallNoCfg {
+		for _, ag := range targets {
+			if err := agent.ConfigureAgentMD(ag); err != nil {
+				fmt.Fprintf(os.Stderr, "  warn: configuring %s: %v\n", ag, err)
+			}
+		}
+	}
+	printInstallSummary(perAgent, targets)
+	return nil
+}
+
+// splitRegistryPrefix parses "my-org:engineering/tdd" into ("my-org", "engineering/tdd", true).
+func splitRegistryPrefix(ref string) (registry, skill string, ok bool) {
+	for i, ch := range ref {
+		if ch == ':' {
+			return ref[:i], ref[i+1:], true
+		}
+		if ch == '/' {
+			break // no registry prefix
+		}
+	}
+	return "", "", false
+}
+
+// resolveSkillFromSources finds a skill by ref across multiple sources; first source wins.
+func resolveSkillFromSources(sources []skills.SkillsSource, ref string) (path string, src skills.SkillsSource, err error) {
+	for _, s := range sources {
+		p, e := skills.ResolveSkillPath(s.Root, ref)
+		if e == nil {
+			return p, s, nil
+		}
+	}
+	return "", skills.SkillsSource{}, fmt.Errorf("skill %q not found in any configured registry", ref)
 }
 
 // resolveAndPersistSource resolves a --from value (local path or git URL),
