@@ -3,6 +3,7 @@ package settings
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -37,7 +38,6 @@ func TestParseFile_CoreSection(t *testing.T) {
 [core]
 home = "/opt/grimoire"
 source = "https://example.com/skills.git"
-profiles = ["oop", "tdd"]
 `)
 	fs, err := ParseFile(path)
 	if err != nil {
@@ -49,15 +49,31 @@ profiles = ["oop", "tdd"]
 	if fs.Core.Source != "https://example.com/skills.git" {
 		t.Errorf("Core.Source = %q", fs.Core.Source)
 	}
-	if len(fs.Core.Profiles) != 2 || fs.Core.Profiles[0] != "oop" {
-		t.Errorf("Core.Profiles = %v", fs.Core.Profiles)
+	// profiles must NOT be parsed from [core]
+	if len(fs.Core.Profiles) != 0 {
+		t.Errorf("Core.Profiles should be empty when not set in [standards], got %v", fs.Core.Profiles)
+	}
+}
+
+func TestParseFile_StandardsProfiles(t *testing.T) {
+	dir := t.TempDir()
+	path := writeSettingsFile(t, dir, "settings.toml", `
+[standards]
+profiles = ["oop", "tdd"]
+`)
+	fs, err := ParseFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(fs.Core.Profiles) != 2 || fs.Core.Profiles[0] != "oop" || fs.Core.Profiles[1] != "tdd" {
+		t.Errorf("Core.Profiles = %v, want [oop tdd]", fs.Core.Profiles)
 	}
 }
 
 func TestParseFile_DomainSection(t *testing.T) {
 	dir := t.TempDir()
 	path := writeSettingsFile(t, dir, "settings.toml", `
-[engineering]
+[standards.engineering]
 practices = ["Google Engineering Practices"]
 fallback = "ask"
 compliance-threshold = 75
@@ -89,10 +105,10 @@ compliance-threshold-error = 0
 func TestParseFile_SubdomainSection(t *testing.T) {
 	dir := t.TempDir()
 	path := writeSettingsFile(t, dir, "settings.toml", `
-[engineering]
+[standards.engineering]
 compliance-threshold = 75
 
-[engineering.architecture]
+[standards.engineering.architecture]
 compliance-threshold = 85
 `)
 	fs, err := ParseFile(path)
@@ -234,7 +250,7 @@ func TestResolveSection_SubdomainInheritsDomainKeys(t *testing.T) {
 func TestComplianceThresholdError_ZeroPreserved(t *testing.T) {
 	dir := t.TempDir()
 	path := writeSettingsFile(t, dir, "settings.toml", `
-[engineering]
+[standards.engineering]
 compliance-threshold-error = 0
 `)
 	fs, err := ParseFile(path)
@@ -266,6 +282,25 @@ func TestWriteFile_RoundTrip(t *testing.T) {
 	path := filepath.Join(dir, "settings.toml")
 	if err := WriteFile(path, original); err != nil {
 		t.Fatal(err)
+	}
+
+	// verify emitted TOML uses [standards.*] namespace and profiles not in [core]
+	raw, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	rawStr := string(raw)
+	if !strings.Contains(rawStr, "[standards.") {
+		t.Errorf("emitted TOML must use [standards.*] sections, got:\n%s", rawStr)
+	}
+	if strings.Contains(rawStr, "profiles") && strings.Contains(rawStr, "[core]") {
+		// profiles should be under [standards], not [core]
+		coreIdx := strings.Index(rawStr, "[core]")
+		profilesIdx := strings.Index(rawStr, "profiles")
+		standardsIdx := strings.Index(rawStr, "[standards")
+		if profilesIdx > coreIdx && (standardsIdx == -1 || profilesIdx < standardsIdx) {
+			t.Errorf("profiles must be under [standards], not [core]:\n%s", rawStr)
+		}
 	}
 
 	got, err := ParseFile(path)

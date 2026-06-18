@@ -97,8 +97,17 @@ func parseRaw(raw map[string]any) FileSettings {
 			fs.Core = parseCoreSection(m)
 		case "registry":
 			fs.Registries = parseRegistries(m)
-		default:
-			parseDomainInto(key, m, &fs)
+		case "standards":
+			fs.Core.Profiles = append(fs.Core.Profiles, parseProfilesFromMap(m)...)
+			for domainName, val := range m {
+				if domainName == "profiles" {
+					continue
+				}
+				if sub, ok := val.(map[string]any); ok {
+					parseDomainInto(domainName, sub, &fs)
+				}
+			}
+		// unknown top-level keys silently ignored
 		}
 	}
 	return fs
@@ -124,14 +133,21 @@ func parseCoreSection(m map[string]any) CoreSection {
 	var cs CoreSection
 	cs.Home, _ = m["home"].(string)
 	cs.Source, _ = m["source"].(string)
-	if arr, ok := m["profiles"].([]any); ok {
-		for _, p := range arr {
-			if s, ok := p.(string); ok {
-				cs.Profiles = append(cs.Profiles, s)
-			}
+	return cs
+}
+
+func parseProfilesFromMap(m map[string]any) []string {
+	arr, ok := m["profiles"].([]any)
+	if !ok {
+		return nil
+	}
+	var profiles []string
+	for _, p := range arr {
+		if s, ok := p.(string); ok {
+			profiles = append(profiles, s)
 		}
 	}
-	return cs
+	return profiles
 }
 
 // parseDomainInto extracts a DomainSection from m (at prefix) and recurses into sub-maps.
@@ -191,9 +207,6 @@ func toMap(fs FileSettings) map[string]any {
 	if fs.Core.Source != "" {
 		core["source"] = fs.Core.Source
 	}
-	if len(fs.Core.Profiles) > 0 {
-		core["profiles"] = fs.Core.Profiles
-	}
 	if len(core) > 0 {
 		m["core"] = core
 	}
@@ -205,30 +218,37 @@ func toMap(fs FileSettings) map[string]any {
 	}
 	sort.Strings(keys)
 
+	// profiles and domain sections all nest under [standards.*]
+	standardsMap := map[string]any{}
+	if len(fs.Core.Profiles) > 0 {
+		standardsMap["profiles"] = fs.Core.Profiles
+	}
 	for _, key := range keys {
-		ds := fs.Sections[key]
-		dm := domainToMap(ds)
+		dm := domainToMap(fs.Sections[key])
 		if len(dm) == 0 {
 			continue
 		}
 		parts := strings.SplitN(key, ".", 2)
 		if len(parts) == 1 {
-			existing, ok := m[key].(map[string]any)
-			if !ok {
+			existing, _ := standardsMap[key].(map[string]any)
+			if existing == nil {
 				existing = map[string]any{}
 			}
 			for k, v := range dm {
 				existing[k] = v
 			}
-			m[key] = existing
+			standardsMap[key] = existing
 		} else {
-			parent, ok := m[parts[0]].(map[string]any)
-			if !ok {
+			parent, _ := standardsMap[parts[0]].(map[string]any)
+			if parent == nil {
 				parent = map[string]any{}
-				m[parts[0]] = parent
+				standardsMap[parts[0]] = parent
 			}
 			parent[parts[1]] = dm
 		}
+	}
+	if len(standardsMap) > 0 {
+		m["standards"] = standardsMap
 	}
 
 	return m

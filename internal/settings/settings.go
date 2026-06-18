@@ -73,7 +73,7 @@ func Merge(layers []FileSettings, paths []string) Resolved {
 		}
 		if len(r.Core.Profiles) == 0 && len(fs.Core.Profiles) > 0 {
 			r.Core.Profiles = fs.Core.Profiles
-			r.Sources["core.profiles"] = src
+			r.Sources["standards.profiles"] = src
 		}
 	}
 

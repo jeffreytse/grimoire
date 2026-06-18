@@ -53,9 +53,9 @@ func runSettings(cmd *cobra.Command, args []string) error {
 func printSettingsHuman(r settings.Resolved) {
 	printed := false
 
-	// [core] section
+	// [core] section — machine-only keys
 	core := r.Core
-	if core.Home != "" || core.Source != "" || len(core.Profiles) > 0 {
+	if core.Home != "" || core.Source != "" {
 		fmt.Println()
 		fmt.Printf("  %s\n", tui.StyleDim.Render("[core]"))
 		if core.Home != "" {
@@ -64,30 +64,40 @@ func printSettingsHuman(r settings.Resolved) {
 		if core.Source != "" {
 			fmt.Printf("    source: %s%s\n", core.Source, sourceTag(r.Sources["core.source"]))
 		}
-		if len(core.Profiles) > 0 {
-			fmt.Printf("    profiles: %s%s\n", strings.Join(core.Profiles, ", "), sourceTag(r.Sources["core.profiles"]))
+		printed = true
+	}
+
+	// [standards] section — profiles + domain sections
+	hasProfiles := len(core.Profiles) > 0
+	keys := r.SectionKeys()
+	sort.Strings(keys)
+	filteredKeys := keys[:0]
+	for _, k := range keys {
+		if flagSettingsDomain == "" || strings.HasPrefix(k, flagSettingsDomain) {
+			filteredKeys = append(filteredKeys, k)
+		}
+	}
+
+	if hasProfiles || len(filteredKeys) > 0 {
+		fmt.Println()
+		fmt.Printf("  %s\n", tui.StyleDim.Render("[standards]"))
+		if hasProfiles {
+			fmt.Printf("    profiles: %s%s\n", strings.Join(core.Profiles, ", "), sourceTag(r.Sources["standards.profiles"]))
 		}
 		printed = true
 	}
 
-	// domain sections
-	keys := r.SectionKeys()
-	sort.Strings(keys)
-	for _, key := range keys {
-		if flagSettingsDomain != "" && !strings.HasPrefix(key, flagSettingsDomain) {
-			continue
-		}
+	for _, key := range filteredKeys {
 		ds := r.ResolveSection(key)
 		lines := domainSectionLines(key, ds, r.Sources)
 		if len(lines) == 0 {
 			continue
 		}
 		fmt.Println()
-		fmt.Printf("  %s\n", tui.StyleDim.Render("["+key+"]"))
+		fmt.Printf("  %s\n", tui.StyleDim.Render("[standards."+key+"]"))
 		for _, l := range lines {
 			fmt.Println(l)
 		}
-		printed = true
 	}
 
 	if !printed {

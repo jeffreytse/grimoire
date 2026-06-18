@@ -55,10 +55,14 @@ func writeSettings(dir, profile string) error {
 # Docs: https://github.com/jeffreytse/grimoire/blob/main/docs/settings.md
 
 [core]
+# home = "~/.grimoire"     # override clone destination
+# source = "https://..."   # override skills repository
+
+[standards]
 %s
 
-# Domain-level settings example:
-# [engineering]
+# Domain standards example:
+# [standards.engineering]
 # practices = ["apply-solid-principles", "apply-kiss-principle"]
 # compliance-threshold = 80
 # compliance-threshold-error = 0
