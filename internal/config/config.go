@@ -11,6 +11,9 @@ import (
 // Global holds user-level grimoire settings persisted to
 // ~/.config/grimoire/settings.toml.
 type Global struct {
+	// Home overrides the local directory where grimoire is installed (clone destination).
+	// Takes precedence over Source when both are set to local paths.
+	Home string `toml:"home,omitempty"`
 	// Source overrides where grimoire pulls skills from.
 	// A local path uses that directory as GrimoireHome;
 	// a git URL is used in place of the default repo constant.

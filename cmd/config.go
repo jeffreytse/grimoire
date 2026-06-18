@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 
@@ -9,7 +11,7 @@ import (
 	"github.com/jeffreytse/grimoire/internal/tui"
 )
 
-var validKeys = []string{"source"}
+var validKeys = []string{"home", "source"}
 
 var configCmd = &cobra.Command{
 	Use:   "config",
@@ -21,6 +23,8 @@ var configCmd = &cobra.Command{
   grimoire config unset <key>       reset to default
 
 Supported keys:
+  home     local directory where grimoire is installed (clone destination)
+           (overrides the default ~/.grimoire)
   source   local path or git URL for the skills library
            (overrides the default https://github.com/jeffreytse/grimoire-skills)`,
 }
@@ -63,7 +67,7 @@ func runConfigGet(cmd *cobra.Command, args []string) error {
 		return err
 	}
 	if val == "" {
-		fmt.Println("(default)")
+		fmt.Printf("(default: %s)\n", defaultFor(key))
 	} else {
 		fmt.Println(val)
 	}
@@ -105,6 +109,8 @@ func runConfigUnset(cmd *cobra.Command, args []string) error {
 
 func getKey(g config.Global, key string) (string, error) {
 	switch key {
+	case "home":
+		return g.Home, nil
 	case "source":
 		return g.Source, nil
 	default:
@@ -114,11 +120,26 @@ func getKey(g config.Global, key string) (string, error) {
 
 func applyKey(g *config.Global, key, value string) error {
 	switch key {
+	case "home":
+		g.Home = value
+		return nil
 	case "source":
 		g.Source = value
 		return nil
 	default:
 		return unknownKeyError(key)
+	}
+}
+
+func defaultFor(key string) string {
+	switch key {
+	case "home":
+		home, _ := os.UserHomeDir()
+		return filepath.Join(home, ".grimoire")
+	case "source":
+		return "https://github.com/jeffreytse/grimoire-skills"
+	default:
+		return "(none)"
 	}
 }
 

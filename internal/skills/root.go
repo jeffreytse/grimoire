@@ -15,6 +15,9 @@ func GrimoireHome() string {
 		return h
 	}
 	cfg, _ := config.Load()
+	if cfg.Home != "" {
+		return cfg.Home
+	}
 	if cfg.Source != "" && !IsGitURL(cfg.Source) {
 		return cfg.Source
 	}
