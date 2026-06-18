@@ -7,7 +7,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/jeffreytse/grimoire/internal/config"
+	"github.com/jeffreytse/grimoire/internal/settings"
 	"github.com/jeffreytse/grimoire/internal/tui"
 )
 
@@ -15,8 +15,9 @@ var validKeys = []string{"home", "source"}
 
 var configCmd = &cobra.Command{
 	Use:   "config",
-	Short: "Get or set grimoire configuration values",
-	Long: `Manage grimoire global configuration (~/.config/grimoire/settings.toml).
+	Short: "Get or set grimoire core configuration values",
+	Long: `Manage grimoire core configuration in the global settings file.
+These are machine-level keys stored under the [core] section.
 
   grimoire config get <key>         print current value
   grimoire config set <key> <value> set a value
@@ -26,7 +27,10 @@ Supported keys:
   home     local directory where grimoire is installed (clone destination)
            (overrides the default ~/.grimoire)
   source   local path or git URL for the skills library
-           (overrides the default https://github.com/jeffreytse/grimoire-skills)`,
+           (overrides the default https://github.com/jeffreytse/grimoire-skills)
+
+To manage skill practice settings (profiles, practices, thresholds), use:
+  grimoire settings`,
 }
 
 var configGetCmd = &cobra.Command{
@@ -58,11 +62,11 @@ func init() {
 
 func runConfigGet(cmd *cobra.Command, args []string) error {
 	key := args[0]
-	g, err := config.Load()
+	fs, err := settings.LoadGlobal()
 	if err != nil {
 		return fmt.Errorf("loading config: %w", err)
 	}
-	val, err := getKey(g, key)
+	val, err := getCoreKey(fs, key)
 	if err != nil {
 		return err
 	}
@@ -76,55 +80,55 @@ func runConfigGet(cmd *cobra.Command, args []string) error {
 
 func runConfigSet(cmd *cobra.Command, args []string) error {
 	key, value := args[0], args[1]
-	g, err := config.Load()
+	fs, err := settings.LoadGlobal()
 	if err != nil {
 		return fmt.Errorf("loading config: %w", err)
 	}
-	if err := applyKey(&g, key, value); err != nil {
+	if err := applyCoreKey(&fs, key, value); err != nil {
 		return err
 	}
-	if err := config.Save(g); err != nil {
+	if err := settings.SaveGlobal(fs); err != nil {
 		return fmt.Errorf("saving config: %w", err)
 	}
 	fmt.Printf("%s  %s = %q\n", tui.IconOK, key, value)
-	fmt.Printf("   saved to %s\n", config.GlobalPath())
+	fmt.Printf("   saved to %s\n", settings.GlobalPath())
 	return nil
 }
 
 func runConfigUnset(cmd *cobra.Command, args []string) error {
 	key := args[0]
-	g, err := config.Load()
+	fs, err := settings.LoadGlobal()
 	if err != nil {
 		return fmt.Errorf("loading config: %w", err)
 	}
-	if err := applyKey(&g, key, ""); err != nil {
+	if err := applyCoreKey(&fs, key, ""); err != nil {
 		return err
 	}
-	if err := config.Save(g); err != nil {
+	if err := settings.SaveGlobal(fs); err != nil {
 		return fmt.Errorf("saving config: %w", err)
 	}
 	fmt.Printf("%s  %s cleared (using default)\n", tui.IconOK, key)
 	return nil
 }
 
-func getKey(g config.Global, key string) (string, error) {
+func getCoreKey(fs settings.FileSettings, key string) (string, error) {
 	switch key {
 	case "home":
-		return g.Home, nil
+		return fs.Core.Home, nil
 	case "source":
-		return g.Source, nil
+		return fs.Core.Source, nil
 	default:
 		return "", unknownKeyError(key)
 	}
 }
 
-func applyKey(g *config.Global, key, value string) error {
+func applyCoreKey(fs *settings.FileSettings, key, value string) error {
 	switch key {
 	case "home":
-		g.Home = value
+		fs.Core.Home = value
 		return nil
 	case "source":
-		g.Source = value
+		fs.Core.Source = value
 		return nil
 	default:
 		return unknownKeyError(key)

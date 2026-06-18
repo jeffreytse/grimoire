@@ -54,6 +54,7 @@ func writeSettings(dir, profile string) error {
 	content := fmt.Sprintf(`# Grimoire settings
 # Docs: https://github.com/jeffreytse/grimoire/blob/main/docs/settings.md
 
+[core]
 %s
 
 # Domain-level settings example:

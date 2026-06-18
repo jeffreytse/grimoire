@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/jeffreytse/grimoire/internal/config"
+	"github.com/jeffreytse/grimoire/internal/settings"
 )
 
 const GrimoireRepo = "https://github.com/jeffreytse/grimoire-skills.git"
@@ -14,12 +14,12 @@ func GrimoireHome() string {
 	if h := os.Getenv("GRIMOIRE_HOME"); h != "" {
 		return h
 	}
-	cfg, _ := config.Load()
-	if cfg.Home != "" {
-		return cfg.Home
+	cfg, _ := settings.LoadGlobal()
+	if cfg.Core.Home != "" {
+		return cfg.Core.Home
 	}
-	if cfg.Source != "" && !IsGitURL(cfg.Source) {
-		return cfg.Source
+	if cfg.Core.Source != "" && !IsGitURL(cfg.Core.Source) {
+		return cfg.Core.Source
 	}
 	home, err := os.UserHomeDir()
 	if err != nil {
@@ -29,11 +29,12 @@ func GrimoireHome() string {
 }
 
 // GrimoireRepoURL returns the git URL to clone/pull skills from.
-// Falls back to the hardcoded GrimoireRepo constant when no custom URL is configured.
+// source is global-only: a project-level override would affect the shared GrimoireHome()
+// for all projects on this machine, causing cross-project contamination.
 func GrimoireRepoURL() string {
-	cfg, _ := config.Load()
-	if cfg.Source != "" && IsGitURL(cfg.Source) {
-		return cfg.Source
+	cfg, _ := settings.LoadGlobal()
+	if cfg.Core.Source != "" && IsGitURL(cfg.Core.Source) {
+		return cfg.Core.Source
 	}
 	return GrimoireRepo
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/jeffreytse/grimoire/internal/compliance"
+	"github.com/jeffreytse/grimoire/internal/settings"
 )
 
 const (
@@ -19,9 +20,10 @@ const (
 )
 
 var (
-	flagReport  string
-	flagJSON    bool
-	flagNoColor bool
+	flagReport       string
+	flagJSON         bool
+	flagNoColor      bool
+	flagFailOnError  bool
 )
 
 var checkCmd = &cobra.Command{
@@ -34,6 +36,7 @@ func init() {
 	checkCmd.Flags().StringVar(&flagReport, "report", "", "path to compliance report (default: .grimoire/reports/compliance-latest.json)")
 	checkCmd.Flags().BoolVar(&flagJSON, "json", false, "output raw JSON")
 	checkCmd.Flags().BoolVar(&flagNoColor, "no-color", false, "disable ANSI color")
+	checkCmd.Flags().BoolVar(&flagFailOnError, "fail-on-error", false, "exit 1 if any error-severity diagnostic exists (no settings.toml required)")
 }
 
 func runCheck(cmd *cobra.Command, args []string) error {
@@ -51,7 +54,37 @@ func runCheck(cmd *cobra.Command, args []string) error {
 
 	printSummary(report)
 
-	if report.Threshold.Status != "pass" {
+	// Settings-driven thresholds override what the AI wrote in the report,
+	// making CI gating deterministic regardless of LLM output variation.
+	resolved, _ := settings.Load(".")
+	section := resolved.ResolveSection(report.Scope)
+
+	failed := false
+
+	if section.ComplianceThreshold > 0 {
+		if report.Coverage.OverallPct < section.ComplianceThreshold {
+			fmt.Fprintf(os.Stderr, "\n  threshold (settings): %.0f%% required, got %.1f%%\n",
+				section.ComplianceThreshold, report.Coverage.OverallPct)
+			failed = true
+		}
+	} else if report.Threshold.Status != "pass" {
+		failed = true
+	}
+
+	errorCount := len(filterBySeverity(report.Diagnostics, 1))
+
+	if section.ComplianceThresholdError >= 0 && errorCount > section.ComplianceThresholdError {
+		fmt.Fprintf(os.Stderr, "\n  error limit (settings): %d allowed, found %d\n",
+			section.ComplianceThresholdError, errorCount)
+		failed = true
+	}
+
+	if flagFailOnError && errorCount > 0 {
+		fmt.Fprintf(os.Stderr, "\n  --fail-on-error: %d error-severity diagnostic(s) found\n", errorCount)
+		failed = true
+	}
+
+	if failed {
 		os.Exit(1) //nolint:revive // intentional: compliance failure must return non-zero exit code
 	}
 	return nil
