@@ -1,0 +1,315 @@
+package git
+
+import (
+	"errors"
+	"fmt"
+	"os"
+	"path/filepath"
+	"sort"
+	"strings"
+	"time"
+
+	gogit "github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing"
+	"github.com/go-git/go-git/v5/plumbing/object"
+)
+
+// State holds the current repo state.
+type State struct {
+	Commit  string
+	Version string
+	Date    string
+}
+
+// CurrentState returns short commit hash, VERSION file content, and commit date.
+func CurrentState(dir string) (State, error) {
+	r, err := gogit.PlainOpen(dir)
+	if err != nil {
+		return State{}, fmt.Errorf("opening repo at %s: %w", dir, err)
+	}
+	head, err := r.Head()
+	if err != nil {
+		return State{}, err
+	}
+	commit, err := r.CommitObject(head.Hash())
+	if err != nil {
+		return State{}, err
+	}
+	short := head.Hash().String()
+	if len(short) > 7 {
+		short = short[:7]
+	}
+	ver := readVersion(dir)
+	return State{
+		Commit:  short,
+		Version: ver,
+		Date:    commit.Author.When.Format("2006-01-02"),
+	}, nil
+}
+
+// Pull fetches and merges the remote branch into the working tree.
+func Pull(dir string) error {
+	r, err := gogit.PlainOpen(dir)
+	if err != nil {
+		return fmt.Errorf("opening repo: %w", err)
+	}
+	w, err := r.Worktree()
+	if err != nil {
+		return err
+	}
+	err = w.Pull(&gogit.PullOptions{})
+	if errors.Is(err, gogit.NoErrAlreadyUpToDate) {
+		return nil
+	}
+	return err
+}
+
+// FetchTags fetches all tags from the remote.
+func FetchTags(dir string) error {
+	r, err := gogit.PlainOpen(dir)
+	if err != nil {
+		return err
+	}
+	err = r.Fetch(&gogit.FetchOptions{Tags: gogit.AllTags})
+	if errors.Is(err, gogit.NoErrAlreadyUpToDate) {
+		return nil
+	}
+	return err
+}
+
+// LatestTag returns the highest semver tag in the repo.
+func LatestTag(dir string) (string, error) {
+	r, err := gogit.PlainOpen(dir)
+	if err != nil {
+		return "", err
+	}
+	iter, err := r.Tags()
+	if err != nil {
+		return "", err
+	}
+	var tags []string
+	if err := iter.ForEach(func(ref *plumbing.Reference) error {
+		name := ref.Name().Short()
+		if name != "" && (name[0] == 'v' || (name[0] >= '0' && name[0] <= '9')) {
+			tags = append(tags, name)
+		}
+		return nil
+	}); err != nil {
+		return "", err
+	}
+	if len(tags) == 0 {
+		return "", fmt.Errorf("no release tags found")
+	}
+	sort.Slice(tags, func(i, j int) bool {
+		return compareSemver(tags[i], tags[j]) > 0
+	})
+	return tags[0], nil
+}
+
+// CheckoutTag checks out the given tag.
+func CheckoutTag(dir, tag string) error {
+	r, err := gogit.PlainOpen(dir)
+	if err != nil {
+		return err
+	}
+	w, err := r.Worktree()
+	if err != nil {
+		return err
+	}
+	ref, err := r.Tag(tag)
+	if err != nil {
+		return fmt.Errorf("tag %s not found: %w", tag, err)
+	}
+	tagObj, err := r.TagObject(ref.Hash())
+	var hash plumbing.Hash
+	if err == nil {
+		hash = tagObj.Target
+	} else {
+		hash = ref.Hash()
+	}
+	return w.Checkout(&gogit.CheckoutOptions{Hash: hash})
+}
+
+// Clone clones the grimoire repo to dest.
+func Clone(repoURL, dest string) error {
+	_, err := gogit.PlainClone(dest, false, &gogit.CloneOptions{
+		URL:   repoURL,
+		Depth: 1,
+	})
+	return err
+}
+
+// IsUpToDate reports whether HEAD matches the remote upstream.
+func IsUpToDate(dir string) (upToDate bool, local, remote State, err error) {
+	r, err := gogit.PlainOpen(dir)
+	if err != nil {
+		return false, State{}, State{}, err
+	}
+	if err := r.Fetch(&gogit.FetchOptions{}); err != nil && !errors.Is(err, gogit.NoErrAlreadyUpToDate) {
+		return false, State{}, State{}, err
+	}
+	head, err := r.Head()
+	if err != nil {
+		return false, State{}, State{}, err
+	}
+	remoteRef, err := r.Reference(plumbing.NewRemoteReferenceName("origin", "HEAD"), true)
+	if err != nil {
+		// try main/master
+		remoteRef, err = r.Reference(plumbing.NewRemoteReferenceName("origin", "main"), true)
+		if err != nil {
+			remoteRef, err = r.Reference(plumbing.NewRemoteReferenceName("origin", "master"), true)
+			if err != nil {
+				return false, State{}, State{}, fmt.Errorf("cannot find remote HEAD: %w", err)
+			}
+		}
+	}
+	local, _ = CurrentState(dir)
+	if head.Hash() == remoteRef.Hash() {
+		return true, local, local, nil
+	}
+	remoteCommit, err := r.CommitObject(remoteRef.Hash())
+	if err != nil {
+		return false, local, State{}, err
+	}
+	short := remoteRef.Hash().String()
+	if len(short) > 7 {
+		short = short[:7]
+	}
+	remote = State{
+		Commit:  short,
+		Version: remoteVersion(r, remoteCommit),
+		Date:    remoteCommit.Author.When.Format("2006-01-02"),
+	}
+	return false, local, remote, nil
+}
+
+// NewSkillsSince counts SKILL.md files added/updated since oldCommit.
+func NewSkillsSince(dir, oldCommit string) (added, updated int, err error) {
+	r, err := gogit.PlainOpen(dir)
+	if err != nil {
+		return 0, 0, err
+	}
+	old, err := r.CommitObject(plumbing.NewHash(oldCommit))
+	if err != nil {
+		return 0, 0, err
+	}
+	head, err := r.Head()
+	if err != nil {
+		return 0, 0, err
+	}
+	headCommit, err := r.CommitObject(head.Hash())
+	if err != nil {
+		return 0, 0, err
+	}
+	oldTree, err := old.Tree()
+	if err != nil {
+		return 0, 0, err
+	}
+	headTree, err := headCommit.Tree()
+	if err != nil {
+		return 0, 0, err
+	}
+	changes, err := object.DiffTree(oldTree, headTree)
+	if err != nil {
+		return 0, 0, err
+	}
+	for _, c := range changes {
+		from := c.From.Name
+		to := c.To.Name
+		isSkill := strings.HasSuffix(to, "SKILL.md") || strings.HasSuffix(from, "SKILL.md")
+		if !isSkill {
+			continue
+		}
+		if from == "" || !strings.HasSuffix(from, "SKILL.md") {
+			added++
+		} else if to != "" {
+			updated++
+		}
+	}
+	return added, updated, nil
+}
+
+func readVersion(dir string) string {
+	data, err := os.ReadFile(filepath.Join(dir, "VERSION"))
+	if err != nil {
+		return "unknown"
+	}
+	return strings.TrimSpace(string(data))
+}
+
+func remoteVersion(_ *gogit.Repository, commit *object.Commit) string {
+	tree, err := commit.Tree()
+	if err != nil {
+		return "unknown"
+	}
+	f, err := tree.File("VERSION")
+	if err != nil {
+		return "unknown"
+	}
+	content, err := f.Contents()
+	if err != nil {
+		return "unknown"
+	}
+	return strings.TrimSpace(content)
+}
+
+// compareSemver returns 1 if a > b, -1 if a < b, 0 if equal (simple string semver).
+func compareSemver(a, b string) int {
+	a = strings.TrimPrefix(a, "v")
+	b = strings.TrimPrefix(b, "v")
+	aParts := strings.Split(a, ".")
+	bParts := strings.Split(b, ".")
+	maxParts := len(aParts)
+	if len(bParts) > maxParts {
+		maxParts = len(bParts)
+	}
+	for i := 0; i < maxParts; i++ {
+		av, bv := 0, 0
+		if i < len(aParts) {
+			_, _ = fmt.Sscanf(aParts[i], "%d", &av)
+		}
+		if i < len(bParts) {
+			_, _ = fmt.Sscanf(bParts[i], "%d", &bv)
+		}
+		if av > bv {
+			return 1
+		}
+		if av < bv {
+			return -1
+		}
+	}
+	return 0
+}
+
+// TagState returns the State for a given tag.
+func TagState(dir, tag string) (State, error) {
+	r, err := gogit.PlainOpen(dir)
+	if err != nil {
+		return State{}, err
+	}
+	ref, err := r.Tag(tag)
+	if err != nil {
+		return State{}, err
+	}
+	tagObj, err := r.TagObject(ref.Hash())
+	var hash plumbing.Hash
+	if err == nil {
+		hash = tagObj.Target
+	} else {
+		hash = ref.Hash()
+	}
+	commit, err := r.CommitObject(hash)
+	if err != nil {
+		return State{}, err
+	}
+	short := hash.String()
+	if len(short) > 7 {
+		short = short[:7]
+	}
+	_ = time.Now() // ensure time is imported
+	return State{
+		Commit:  short,
+		Version: strings.TrimPrefix(tag, "v"),
+		Date:    commit.Author.When.Format("2006-01-02"),
+	}, nil
+}

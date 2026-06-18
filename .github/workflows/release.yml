@@ -1,0 +1,48 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-cli:
+    strategy:
+      matrix:
+        include:
+          - { runner: ubuntu-latest, GOOS: linux,   GOARCH: amd64 }
+          - { runner: macos-latest,  GOOS: darwin,  GOARCH: amd64 }
+          - { runner: macos-latest,  GOOS: darwin,  GOARCH: arm64 }
+          - { runner: ubuntu-latest, GOOS: windows, GOARCH: amd64, ext: .exe }
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26.3'
+      - name: Build CLI
+        run: |
+          GOOS=${{ matrix.GOOS }} GOARCH=${{ matrix.GOARCH }} \
+            go build -ldflags="-s -w -X main.Version=${{ github.ref_name }}" \
+            -o grimoire-${{ matrix.GOOS }}-${{ matrix.GOARCH }}${{ matrix.ext || '' }} .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: grimoire-${{ matrix.GOOS }}-${{ matrix.GOARCH }}
+          path: grimoire-${{ matrix.GOOS }}-${{ matrix.GOARCH }}${{ matrix.ext || '' }}
+
+  release:
+    needs: build-cli
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: grimoire-*

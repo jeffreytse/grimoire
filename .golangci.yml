@@ -1,0 +1,89 @@
+version: "2"
+
+linters:
+  enable:
+    - govet
+    - errcheck
+    - staticcheck
+    - ineffassign
+    - unused
+    - revive
+    - misspell
+    - godot
+    - gocritic
+
+  settings:
+    revive:
+      rules:
+        # Naming — google.github.io/styleguide/go/decisions#naming
+        - name: var-naming
+        - name: receiver-naming
+        - name: time-naming
+        - name: error-naming
+        - name: import-alias-naming
+        # Error handling — google.github.io/styleguide/go/decisions#errors
+        - name: error-return
+        - name: error-strings         # lowercase, no trailing punctuation
+        - name: errorf
+        - name: unhandled-error
+          arguments:
+            - "fmt.Fprintf"
+            - "fmt.Fprintln"
+            - "fmt.Printf"
+            - "fmt.Println"
+            - "fmt.Print"
+            - "strings.Builder.WriteString"
+        - name: unchecked-type-assertion
+        # Imports
+        - name: dot-imports
+        - name: blank-imports
+        - name: duplicated-imports
+        # Control flow
+        - name: if-return
+        - name: indent-error-flow
+        - name: superfluous-else
+        - name: early-return
+        - name: unreachable-code
+        - name: unconditional-recursion
+        # Context
+        - name: context-as-argument
+        - name: context-keys-type
+        # Misc correctness
+        - name: range
+        - name: range-val-in-closure
+        - name: range-val-address
+        - name: var-declaration
+        - name: increment-decrement
+        - name: empty-block
+        - name: constant-logical-expr
+        - name: bool-literal-in-expr
+        - name: identical-branches
+        - name: string-of-int
+        - name: time-equal
+        - name: waitgroup-by-value
+        - name: datarace
+        - name: defer
+        - name: useless-break
+        - name: deep-exit
+
+    godot:
+      scope: declarations
+
+    gocritic:
+      enabled-tags:
+        - diagnostic
+        - style
+        - performance
+      disabled-checks:
+        - commentedOutCode
+
+formatters:
+  enable:
+    - goimports
+  settings:
+    goimports:
+      local-prefixes:
+        - github.com/jeffreytse/grimoire
+
+issues:
+  max-same-issues: 0

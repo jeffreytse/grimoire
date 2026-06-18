@@ -1,0 +1,30 @@
+name: Bug report
+description: Report a bug in the grimoire CLI
+labels: [bug]
+body:
+  - type: input
+    id: version
+    attributes:
+      label: grimoire version
+      placeholder: "grimoire version"
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: OS / arch
+      placeholder: "macOS arm64, Ubuntu amd64, Windows amd64..."
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      placeholder: Steps to reproduce, actual vs expected output
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant output / logs
+      render: shell

@@ -1,0 +1,22 @@
+name: Feature request
+description: Suggest a new command or improvement to the grimoire CLI
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / motivation
+      placeholder: What are you trying to do that grimoire can't do today?
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      placeholder: Describe the command, flag, or behavior you'd like
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered

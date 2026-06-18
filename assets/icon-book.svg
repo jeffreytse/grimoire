@@ -1,0 +1,131 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="96 14 192 272" width="512" height="512">
+  <defs>
+    <!-- Leather crosshatch texture -->
+    <pattern id="leather" x="0" y="0" width="8" height="8" patternUnits="userSpaceOnUse">
+      <rect width="8" height="8" fill="#1a0d06"/>
+      <line x1="0" y1="0" x2="8" y2="8" stroke="#130a04" stroke-width="0.6" opacity="0.7"/>
+      <line x1="8" y1="0" x2="0" y2="8" stroke="#130a04" stroke-width="0.6" opacity="0.7"/>
+    </pattern>
+    <!-- Left-side cover lighting -->
+    <linearGradient id="cover-sheen" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.12"/>
+      <stop offset="40%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <!-- Top edge cover lighting -->
+    <linearGradient id="cover-top" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.1"/>
+      <stop offset="25%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <!-- Soft glow filter -->
+    <filter id="soft-glow" x="-25%" y="-25%" width="150%" height="150%">
+      <feGaussianBlur stdDeviation="2.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- ── SPINE ──────────────────────────────────────────────── -->
+  <rect x="100" y="18" width="14" height="264" fill="#110804"/>
+  <line x1="101" y1="60"  x2="113" y2="60"  stroke="#c9933a" stroke-width="0.8" opacity="0.35"/>
+  <line x1="101" y1="90"  x2="113" y2="90"  stroke="#c9933a" stroke-width="0.8" opacity="0.35"/>
+  <line x1="101" y1="120" x2="113" y2="120" stroke="#c9933a" stroke-width="0.5" opacity="0.22"/>
+  <line x1="101" y1="150" x2="113" y2="150" stroke="#c9933a" stroke-width="0.8" opacity="0.35"/>
+  <line x1="101" y1="180" x2="113" y2="180" stroke="#c9933a" stroke-width="0.5" opacity="0.22"/>
+  <line x1="101" y1="210" x2="113" y2="210" stroke="#c9933a" stroke-width="0.8" opacity="0.35"/>
+  <line x1="101" y1="240" x2="113" y2="240" stroke="#c9933a" stroke-width="0.8" opacity="0.35"/>
+  <!-- Spine left gold edge -->
+  <line x1="100" y1="18" x2="100" y2="282" stroke="#c9933a" stroke-width="0.75" opacity="0.55"/>
+  <!-- Spine right shadow -->
+  <line x1="114" y1="18" x2="114" y2="282" stroke="#000000" stroke-width="1" opacity="0.4"/>
+
+  <!-- ── COVER FACE ───────────────────────────────────────────── -->
+  <rect x="114" y="18" width="154" height="264" fill="url(#leather)"/>
+  <rect x="114" y="18" width="154" height="264" fill="url(#cover-sheen)"/>
+  <rect x="114" y="18" width="154" height="80"  fill="url(#cover-top)"/>
+
+  <!-- ── PAGE EDGES ───────────────────────────────────────────── -->
+  <rect x="268" y="22" width="7" height="256" fill="#6a5228" opacity="0.55"/>
+  <line x1="269" y1="30"  x2="274" y2="30"  stroke="#c9a84c" stroke-width="0.6" opacity="0.55"/>
+  <line x1="269" y1="44"  x2="274" y2="44"  stroke="#c9a84c" stroke-width="0.6" opacity="0.55"/>
+  <line x1="269" y1="58"  x2="274" y2="58"  stroke="#c9a84c" stroke-width="0.6" opacity="0.55"/>
+  <line x1="269" y1="72"  x2="274" y2="72"  stroke="#c9a84c" stroke-width="0.6" opacity="0.55"/>
+  <line x1="269" y1="86"  x2="274" y2="86"  stroke="#c9a84c" stroke-width="0.6" opacity="0.55"/>
+  <line x1="269" y1="100" x2="274" y2="100" stroke="#c9a84c" stroke-width="0.6" opacity="0.55"/>
+  <line x1="269" y1="116" x2="274" y2="116" stroke="#c9a84c" stroke-width="0.6" opacity="0.40"/>
+  <line x1="269" y1="132" x2="274" y2="132" stroke="#c9a84c" stroke-width="0.6" opacity="0.55"/>
+  <line x1="269" y1="150" x2="274" y2="150" stroke="#c9a84c" stroke-width="0.6" opacity="0.55"/>
+  <line x1="269" y1="168" x2="274" y2="168" stroke="#c9a84c" stroke-width="0.6" opacity="0.40"/>
+  <line x1="269" y1="184" x2="274" y2="184" stroke="#c9a84c" stroke-width="0.6" opacity="0.55"/>
+  <line x1="269" y1="200" x2="274" y2="200" stroke="#c9a84c" stroke-width="0.6" opacity="0.55"/>
+  <line x1="269" y1="216" x2="274" y2="216" stroke="#c9a84c" stroke-width="0.6" opacity="0.55"/>
+  <line x1="269" y1="232" x2="274" y2="232" stroke="#c9a84c" stroke-width="0.6" opacity="0.55"/>
+  <line x1="269" y1="248" x2="274" y2="248" stroke="#c9a84c" stroke-width="0.6" opacity="0.55"/>
+  <line x1="269" y1="262" x2="274" y2="262" stroke="#c9a84c" stroke-width="0.6" opacity="0.55"/>
+
+  <!-- ── ORNAMENTS ─────────────────────────────────────────────── -->
+  <!-- Outer gold border -->
+  <rect x="118" y="22" width="146" height="256" fill="none" stroke="#c9933a" stroke-width="1.5"/>
+  <!-- Inner gold border -->
+  <rect x="128" y="32" width="126" height="236" fill="none" stroke="#c9933a" stroke-width="0.6" opacity="0.5"/>
+
+  <!-- Corner: Top-Left -->
+  <circle cx="133" cy="37" r="2.5" fill="#c9933a" filter="url(#soft-glow)"/>
+  <line x1="135.5" y1="37" x2="151" y2="37" stroke="#c9933a" stroke-width="1.2"/>
+  <line x1="133"   y1="39.5" x2="133" y2="55" stroke="#c9933a" stroke-width="1.2"/>
+  <circle cx="151" cy="37" r="1.5" fill="#c9933a" opacity="0.6"/>
+  <circle cx="133" cy="55" r="1.5" fill="#c9933a" opacity="0.6"/>
+
+  <!-- Corner: Top-Right -->
+  <circle cx="247" cy="37" r="2.5" fill="#c9933a" filter="url(#soft-glow)"/>
+  <line x1="244.5" y1="37" x2="229" y2="37" stroke="#c9933a" stroke-width="1.2"/>
+  <line x1="247"   y1="39.5" x2="247" y2="55" stroke="#c9933a" stroke-width="1.2"/>
+  <circle cx="229" cy="37" r="1.5" fill="#c9933a" opacity="0.6"/>
+  <circle cx="247" cy="55" r="1.5" fill="#c9933a" opacity="0.6"/>
+
+  <!-- Corner: Bottom-Left -->
+  <circle cx="133" cy="263" r="2.5" fill="#c9933a" filter="url(#soft-glow)"/>
+  <line x1="135.5" y1="263" x2="151" y2="263" stroke="#c9933a" stroke-width="1.2"/>
+  <line x1="133"   y1="260.5" x2="133" y2="245" stroke="#c9933a" stroke-width="1.2"/>
+  <circle cx="151" cy="263" r="1.5" fill="#c9933a" opacity="0.6"/>
+  <circle cx="133" cy="245" r="1.5" fill="#c9933a" opacity="0.6"/>
+
+  <!-- Corner: Bottom-Right -->
+  <circle cx="247" cy="263" r="2.5" fill="#c9933a" filter="url(#soft-glow)"/>
+  <line x1="244.5" y1="263" x2="229" y2="263" stroke="#c9933a" stroke-width="1.2"/>
+  <line x1="247"   y1="260.5" x2="247" y2="245" stroke="#c9933a" stroke-width="1.2"/>
+  <circle cx="229" cy="263" r="1.5" fill="#c9933a" opacity="0.6"/>
+  <circle cx="247" cy="245" r="1.5" fill="#c9933a" opacity="0.6"/>
+
+  <!-- ── MAGICAL SEAL (cx=191, cy=150) ──────────────────────── -->
+  <!-- Outer ring -->
+  <circle cx="191" cy="150" r="55" fill="none" stroke="#c9933a" stroke-width="1"/>
+  <!-- Dashed inner ring -->
+  <circle cx="191" cy="150" r="48" fill="none" stroke="#c9933a" stroke-width="0.5" stroke-dasharray="4 3" opacity="0.65"/>
+  <!-- 8-pointed star fill -->
+  <polygon
+    points="191,112 196.7,136.1 217.9,123.1 204.9,144.3 229,150 204.9,155.7 217.9,176.9 196.7,163.9 191,188 185.3,163.9 164.1,176.9 177.1,155.7 153,150 177.1,144.3 164.1,123.1 185.3,136.1"
+    fill="#c9933a" opacity="0.13"/>
+  <!-- 8-pointed star stroke -->
+  <polygon
+    points="191,112 196.7,136.1 217.9,123.1 204.9,144.3 229,150 204.9,155.7 217.9,176.9 196.7,163.9 191,188 185.3,163.9 164.1,176.9 177.1,155.7 153,150 177.1,144.3 164.1,123.1 185.3,136.1"
+    fill="none" stroke="#c9933a" stroke-width="1" filter="url(#soft-glow)"/>
+  <!-- Inner circle -->
+  <circle cx="191" cy="150" r="20" fill="none" stroke="#c9933a" stroke-width="0.6" opacity="0.45"/>
+  <!-- Center node -->
+  <circle cx="191" cy="150" r="5.5" fill="#c9933a" opacity="0.75" filter="url(#soft-glow)"/>
+  <!-- 8 rune tick marks -->
+  <line x1="191" y1="85"  x2="191" y2="91"  stroke="#c9933a" stroke-width="1.5" opacity="0.8"/>
+  <line x1="237" y1="104" x2="232.7" y2="108.3" stroke="#c9933a" stroke-width="1.5" opacity="0.8"/>
+  <line x1="256" y1="150" x2="250"   y2="150"  stroke="#c9933a" stroke-width="1.5" opacity="0.8"/>
+  <line x1="237" y1="196" x2="232.7" y2="191.7" stroke="#c9933a" stroke-width="1.5" opacity="0.8"/>
+  <line x1="191" y1="215" x2="191"   y2="209"  stroke="#c9933a" stroke-width="1.5" opacity="0.8"/>
+  <line x1="145" y1="196" x2="149.3" y2="191.7" stroke="#c9933a" stroke-width="1.5" opacity="0.8"/>
+  <line x1="126" y1="150" x2="132"   y2="150"  stroke="#c9933a" stroke-width="1.5" opacity="0.8"/>
+  <line x1="145" y1="104" x2="149.3" y2="108.3" stroke="#c9933a" stroke-width="1.5" opacity="0.8"/>
+
+  <!-- ── CLASP ───────────────────────────────────────────────── -->
+  <polygon points="268,144 277,150 268,156 261,150" fill="#c9933a" opacity="0.85" filter="url(#soft-glow)"/>
+  <line x1="277" y1="150" x2="285" y2="150" stroke="#c9933a" stroke-width="1" opacity="0.45"/>
+</svg>
