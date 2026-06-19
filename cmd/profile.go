@@ -125,12 +125,26 @@ func runProfileShow(_ *cobra.Command, args []string) error {
 		fmt.Printf("  %s\n", p.Description)
 	}
 
+	if len(p.Extends) > 0 {
+		fmt.Printf("  extends: %s\n", strings.Join(p.Extends, ", "))
+	}
+	if len(p.Tags) > 0 {
+		fmt.Printf("  tags: %s\n", strings.Join(p.Tags, ", "))
+	}
+	if len(p.Exclude) > 0 {
+		fmt.Printf("  exclude: %s\n", strings.Join(p.Exclude, ", "))
+	}
+
 	fmt.Println()
 	if len(p.Skills) == 0 {
 		fmt.Printf("  %s\n", tui.StyleDim.Render("(no skills defined)"))
 	} else {
 		for _, sk := range p.Skills {
-			fmt.Printf("    %s %s\n", tui.StyleCyan.Render("→"), sk.Name)
+			line := fmt.Sprintf("    %s %s", tui.StyleCyan.Render("→"), sk.Name)
+			if sk.Priority != 0 && sk.Priority != 50 {
+				line += tui.StyleDim.Render(fmt.Sprintf("  (priority %d)", sk.Priority))
+			}
+			fmt.Println(line)
 		}
 	}
 	fmt.Println()
@@ -154,12 +168,22 @@ func runProfileInit(_ *cobra.Command, args []string) error {
 	content := fmt.Sprintf(`name = "%s"
 description = ""
 
-# Add skills to this profile:
+# Inherit all skills from other profiles:
+# extends = ["oop", "tdd"]
+
+# Bulk-activate all skills matching these tags:
+# tags = ["go", "backend"]
+
+# Remove specific skills after all inclusions:
+# exclude = ["apply-law-of-demeter"]
+
+# Explicit skill additions (priority: lower = higher priority, default = 50):
 # [[skills]]
 # name = "apply-solid-principles"
+# priority = 10
 #
 # [[skills]]
-# name = "apply-tdd"
+# name = "apply-kiss-principle"
 `, name)
 
 	if err := os.WriteFile(path, []byte(content), 0o644); err != nil {

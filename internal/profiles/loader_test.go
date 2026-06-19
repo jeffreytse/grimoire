@@ -225,3 +225,208 @@ name = "file-based-skill"
 		t.Errorf("Skills = %v", p.Skills)
 	}
 }
+
+// --- composition tests ---
+
+func TestResolveSkills_Extends_InheritsParentSkills(t *testing.T) {
+	dir := t.TempDir()
+	writeProfileFile(t, dir, ".grimoire/profiles/oop.toml", `
+[[skills]]
+name = "apply-solid"
+[[skills]]
+name = "apply-lod"
+`)
+	writeProfileFile(t, dir, ".grimoire/profiles/my-team.toml", `
+extends = ["oop"]
+[[skills]]
+name = "apply-internal"
+`)
+
+	p, err := Resolve("my-team", dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	resolved := ResolveSkills(p, dir, nil, nil)
+	names := skillNames(resolved)
+	if !contains(names, "apply-solid") || !contains(names, "apply-lod") {
+		t.Errorf("missing inherited skills: %v", names)
+	}
+	if !contains(names, "apply-internal") {
+		t.Errorf("missing explicit skill: %v", names)
+	}
+}
+
+func TestResolveSkills_Tags_BulkActivates(t *testing.T) {
+	dir := t.TempDir()
+	root := t.TempDir()
+	writeTaggedSkill(t, root, "eng", "apply-solid", []string{"oop"})
+	writeTaggedSkill(t, root, "eng", "apply-lod", []string{"oop"})
+	writeTaggedSkill(t, root, "eng", "apply-tdd", []string{"tdd"})
+
+	writeProfileFile(t, dir, ".grimoire/profiles/oop-team.toml", `
+tags = ["oop"]
+`)
+	p, err := Resolve("oop-team", dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	sources := []skills.SkillsSource{{Name: "test", Root: root}}
+	resolved := ResolveSkills(p, dir, sources, nil)
+	names := skillNames(resolved)
+	if len(names) != 2 {
+		t.Errorf("expected 2 oop-tagged skills, got %v", names)
+	}
+	if contains(names, "apply-tdd") {
+		t.Error("apply-tdd should not be included (tagged tdd not oop)")
+	}
+}
+
+func TestResolveSkills_Exclude_RemovesSkills(t *testing.T) {
+	dir := t.TempDir()
+	writeProfileFile(t, dir, ".grimoire/profiles/oop.toml", `
+[[skills]]
+name = "apply-solid"
+[[skills]]
+name = "apply-lod"
+`)
+	writeProfileFile(t, dir, ".grimoire/profiles/my-team.toml", `
+extends = ["oop"]
+exclude = ["apply-lod"]
+`)
+	p, err := Resolve("my-team", dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	resolved := ResolveSkills(p, dir, nil, nil)
+	names := skillNames(resolved)
+	if contains(names, "apply-lod") {
+		t.Error("apply-lod should be excluded")
+	}
+	if !contains(names, "apply-solid") {
+		t.Error("apply-solid should still be present")
+	}
+}
+
+func TestResolveSkills_Priority_LowerWins(t *testing.T) {
+	dir := t.TempDir()
+	writeProfileFile(t, dir, ".grimoire/profiles/base.toml", `
+[[skills]]
+name = "apply-solid"
+priority = 30
+[[skills]]
+name = "apply-lod"
+priority = 10
+`)
+	p, err := Resolve("base", dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	resolved := ResolveSkills(p, dir, nil, nil)
+	if len(resolved) != 2 {
+		t.Fatalf("expected 2 skills, got %d", len(resolved))
+	}
+	// priority 10 (apply-lod) should come first
+	if resolved[0].Name != "apply-lod" {
+		t.Errorf("expected apply-lod first (priority 10), got %s", resolved[0].Name)
+	}
+	if resolved[1].Name != "apply-solid" {
+		t.Errorf("expected apply-solid second (priority 30), got %s", resolved[1].Name)
+	}
+}
+
+func TestResolveSkills_CycleDetection(t *testing.T) {
+	dir := t.TempDir()
+	// A extends B, B extends A — should not infinite loop
+	writeProfileFile(t, dir, ".grimoire/profiles/a.toml", `
+extends = ["b"]
+[[skills]]
+name = "skill-a"
+`)
+	writeProfileFile(t, dir, ".grimoire/profiles/b.toml", `
+extends = ["a"]
+[[skills]]
+name = "skill-b"
+`)
+	p, err := Resolve("a", dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	// Should complete without hanging; exact output not critical — just no panic/loop
+	visited := map[string]bool{"a": true}
+	resolved := ResolveSkills(p, dir, nil, visited)
+	names := skillNames(resolved)
+	if !contains(names, "skill-a") {
+		t.Errorf("skill-a missing from %v", names)
+	}
+}
+
+func TestResolveSkills_ExplicitOverridesPriority(t *testing.T) {
+	dir := t.TempDir()
+	// Parent has apply-solid at default priority; child explicitly sets priority=1
+	writeProfileFile(t, dir, ".grimoire/profiles/parent.toml", `
+[[skills]]
+name = "apply-solid"
+[[skills]]
+name = "apply-lod"
+`)
+	writeProfileFile(t, dir, ".grimoire/profiles/child.toml", `
+extends = ["parent"]
+[[skills]]
+name = "apply-solid"
+priority = 1
+`)
+	p, err := Resolve("child", dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	resolved := ResolveSkills(p, dir, nil, nil)
+	// apply-solid should appear with priority=1 and come first
+	if len(resolved) == 0 || resolved[0].Name != "apply-solid" {
+		t.Errorf("expected apply-solid first with priority=1, got %v", resolved)
+	}
+	if resolved[0].Priority != 1 {
+		t.Errorf("expected priority=1, got %d", resolved[0].Priority)
+	}
+}
+
+func TestResolveSkills_BackwardCompat_NoNewFields(t *testing.T) {
+	dir := t.TempDir()
+	writeProfileFile(t, dir, ".grimoire/profiles/oop.toml", `
+name = "oop"
+[[skills]]
+name = "apply-solid-principles"
+[[skills]]
+name = "apply-law-of-demeter"
+`)
+	p, err := Resolve("oop", dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	// No extends/tags/exclude — should behave identically to pre-redesign
+	resolved := ResolveSkills(p, dir, nil, nil)
+	if len(resolved) != 2 {
+		t.Fatalf("expected 2 skills, got %d", len(resolved))
+	}
+	if resolved[0].Name != "apply-solid-principles" {
+		t.Errorf("order changed: %v", skillNames(resolved))
+	}
+}
+
+// helpers
+
+func skillNames(refs []SkillRef) []string {
+	names := make([]string, len(refs))
+	for i, r := range refs {
+		names[i] = r.Name
+	}
+	return names
+}
+
+func contains(slice []string, s string) bool {
+	for _, v := range slice {
+		if v == s {
+			return true
+		}
+	}
+	return false
+}
