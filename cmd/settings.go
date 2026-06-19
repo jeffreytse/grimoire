@@ -11,6 +11,7 @@ import (
 
 	"github.com/jeffreytse/grimoire/internal/profiles"
 	"github.com/jeffreytse/grimoire/internal/settings"
+	"github.com/jeffreytse/grimoire/internal/skills"
 	"github.com/jeffreytse/grimoire/internal/tui"
 )
 
@@ -120,12 +121,13 @@ func printExpandedProfiles(profileNames []string) {
 	if err != nil {
 		return
 	}
-	resolved, err := profiles.ResolveAll(profileNames, cwd)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "    warn: loading profiles: %v\n", err)
-		return
-	}
-	for _, p := range resolved {
+	opts := profiles.ResolveOptions{Sources: skills.AllSkillsSources()}
+	for _, name := range profileNames {
+		p, err := profiles.ResolveWithOptions(name, cwd, opts)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "    warn: loading profile %q: %v\n", name, err)
+			continue
+		}
 		if p.Source == "" {
 			fmt.Printf("    %s\n", tui.StyleDim.Render(p.Name+":"))
 			fmt.Printf("      %s\n", tui.StyleDim.Render("(no profile file found — resolved by LLM tag query at runtime)"))

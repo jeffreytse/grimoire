@@ -10,6 +10,7 @@ import (
 
 	"github.com/jeffreytse/grimoire/internal/agent"
 	"github.com/jeffreytse/grimoire/internal/git"
+	"github.com/jeffreytse/grimoire/internal/settings"
 	"github.com/jeffreytse/grimoire/internal/skills"
 	"github.com/jeffreytse/grimoire/internal/tui"
 )
@@ -131,6 +132,16 @@ func runDoctor(cmd *cobra.Command, args []string) error {
 	}
 	if !hasAnyCfg {
 		fmt.Printf("    %s  no settings files found (grimoire uses defaults)\n", tui.IconSkip)
+	}
+
+	// Warn if machine-local [core] keys appear in the committed shared settings file.
+	sharedPath := filepath.Join(cwd, ".grimoire", "settings.toml")
+	if shared, err := settings.ParseFile(sharedPath); err == nil {
+		if shared.Core.Home != "" || shared.Core.Source != "" {
+			fmt.Printf("    %s  [core] home/source found in %s\n", tui.IconWarn, ".grimoire/settings.toml")
+			fmt.Printf("         these are machine-local paths — move them to .grimoire/settings.local.toml\n")
+			warnings++
+		}
 	}
 
 	// ── Summary ──────────────────────────────────────────────────────────────────
