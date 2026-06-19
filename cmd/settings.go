@@ -9,13 +9,15 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/jeffreytse/grimoire/internal/profiles"
 	"github.com/jeffreytse/grimoire/internal/settings"
 	"github.com/jeffreytse/grimoire/internal/tui"
 )
 
 var (
-	flagSettingsDomain string
-	flagSettingsJSON   bool
+	flagSettingsDomain        string
+	flagSettingsJSON          bool
+	flagSettingsExpandProfiles bool
 )
 
 var settingsCmd = &cobra.Command{
@@ -35,6 +37,7 @@ Use grimoire config get/set/unset to manage [core] keys (home, source).`,
 func init() {
 	settingsCmd.Flags().StringVar(&flagSettingsDomain, "domain", "", "show only sections matching this domain prefix")
 	settingsCmd.Flags().BoolVar(&flagSettingsJSON, "json", false, "output resolved settings as JSON")
+	settingsCmd.Flags().BoolVar(&flagSettingsExpandProfiles, "expand-profiles", false, "show skills defined in each profile file")
 }
 
 func runSettings(cmd *cobra.Command, args []string) error {
@@ -83,6 +86,9 @@ func printSettingsHuman(r settings.Resolved) {
 		fmt.Printf("  %s\n", tui.StyleDim.Render("[standards]"))
 		if hasProfiles {
 			fmt.Printf("    profiles: %s%s\n", strings.Join(core.Profiles, ", "), sourceTag(r.Sources["standards.profiles"]))
+			if flagSettingsExpandProfiles {
+				printExpandedProfiles(core.Profiles)
+			}
 		}
 		printed = true
 	}
@@ -106,6 +112,33 @@ func printSettingsHuman(r settings.Resolved) {
 		fmt.Printf("  or edit: %s\n", settings.GlobalPath())
 	} else {
 		fmt.Println()
+	}
+}
+
+func printExpandedProfiles(profileNames []string) {
+	cwd, err := os.Getwd()
+	if err != nil {
+		return
+	}
+	resolved, err := profiles.ResolveAll(profileNames, cwd)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "    warn: loading profiles: %v\n", err)
+		return
+	}
+	for _, p := range resolved {
+		if p.Source == "" {
+			fmt.Printf("    %s\n", tui.StyleDim.Render(p.Name+":"))
+			fmt.Printf("      %s\n", tui.StyleDim.Render("(no profile file found — resolved by LLM tag query at runtime)"))
+			continue
+		}
+		src := sourceTag(p.Source)
+		fmt.Printf("    %s%s\n", tui.StyleDim.Render(p.Name+":"), src)
+		for _, sk := range p.Skills {
+			fmt.Printf("      %s %s\n", tui.StyleCyan.Render("→"), sk.Name)
+		}
+		if len(p.Skills) == 0 {
+			fmt.Printf("      %s\n", tui.StyleDim.Render("(no skills defined in profile file)"))
+		}
 	}
 }
 

@@ -419,3 +419,103 @@ func TestResolveSkillPath_FourPartRefReturnsError(t *testing.T) {
 		t.Fatal("expected error for 4-part ref")
 	}
 }
+
+// ── parseSkillMeta ───────────────────────────────────────────────────────────
+
+func writeSkillMD(t *testing.T, dir, content string) string {
+	t.Helper()
+	if err := os.MkdirAll(dir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(dir, "SKILL.md"), []byte(content), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	return dir
+}
+
+func TestParseSkillMeta_InlineTags(t *testing.T) {
+	dir := t.TempDir()
+	skillDir := writeSkillMD(t, filepath.Join(dir, "my-skill"), `---
+name: my-skill
+description: A test skill
+tags: [oop, tdd, solid]
+---
+# My Skill
+`)
+	name, tags := parseSkillMeta(skillDir)
+	if name != "my-skill" {
+		t.Errorf("name = %q, want my-skill", name)
+	}
+	if len(tags) != 3 || tags[0] != "oop" || tags[1] != "tdd" || tags[2] != "solid" {
+		t.Errorf("tags = %v, want [oop tdd solid]", tags)
+	}
+}
+
+func TestParseSkillMeta_BlockTags(t *testing.T) {
+	dir := t.TempDir()
+	skillDir := writeSkillMD(t, filepath.Join(dir, "block-skill"), `---
+name: block-skill
+tags:
+  - functional
+  - fp
+---
+`)
+	_, tags := parseSkillMeta(skillDir)
+	if len(tags) != 2 || tags[0] != "functional" || tags[1] != "fp" {
+		t.Errorf("tags = %v, want [functional fp]", tags)
+	}
+}
+
+func TestParseSkillMeta_NoFrontmatter(t *testing.T) {
+	dir := t.TempDir()
+	skillDir := writeSkillMD(t, filepath.Join(dir, "plain"), `# No frontmatter
+Just content.
+`)
+	name, tags := parseSkillMeta(skillDir)
+	if name != "" || len(tags) != 0 {
+		t.Errorf("expected empty for no frontmatter, got name=%q tags=%v", name, tags)
+	}
+}
+
+func TestParseSkillMeta_NoTags(t *testing.T) {
+	dir := t.TempDir()
+	skillDir := writeSkillMD(t, filepath.Join(dir, "no-tags"), `---
+name: no-tags-skill
+description: Skill without tags
+---
+`)
+	name, tags := parseSkillMeta(skillDir)
+	if name != "no-tags-skill" {
+		t.Errorf("name = %q", name)
+	}
+	if len(tags) != 0 {
+		t.Errorf("expected no tags, got %v", tags)
+	}
+}
+
+func TestParseSkillMeta_MissingFile(t *testing.T) {
+	name, tags := parseSkillMeta("/nonexistent/skill/dir")
+	if name != "" || len(tags) != 0 {
+		t.Errorf("missing SKILL.md should return empty, got name=%q tags=%v", name, tags)
+	}
+}
+
+func TestListSkillsInDir_PopulatesTags(t *testing.T) {
+	root := t.TempDir()
+	skillDir := filepath.Join(root, "meta", "skills", "tagged-skill")
+	writeSkillMD(t, skillDir, `---
+name: tagged-skill
+tags: [oop, engineering]
+---
+`)
+	skills, err := ListSkillsInDir(filepath.Join(root, "meta"), "meta", "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(skills) != 1 {
+		t.Fatalf("expected 1 skill, got %d", len(skills))
+	}
+	if len(skills[0].Tags) != 2 || skills[0].Tags[0] != "oop" {
+		t.Errorf("Tags = %v, want [oop engineering]", skills[0].Tags)
+	}
+}

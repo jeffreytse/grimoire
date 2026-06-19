@@ -6,6 +6,71 @@ import (
 	"strings"
 )
 
+// parseSkillMeta reads the YAML frontmatter from a SKILL.md file and returns
+// the skill name and tags. Both are optional; falls back to empty values.
+func parseSkillMeta(skillPath string) (name string, tags []string) {
+	data, err := os.ReadFile(filepath.Join(skillPath, "SKILL.md"))
+	if err != nil {
+		return "", nil
+	}
+	content := string(data)
+
+	// extract frontmatter between first and second "---"
+	if !strings.HasPrefix(content, "---") {
+		return "", nil
+	}
+	rest := content[3:]
+	end := strings.Index(rest, "\n---")
+	if end == -1 {
+		return "", nil
+	}
+	fm := rest[:end]
+
+	var inTagsBlock bool
+	for _, line := range strings.Split(fm, "\n") {
+		trimmed := strings.TrimRight(line, " \t\r")
+
+		// block list item inside tags:
+		if inTagsBlock {
+			if strings.HasPrefix(trimmed, "  - ") || strings.HasPrefix(trimmed, "- ") {
+				tag := strings.TrimLeft(trimmed, " -")
+				tag = strings.Trim(tag, `"'`)
+				if tag != "" {
+					tags = append(tags, tag)
+				}
+				continue
+			}
+			// new key — end of tags block
+			if !strings.HasPrefix(trimmed, " ") && !strings.HasPrefix(trimmed, "\t") {
+				inTagsBlock = false
+			}
+		}
+
+		if after, ok := strings.CutPrefix(trimmed, "name:"); ok {
+			name = strings.Trim(after, ` "'`)
+			continue
+		}
+
+		if after, ok := strings.CutPrefix(trimmed, "tags:"); ok {
+			after = strings.TrimSpace(after)
+			if strings.HasPrefix(after, "[") {
+				// inline flow sequence: [oop, tdd]
+				inner := strings.Trim(after, "[]")
+				for _, t := range strings.Split(inner, ",") {
+					t = strings.Trim(t, ` "'`)
+					if t != "" {
+						tags = append(tags, t)
+					}
+				}
+			} else if after == "" {
+				inTagsBlock = true
+			}
+			continue
+		}
+	}
+	return name, tags
+}
+
 type Domain struct {
 	Name   string
 	Path   string
@@ -19,11 +84,12 @@ type Subdomain struct {
 }
 
 type Skill struct {
-	Registry  string `json:"registry,omitempty"`
-	Domain    string `json:"domain"`
-	Subdomain string `json:"subdomain,omitempty"`
-	Name      string `json:"name"`
-	Path      string `json:"path"`
+	Registry  string   `json:"registry,omitempty"`
+	Domain    string   `json:"domain"`
+	Subdomain string   `json:"subdomain,omitempty"`
+	Name      string   `json:"name"`
+	Path      string   `json:"path"`
+	Tags      []string `json:"tags,omitempty"`
 }
 
 // IsNested returns true when the domain uses subdomain directories
@@ -105,11 +171,17 @@ func ListSkillsInDir(dir, domainName, subdomainName string) ([]Skill, error) {
 		if _, err := os.Stat(filepath.Join(skillPath, "SKILL.md")); err != nil {
 			continue
 		}
+		metaName, tags := parseSkillMeta(skillPath)
+		name := e.Name()
+		if metaName != "" {
+			name = metaName
+		}
 		skills = append(skills, Skill{
 			Domain:    domainName,
 			Subdomain: subdomainName,
-			Name:      e.Name(),
+			Name:      name,
 			Path:      skillPath,
+			Tags:      tags,
 		})
 	}
 	return skills, nil
