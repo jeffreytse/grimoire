@@ -1,15 +1,15 @@
 package cmd
 
 import (
-	"os"
-
-	"github.com/mattn/go-isatty"
 	"github.com/spf13/cobra"
+	"os"
 )
 
 var cliVersion = "dev"
 
 func SetVersion(v string) { cliVersion = v }
+
+var flagInteractive bool
 
 var rootCmd = &cobra.Command{
 	SilenceUsage: true,
@@ -17,7 +17,7 @@ var rootCmd = &cobra.Command{
 	Short: "Grimoire — best practice enforcement for AI assistants",
 	Long: `Grimoire skills enforce best practices in AI-assisted development.
 
-  grimoire               Interactive TUI — install, update, doctor
+  grimoire -i            Open the interactive TUI
   grimoire install       Install skills to AI agent directories
   grimoire uninstall     Remove skills from AI agent directories
   grimoire update        Pull the latest grimoire skills and relink
@@ -31,10 +31,10 @@ var rootCmd = &cobra.Command{
   grimoire profile       Manage profiles (list, show, init)
   grimoire self-update   Update the grimoire CLI binary to the latest release`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if !isatty.IsTerminal(os.Stdin.Fd()) {
-			return cmd.Help()
+		if flagInteractive {
+			return runInteractive()
 		}
-		return runInteractive()
+		return cmd.Help()
 	},
 }
 
@@ -45,6 +45,7 @@ func Execute() {
 }
 
 func init() {
+	rootCmd.Flags().BoolVarP(&flagInteractive, "interactive", "i", false, "open the interactive TUI")
 	rootCmd.AddCommand(initCmd)
 	rootCmd.AddCommand(checkCmd)
 	rootCmd.AddCommand(installCmd)
