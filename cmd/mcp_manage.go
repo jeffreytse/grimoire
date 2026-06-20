@@ -43,10 +43,10 @@ type mcpCleanOutput struct {
 // ── Handlers ──────────────────────────────────────────────────────────────────
 
 func toolGrimoireInstall(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
-	domain    := request.GetString("domain", "")
+	domain := request.GetString("domain", "")
 	subdomain := request.GetString("subdomain", "")
-	skill     := request.GetString("skill", "")
-	target    := request.GetString("target", "")
+	skill := request.GetString("skill", "")
+	target := request.GetString("target", "")
 	out, err := performInstall(domain, subdomain, skill, target)
 	if err != nil {
 		return mcp.NewToolResultError(err.Error()), nil
@@ -55,10 +55,10 @@ func toolGrimoireInstall(_ context.Context, request mcp.CallToolRequest) (*mcp.C
 }
 
 func toolGrimoireUninstall(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
-	domain    := request.GetString("domain", "")
+	domain := request.GetString("domain", "")
 	subdomain := request.GetString("subdomain", "")
-	skill     := request.GetString("skill", "")
-	target    := request.GetString("target", "")
+	skill := request.GetString("skill", "")
+	target := request.GetString("target", "")
 	out, err := performUninstall(domain, subdomain, skill, target)
 	if err != nil {
 		return mcp.NewToolResultError(err.Error()), nil
@@ -153,14 +153,12 @@ func performInstall(domain, subdomain, skill, target string) (mcpInstallOutput, 
 	return mcpInstallOutput{Installed: installed, Skipped: skipped, Errors: errs}, nil
 }
 
-func installDomainSilent(root, domain, subdomain, ag string) (int, []string) {
+func installDomainSilent(root, domain, subdomain, ag string) (count int, errs []string) {
 	domainDir := root + "/" + domain
 	if _, err := os.Stat(domainDir); err != nil {
 		return 0, []string{fmt.Sprintf("domain not found: %s", domain)}
 	}
 	destDir := agent.SkillsDir(ag)
-	count := 0
-	var errs []string
 
 	if skills.IsNested(domainDir) {
 		subs, err := skills.ListSubdomains(domainDir)
@@ -255,14 +253,12 @@ func performUninstall(domain, subdomain, skill, target string) (mcpUninstallOutp
 	return mcpUninstallOutput{Removed: removed, Errors: errs}, nil
 }
 
-func uninstallDomainSilent(root, domain, subdomain, ag string) (int, []string) {
+func uninstallDomainSilent(root, domain, subdomain, ag string) (count int, errs []string) {
 	domainDir := root + "/" + domain
 	if _, err := os.Stat(domainDir); err != nil {
 		return 0, nil
 	}
 	destDir := agent.SkillsDir(ag)
-	count := 0
-	var errs []string
 
 	if skills.IsNested(domainDir) {
 		subs, err := skills.ListSubdomains(domainDir)
