@@ -8,7 +8,9 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/jeffreytse/grimoire/internal/compliance"
+	"github.com/jeffreytse/grimoire/internal/rules"
 	"github.com/jeffreytse/grimoire/internal/settings"
+	"github.com/jeffreytse/grimoire/internal/skills"
 )
 
 const (
@@ -44,6 +46,14 @@ func runCheck(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(2) //nolint:revive // intentional: compliance failure must return exit code 2
+	}
+
+	eng := &rules.Engine{
+		SkillsSources: skills.AllSkillsSources(),
+		ProjectDir:    ".",
+	}
+	if found := eng.Run(); len(found) > 0 {
+		report.Diagnostics = append(found, report.Diagnostics...)
 	}
 
 	if flagJSON {
