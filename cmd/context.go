@@ -404,7 +404,7 @@ func printContextHuman(out *contextOutput, r *settings.Resolved) {
 			if hasProfiles {
 				fmt.Println()
 				fmt.Printf("    %s\n", tui.StyleDim.Render("[standards]"))
-				fmt.Printf("      profiles: %s%s\n",
+				fmt.Printf("    profiles: %s%s\n",
 					strings.Join(r.Core.Profiles, ", "),
 					sourceTag(r.Sources["standards.profiles"]))
 				cwd := getProjectDir()
@@ -412,15 +412,15 @@ func printContextHuman(out *contextOutput, r *settings.Resolved) {
 				for _, name := range r.Core.Profiles {
 					p, err := profiles.ResolveWithOptions(name, cwd, opts)
 					if err != nil {
-						fmt.Printf("        %s\n", tui.StyleDim.Render(name+": (error resolving)"))
+						fmt.Printf("      %s\n", tui.StyleDim.Render(name+": (error resolving)"))
 						continue
 					}
-					fmt.Printf("        %s%s\n", tui.StyleDim.Render(name+":"), sourceTag(p.Source))
+					fmt.Printf("      %s%s\n", tui.StyleDim.Render(name+":"), sourceTag(p.Source))
 					for _, sk := range p.Skills {
-						fmt.Printf("          %s %s\n", tui.StyleCyan.Render("→"), sk.Name)
+						fmt.Printf("        %s %s\n", tui.StyleCyan.Render("→"), sk.Name)
 					}
 					if len(p.Skills) == 0 {
-						fmt.Printf("          %s\n", tui.StyleDim.Render("(no installed skills match — AI applies semantically)"))
+						fmt.Printf("        %s\n", tui.StyleDim.Render("(no installed skills match — AI applies semantically)"))
 					}
 				}
 			}
@@ -434,7 +434,7 @@ func printContextHuman(out *contextOutput, r *settings.Resolved) {
 				fmt.Println()
 				fmt.Printf("    %s\n", tui.StyleDim.Render("[standards."+key+"]"))
 				for _, l := range lines {
-					fmt.Println("  " + l)
+					fmt.Println(l)
 				}
 			}
 		}
