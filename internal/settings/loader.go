@@ -29,13 +29,8 @@ func ParseFile(path string) (FileSettings, error) {
 }
 
 // Load reads all three file layers for projectDir in priority order and merges them.
-// Layers (highest → lowest): .grimoire/settings.toml → ~/.config/grimoire/settings.toml → /etc/grimoire/settings.toml
+// Layers (highest → lowest): .grimoire/settings.toml → ~/.config/grimoire/settings.toml → /etc/grimoire/settings.toml.
 func Load(projectDir string) (Resolved, error) {
-	type entry struct {
-		path string
-		fs   FileSettings
-	}
-
 	layerPaths := []string{
 		filepath.Join(projectDir, ".grimoire", "settings.toml"),
 		GlobalPath(),
@@ -132,7 +127,7 @@ func parseRaw(raw map[string]any) FileSettings {
 					parseDomainInto(domainName, sub, &fs)
 				}
 			}
-		// unknown top-level keys silently ignored
+			// unknown top-level keys silently ignored
 		}
 	}
 	return fs
@@ -146,7 +141,7 @@ func parseRegistries(m map[string]any) map[string]RegistryConfig {
 			continue
 		}
 		rc := RegistryConfig{}
-		rc.URL, _ = sub["url"].(string)
+		rc.URL, _ = sub["url"].(string) //nolint:revive // wrong type silently skipped
 		if rc.URL != "" {
 			result[name] = rc
 		}
@@ -156,8 +151,8 @@ func parseRegistries(m map[string]any) map[string]RegistryConfig {
 
 func parseCoreSection(m map[string]any) CoreSection {
 	var cs CoreSection
-	cs.Home, _ = m["home"].(string)
-	cs.Source, _ = m["source"].(string)
+	cs.Home, _ = m["home"].(string)     //nolint:revive // wrong type silently skipped
+	cs.Source, _ = m["source"].(string) //nolint:revive // wrong type silently skipped
 	return cs
 }
 
@@ -198,7 +193,7 @@ func parseDomainInto(prefix string, m map[string]any, fs *FileSettings) {
 				}
 			}
 		case "fallback":
-			ds.Fallback, _ = v.(string)
+			ds.Fallback, _ = v.(string) //nolint:revive // wrong type silently skipped
 		case "compliance-threshold":
 			ds.ComplianceThreshold = anyToFloat64(v)
 		case "compliance-threshold-error":
@@ -257,13 +252,14 @@ func toMap(fs FileSettings) map[string]any {
 		standardsMap["profiles"] = fs.Core.Profiles
 	}
 	for _, key := range keys {
-		dm := domainToMap(fs.Sections[key])
+		s := fs.Sections[key]
+		dm := domainToMap(&s)
 		if len(dm) == 0 {
 			continue
 		}
 		parts := strings.SplitN(key, ".", 2)
 		if len(parts) == 1 {
-			existing, _ := standardsMap[key].(map[string]any)
+			existing, _ := standardsMap[key].(map[string]any) //nolint:revive // nil if absent, handled below
 			if existing == nil {
 				existing = map[string]any{}
 			}
@@ -272,7 +268,7 @@ func toMap(fs FileSettings) map[string]any {
 			}
 			standardsMap[key] = existing
 		} else {
-			parent, _ := standardsMap[parts[0]].(map[string]any)
+			parent, _ := standardsMap[parts[0]].(map[string]any) //nolint:revive // nil if absent, handled below
 			if parent == nil {
 				parent = map[string]any{}
 				standardsMap[parts[0]] = parent
@@ -287,7 +283,7 @@ func toMap(fs FileSettings) map[string]any {
 	return m
 }
 
-func domainToMap(ds DomainSection) map[string]any {
+func domainToMap(ds *DomainSection) map[string]any {
 	m := map[string]any{}
 	if len(ds.Practices) > 0 {
 		m["practices"] = ds.Practices

@@ -246,7 +246,7 @@ name = "apply-internal"
 	if err != nil {
 		t.Fatal(err)
 	}
-	resolved := ResolveSkills(p, dir, nil, nil)
+	resolved := ResolveSkills(&p, dir, nil, nil)
 	names := skillNames(resolved)
 	if !contains(names, "apply-solid") || !contains(names, "apply-lod") {
 		t.Errorf("missing inherited skills: %v", names)
@@ -271,7 +271,7 @@ tags = ["oop"]
 		t.Fatal(err)
 	}
 	sources := []skills.SkillsSource{{Name: "test", Root: root}}
-	resolved := ResolveSkills(p, dir, sources, nil)
+	resolved := ResolveSkills(&p, dir, sources, nil)
 	names := skillNames(resolved)
 	if len(names) != 2 {
 		t.Errorf("expected 2 oop-tagged skills, got %v", names)
@@ -297,7 +297,7 @@ exclude = ["apply-lod"]
 	if err != nil {
 		t.Fatal(err)
 	}
-	resolved := ResolveSkills(p, dir, nil, nil)
+	resolved := ResolveSkills(&p, dir, nil, nil)
 	names := skillNames(resolved)
 	if contains(names, "apply-lod") {
 		t.Error("apply-lod should be excluded")
@@ -321,7 +321,7 @@ priority = 10
 	if err != nil {
 		t.Fatal(err)
 	}
-	resolved := ResolveSkills(p, dir, nil, nil)
+	resolved := ResolveSkills(&p, dir, nil, nil)
 	if len(resolved) != 2 {
 		t.Fatalf("expected 2 skills, got %d", len(resolved))
 	}
@@ -353,7 +353,7 @@ name = "skill-b"
 	}
 	// Should complete without hanging; exact output not critical — just no panic/loop
 	visited := map[string]bool{"a": true}
-	resolved := ResolveSkills(p, dir, nil, visited)
+	resolved := ResolveSkills(&p, dir, nil, visited)
 	names := skillNames(resolved)
 	if !contains(names, "skill-a") {
 		t.Errorf("skill-a missing from %v", names)
@@ -379,7 +379,7 @@ priority = 1
 	if err != nil {
 		t.Fatal(err)
 	}
-	resolved := ResolveSkills(p, dir, nil, nil)
+	resolved := ResolveSkills(&p, dir, nil, nil)
 	// apply-solid should appear with priority=1 and come first
 	if len(resolved) == 0 || resolved[0].Name != "apply-solid" {
 		t.Errorf("expected apply-solid first with priority=1, got %v", resolved)
@@ -403,7 +403,7 @@ name = "apply-law-of-demeter"
 		t.Fatal(err)
 	}
 	// No extends/tags/exclude — should behave identically to pre-redesign
-	resolved := ResolveSkills(p, dir, nil, nil)
+	resolved := ResolveSkills(&p, dir, nil, nil)
 	if len(resolved) != 2 {
 		t.Fatalf("expected 2 skills, got %d", len(resolved))
 	}

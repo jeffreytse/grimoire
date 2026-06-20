@@ -211,9 +211,10 @@ func printDoctorHuman(out doctorOutput) {
 		}
 		icon, _ := doctorIcon(c.Status)
 		fmt.Printf("    %s  %s\n", icon, c.Detail)
-		if c.Status == "error" {
+		switch c.Status {
+		case "error":
 			errs++
-		} else if c.Status == "warn" {
+		case "warn":
 			warnings++
 		}
 	}
@@ -226,9 +227,10 @@ func printDoctorHuman(out doctorOutput) {
 		}
 		icon, _ := doctorIcon(c.Status)
 		fmt.Printf("    %s  %s\n", icon, c.Detail)
-		if c.Status == "error" {
+		switch c.Status {
+		case "error":
 			errs++
-		} else if c.Status == "warn" {
+		case "warn":
 			warnings++
 		}
 	}
@@ -241,9 +243,10 @@ func printDoctorHuman(out doctorOutput) {
 		}
 		icon, _ := doctorIcon(c.Status)
 		fmt.Printf("    %s  %s\n", icon, c.Detail)
-		if c.Status == "error" {
+		switch c.Status {
+		case "error":
 			errs++
-		} else if c.Status == "warn" {
+		case "warn":
 			warnings++
 		}
 	}
@@ -266,7 +269,7 @@ func printDoctorHuman(out doctorOutput) {
 	}
 }
 
-func doctorIcon(status string) (string, string) {
+func doctorIcon(status string) (icon, label string) {
 	switch status {
 	case "ok":
 		return tui.IconOK, "ok"

@@ -22,10 +22,10 @@ const (
 )
 
 var (
-	flagReport       string
-	flagJSON         bool
-	flagNoColor      bool
-	flagFailOnError  bool
+	flagReport      string
+	flagJSON        bool
+	flagNoColor     bool
+	flagFailOnError bool
 )
 
 var checkCmd = &cobra.Command{

@@ -1,8 +1,9 @@
 package cmd
 
 import (
-	"github.com/spf13/cobra"
 	"os"
+
+	"github.com/spf13/cobra"
 )
 
 var cliVersion = "dev"
@@ -14,7 +15,7 @@ var flagInteractive bool
 var rootCmd = &cobra.Command{
 	SilenceUsage: true,
 	Use:          "grimoire",
-	Short: "Grimoire — best practice enforcement for AI assistants",
+	Short:        "Grimoire — best practice enforcement for AI assistants",
 	Long: `Grimoire skills enforce best practices in AI-assisted development.
 
   grimoire -i            Open the interactive TUI

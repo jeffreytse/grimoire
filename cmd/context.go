@@ -142,7 +142,7 @@ func runContext(cmd *cobra.Command, args []string) error {
 	if rs, err := settings.Load("."); err == nil {
 		resolvedSettings = &rs
 	}
-	printContextHuman(out, resolvedSettings)
+	printContextHuman(&out, resolvedSettings)
 	return nil
 }
 
@@ -345,7 +345,7 @@ func buildRegistryInfos() []contextRegistryInfo {
 	return infos
 }
 
-func printContextHuman(out contextOutput, r *settings.Resolved) {
+func printContextHuman(out *contextOutput, r *settings.Resolved) {
 	fmt.Printf("\nGrimoire context\n")
 	fmt.Printf("  cli:      %s\n", out.CLIVersion)
 	if out.GrimoireVersion != "" {
@@ -424,7 +424,7 @@ func printContextHuman(out contextOutput, r *settings.Resolved) {
 
 			for _, key := range keys {
 				ds := r.ResolveSection(key)
-				lines := domainSectionLines(key, ds, r.Sources)
+				lines := domainSectionLines(key, &ds, r.Sources)
 				if len(lines) == 0 {
 					continue
 				}

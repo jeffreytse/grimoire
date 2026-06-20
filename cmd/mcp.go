@@ -103,7 +103,7 @@ func registerMCPTools(s *server.MCPServer) {
 
 }
 
-func toolGrimoireContext(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+func toolGrimoireContext(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
 	home := skills.GrimoireHome()
 	grimoireVer := ""
 	if state, err := git.CurrentState(home); err == nil {
@@ -140,7 +140,7 @@ func toolGrimoireContext(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToo
 	return jsonResult(out)
 }
 
-func toolGrimoireCheck(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+func toolGrimoireCheck(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
 	report, err := compliance.Load("")
 	if err != nil {
 		return mcp.NewToolResultError(err.Error()), nil
@@ -155,7 +155,7 @@ func toolGrimoireCheck(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolR
 	return jsonResult(report)
 }
 
-func toolGrimoireListSkills(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+func toolGrimoireListSkills(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
 	all, err := skills.ListAllSkillsFromSources(skills.AllSkillsSources())
 	if err != nil {
 		return mcp.NewToolResultError(err.Error()), nil
@@ -163,11 +163,11 @@ func toolGrimoireListSkills(_ context.Context, _ mcp.CallToolRequest) (*mcp.Call
 	return jsonResult(all)
 }
 
-func toolGrimoireDoctor(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+func toolGrimoireDoctor(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
 	return jsonResult(collectDoctorChecks())
 }
 
-func toolGrimoireRunRules(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+func toolGrimoireRunRules(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
 	eng := &rules.Engine{
 		SkillsSources: skills.AllSkillsSources(),
 		ProjectDir:    ".",

@@ -70,11 +70,6 @@ func runList(cmd *cobra.Command, args []string) error {
 
 func printSkillTreeMulti(all []skills.Skill, showRegistry bool) {
 	// group by registry → domain → subdomain → skills
-	type registryGroup struct {
-		name   string
-		skills []skills.Skill
-	}
-
 	registryOrder := []string{}
 	byRegistry := map[string][]skills.Skill{}
 	for _, s := range all {

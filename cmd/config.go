@@ -197,13 +197,13 @@ func getKeyResolved(r settings.Resolved, key string) (val, src string, err error
 				return "", "", fmt.Errorf("field %q requires a domain (e.g. standards.engineering.%s)", field, field)
 			}
 			ds := r.ResolveSection(domain)
-			return domainFieldString(ds, field, r.Sources, domain+"."+field), r.Sources[domain+"."+field], nil
+			return domainFieldString(&ds, field, r.Sources, domain+"."+field), r.Sources[domain+"."+field], nil
 		}
 	}
 	return "", "", fmt.Errorf("unknown config key %q", key)
 }
 
-func domainFieldString(ds settings.DomainSection, field string, sources map[string]string, srcKey string) string {
+func domainFieldString(ds *settings.DomainSection, field string, sources map[string]string, srcKey string) string {
 	switch field {
 	case "practices":
 		return strings.Join(ds.Practices, ", ")
@@ -242,8 +242,7 @@ func applyKey(fs *settings.FileSettings, key, value string) error {
 		}
 		if domain == "" {
 			// top-level standards field
-			switch field {
-			case "profiles":
+			if field == "profiles" {
 				fs.Core.Profiles = splitCSV(value)
 				return nil
 			}

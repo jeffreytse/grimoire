@@ -58,7 +58,7 @@ func GlobalPath() string {
 
 // SystemPath returns the system-wide settings file path.
 // Linux/macOS: /etc/grimoire/settings.toml
-// Windows: %PROGRAMDATA%\grimoire\settings.toml
+// Windows: %PROGRAMDATA%\grimoire\settings.toml.
 func SystemPath() string {
 	if runtime.GOOS == "windows" {
 		pd := os.Getenv("PROGRAMDATA")
@@ -82,7 +82,7 @@ var validStandardsFields = map[string]bool{
 // ParseStandardsKey splits a dotted standards key into domain and field.
 // "standards.profiles"                    → domain="",                  field="profiles"
 // "standards.engineering.practices"       → domain="engineering",       field="practices"
-// "standards.engineering.testing.fallback"→ domain="engineering.testing", field="fallback"
+// "standards.engineering.testing.fallback"→ domain="engineering.testing", field="fallback".
 func ParseStandardsKey(dotted string) (domain, field string, err error) {
 	parts := strings.SplitN(dotted, ".", 2)
 	if len(parts) < 2 || parts[0] != "standards" {

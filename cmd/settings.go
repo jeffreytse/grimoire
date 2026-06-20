@@ -92,7 +92,7 @@ func printSettingsHuman(r settings.Resolved) {
 
 	for _, key := range filteredKeys {
 		ds := r.ResolveSection(key)
-		lines := domainSectionLines(key, ds, r.Sources)
+		lines := domainSectionLines(key, &ds, r.Sources)
 		if len(lines) == 0 {
 			continue
 		}
@@ -140,7 +140,7 @@ func printExpandedProfiles(profileNames []string) {
 	}
 }
 
-func domainSectionLines(key string, ds settings.DomainSection, sources map[string]string) []string {
+func domainSectionLines(key string, ds *settings.DomainSection, sources map[string]string) []string {
 	var lines []string
 	if len(ds.Practices) > 0 {
 		lines = append(lines, fmt.Sprintf("    practices: %s%s",

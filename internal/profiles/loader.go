@@ -107,7 +107,7 @@ func ResolveByTags(profileName string, sources []skills.SkillsSource) []SkillRef
 //
 // Results are sorted by priority ascending (lower = higher priority), then insertion order.
 // visited tracks the current resolution stack to prevent infinite recursion.
-func ResolveSkills(p Profile, projectDir string, sources []skills.SkillsSource, visited map[string]bool) []SkillRef {
+func ResolveSkills(p *Profile, projectDir string, sources []skills.SkillsSource, visited map[string]bool) []SkillRef {
 	if visited == nil {
 		visited = make(map[string]bool)
 	}
@@ -151,7 +151,7 @@ func ResolveSkills(p Profile, projectDir string, sources []skills.SkillsSource, 
 		visited[parentName] = true
 		parent, err := Resolve(parentName, projectDir)
 		if err == nil {
-			for _, ref := range ResolveSkills(parent, projectDir, sources, visited) {
+			for _, ref := range ResolveSkills(&parent, projectDir, sources, visited) {
 				insert(ref)
 			}
 		}
@@ -218,7 +218,7 @@ func ResolveWithOptions(name, projectDir string, opts ResolveOptions) (Profile, 
 
 	// Full resolution via ResolveSkills (handles extends, tags, explicit skills, exclude).
 	if p.Source != "" || len(p.Extends) > 0 || len(p.Tags) > 0 {
-		p.Skills = ResolveSkills(p, projectDir, opts.Sources, visited)
+		p.Skills = ResolveSkills(&p, projectDir, opts.Sources, visited)
 	}
 
 	return p, nil

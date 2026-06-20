@@ -88,7 +88,7 @@ func checkSkillMdFrontmatter(sources []skills.SkillsSource) []compliance.Diagnos
 
 // parseFrontmatterFields extracts name and tags directly from SKILL.md content.
 // Returns (hasFrontmatter, name, tags).
-func parseFrontmatterFields(content string) (bool, string, []string) {
+func parseFrontmatterFields(content string) (hasFrontmatter bool, name string, tags []string) {
 	if !strings.HasPrefix(content, "---") {
 		return false, "", nil
 	}
@@ -99,8 +99,6 @@ func parseFrontmatterFields(content string) (bool, string, []string) {
 	}
 	fm := rest[:end]
 
-	var name string
-	var tags []string
 	inTagsBlock := false
 
 	for _, line := range strings.Split(fm, "\n") {
