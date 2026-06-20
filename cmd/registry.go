@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"sort"
@@ -26,6 +27,8 @@ Multiple registries are searched in priority order: official first, then custom 
   grimoire registry remove <name>     remove a registry
   grimoire registry update [<name>]   pull latest skills from registries`,
 }
+
+var flagRegistryListJSON bool
 
 var registryListCmd = &cobra.Command{
 	Use:   "list",
@@ -56,10 +59,19 @@ var registryUpdateCmd = &cobra.Command{
 }
 
 func init() {
+	registryListCmd.Flags().BoolVar(&flagRegistryListJSON, "json", false, "output as JSON")
 	registryCmd.AddCommand(registryListCmd)
 	registryCmd.AddCommand(registryAddCmd)
 	registryCmd.AddCommand(registryRemoveCmd)
 	registryCmd.AddCommand(registryUpdateCmd)
+}
+
+type registryListEntry struct {
+	Name        string `json:"name"`
+	URL         string `json:"url"`
+	SkillsCount int    `json:"skills_count"`
+	Cloned      bool   `json:"cloned"`
+	Version     string `json:"version,omitempty"`
 }
 
 func runRegistryList(cmd *cobra.Command, args []string) error {
@@ -68,27 +80,56 @@ func runRegistryList(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("loading settings: %w", err)
 	}
 
-	// official registry always shown first
 	officialURL := skills.GrimoireRepoURL()
 	officialRoot := skills.SkillsRoot()
-	officialCount := countSkills(officialRoot)
-	officialVersion := skills.GrimoireVersion()
-	fmt.Printf("  %s  official  %s\n", tui.IconOK, officialURL)
-	fmt.Printf("         %d skills, version %s\n\n", officialCount, officialVersion)
+	officialCloned := false
+	if _, err := os.Stat(officialRoot); err == nil {
+		officialCloned = true
+	}
+	entries := []registryListEntry{{
+		Name:        "official",
+		URL:         officialURL,
+		SkillsCount: countSkills(officialRoot),
+		Cloned:      officialCloned,
+		Version:     skills.GrimoireVersion(),
+	}}
 
-	// custom registries sorted by name
-	names := sortedRegistryNames(fs.Registries)
-	for _, name := range names {
+	for _, name := range sortedRegistryNames(fs.Registries) {
 		rc := fs.Registries[name]
 		regHome := skills.RegistryHome(name)
 		regRoot := regHome + "/skills"
-		count := countSkills(regRoot)
-		if _, err := os.Stat(regHome); err != nil {
-			fmt.Printf("  %s  %s  %s\n", tui.IconWarn, name, rc.URL)
-			fmt.Printf("         not cloned yet — run: grimoire registry update %s\n\n", name)
+		cloned := false
+		if _, err := os.Stat(regHome); err == nil {
+			cloned = true
+		}
+		entries = append(entries, registryListEntry{
+			Name:        name,
+			URL:         rc.URL,
+			SkillsCount: countSkills(regRoot),
+			Cloned:      cloned,
+		})
+	}
+
+	if flagRegistryListJSON {
+		enc := json.NewEncoder(os.Stdout)
+		enc.SetIndent("", "  ")
+		return enc.Encode(entries)
+	}
+
+	for _, e := range entries {
+		icon := tui.IconOK
+		if !e.Cloned {
+			icon = tui.IconWarn
+		}
+		fmt.Printf("  %s  %-12s %s\n", icon, e.Name, e.URL)
+		if e.Cloned {
+			detail := fmt.Sprintf("%d skills", e.SkillsCount)
+			if e.Version != "" {
+				detail += ", version " + e.Version
+			}
+			fmt.Printf("         %s\n\n", detail)
 		} else {
-			fmt.Printf("  %s  %s  %s\n", tui.IconOK, name, rc.URL)
-			fmt.Printf("         %d skills\n\n", count)
+			fmt.Printf("         not cloned yet — run: grimoire registry update %s\n\n", e.Name)
 		}
 	}
 

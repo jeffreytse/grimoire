@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"os/exec"
@@ -15,79 +16,128 @@ import (
 	"github.com/jeffreytse/grimoire/internal/tui"
 )
 
+var flagDoctorJSON bool
+
 var doctorCmd = &cobra.Command{
 	Use:   "doctor",
 	Short: "Run a health check on the grimoire installation",
 	RunE:  runDoctor,
 }
 
-func runDoctor(cmd *cobra.Command, args []string) error {
-	warnings, errs := 0, 0
+func init() {
+	doctorCmd.Flags().BoolVar(&flagDoctorJSON, "json", false, "output as JSON")
+}
 
-	fmt.Println("\nGrimoire health check")
+type doctorCheck struct {
+	Name   string `json:"name"`
+	Status string `json:"status"` // "ok" | "warn" | "error" | "skip"
+	Detail string `json:"detail,omitempty"`
+}
+
+type doctorOutput struct {
+	OK     bool          `json:"ok"`
+	Checks []doctorCheck `json:"checks"`
+}
+
+func runDoctor(cmd *cobra.Command, args []string) error {
+	out := collectDoctorChecks()
+
+	if flagDoctorJSON {
+		enc := json.NewEncoder(os.Stdout)
+		enc.SetIndent("", "  ")
+		return enc.Encode(out)
+	}
+
+	printDoctorHuman(out)
+	return nil
+}
+
+func collectDoctorChecks() doctorOutput {
+	var checks []doctorCheck
+	ok := true
 
 	// ── Source ──────────────────────────────────────────────────────────────────
-	fmt.Println()
-	fmt.Println("  Source")
 	home := skills.GrimoireHome()
 	if _, err := os.Stat(home); err != nil {
-		fmt.Printf("    %s  grimoire not found at %s — run: grimoire update\n", tui.IconFail, home)
-		errs++
+		checks = append(checks, doctorCheck{
+			Name:   "grimoire-source",
+			Status: "error",
+			Detail: fmt.Sprintf("grimoire not found at %s — run: grimoire update", home),
+		})
+		ok = false
 	} else {
 		state, err := git.CurrentState(home)
 		if err != nil {
 			ver := skills.GrimoireVersion()
-			fmt.Printf("    %s  grimoire:   v%s\n", tui.IconOK, ver)
-			fmt.Printf("    %s  git repo:   not found at %s\n", tui.IconFail, home)
-			errs++
+			checks = append(checks, doctorCheck{
+				Name:   "grimoire-source",
+				Status: "warn",
+				Detail: fmt.Sprintf("grimoire %s (no git state at %s)", ver, home),
+			})
 		} else {
-			fmt.Printf("    %s  grimoire:   v%s (commit %s, %s)\n",
-				tui.IconOK, state.Version, state.Commit, state.Date)
-			fmt.Printf("    %s  location:   %s\n", tui.IconOK, home)
+			checks = append(checks, doctorCheck{
+				Name:   "grimoire-source",
+				Status: "ok",
+				Detail: fmt.Sprintf("grimoire %s (commit %s, %s) at %s", state.Version, state.Commit, state.Date, home),
+			})
 		}
 	}
 
 	// ── AI agents ────────────────────────────────────────────────────────────────
-	fmt.Println()
-	fmt.Println("  AI agents")
-
 	for _, ag := range agent.All {
 		label := agent.DisplayName(ag)
-		_, err := exec.LookPath(ag)
-		if err != nil {
-			fmt.Printf("    %s  %-16s not found\n", tui.IconSkip, label)
+		if _, err := exec.LookPath(ag); err != nil {
+			checks = append(checks, doctorCheck{
+				Name:   "agent-" + ag,
+				Status: "skip",
+				Detail: label + " not found",
+			})
 			continue
 		}
 		ver := agent.Version(ag)
 		vs := "detected"
 		if ver != "" {
-			vs = "v" + ver
+			vs = ver
 		}
 		dir := agent.SkillsDir(ag)
 		if _, err := os.Stat(dir); err != nil {
-			fmt.Printf("    %s  %-16s %-12s (no skills installed — run: grimoire install --target %s)\n",
-				tui.IconWarn, label, vs, ag)
-			warnings++
+			checks = append(checks, doctorCheck{
+				Name:   "agent-" + ag,
+				Status: "warn",
+				Detail: fmt.Sprintf("%s %s — no skills installed, run: grimoire install --target %s", label, vs, ag),
+			})
+			ok = false
 			continue
 		}
 		count := agent.SkillCount(ag)
 		broken := agent.BrokenSymlinkCount(ag)
 		if broken > 0 {
-			fmt.Printf("    %s  %-16s %-12s %d skills, %d broken → run: grimoire clean --target %s\n",
-				tui.IconWarn, label, vs, count, broken, ag)
-			warnings++
+			checks = append(checks, doctorCheck{
+				Name:   "agent-" + ag,
+				Status: "warn",
+				Detail: fmt.Sprintf("%s %s — %d skills, %d broken, run: grimoire clean --target %s", label, vs, count, broken, ag),
+			})
+			ok = false
 		} else {
-			fmt.Printf("    %s  %-16s %-12s %d grimoire skills\n",
-				tui.IconOK, label, vs, count)
+			checks = append(checks, doctorCheck{
+				Name:   "agent-" + ag,
+				Status: "ok",
+				Detail: fmt.Sprintf("%s %s — %d grimoire skills", label, vs, count),
+			})
 		}
-		cfgFile := agent.ConfigFile(ag)
 		if agent.IsConfigured(ag) {
-			fmt.Printf("    %s  %-16s %-12s start-best-practice active → %s\n",
-				tui.IconOK, "", "", cfgFile)
+			checks = append(checks, doctorCheck{
+				Name:   "agent-" + ag + "-configured",
+				Status: "ok",
+				Detail: fmt.Sprintf("%s start-best-practice active", label),
+			})
 		} else {
-			fmt.Printf("    %s  %-16s %-12s start-best-practice not configured → run: grimoire install --target %s\n",
-				tui.IconWarn, "", "", ag)
-			warnings++
+			checks = append(checks, doctorCheck{
+				Name:   "agent-" + ag + "-configured",
+				Status: "warn",
+				Detail: fmt.Sprintf("%s start-best-practice not configured — run: grimoire install --target %s", label, ag),
+			})
+			ok = false
 		}
 	}
 
@@ -102,18 +152,23 @@ func runDoctor(cmd *cobra.Command, args []string) error {
 			ver := agent.Version(item.cmd)
 			vs := "detected"
 			if ver != "" {
-				vs = "v" + ver
+				vs = ver
 			}
-			fmt.Printf("    %s  %-16s %s\n", tui.IconOK, item.label, vs)
+			checks = append(checks, doctorCheck{
+				Name:   "agent-" + item.cmd,
+				Status: "ok",
+				Detail: fmt.Sprintf("%s %s", item.label, vs),
+			})
 		} else {
-			fmt.Printf("    %s  %-16s not found\n", tui.IconSkip, item.label)
+			checks = append(checks, doctorCheck{
+				Name:   "agent-" + item.cmd,
+				Status: "skip",
+				Detail: item.label + " not found",
+			})
 		}
 	}
 
 	// ── Config files ─────────────────────────────────────────────────────────────
-	fmt.Println()
-	fmt.Println("  Config")
-
 	cwd, _ := os.Getwd()
 	home2, _ := os.UserHomeDir()
 	cfgPaths := []struct{ path, label string }{
@@ -121,30 +176,78 @@ func runDoctor(cmd *cobra.Command, args []string) error {
 		{filepath.Join(cwd, ".grimoire", "settings.toml"), "project shared (.grimoire/settings.toml)"},
 		{filepath.Join(home2, ".config", "grimoire", "settings.toml"), "global (~/.config/grimoire/settings.toml)"},
 	}
-	hasAnyCfg := false
 	for _, c := range cfgPaths {
 		if _, err := os.Stat(c.path); err != nil {
-			fmt.Printf("    %s  %s — not found\n", tui.IconSkip, c.label)
-			continue
+			checks = append(checks, doctorCheck{Name: "config-" + filepath.Base(c.path), Status: "skip", Detail: c.label + " not found"})
+		} else {
+			checks = append(checks, doctorCheck{Name: "config-" + filepath.Base(c.path), Status: "ok", Detail: c.label + " present"})
 		}
-		hasAnyCfg = true
-		fmt.Printf("    %s  %s — present\n", tui.IconOK, c.label)
-	}
-	if !hasAnyCfg {
-		fmt.Printf("    %s  no settings files found (grimoire uses defaults)\n", tui.IconSkip)
 	}
 
-	// Warn if machine-local [core] keys appear in the committed shared settings file.
 	sharedPath := filepath.Join(cwd, ".grimoire", "settings.toml")
 	if shared, err := settings.ParseFile(sharedPath); err == nil {
 		if shared.Core.Home != "" || shared.Core.Source != "" {
-			fmt.Printf("    %s  [core] home/source found in %s\n", tui.IconWarn, ".grimoire/settings.toml")
-			fmt.Printf("         these are machine-local paths — move them to .grimoire/settings.local.toml\n")
+			checks = append(checks, doctorCheck{
+				Name:   "config-core-in-shared",
+				Status: "warn",
+				Detail: "[core] home/source in .grimoire/settings.toml — move to .grimoire/settings.local.toml",
+			})
+			ok = false
+		}
+	}
+
+	return doctorOutput{OK: ok, Checks: checks}
+}
+
+func printDoctorHuman(out doctorOutput) {
+	fmt.Println("\nGrimoire health check")
+	warnings, errs := 0, 0
+
+	fmt.Println()
+	fmt.Println("  Source")
+	for _, c := range out.Checks {
+		if c.Name != "grimoire-source" {
+			continue
+		}
+		icon, _ := doctorIcon(c.Status)
+		fmt.Printf("    %s  %s\n", icon, c.Detail)
+		if c.Status == "error" {
+			errs++
+		} else if c.Status == "warn" {
 			warnings++
 		}
 	}
 
-	// ── Summary ──────────────────────────────────────────────────────────────────
+	fmt.Println()
+	fmt.Println("  AI agents")
+	for _, c := range out.Checks {
+		if len(c.Name) < 6 || c.Name[:6] != "agent-" {
+			continue
+		}
+		icon, _ := doctorIcon(c.Status)
+		fmt.Printf("    %s  %s\n", icon, c.Detail)
+		if c.Status == "error" {
+			errs++
+		} else if c.Status == "warn" {
+			warnings++
+		}
+	}
+
+	fmt.Println()
+	fmt.Println("  Config")
+	for _, c := range out.Checks {
+		if len(c.Name) < 7 || c.Name[:7] != "config-" {
+			continue
+		}
+		icon, _ := doctorIcon(c.Status)
+		fmt.Printf("    %s  %s\n", icon, c.Detail)
+		if c.Status == "error" {
+			errs++
+		} else if c.Status == "warn" {
+			warnings++
+		}
+	}
+
 	fmt.Println()
 	if errs == 0 && warnings == 0 {
 		fmt.Printf("  %s  All checks passed.\n\n", tui.IconOK)
@@ -161,5 +264,17 @@ func runDoctor(cmd *cobra.Command, args []string) error {
 		}
 		fmt.Printf("  Summary: %s.\n\n", parts)
 	}
-	return nil
+}
+
+func doctorIcon(status string) (string, string) {
+	switch status {
+	case "ok":
+		return tui.IconOK, "ok"
+	case "warn":
+		return tui.IconWarn, "warn"
+	case "error":
+		return tui.IconFail, "error"
+	default:
+		return tui.IconSkip, "skip"
+	}
 }

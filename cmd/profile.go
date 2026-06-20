@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -24,6 +25,8 @@ var profileCmd = &cobra.Command{
   grimoire profile init <name>   Create a profile file in .grimoire/profiles/`,
 }
 
+var flagProfileListJSON bool
+
 var profileListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List available profiles",
@@ -45,9 +48,16 @@ var profileInitCmd = &cobra.Command{
 }
 
 func init() {
+	profileListCmd.Flags().BoolVar(&flagProfileListJSON, "json", false, "output as JSON")
 	profileCmd.AddCommand(profileListCmd)
 	profileCmd.AddCommand(profileShowCmd)
 	profileCmd.AddCommand(profileInitCmd)
+}
+
+type profileListEntry struct {
+	Name   string `json:"name"`
+	Source string `json:"source"` // "project" | "user" | "active"
+	File   string `json:"file,omitempty"`
 }
 
 func runProfileList(_ *cobra.Command, _ []string) error {
@@ -62,36 +72,57 @@ func runProfileList(_ *cobra.Command, _ []string) error {
 		{"user", filepath.Join(grimoireHome, "profiles")},
 	}
 
-	printed := false
+	var entries []profileListEntry
 	for _, sd := range searchDirs {
-		entries, err := os.ReadDir(sd.dir)
+		dirEntries, err := os.ReadDir(sd.dir)
 		if err != nil {
 			continue
 		}
-		for _, e := range entries {
+		for _, e := range dirEntries {
 			if e.IsDir() || !strings.HasSuffix(e.Name(), ".toml") {
 				continue
 			}
 			name := strings.TrimSuffix(e.Name(), ".toml")
-			fmt.Printf("  %s %s  %s\n", tui.IconOK, name, tui.StyleDim.Render("("+sd.label+")"))
-			printed = true
+			entries = append(entries, profileListEntry{
+				Name:   name,
+				Source: sd.label,
+				File:   filepath.Join(sd.dir, e.Name()),
+			})
 		}
 	}
 
-	// also show profiles active in settings but not yet listed
+	// profiles active in settings
 	r, err := settings.Load(cwd)
+	if err == nil {
+		for _, name := range r.Core.Profiles {
+			entries = append(entries, profileListEntry{Name: name, Source: "active"})
+		}
+	}
+
+	if flagProfileListJSON {
+		enc := json.NewEncoder(os.Stdout)
+		enc.SetIndent("", "  ")
+		return enc.Encode(entries)
+	}
+
+	if len(entries) == 0 {
+		fmt.Printf("  %s no profiles found\n", tui.IconWarn)
+		fmt.Printf("  run: grimoire profile init <name>\n")
+		return nil
+	}
+
+	for _, e := range entries {
+		if e.Source == "active" {
+			continue
+		}
+		fmt.Printf("  %s %s  %s\n", tui.IconOK, e.Name, tui.StyleDim.Render("("+e.Source+")"))
+	}
 	if err == nil && len(r.Core.Profiles) > 0 {
 		fmt.Println()
 		fmt.Printf("  %s\n", tui.StyleDim.Render("active in [standards] profiles:"))
 		for _, name := range r.Core.Profiles {
 			fmt.Printf("    %s\n", name)
 		}
-		printed = true
-	}
-
-	if !printed {
-		fmt.Printf("  %s no profiles found\n", tui.IconWarn)
-		fmt.Printf("  run: grimoire profile init <name>\n")
 	}
 	return nil
 }
