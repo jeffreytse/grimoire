@@ -7,6 +7,7 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/jeffreytse/grimoire/internal/compliance"
 	"github.com/jeffreytse/grimoire/internal/detect"
 )
 
@@ -39,8 +40,58 @@ func runInit(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	fmt.Println("✓ Grimoire initialized. Run /suggest-best-practice to get started.")
+	fmt.Println("✓ Grimoire initialized.")
+	printInitReport(cwd)
 	return nil
+}
+
+func printInitReport(projectDir string) {
+	reportPath := filepath.Join(projectDir, compliance.DefaultReportPath)
+	report, err := compliance.Load(reportPath)
+	if err != nil {
+		// No report yet — show next-step guidance
+		fmt.Println()
+		fmt.Println("  Next steps:")
+		fmt.Printf("    1. Ask your AI to run %s\n", colorize(ansiGreen, "/check-best-practice-compliance"))
+		fmt.Printf("    2. Run %s to see your compliance score\n", colorize(ansiGreen, "grimoire check"))
+		return
+	}
+
+	pass := report.Threshold.Status == "pass"
+	statusLabel := colorize(ansiGreen, "PASS")
+	if !pass {
+		statusLabel = colorize(ansiRed, "FAIL")
+	}
+
+	fmt.Println()
+	fmt.Printf("  Existing report: %.1f%% — %s\n", report.Coverage.OverallPct, statusLabel)
+
+	errors := filterBySeverity(report.Diagnostics, 1)
+	warnings := filterBySeverity(report.Diagnostics, 2)
+	shown := 0
+	for i := range errors {
+		if shown >= 3 {
+			break
+		}
+		loc := formatLoc(&errors[i])
+		fmt.Printf("    %s %s%s\n", colorize(ansiRed, "✗"), errors[i].Message, loc)
+		shown++
+	}
+	for i := range warnings {
+		if shown >= 3 {
+			break
+		}
+		loc := formatLoc(&warnings[i])
+		fmt.Printf("    %s %s%s\n", colorize(ansiYellow, "⚠"), warnings[i].Message, loc)
+		shown++
+	}
+	total := len(errors) + len(warnings)
+	if total > 3 {
+		fmt.Printf("    %s\n", colorize(ansiGray, fmt.Sprintf("… and %d more — run `grimoire check` for full report", total-3)))
+	}
+
+	fmt.Println()
+	fmt.Printf("  Fix first finding: ask your AI to run %s\n", colorize(ansiGreen, "/fix-best-practice-finding"))
 }
 
 func writeSettings(dir, profile string) error {
