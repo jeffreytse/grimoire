@@ -164,6 +164,98 @@ func registerMCPTools(s *server.MCPServer) {
 		),
 		toolGrimoireConfigUnset,
 	)
+
+	s.AddTool(
+		mcp.NewTool("grimoire_install",
+			mcp.WithDescription("Install grimoire skills to AI agent directories. Omit all params to install everything."),
+			mcp.WithString("domain", mcp.Description("Domain to install (e.g. engineering)")),
+			mcp.WithString("subdomain", mcp.Description("Subdomain filter (requires domain)")),
+			mcp.WithString("skill", mcp.Description("Single skill ref: domain/subdomain/name")),
+			mcp.WithString("target", mcp.Description("Agent: claude, codex, gemini, all, auto (default: auto)")),
+		),
+		toolGrimoireInstall,
+	)
+
+	s.AddTool(
+		mcp.NewTool("grimoire_uninstall",
+			mcp.WithDescription("Remove grimoire skills from AI agent directories."),
+			mcp.WithString("domain", mcp.Description("Domain to uninstall")),
+			mcp.WithString("subdomain", mcp.Description("Subdomain filter (requires domain)")),
+			mcp.WithString("skill", mcp.Description("Single skill ref: domain/subdomain/name")),
+			mcp.WithString("target", mcp.Description("Agent: claude, codex, gemini, all, auto (default: auto)")),
+		),
+		toolGrimoireUninstall,
+	)
+
+	s.AddTool(
+		mcp.NewTool("grimoire_update",
+			mcp.WithDescription("Pull the latest grimoire skills and relink. Clones if not yet installed."),
+			mcp.WithString("stable", mcp.Description("Set 'true' to check out latest tagged release instead of HEAD")),
+		),
+		toolGrimoireUpdate,
+	)
+
+	s.AddTool(
+		mcp.NewTool("grimoire_clean",
+			mcp.WithDescription("Remove broken skill symlinks from agent directories."),
+			mcp.WithString("target", mcp.Description("Agent to clean: claude, codex, gemini, all, auto (default: auto)")),
+		),
+		toolGrimoireClean,
+	)
+
+	s.AddTool(
+		mcp.NewTool("grimoire_version",
+			mcp.WithDescription("Show grimoire CLI and skills version information."),
+		),
+		toolGrimoireVersion,
+	)
+
+	s.AddTool(
+		mcp.NewTool("grimoire_init",
+			mcp.WithDescription("Initialize .grimoire/ in the project directory. Creates settings.toml with auto-detected profile."),
+		),
+		toolGrimoireInit,
+	)
+
+	s.AddTool(
+		mcp.NewTool("grimoire_self_update",
+			mcp.WithDescription("Check for or apply updates to the grimoire CLI binary. Default is check-only."),
+			mcp.WithString("yes", mcp.Description("Set 'true' to apply the update (default: check only, returns available version)")),
+		),
+		toolGrimoireSelfUpdate,
+	)
+
+	s.AddTool(
+		mcp.NewTool("grimoire_registry_list",
+			mcp.WithDescription("List all configured grimoire skill registries with skill counts and clone status."),
+		),
+		toolGrimoireRegistryList,
+	)
+
+	s.AddTool(
+		mcp.NewTool("grimoire_registry_add",
+			mcp.WithDescription("Add a new skill registry and clone it locally."),
+			mcp.WithString("name", mcp.Required(), mcp.Description("Registry name")),
+			mcp.WithString("url", mcp.Required(), mcp.Description("Git URL of the registry")),
+		),
+		toolGrimoireRegistryAdd,
+	)
+
+	s.AddTool(
+		mcp.NewTool("grimoire_registry_remove",
+			mcp.WithDescription("Remove a registry from config and delete its local clone."),
+			mcp.WithString("name", mcp.Required(), mcp.Description("Registry name to remove")),
+		),
+		toolGrimoireRegistryRemove,
+	)
+
+	s.AddTool(
+		mcp.NewTool("grimoire_registry_update",
+			mcp.WithDescription("Pull the latest skills from all registries or a specific one."),
+			mcp.WithString("name", mcp.Description("Registry name (omit to update all)")),
+		),
+		toolGrimoireRegistryUpdate,
+	)
 }
 
 func toolGrimoireContext(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
