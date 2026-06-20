@@ -18,9 +18,10 @@ type CoreSection struct {
 // ComplianceThresholdError uses -1 as "unset" sentinel because 0 is meaningful (allow no errors).
 type DomainSection struct {
 	Practices                []string
-	Fallback                 string  // "ask" | "skip" | ""
-	ComplianceThreshold      float64 // 0 = unset
-	ComplianceThresholdError int     // -1 = unset; 0 = allow none; N = allow up to N
+	Disabled                 []string // skill names to suppress from spec regardless of profiles
+	Fallback                 string   // "ask" | "skip" | ""
+	ComplianceThreshold      float64  // 0 = unset
+	ComplianceThresholdError int      // -1 = unset; 0 = allow none; N = allow up to N
 }
 
 // RegistryConfig holds the configuration for one named skill registry.
@@ -97,6 +98,10 @@ func Merge(layers []FileSettings, paths []string) Resolved {
 				merged.Practices = ds.Practices
 				r.Sources[key+".practices"] = src
 			}
+			if len(merged.Disabled) == 0 && len(ds.Disabled) > 0 {
+				merged.Disabled = ds.Disabled
+				r.Sources[key+".disabled"] = src
+			}
 			if merged.Fallback == "" && ds.Fallback != "" {
 				merged.Fallback = ds.Fallback
 				r.Sources[key+".fallback"] = src
@@ -146,6 +151,11 @@ func (r Resolved) ResolveSection(scope string) DomainSection {
 		result.Practices = sub.Practices
 	} else {
 		result.Practices = domain.Practices
+	}
+	if len(sub.Disabled) > 0 {
+		result.Disabled = sub.Disabled
+	} else {
+		result.Disabled = domain.Disabled
 	}
 	if sub.Fallback != "" {
 		result.Fallback = sub.Fallback

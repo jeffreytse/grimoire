@@ -177,6 +177,14 @@ func parseDomainInto(prefix string, m map[string]any, fs *FileSettings) {
 					}
 				}
 			}
+		case "disabled":
+			if arr, ok := v.([]any); ok {
+				for _, p := range arr {
+					if s, ok := p.(string); ok {
+						ds.Disabled = append(ds.Disabled, s)
+					}
+				}
+			}
 		case "fallback":
 			ds.Fallback, _ = v.(string)
 		case "compliance-threshold":
@@ -271,6 +279,9 @@ func domainToMap(ds DomainSection) map[string]any {
 	m := map[string]any{}
 	if len(ds.Practices) > 0 {
 		m["practices"] = ds.Practices
+	}
+	if len(ds.Disabled) > 0 {
+		m["disabled"] = ds.Disabled
 	}
 	if ds.Fallback != "" {
 		m["fallback"] = ds.Fallback

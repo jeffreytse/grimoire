@@ -263,6 +263,47 @@ compliance-threshold-error = 0
 	}
 }
 
+func TestParseFile_DisabledField(t *testing.T) {
+	dir := t.TempDir()
+	path := writeSettingsFile(t, dir, "settings.toml", `
+[standards.engineering]
+practices = ["apply-solid-principles"]
+disabled = ["apply-law-of-demeter", "apply-kiss-principle"]
+`)
+	fs, err := ParseFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	ds, ok := fs.Sections["engineering"]
+	if !ok {
+		t.Fatal("expected engineering section")
+	}
+	if len(ds.Disabled) != 2 || ds.Disabled[0] != "apply-law-of-demeter" {
+		t.Errorf("Disabled = %v", ds.Disabled)
+	}
+}
+
+func TestMerge_DisabledFirstWins(t *testing.T) {
+	personal := FileSettings{
+		Sections: map[string]DomainSection{
+			"engineering": {Disabled: []string{"apply-law-of-demeter"}, ComplianceThresholdError: -1},
+		},
+	}
+	shared := FileSettings{
+		Sections: map[string]DomainSection{
+			"engineering": {Disabled: []string{"apply-solid-principles"}, ComplianceThresholdError: -1},
+		},
+	}
+	r := Merge([]FileSettings{personal, shared}, []string{"local.toml", "shared.toml"})
+	ds := r.ResolveSection("engineering")
+	if len(ds.Disabled) != 1 || ds.Disabled[0] != "apply-law-of-demeter" {
+		t.Errorf("project-personal disabled should win: got %v", ds.Disabled)
+	}
+	if src := r.Sources["engineering.disabled"]; src != "local.toml" {
+		t.Errorf("source = %q, want local.toml", src)
+	}
+}
+
 func TestLoad_EnvVarOverridesFileLayer(t *testing.T) {
 	dir := t.TempDir()
 	writeSettingsFile(t, dir, ".grimoire/settings.toml", `

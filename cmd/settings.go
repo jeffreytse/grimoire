@@ -150,6 +150,10 @@ func domainSectionLines(key string, ds settings.DomainSection, sources map[strin
 		lines = append(lines, fmt.Sprintf("    practices: %s%s",
 			strings.Join(ds.Practices, ", "), sourceTag(sources[key+".practices"])))
 	}
+	if len(ds.Disabled) > 0 {
+		lines = append(lines, fmt.Sprintf("    disabled: %s%s",
+			strings.Join(ds.Disabled, ", "), sourceTag(sources[key+".disabled"])))
+	}
 	if ds.Fallback != "" {
 		lines = append(lines, fmt.Sprintf("    fallback: %s%s",
 			ds.Fallback, sourceTag(sources[key+".fallback"])))
