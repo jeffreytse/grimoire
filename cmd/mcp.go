@@ -197,7 +197,7 @@ func registerMCPTools(s *server.MCPServer) {
 
 	s.AddTool(
 		mcp.NewTool("grimoire_clean",
-			mcp.WithDescription("Remove broken skill symlinks from agent directories."),
+			mcp.WithDescription("Remove stale grimoire-managed skills from agent directories (broken symlinks and stale copy-mode installs)."),
 			mcp.WithString("target", mcp.Description("Agent to clean: claude, codex, gemini, all, auto (default: auto)")),
 		),
 		toolGrimoireClean,

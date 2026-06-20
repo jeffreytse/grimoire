@@ -14,7 +14,7 @@ var flagCleanTarget string
 
 var cleanCmd = &cobra.Command{
 	Use:   "clean",
-	Short: "Remove broken skill symlinks from agent directories",
+	Short: "Remove stale grimoire-managed skills from agent directories",
 	RunE:  runClean,
 }
 

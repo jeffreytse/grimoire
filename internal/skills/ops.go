@@ -9,6 +9,10 @@ import (
 	"strings"
 )
 
+// managedMarker is written inside every copy-mode skill install so uninstall
+// can safely distinguish grimoire-managed copies from user-created directories.
+const managedMarker = ".grimoire-managed"
+
 // InstallSkill installs a skill directory into destDir.
 // If symlink is true, creates a symlink; otherwise copies the directory.
 func InstallSkill(src, destDir string, symlink bool) (installed bool, err error) {
@@ -44,21 +48,50 @@ func InstallSkill(src, destDir string, symlink bool) (installed bool, err error)
 		return true, nil
 	}
 
-	// copy mode
+	// copy mode — guard against overwriting an unmanaged directory
+	if info, lErr := os.Lstat(dest); lErr == nil {
+		isSymlink := info.Mode()&os.ModeSymlink != 0
+		if !isSymlink {
+			if _, mErr := os.Stat(filepath.Join(dest, managedMarker)); mErr != nil {
+				fmt.Fprintf(os.Stderr, "  warn: %s already exists and is not managed by grimoire, skipping\n", name)
+				return false, nil
+			}
+		}
+	}
+
 	if err := os.MkdirAll(destDir, 0o755); err != nil {
 		return false, fmt.Errorf("creating %s: %w", destDir, err)
 	}
 	if err := copyDir(src, dest); err != nil {
 		return false, fmt.Errorf("copying %s: %w", name, err)
 	}
+	// write marker so uninstall can confirm this copy is grimoire-managed
+	if err := os.WriteFile(filepath.Join(dest, managedMarker), []byte(src+"\n"), 0o644); err != nil {
+		return false, fmt.Errorf("writing marker in %s: %w", name, err)
+	}
 	return true, nil
 }
 
 // UninstallSkill removes a skill by name from destDir.
+// Symlinks are always safe to remove. Real directories require the grimoire
+// managed marker — without it the directory is not touched.
 func UninstallSkill(name, destDir string) (removed bool, err error) {
 	dest := filepath.Join(destDir, name)
-	if _, err := os.Lstat(dest); err != nil {
+	info, err := os.Lstat(dest)
+	if err != nil {
 		return false, nil // not installed
+	}
+	if info.Mode()&os.ModeSymlink != 0 {
+		// symlink: remove the link only, never the target
+		if err := os.Remove(dest); err != nil {
+			return false, fmt.Errorf("removing %s: %w", name, err)
+		}
+		return true, nil
+	}
+	// real directory: require grimoire managed marker before deleting
+	if _, mErr := os.Stat(filepath.Join(dest, managedMarker)); mErr != nil {
+		fmt.Fprintf(os.Stderr, "  warn: %s has no grimoire marker — skipping (not managed by grimoire)\n", name)
+		return false, nil
 	}
 	if err := os.RemoveAll(dest); err != nil {
 		return false, fmt.Errorf("removing %s: %w", name, err)
@@ -66,7 +99,12 @@ func UninstallSkill(name, destDir string) (removed bool, err error) {
 	return true, nil
 }
 
-// CleanBrokenSymlinks removes broken symlinks from dir. Returns count removed.
+// CleanBrokenSymlinks removes stale grimoire-managed entries from dir:
+//   - broken symlinks (Lstat ok, Stat fails)
+//   - copy-mode directories whose source path (recorded in the managed marker)
+//     no longer exists on disk
+//
+// Returns count removed.
 func CleanBrokenSymlinks(dir string) (int, error) {
 	entries, err := os.ReadDir(dir)
 	if err != nil {
@@ -81,11 +119,29 @@ func CleanBrokenSymlinks(dir string) (int, error) {
 			continue
 		}
 		full := filepath.Join(dir, e.Name())
-		if _, lErr := os.Lstat(full); lErr != nil {
+		info, lErr := os.Lstat(full)
+		if lErr != nil {
 			continue
 		}
-		if _, sErr := os.Stat(full); sErr != nil {
-			if err := os.Remove(full); err == nil {
+		if info.Mode()&os.ModeSymlink != 0 {
+			// broken symlink: Lstat ok but Stat fails
+			if _, sErr := os.Stat(full); sErr != nil {
+				if os.Remove(full) == nil {
+					count++
+				}
+			}
+			continue
+		}
+		// real directory: stale if it has a grimoire marker whose source is gone
+		markerPath := filepath.Join(full, managedMarker)
+		src, mErr := os.ReadFile(markerPath)
+		if mErr != nil {
+			continue // no marker — not managed by grimoire, leave it alone
+		}
+		sourcePath := strings.TrimSpace(string(src))
+		if _, sErr := os.Stat(sourcePath); sErr != nil {
+			// source gone — remove the stale copy
+			if os.RemoveAll(full) == nil {
 				count++
 			}
 		}
