@@ -1,8 +1,10 @@
 package settings
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 )
 
@@ -52,6 +54,55 @@ func GlobalPath() string {
 	}
 	home, _ := os.UserHomeDir()
 	return filepath.Join(home, ".config", "grimoire", "settings.toml")
+}
+
+// SystemPath returns the system-wide settings file path.
+// Linux/macOS: /etc/grimoire/settings.toml
+// Windows: %PROGRAMDATA%\grimoire\settings.toml
+func SystemPath() string {
+	if runtime.GOOS == "windows" {
+		pd := os.Getenv("PROGRAMDATA")
+		if pd == "" {
+			pd = `C:\ProgramData`
+		}
+		return filepath.Join(pd, "grimoire", "settings.toml")
+	}
+	return "/etc/grimoire/settings.toml"
+}
+
+var validStandardsFields = map[string]bool{
+	"profiles":                   true,
+	"practices":                  true,
+	"disabled":                   true,
+	"fallback":                   true,
+	"compliance-threshold":       true,
+	"compliance-threshold-error": true,
+}
+
+// ParseStandardsKey splits a dotted standards key into domain and field.
+// "standards.profiles"                    → domain="",                  field="profiles"
+// "standards.engineering.practices"       → domain="engineering",       field="practices"
+// "standards.engineering.testing.fallback"→ domain="engineering.testing", field="fallback"
+func ParseStandardsKey(dotted string) (domain, field string, err error) {
+	parts := strings.SplitN(dotted, ".", 2)
+	if len(parts) < 2 || parts[0] != "standards" {
+		return "", "", fmt.Errorf("key must start with \"standards.\"")
+	}
+	rest := parts[1]
+	// check if rest is a top-level field (no domain)
+	if validStandardsFields[rest] {
+		return "", rest, nil
+	}
+	// last segment is field, everything before is domain
+	idx := strings.LastIndex(rest, ".")
+	if idx < 0 {
+		return "", "", fmt.Errorf("unknown standards key %q", dotted)
+	}
+	field = rest[idx+1:]
+	if !validStandardsFields[field] {
+		return "", "", fmt.Errorf("unknown standards field %q in key %q", field, dotted)
+	}
+	return rest[:idx], field, nil
 }
 
 // Merge combines layers in priority order — layers[0] wins over layers[1], etc.

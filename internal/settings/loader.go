@@ -29,7 +29,7 @@ func ParseFile(path string) (FileSettings, error) {
 }
 
 // Load reads all three file layers for projectDir in priority order and merges them.
-// Layers: .grimoire/settings.local.toml → .grimoire/settings.toml → ~/.config/grimoire/settings.toml
+// Layers (highest → lowest): .grimoire/settings.toml → ~/.config/grimoire/settings.toml → /etc/grimoire/settings.toml
 func Load(projectDir string) (Resolved, error) {
 	type entry struct {
 		path string
@@ -37,9 +37,9 @@ func Load(projectDir string) (Resolved, error) {
 	}
 
 	layerPaths := []string{
-		filepath.Join(projectDir, ".grimoire", "settings.local.toml"),
 		filepath.Join(projectDir, ".grimoire", "settings.toml"),
 		GlobalPath(),
+		SystemPath(),
 	}
 
 	layers := make([]FileSettings, 0, len(layerPaths))
@@ -78,9 +78,14 @@ func Load(projectDir string) (Resolved, error) {
 }
 
 // LoadGlobal reads only the global settings file (no project layers).
-// Used by grimoire config get/set/unset which operate on the global file only.
 func LoadGlobal() (FileSettings, error) {
 	return ParseFile(GlobalPath())
+}
+
+// LoadFile reads a single settings file by path.
+// Used by grimoire config get/set/unset to target a specific level.
+func LoadFile(path string) (FileSettings, error) {
+	return ParseFile(path)
 }
 
 // SaveGlobal writes fs to the global settings file, creating parent dirs as needed.

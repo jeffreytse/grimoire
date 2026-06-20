@@ -172,9 +172,9 @@ func collectDoctorChecks() doctorOutput {
 	cwd, _ := os.Getwd()
 	home2, _ := os.UserHomeDir()
 	cfgPaths := []struct{ path, label string }{
-		{filepath.Join(cwd, ".grimoire", "settings.local.toml"), "project personal (.grimoire/settings.local.toml)"},
-		{filepath.Join(cwd, ".grimoire", "settings.toml"), "project shared (.grimoire/settings.toml)"},
+		{filepath.Join(cwd, ".grimoire", "settings.toml"), "project (.grimoire/settings.toml)"},
 		{filepath.Join(home2, ".config", "grimoire", "settings.toml"), "global (~/.config/grimoire/settings.toml)"},
+		{settings.SystemPath(), "system (" + settings.SystemPath() + ")"},
 	}
 	for _, c := range cfgPaths {
 		if _, err := os.Stat(c.path); err != nil {
@@ -190,7 +190,7 @@ func collectDoctorChecks() doctorOutput {
 			checks = append(checks, doctorCheck{
 				Name:   "config-core-in-shared",
 				Status: "warn",
-				Detail: "[core] home/source in .grimoire/settings.toml — move to .grimoire/settings.local.toml",
+				Detail: "[core] home/source in .grimoire/settings.toml — move to global: grimoire config set core.home <path> --global",
 			})
 			ok = false
 		}

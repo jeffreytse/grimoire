@@ -25,12 +25,12 @@ var settingsCmd = &cobra.Command{
 	Short: "Show resolved grimoire settings for the current project",
 	Long: `Show the effective settings after merging all layers (highest priority first):
 
-  1. .grimoire/settings.local.toml   (project personal — gitignored)
-  2. .grimoire/settings.toml         (project shared — committed)
-  3. ~/.config/grimoire/settings.toml (global)
+  1. .grimoire/settings.toml          (project — committed, --local)
+  2. ~/.config/grimoire/settings.toml (user global, --global)
+  3. /etc/grimoire/settings.toml      (system-wide, --system)
 
 Each key shows the source file that provided it.
-Use grimoire config get/set/unset to manage [core] keys (home, source).`,
+Use grimoire config get/set/unset to manage all keys.`,
 	RunE: runSettings,
 }
 
@@ -155,7 +155,7 @@ func domainSectionLines(key string, ds settings.DomainSection, sources map[strin
 			ds.Fallback, sourceTag(sources[key+".fallback"])))
 	}
 	if ds.ComplianceThreshold > 0 {
-		lines = append(lines, fmt.Sprintf("    compliance-threshold: %.0f%%%s",
+		lines = append(lines, fmt.Sprintf("    compliance-threshold: %.0f%s",
 			ds.ComplianceThreshold, sourceTag(sources[key+".compliance-threshold"])))
 	}
 	if ds.ComplianceThresholdError >= 0 {

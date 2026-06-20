@@ -124,7 +124,9 @@ func writeSettings(dir, profile string) error {
 }
 
 func writeGitignore(dir string) error {
-	content := "settings.local.toml\n"
 	path := filepath.Join(dir, ".gitignore")
-	return os.WriteFile(path, []byte(content), 0o644)
+	if _, err := os.Stat(path); err == nil {
+		return nil // already exists, leave it
+	}
+	return os.WriteFile(path, []byte(""), 0o644)
 }
