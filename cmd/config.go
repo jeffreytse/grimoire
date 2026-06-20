@@ -176,6 +176,26 @@ func targetFilePath(key string) (string, error) {
 	return settings.GlobalPath(), nil
 }
 
+// levelToFilePath maps an explicit level string to a settings file path.
+// Used by MCP tools where cobra flags are not available.
+func levelToFilePath(key, level string) (string, error) {
+	switch level {
+	case "local":
+		cwd, _ := os.Getwd()
+		return filepath.Join(cwd, ".grimoire", "settings.toml"), nil
+	case "global":
+		return settings.GlobalPath(), nil
+	case "system":
+		return settings.SystemPath(), nil
+	default: // "" — same auto-defaults as targetFilePath
+		if strings.HasPrefix(key, "standards.") {
+			cwd, _ := os.Getwd()
+			return filepath.Join(cwd, ".grimoire", "settings.toml"), nil
+		}
+		return settings.GlobalPath(), nil
+	}
+}
+
 // getKeyResolved returns the resolved value and source for a key.
 func getKeyResolved(r settings.Resolved, key string) (val, src string, err error) {
 	switch key {

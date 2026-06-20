@@ -60,10 +60,7 @@ type profileListEntry struct {
 	File   string `json:"file,omitempty"`
 }
 
-func runProfileList(_ *cobra.Command, _ []string) error {
-	cwd, _ := os.Getwd()
-	grimoireHome := skills.GrimoireHome()
-
+func listProfileEntries(cwd, grimoireHome string) []profileListEntry {
 	searchDirs := []struct {
 		label string
 		dir   string
@@ -71,7 +68,6 @@ func runProfileList(_ *cobra.Command, _ []string) error {
 		{"project", filepath.Join(cwd, ".grimoire", "profiles")},
 		{"user", filepath.Join(grimoireHome, "profiles")},
 	}
-
 	var entries []profileListEntry
 	for _, sd := range searchDirs {
 		dirEntries, err := os.ReadDir(sd.dir)
@@ -90,14 +86,19 @@ func runProfileList(_ *cobra.Command, _ []string) error {
 			})
 		}
 	}
-
-	// profiles active in settings
-	r, settingsErr := settings.Load(cwd)
-	if settingsErr == nil {
+	if r, err := settings.Load(cwd); err == nil {
 		for _, name := range r.Core.Profiles {
 			entries = append(entries, profileListEntry{Name: name, Source: "active"})
 		}
 	}
+	return entries
+}
+
+func runProfileList(_ *cobra.Command, _ []string) error {
+	cwd, _ := os.Getwd()
+	grimoireHome := skills.GrimoireHome()
+	entries := listProfileEntries(cwd, grimoireHome)
+	r, settingsErr := settings.Load(cwd)
 
 	if flagProfileListJSON {
 		enc := json.NewEncoder(os.Stdout)
@@ -217,21 +218,8 @@ func runProfileShow(_ *cobra.Command, args []string) error {
 	return nil
 }
 
-func runProfileInit(_ *cobra.Command, args []string) error {
-	name := args[0]
-	cwd, _ := os.Getwd()
-	dir := filepath.Join(cwd, ".grimoire", "profiles")
-	path := filepath.Join(dir, name+".toml")
-
-	if _, err := os.Stat(path); err == nil {
-		return fmt.Errorf("profile file already exists: %s", path)
-	}
-
-	if err := os.MkdirAll(dir, 0o755); err != nil {
-		return fmt.Errorf("creating profiles dir: %w", err)
-	}
-
-	content := fmt.Sprintf(`name = "%s"
+func buildProfileTemplate(name string) string {
+	return fmt.Sprintf(`name = "%s"
 description = ""
 
 # Inherit all skills from other profiles:
@@ -251,8 +239,23 @@ description = ""
 # [[skills]]
 # name = "apply-kiss-principle"
 `, name)
+}
 
-	if err := os.WriteFile(path, []byte(content), 0o644); err != nil {
+func runProfileInit(_ *cobra.Command, args []string) error {
+	name := args[0]
+	cwd, _ := os.Getwd()
+	dir := filepath.Join(cwd, ".grimoire", "profiles")
+	path := filepath.Join(dir, name+".toml")
+
+	if _, err := os.Stat(path); err == nil {
+		return fmt.Errorf("profile file already exists: %s", path)
+	}
+
+	if err := os.MkdirAll(dir, 0o755); err != nil {
+		return fmt.Errorf("creating profiles dir: %w", err)
+	}
+
+	if err := os.WriteFile(path, []byte(buildProfileTemplate(name)), 0o644); err != nil {
 		return fmt.Errorf("writing profile file: %w", err)
 	}
 

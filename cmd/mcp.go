@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/mark3labs/mcp-go/mcp"
@@ -13,7 +14,9 @@ import (
 
 	"github.com/jeffreytse/grimoire/internal/compliance"
 	"github.com/jeffreytse/grimoire/internal/git"
+	"github.com/jeffreytse/grimoire/internal/profiles"
 	"github.com/jeffreytse/grimoire/internal/rules"
+	"github.com/jeffreytse/grimoire/internal/settings"
 	"github.com/jeffreytse/grimoire/internal/skills"
 )
 
@@ -101,6 +104,62 @@ func registerMCPTools(s *server.MCPServer) {
 		toolGrimoireRunRules,
 	)
 
+	s.AddTool(
+		mcp.NewTool("grimoire_get_settings",
+			mcp.WithDescription("Return resolved grimoire settings for the current project after merging all layers (project > global > system). Equivalent to grimoire settings --json."),
+		),
+		toolGrimoireGetSettings,
+	)
+
+	s.AddTool(
+		mcp.NewTool("grimoire_profile_list",
+			mcp.WithDescription("List all available grimoire profiles (project .grimoire/profiles/ and user directories) plus profiles active in settings."),
+		),
+		toolGrimoireProfileList,
+	)
+
+	s.AddTool(
+		mcp.NewTool("grimoire_profile_show",
+			mcp.WithDescription("Show resolved skills and metadata for a named grimoire profile."),
+			mcp.WithString("name", mcp.Required(), mcp.Description("Profile name (without .toml extension)")),
+		),
+		toolGrimoireProfileShow,
+	)
+
+	s.AddTool(
+		mcp.NewTool("grimoire_profile_init",
+			mcp.WithDescription("Create a new profile file at .grimoire/profiles/<name>.toml with a starter template. Returns the relative path of the created file."),
+			mcp.WithString("name", mcp.Required(), mcp.Description("Profile name (without .toml extension)")),
+		),
+		toolGrimoireProfileInit,
+	)
+
+	s.AddTool(
+		mcp.NewTool("grimoire_config_get",
+			mcp.WithDescription("Get the resolved value and source file for a grimoire config key (e.g. standards.engineering.compliance-threshold)."),
+			mcp.WithString("key", mcp.Required(), mcp.Description("Dotted config key")),
+		),
+		toolGrimoireConfigGet,
+	)
+
+	s.AddTool(
+		mcp.NewTool("grimoire_config_set",
+			mcp.WithDescription("Write a grimoire config key. Level defaults to 'local' for standards.* keys, 'global' for core.* keys."),
+			mcp.WithString("key", mcp.Required(), mcp.Description("Dotted config key")),
+			mcp.WithString("value", mcp.Required(), mcp.Description("New value")),
+			mcp.WithString("level", mcp.Description("Target layer: local | global | system (default: auto)")),
+		),
+		toolGrimoireConfigSet,
+	)
+
+	s.AddTool(
+		mcp.NewTool("grimoire_config_unset",
+			mcp.WithDescription("Clear a grimoire config key from a settings file."),
+			mcp.WithString("key", mcp.Required(), mcp.Description("Dotted config key")),
+			mcp.WithString("level", mcp.Description("Target layer: local | global | system (default: auto)")),
+		),
+		toolGrimoireConfigUnset,
+	)
 }
 
 func toolGrimoireContext(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
@@ -173,6 +232,101 @@ func toolGrimoireRunRules(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallTo
 		ProjectDir:    ".",
 	}
 	return jsonResult(eng.Run())
+}
+
+func toolGrimoireGetSettings(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
+	r, err := settings.Load(".")
+	if err != nil {
+		return mcp.NewToolResultError(err.Error()), nil
+	}
+	return jsonResult(settingsToMap(r))
+}
+
+func toolGrimoireProfileList(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
+	cwd, _ := os.Getwd()
+	return jsonResult(listProfileEntries(cwd, skills.GrimoireHome()))
+}
+
+func toolGrimoireProfileShow(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
+	name := request.GetString("name", "")
+	cwd, _ := os.Getwd()
+	p, err := profiles.ResolveWithOptions(name, cwd, profiles.ResolveOptions{Sources: skills.AllSkillsSources()})
+	if err != nil {
+		return mcp.NewToolResultError(err.Error()), nil
+	}
+	return jsonResult(p)
+}
+
+func toolGrimoireProfileInit(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
+	name := request.GetString("name", "")
+	cwd, _ := os.Getwd()
+	dir := filepath.Join(cwd, ".grimoire", "profiles")
+	path := filepath.Join(dir, name+".toml")
+	if _, err := os.Stat(path); err == nil {
+		return mcp.NewToolResultError("profile already exists: " + path), nil
+	}
+	if err := os.MkdirAll(dir, 0o755); err != nil {
+		return mcp.NewToolResultError(err.Error()), nil
+	}
+	if err := os.WriteFile(path, []byte(buildProfileTemplate(name)), 0o644); err != nil {
+		return mcp.NewToolResultError(err.Error()), nil
+	}
+	rel, _ := filepath.Rel(cwd, path)
+	return jsonResult(map[string]any{"path": rel})
+}
+
+func toolGrimoireConfigGet(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
+	key := request.GetString("key", "")
+	r, err := settings.Load(".")
+	if err != nil {
+		return mcp.NewToolResultError(err.Error()), nil
+	}
+	val, src, err := getKeyResolved(r, key)
+	if err != nil {
+		return mcp.NewToolResultError(err.Error()), nil
+	}
+	return jsonResult(map[string]any{"value": val, "source": src})
+}
+
+func toolGrimoireConfigSet(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
+	key := request.GetString("key", "")
+	value := request.GetString("value", "")
+	level := request.GetString("level", "")
+	path, err := levelToFilePath(key, level)
+	if err != nil {
+		return mcp.NewToolResultError(err.Error()), nil
+	}
+	fs, err := settings.LoadFile(path)
+	if err != nil {
+		return mcp.NewToolResultError(err.Error()), nil
+	}
+	if err := applyKey(&fs, key, value); err != nil {
+		return mcp.NewToolResultError(err.Error()), nil
+	}
+	if err := settings.WriteFile(path, fs); err != nil {
+		return mcp.NewToolResultError(err.Error()), nil
+	}
+	return jsonResult(map[string]any{"key": key, "value": value, "path": path})
+}
+
+func toolGrimoireConfigUnset(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
+	key := request.GetString("key", "")
+	level := request.GetString("level", "")
+	path, err := levelToFilePath(key, level)
+	if err != nil {
+		return mcp.NewToolResultError(err.Error()), nil
+	}
+	fs, err := settings.LoadFile(path)
+	if err != nil {
+		return mcp.NewToolResultError(err.Error()), nil
+	}
+	if err := applyKey(&fs, key, ""); err != nil {
+		return mcp.NewToolResultError(err.Error()), nil
+	}
+	if err := settings.WriteFile(path, fs); err != nil {
+		return mcp.NewToolResultError(err.Error()), nil
+	}
+	return jsonResult(map[string]any{"key": key, "path": path})
 }
 
 func jsonResult(v any) (*mcp.CallToolResult, error) {

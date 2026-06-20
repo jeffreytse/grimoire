@@ -176,16 +176,8 @@ func sourceTag(path string) string {
 	return tui.StyleDim.Render("   (" + path + ")")
 }
 
-func printSettingsJSON(r settings.Resolved) error {
-	type domainOut struct {
-		Practices                []string `json:"practices,omitempty"`
-		Fallback                 string   `json:"fallback,omitempty"`
-		ComplianceThreshold      float64  `json:"compliance-threshold,omitempty"`
-		ComplianceThresholdError *int     `json:"compliance-threshold-error,omitempty"`
-	}
-
+func settingsToMap(r settings.Resolved) map[string]any {
 	out := map[string]any{}
-
 	core := map[string]any{}
 	if r.Core.Home != "" {
 		core["home"] = r.Core.Home
@@ -199,25 +191,36 @@ func printSettingsJSON(r settings.Resolved) error {
 	if len(core) > 0 {
 		out["core"] = core
 	}
-
 	for _, key := range r.SectionKeys() {
-		if flagSettingsDomain != "" && !strings.HasPrefix(key, flagSettingsDomain) {
-			continue
-		}
 		ds := r.ResolveSection(key)
-		d := domainOut{
-			Practices:           ds.Practices,
-			Fallback:            ds.Fallback,
-			ComplianceThreshold: ds.ComplianceThreshold,
+		d := map[string]any{}
+		if len(ds.Practices) > 0 {
+			d["practices"] = ds.Practices
+		}
+		if ds.Fallback != "" {
+			d["fallback"] = ds.Fallback
+		}
+		if ds.ComplianceThreshold > 0 {
+			d["compliance-threshold"] = ds.ComplianceThreshold
 		}
 		if ds.ComplianceThresholdError >= 0 {
-			v := ds.ComplianceThresholdError
-			d.ComplianceThresholdError = &v
+			d["compliance-threshold-error"] = ds.ComplianceThresholdError
 		}
 		out[key] = d
 	}
+	return out
+}
 
+func printSettingsJSON(r settings.Resolved) error {
+	m := settingsToMap(r)
+	if flagSettingsDomain != "" {
+		for k := range m {
+			if k != "core" && !strings.HasPrefix(k, flagSettingsDomain) {
+				delete(m, k)
+			}
+		}
+	}
 	enc := json.NewEncoder(os.Stdout)
 	enc.SetIndent("", "  ")
-	return enc.Encode(out)
+	return enc.Encode(m)
 }
