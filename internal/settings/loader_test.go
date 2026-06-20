@@ -263,6 +263,55 @@ compliance-threshold-error = 0
 	}
 }
 
+func TestLoad_EnvVarOverridesFileLayer(t *testing.T) {
+	dir := t.TempDir()
+	writeSettingsFile(t, dir, ".grimoire/settings.toml", `
+[core]
+home = "/file/home"
+source = "https://file-source.example.com/skills.git"
+`)
+
+	t.Setenv("GRIMOIRE_HOME", "/env/home")
+	t.Setenv("GRIMOIRE_SOURCE", "https://env-source.example.com/skills.git")
+
+	r, err := Load(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if r.Core.Home != "/env/home" {
+		t.Errorf("GRIMOIRE_HOME should override file: Core.Home = %q", r.Core.Home)
+	}
+	if r.Core.Source != "https://env-source.example.com/skills.git" {
+		t.Errorf("GRIMOIRE_SOURCE should override file: Core.Source = %q", r.Core.Source)
+	}
+	if src := r.Sources["core.home"]; src != "$GRIMOIRE_HOME" {
+		t.Errorf("source tag should be $GRIMOIRE_HOME, got %q", src)
+	}
+	if src := r.Sources["core.source"]; src != "$GRIMOIRE_SOURCE" {
+		t.Errorf("source tag should be $GRIMOIRE_SOURCE, got %q", src)
+	}
+}
+
+func TestLoad_EnvVarNotSet_UsesFileValue(t *testing.T) {
+	dir := t.TempDir()
+	writeSettingsFile(t, dir, ".grimoire/settings.toml", `
+[core]
+home = "/file/home"
+`)
+
+	// ensure env vars not set
+	t.Setenv("GRIMOIRE_HOME", "")
+	t.Setenv("GRIMOIRE_SOURCE", "")
+
+	r, err := Load(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if r.Core.Home != "/file/home" {
+		t.Errorf("file value should be used when env unset: Core.Home = %q", r.Core.Home)
+	}
+}
+
 func TestWriteFile_RoundTrip(t *testing.T) {
 	original := FileSettings{
 		Core: CoreSection{

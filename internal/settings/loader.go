@@ -54,7 +54,20 @@ func Load(projectDir string) (Resolved, error) {
 		paths = append(paths, p)
 	}
 
-	return Merge(layers, paths), nil
+	r := Merge(layers, paths)
+
+	// Env var overrides — highest priority, above all file layers.
+	// Useful in CI/CD where writing config files is impractical.
+	if v := os.Getenv("GRIMOIRE_HOME"); v != "" {
+		r.Core.Home = v
+		r.Sources["core.home"] = "$GRIMOIRE_HOME"
+	}
+	if v := os.Getenv("GRIMOIRE_SOURCE"); v != "" {
+		r.Core.Source = v
+		r.Sources["core.source"] = "$GRIMOIRE_SOURCE"
+	}
+
+	return r, nil
 }
 
 // LoadGlobal reads only the global settings file (no project layers).

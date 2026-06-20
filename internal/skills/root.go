@@ -32,6 +32,9 @@ func GrimoireHome() string {
 // source is global-only: a project-level override would affect the shared GrimoireHome()
 // for all projects on this machine, causing cross-project contamination.
 func GrimoireRepoURL() string {
+	if s := os.Getenv("GRIMOIRE_SOURCE"); s != "" && IsGitURL(s) {
+		return s
+	}
 	cfg, _ := settings.LoadGlobal()
 	if cfg.Core.Source != "" && IsGitURL(cfg.Core.Source) {
 		return cfg.Core.Source
