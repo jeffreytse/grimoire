@@ -44,14 +44,21 @@ func Load(projectDir string) (Resolved, error) {
 
 	layers := make([]FileSettings, 0, len(layerPaths))
 	paths := make([]string, 0, len(layerPaths))
+	var layerErrors []error
 
 	for _, p := range layerPaths {
 		fs, err := ParseFile(p)
 		if err != nil {
-			return Resolved{}, err
+			layerErrors = append(layerErrors, err)
+			continue
 		}
 		layers = append(layers, fs)
 		paths = append(paths, p)
+	}
+
+	// Fail only if every layer failed (nothing at all could be loaded).
+	if len(layers) == 0 && len(layerErrors) > 0 {
+		return Resolved{}, layerErrors[0]
 	}
 
 	r := Merge(layers, paths)

@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
+	"sort"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -12,6 +14,7 @@ import (
 	"github.com/jeffreytse/grimoire/internal/agent"
 	"github.com/jeffreytse/grimoire/internal/compliance"
 	"github.com/jeffreytse/grimoire/internal/git"
+	"github.com/jeffreytse/grimoire/internal/profiles"
 	"github.com/jeffreytse/grimoire/internal/rules"
 	"github.com/jeffreytse/grimoire/internal/settings"
 	"github.com/jeffreytse/grimoire/internal/skills"
@@ -55,15 +58,29 @@ type contextRegistryInfo struct {
 	Cloned      bool   `json:"cloned"`
 }
 
+type contextDomainSection struct {
+	Key                      string   `json:"key"`
+	Practices                []string `json:"practices,omitempty"`
+	Disabled                 []string `json:"disabled,omitempty"`
+	Fallback                 string   `json:"fallback,omitempty"`
+	ComplianceThreshold      float64  `json:"compliance_threshold,omitempty"`
+	ComplianceThresholdError int      `json:"compliance_threshold_error,omitempty"`
+}
+
 type contextOutput struct {
-	CLIVersion      string                   `json:"cli_version"`
-	GrimoireVersion string                   `json:"grimoire_version,omitempty"`
-	GrimoireHome    string                   `json:"grimoire_home"`
-	Agents          []contextAgentInfo       `json:"agents"`
-	Settings        map[string]any           `json:"settings,omitempty"`
-	Compliance      *compliance.Report       `json:"compliance,omitempty"`
-	Registries      []contextRegistryInfo    `json:"registries"`
-	RuleFindings    []compliance.Diagnostic  `json:"rule_findings,omitempty"`
+	CLIVersion       string                  `json:"cli_version"`
+	GrimoireVersion  string                  `json:"grimoire_version,omitempty"`
+	GrimoireHome     string                  `json:"grimoire_home"`
+	ProfileDirs      []string                `json:"profile_dirs,omitempty"`
+	ResolvedProfiles map[string][]string     `json:"resolved_profiles,omitempty"`
+	ProfileSources   map[string]string       `json:"profile_sources,omitempty"`
+	DomainSections   []contextDomainSection  `json:"domain_sections,omitempty"`
+	SettingsSources  map[string]string       `json:"settings_sources,omitempty"`
+	Agents           []contextAgentInfo      `json:"agents"`
+	Settings         map[string]any          `json:"settings,omitempty"`
+	Compliance       *compliance.Report      `json:"compliance,omitempty"`
+	Registries       []contextRegistryInfo   `json:"registries"`
+	RuleFindings     []compliance.Diagnostic `json:"rule_findings,omitempty"`
 }
 
 func runContext(cmd *cobra.Command, args []string) error {
@@ -100,14 +117,19 @@ func runContext(cmd *cobra.Command, args []string) error {
 	ruleFindings := eng.Run()
 
 	out := contextOutput{
-		CLIVersion:      strings.TrimPrefix(cliVersion, "v"),
-		GrimoireVersion: grimoireVer,
-		GrimoireHome:    home,
-		Agents:          agentInfos,
-		Settings:        settingsMap,
-		Compliance:      complianceReport,
-		Registries:      registries,
-		RuleFindings:    ruleFindings,
+		CLIVersion:       strings.TrimPrefix(cliVersion, "v"),
+		GrimoireVersion:  grimoireVer,
+		GrimoireHome:     home,
+		ProfileDirs:      buildProfileDirs(home),
+		ResolvedProfiles: buildResolvedProfiles(),
+		ProfileSources:   buildProfileSources(),
+		DomainSections:   buildDomainSections(),
+		SettingsSources:  buildSettingsSources(),
+		Agents:           agentInfos,
+		Settings:         settingsMap,
+		Compliance:       complianceReport,
+		Registries:       registries,
+		RuleFindings:     ruleFindings,
 	}
 
 	if flagContextJSON {
@@ -116,7 +138,11 @@ func runContext(cmd *cobra.Command, args []string) error {
 		return enc.Encode(out)
 	}
 
-	printContextHuman(out)
+	var resolvedSettings *settings.Resolved
+	if rs, err := settings.Load("."); err == nil {
+		resolvedSettings = &rs
+	}
+	printContextHuman(out, resolvedSettings)
 	return nil
 }
 
@@ -146,6 +172,8 @@ func buildSettingsMap() map[string]any {
 		return nil
 	}
 	m := map[string]any{}
+
+	// [core]: home, source only
 	core := map[string]any{}
 	if r.Core.Home != "" {
 		core["home"] = r.Core.Home
@@ -153,11 +181,14 @@ func buildSettingsMap() map[string]any {
 	if r.Core.Source != "" {
 		core["source"] = r.Core.Source
 	}
-	if len(r.Core.Profiles) > 0 {
-		core["profiles"] = r.Core.Profiles
-	}
 	if len(core) > 0 {
 		m["core"] = core
+	}
+
+	// [standards]: profiles + domain sections (mirrors TOML structure)
+	standardsMap := map[string]any{}
+	if len(r.Core.Profiles) > 0 {
+		standardsMap["profiles"] = r.Core.Profiles
 	}
 	for _, key := range r.SectionKeys() {
 		ds := r.ResolveSection(key)
@@ -178,10 +209,104 @@ func buildSettingsMap() map[string]any {
 			entry["compliance-threshold-error"] = ds.ComplianceThresholdError
 		}
 		if len(entry) > 0 {
-			m[key] = entry
+			standardsMap[key] = entry
 		}
 	}
+	if len(standardsMap) > 0 {
+		m["standards"] = standardsMap
+	}
 	return m
+}
+
+func buildResolvedProfiles() map[string][]string {
+	r, err := settings.Load(".")
+	if err != nil || len(r.Core.Profiles) == 0 {
+		return nil
+	}
+	opts := profiles.ResolveOptions{Sources: skills.AllSkillsSources()}
+	out := make(map[string][]string, len(r.Core.Profiles))
+	for _, name := range r.Core.Profiles {
+		p, err := profiles.ResolveWithOptions(name, ".", opts)
+		if err != nil {
+			out[name] = nil
+			continue
+		}
+		names := make([]string, 0, len(p.Skills))
+		for _, sk := range p.Skills {
+			names = append(names, sk.Name)
+		}
+		out[name] = names
+	}
+	return out
+}
+
+func buildSettingsSources() map[string]string {
+	r, err := settings.Load(".")
+	if err != nil || len(r.Sources) == 0 {
+		return nil
+	}
+	home, _ := os.UserHomeDir()
+	out := make(map[string]string, len(r.Sources))
+	for k, v := range r.Sources {
+		if home != "" {
+			v = strings.Replace(v, home, "~", 1)
+		}
+		out[k] = v
+	}
+	return out
+}
+
+func buildProfileSources() map[string]string {
+	r, err := settings.Load(".")
+	if err != nil || len(r.Core.Profiles) == 0 {
+		return nil
+	}
+	cwd, _ := os.Getwd()
+	opts := profiles.ResolveOptions{Sources: skills.AllSkillsSources()}
+	out := make(map[string]string, len(r.Core.Profiles))
+	home, _ := os.UserHomeDir()
+	for _, name := range r.Core.Profiles {
+		p, err := profiles.ResolveWithOptions(name, cwd, opts)
+		if err != nil {
+			continue
+		}
+		src := p.Source
+		if home != "" {
+			src = strings.Replace(src, home, "~", 1)
+		}
+		out[name] = src
+	}
+	return out
+}
+
+func buildDomainSections() []contextDomainSection {
+	r, err := settings.Load(".")
+	if err != nil {
+		return nil
+	}
+	keys := r.SectionKeys()
+	sort.Strings(keys)
+	var out []contextDomainSection
+	for _, key := range keys {
+		ds := r.ResolveSection(key)
+		out = append(out, contextDomainSection{
+			Key:                      key,
+			Practices:                ds.Practices,
+			Disabled:                 ds.Disabled,
+			Fallback:                 ds.Fallback,
+			ComplianceThreshold:      ds.ComplianceThreshold,
+			ComplianceThresholdError: ds.ComplianceThresholdError,
+		})
+	}
+	return out
+}
+
+func buildProfileDirs(home string) []string {
+	cwd, _ := os.Getwd()
+	return []string{
+		filepath.Join(cwd, ".grimoire", "profiles"),
+		filepath.Join(home, "profiles"),
+	}
 }
 
 func buildRegistryInfos() []contextRegistryInfo {
@@ -220,7 +345,7 @@ func buildRegistryInfos() []contextRegistryInfo {
 	return infos
 }
 
-func printContextHuman(out contextOutput) {
+func printContextHuman(out contextOutput, r *settings.Resolved) {
 	fmt.Printf("\nGrimoire context\n")
 	fmt.Printf("  cli:      %s\n", out.CLIVersion)
 	if out.GrimoireVersion != "" {
@@ -264,12 +389,50 @@ func printContextHuman(out contextOutput) {
 		fmt.Printf("    %s  %-12s %d skills  %s\n", icon, reg.Name, reg.SkillsCount, tui.StyleDim.Render(reg.URL))
 	}
 
-	// Settings summary
-	if out.Settings != nil {
-		if core, ok := out.Settings["core"].(map[string]any); ok {
-			if profiles, ok := core["profiles"]; ok {
+	// Standards — with source attribution
+	if r != nil {
+		keys := r.SectionKeys()
+		sort.Strings(keys)
+		hasProfiles := len(r.Core.Profiles) > 0
+		if hasProfiles || len(keys) > 0 {
+			fmt.Println()
+			fmt.Println("  Standards")
+
+			if hasProfiles {
 				fmt.Println()
-				fmt.Printf("  Profiles: %v\n", profiles)
+				fmt.Printf("    %s\n", tui.StyleDim.Render("[standards]"))
+				fmt.Printf("      profiles: %s%s\n",
+					strings.Join(r.Core.Profiles, ", "),
+					sourceTag(r.Sources["standards.profiles"]))
+				cwd, _ := os.Getwd()
+				opts := profiles.ResolveOptions{Sources: skills.AllSkillsSources()}
+				for _, name := range r.Core.Profiles {
+					p, err := profiles.ResolveWithOptions(name, cwd, opts)
+					if err != nil {
+						fmt.Printf("        %s\n", tui.StyleDim.Render(name+": (error resolving)"))
+						continue
+					}
+					fmt.Printf("        %s%s\n", tui.StyleDim.Render(name+":"), sourceTag(p.Source))
+					for _, sk := range p.Skills {
+						fmt.Printf("          %s %s\n", tui.StyleCyan.Render("→"), sk.Name)
+					}
+					if len(p.Skills) == 0 {
+						fmt.Printf("          %s\n", tui.StyleDim.Render("(no installed skills match — AI applies semantically)"))
+					}
+				}
+			}
+
+			for _, key := range keys {
+				ds := r.ResolveSection(key)
+				lines := domainSectionLines(key, ds, r.Sources)
+				if len(lines) == 0 {
+					continue
+				}
+				fmt.Println()
+				fmt.Printf("    %s\n", tui.StyleDim.Render("[standards."+key+"]"))
+				for _, l := range lines {
+					fmt.Println("  " + l)
+				}
 			}
 		}
 	}
@@ -277,13 +440,13 @@ func printContextHuman(out contextOutput) {
 	// Compliance
 	fmt.Println()
 	if out.Compliance != nil {
-		r := out.Compliance
+		cr := out.Compliance
 		statusIcon := tui.IconOK
-		if r.Threshold.Status != "pass" {
+		if cr.Threshold.Status != "pass" {
 			statusIcon = tui.IconFail
 		}
-		fmt.Printf("  Compliance: %.1f%% %s  %s\n", r.Coverage.OverallPct, statusIcon,
-			tui.StyleDim.Render("("+r.Timestamp+")"))
+		fmt.Printf("  Compliance: %.1f%% %s  %s\n", cr.Coverage.OverallPct, statusIcon,
+			tui.StyleDim.Render("("+cr.Timestamp+")"))
 	} else {
 		fmt.Printf("  Compliance: %s\n", tui.StyleDim.Render("no report — run /check-best-practice-compliance"))
 	}

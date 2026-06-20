@@ -16,9 +16,8 @@ import (
 )
 
 var (
-	flagSettingsDomain        string
-	flagSettingsJSON          bool
-	flagSettingsExpandProfiles bool
+	flagSettingsDomain string
+	flagSettingsJSON   bool
 )
 
 var settingsCmd = &cobra.Command{
@@ -38,7 +37,6 @@ Use grimoire config get/set/unset to manage [core] keys (home, source).`,
 func init() {
 	settingsCmd.Flags().StringVar(&flagSettingsDomain, "domain", "", "show only sections matching this domain prefix")
 	settingsCmd.Flags().BoolVar(&flagSettingsJSON, "json", false, "output resolved settings as JSON")
-	settingsCmd.Flags().BoolVar(&flagSettingsExpandProfiles, "expand-profiles", false, "show skills defined in each profile file")
 }
 
 func runSettings(cmd *cobra.Command, args []string) error {
@@ -61,7 +59,7 @@ func printSettingsHuman(r settings.Resolved) {
 	core := r.Core
 	if core.Home != "" || core.Source != "" {
 		fmt.Println()
-		fmt.Printf("  %s\n", tui.StyleDim.Render("[core]"))
+		fmt.Printf("    %s\n", tui.StyleDim.Render("[core]"))
 		if core.Home != "" {
 			fmt.Printf("    home: %s%s\n", core.Home, sourceTag(r.Sources["core.home"]))
 		}
@@ -84,12 +82,10 @@ func printSettingsHuman(r settings.Resolved) {
 
 	if hasProfiles || len(filteredKeys) > 0 {
 		fmt.Println()
-		fmt.Printf("  %s\n", tui.StyleDim.Render("[standards]"))
+		fmt.Printf("    %s\n", tui.StyleDim.Render("[standards]"))
 		if hasProfiles {
 			fmt.Printf("    profiles: %s%s\n", strings.Join(core.Profiles, ", "), sourceTag(r.Sources["standards.profiles"]))
-			if flagSettingsExpandProfiles {
-				printExpandedProfiles(core.Profiles)
-			}
+			printExpandedProfiles(core.Profiles)
 		}
 		printed = true
 	}
@@ -101,7 +97,7 @@ func printSettingsHuman(r settings.Resolved) {
 			continue
 		}
 		fmt.Println()
-		fmt.Printf("  %s\n", tui.StyleDim.Render("[standards."+key+"]"))
+		fmt.Printf("    %s\n", tui.StyleDim.Render("[standards."+key+"]"))
 		for _, l := range lines {
 			fmt.Println(l)
 		}
@@ -129,17 +125,17 @@ func printExpandedProfiles(profileNames []string) {
 			continue
 		}
 		if p.Source == "" {
-			fmt.Printf("    %s\n", tui.StyleDim.Render(p.Name+":"))
-			fmt.Printf("      %s\n", tui.StyleDim.Render("(no profile file found — resolved by LLM tag query at runtime)"))
+			fmt.Printf("      %s\n", tui.StyleDim.Render(p.Name+":"))
+			fmt.Printf("        %s\n", tui.StyleDim.Render("(no installed skills match — AI applies semantically)"))
 			continue
 		}
 		src := sourceTag(p.Source)
-		fmt.Printf("    %s%s\n", tui.StyleDim.Render(p.Name+":"), src)
+		fmt.Printf("      %s%s\n", tui.StyleDim.Render(p.Name+":"), src)
 		for _, sk := range p.Skills {
-			fmt.Printf("      %s %s\n", tui.StyleCyan.Render("→"), sk.Name)
+			fmt.Printf("        %s %s\n", tui.StyleCyan.Render("→"), sk.Name)
 		}
 		if len(p.Skills) == 0 {
-			fmt.Printf("      %s\n", tui.StyleDim.Render("(no skills defined in profile file)"))
+			fmt.Printf("        %s\n", tui.StyleDim.Render("(no installed skills match — AI applies semantically)"))
 		}
 	}
 }

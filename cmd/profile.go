@@ -92,8 +92,8 @@ func runProfileList(_ *cobra.Command, _ []string) error {
 	}
 
 	// profiles active in settings
-	r, err := settings.Load(cwd)
-	if err == nil {
+	r, settingsErr := settings.Load(cwd)
+	if settingsErr == nil {
 		for _, name := range r.Core.Profiles {
 			entries = append(entries, profileListEntry{Name: name, Source: "active"})
 		}
@@ -106,22 +106,57 @@ func runProfileList(_ *cobra.Command, _ []string) error {
 	}
 
 	if len(entries) == 0 {
-		fmt.Printf("  %s no profiles found\n", tui.IconWarn)
-		fmt.Printf("  run: grimoire profile init <name>\n")
+		if settingsErr != nil {
+			fmt.Printf("  %s no profiles found (settings load error: %v)\n", tui.IconWarn, settingsErr)
+			fmt.Printf("  check: %s\n", tui.StyleDim.Render(settings.GlobalPath()))
+		} else {
+			fmt.Printf("  %s no profiles found\n", tui.IconWarn)
+			fmt.Printf("  run: grimoire profile init <name>\n")
+		}
 		return nil
 	}
 
+	opts := profiles.ResolveOptions{Sources: skills.AllSkillsSources()}
 	for _, e := range entries {
 		if e.Source == "active" {
 			continue
 		}
 		fmt.Printf("  %s %s  %s\n", tui.IconOK, e.Name, tui.StyleDim.Render("("+e.Source+")"))
+		p, err := profiles.ResolveWithOptions(e.Name, cwd, opts)
+		if err != nil || (len(p.Skills) == 0 && p.Source == "") {
+			continue
+		}
+		for _, sk := range p.Skills {
+			fmt.Printf("      %s %s\n", tui.StyleCyan.Render("→"), sk.Name)
+		}
+		if len(p.Skills) == 0 {
+			fmt.Printf("      %s\n", tui.StyleDim.Render("(no installed skills match — AI applies semantically)"))
+		}
 	}
-	if err == nil && len(r.Core.Profiles) > 0 {
+	if settingsErr == nil && len(r.Core.Profiles) > 0 {
 		fmt.Println()
 		fmt.Printf("  %s\n", tui.StyleDim.Render("active in [standards] profiles:"))
 		for _, name := range r.Core.Profiles {
-			fmt.Printf("    %s\n", name)
+			p, err := profiles.ResolveWithOptions(name, cwd, opts)
+			if err != nil {
+				fmt.Printf("    %s\n", tui.StyleDim.Render(name+": (error resolving)"))
+				continue
+			}
+			src := p.Source
+			if home, e := os.UserHomeDir(); e == nil && src != "" {
+				src = strings.Replace(src, home, "~", 1)
+			}
+			if src != "" {
+				fmt.Printf("    %s  %s\n", tui.StyleBold.Render(name), tui.StyleDim.Render(src))
+			} else {
+				fmt.Printf("    %s\n", tui.StyleBold.Render(name))
+			}
+			for _, sk := range p.Skills {
+				fmt.Printf("      %s %s\n", tui.StyleCyan.Render("→"), sk.Name)
+			}
+			if len(p.Skills) == 0 {
+				fmt.Printf("      %s\n", tui.StyleDim.Render("(no installed skills match — AI applies semantically)"))
+			}
 		}
 	}
 	return nil

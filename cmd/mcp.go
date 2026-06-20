@@ -88,13 +88,6 @@ func registerMCPTools(s *server.MCPServer) {
 	)
 
 	s.AddTool(
-		mcp.NewTool("grimoire_settings",
-			mcp.WithDescription("Get the resolved grimoire settings for the current project. Shows the effective configuration after merging all layers (env vars > project personal > project shared > global). Use this to understand what standards and profiles are active."),
-		),
-		toolGrimoireSettings,
-	)
-
-	s.AddTool(
 		mcp.NewTool("grimoire_doctor",
 			mcp.WithDescription("Run a health check on the grimoire installation. Returns status of grimoire source, AI agent installations, and config files. Use this to diagnose setup issues."),
 		),
@@ -107,6 +100,7 @@ func registerMCPTools(s *server.MCPServer) {
 		),
 		toolGrimoireRunRules,
 	)
+
 }
 
 func toolGrimoireContext(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) {
@@ -129,14 +123,19 @@ func toolGrimoireContext(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToo
 	}
 
 	out := contextOutput{
-		CLIVersion:      strings.TrimPrefix(cliVersion, "v"),
-		GrimoireVersion: grimoireVer,
-		GrimoireHome:    home,
-		Agents:          buildAgentInfos(),
-		Settings:        buildSettingsMap(),
-		Compliance:      complianceReport,
-		Registries:      buildRegistryInfos(),
-		RuleFindings:    eng.Run(),
+		CLIVersion:       strings.TrimPrefix(cliVersion, "v"),
+		GrimoireVersion:  grimoireVer,
+		GrimoireHome:     home,
+		ProfileDirs:      buildProfileDirs(home),
+		ResolvedProfiles: buildResolvedProfiles(),
+		ProfileSources:   buildProfileSources(),
+		DomainSections:   buildDomainSections(),
+		SettingsSources:  buildSettingsSources(),
+		Agents:           buildAgentInfos(),
+		Settings:         buildSettingsMap(),
+		Compliance:       complianceReport,
+		Registries:       buildRegistryInfos(),
+		RuleFindings:     eng.Run(),
 	}
 	return jsonResult(out)
 }
@@ -162,10 +161,6 @@ func toolGrimoireListSkills(_ context.Context, _ mcp.CallToolRequest) (*mcp.Call
 		return mcp.NewToolResultError(err.Error()), nil
 	}
 	return jsonResult(all)
-}
-
-func toolGrimoireSettings(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-	return jsonResult(buildSettingsMap())
 }
 
 func toolGrimoireDoctor(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) {
