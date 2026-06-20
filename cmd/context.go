@@ -69,6 +69,7 @@ type contextDomainSection struct {
 
 type contextOutput struct {
 	CLIVersion       string                  `json:"cli_version"`
+	ProjectDir       string                  `json:"project_dir"`
 	GrimoireVersion  string                  `json:"grimoire_version,omitempty"`
 	GrimoireHome     string                  `json:"grimoire_home"`
 	ProfileDirs      []string                `json:"profile_dirs,omitempty"`
@@ -102,7 +103,7 @@ func runContext(cmd *cobra.Command, args []string) error {
 
 	// compliance — nil if no report
 	var complianceReport *compliance.Report
-	if r, err := compliance.Load(""); err == nil {
+	if r, err := compliance.Load(filepath.Join(getProjectDir(), compliance.DefaultReportPath)); err == nil {
 		complianceReport = r
 	}
 
@@ -112,12 +113,13 @@ func runContext(cmd *cobra.Command, args []string) error {
 	// rule findings
 	eng := &rules.Engine{
 		SkillsSources: skills.AllSkillsSources(),
-		ProjectDir:    ".",
+		ProjectDir:    getProjectDir(),
 	}
 	ruleFindings := eng.Run()
 
 	out := contextOutput{
 		CLIVersion:       strings.TrimPrefix(cliVersion, "v"),
+		ProjectDir:       getProjectDir(),
 		GrimoireVersion:  grimoireVer,
 		GrimoireHome:     home,
 		ProfileDirs:      buildProfileDirs(home),
@@ -139,7 +141,7 @@ func runContext(cmd *cobra.Command, args []string) error {
 	}
 
 	var resolvedSettings *settings.Resolved
-	if rs, err := settings.Load("."); err == nil {
+	if rs, err := settings.Load(getProjectDir()); err == nil {
 		resolvedSettings = &rs
 	}
 	printContextHuman(&out, resolvedSettings)
@@ -167,7 +169,7 @@ func buildAgentInfos() []contextAgentInfo {
 }
 
 func buildSettingsMap() map[string]any {
-	r, err := settings.Load(".")
+	r, err := settings.Load(getProjectDir())
 	if err != nil {
 		return nil
 	}
@@ -219,14 +221,14 @@ func buildSettingsMap() map[string]any {
 }
 
 func buildResolvedProfiles() map[string][]string {
-	r, err := settings.Load(".")
+	r, err := settings.Load(getProjectDir())
 	if err != nil || len(r.Core.Profiles) == 0 {
 		return nil
 	}
 	opts := profiles.ResolveOptions{Sources: skills.AllSkillsSources()}
 	out := make(map[string][]string, len(r.Core.Profiles))
 	for _, name := range r.Core.Profiles {
-		p, err := profiles.ResolveWithOptions(name, ".", opts)
+		p, err := profiles.ResolveWithOptions(name, getProjectDir(), opts)
 		if err != nil {
 			out[name] = nil
 			continue
@@ -241,7 +243,7 @@ func buildResolvedProfiles() map[string][]string {
 }
 
 func buildSettingsSources() map[string]string {
-	r, err := settings.Load(".")
+	r, err := settings.Load(getProjectDir())
 	if err != nil || len(r.Sources) == 0 {
 		return nil
 	}
@@ -257,11 +259,11 @@ func buildSettingsSources() map[string]string {
 }
 
 func buildProfileSources() map[string]string {
-	r, err := settings.Load(".")
+	r, err := settings.Load(getProjectDir())
 	if err != nil || len(r.Core.Profiles) == 0 {
 		return nil
 	}
-	cwd, _ := os.Getwd()
+	cwd := getProjectDir()
 	opts := profiles.ResolveOptions{Sources: skills.AllSkillsSources()}
 	out := make(map[string]string, len(r.Core.Profiles))
 	home, _ := os.UserHomeDir()
@@ -280,7 +282,7 @@ func buildProfileSources() map[string]string {
 }
 
 func buildDomainSections() []contextDomainSection {
-	r, err := settings.Load(".")
+	r, err := settings.Load(getProjectDir())
 	if err != nil {
 		return nil
 	}
@@ -302,7 +304,7 @@ func buildDomainSections() []contextDomainSection {
 }
 
 func buildProfileDirs(home string) []string {
-	cwd, _ := os.Getwd()
+	cwd := getProjectDir()
 	return []string{
 		filepath.Join(cwd, ".grimoire", "profiles"),
 		filepath.Join(home, "profiles"),
@@ -354,6 +356,7 @@ func printContextHuman(out *contextOutput, r *settings.Resolved) {
 		fmt.Printf("  grimoire: %s\n", tui.StyleDim.Render("not installed"))
 	}
 	fmt.Printf("  home:     %s\n", out.GrimoireHome)
+	fmt.Printf("  project:  %s\n", out.ProjectDir)
 
 	// Agents
 	fmt.Println()
@@ -404,7 +407,7 @@ func printContextHuman(out *contextOutput, r *settings.Resolved) {
 				fmt.Printf("      profiles: %s%s\n",
 					strings.Join(r.Core.Profiles, ", "),
 					sourceTag(r.Sources["standards.profiles"]))
-				cwd, _ := os.Getwd()
+				cwd := getProjectDir()
 				opts := profiles.ResolveOptions{Sources: skills.AllSkillsSources()}
 				for _, name := range r.Core.Profiles {
 					p, err := profiles.ResolveWithOptions(name, cwd, opts)

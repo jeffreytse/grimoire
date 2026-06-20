@@ -40,7 +40,7 @@ func init() {
 }
 
 func runSettings(cmd *cobra.Command, args []string) error {
-	resolved, err := settings.Load(".")
+	resolved, err := settings.Load(getProjectDir())
 	if err != nil {
 		return fmt.Errorf("loading settings: %w", err)
 	}
@@ -113,10 +113,7 @@ func printSettingsHuman(r settings.Resolved) {
 }
 
 func printExpandedProfiles(profileNames []string) {
-	cwd, err := os.Getwd()
-	if err != nil {
-		return
-	}
+	cwd := getProjectDir()
 	opts := profiles.ResolveOptions{Sources: skills.AllSkillsSources()}
 	for _, name := range profileNames {
 		p, err := profiles.ResolveWithOptions(name, cwd, opts)

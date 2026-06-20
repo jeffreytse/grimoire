@@ -169,7 +169,7 @@ func collectDoctorChecks() doctorOutput {
 	}
 
 	// ── Config files ─────────────────────────────────────────────────────────────
-	cwd, _ := os.Getwd()
+	cwd := getProjectDir()
 	home2, _ := os.UserHomeDir()
 	cfgPaths := []struct{ path, label string }{
 		{filepath.Join(cwd, ".grimoire", "settings.toml"), "project (.grimoire/settings.toml)"},
@@ -184,7 +184,7 @@ func collectDoctorChecks() doctorOutput {
 		}
 	}
 
-	sharedPath := filepath.Join(cwd, ".grimoire", "settings.toml")
+	sharedPath := filepath.Join(getProjectDir(), ".grimoire", "settings.toml")
 	if shared, err := settings.ParseFile(sharedPath); err == nil {
 		if shared.Core.Home != "" || shared.Core.Source != "" {
 			checks = append(checks, doctorCheck{

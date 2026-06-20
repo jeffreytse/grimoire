@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -85,7 +84,7 @@ func init() {
 
 func runConfigGet(_ *cobra.Command, args []string) error {
 	key := args[0]
-	r, err := settings.Load(".")
+	r, err := settings.Load(getProjectDir())
 	if err != nil {
 		return fmt.Errorf("loading settings: %w", err)
 	}
@@ -159,8 +158,7 @@ func targetFilePath(key string) (string, error) {
 	}
 
 	if flagConfigLocal {
-		cwd, _ := os.Getwd()
-		return filepath.Join(cwd, ".grimoire", "settings.toml"), nil
+		return filepath.Join(getProjectDir(), ".grimoire", "settings.toml"), nil
 	}
 	if flagConfigGlobal {
 		return settings.GlobalPath(), nil
@@ -170,8 +168,7 @@ func targetFilePath(key string) (string, error) {
 	}
 	// defaults
 	if strings.HasPrefix(key, "standards.") {
-		cwd, _ := os.Getwd()
-		return filepath.Join(cwd, ".grimoire", "settings.toml"), nil
+		return filepath.Join(getProjectDir(), ".grimoire", "settings.toml"), nil
 	}
 	return settings.GlobalPath(), nil
 }
@@ -181,16 +178,14 @@ func targetFilePath(key string) (string, error) {
 func levelToFilePath(key, level string) (string, error) {
 	switch level {
 	case "local":
-		cwd, _ := os.Getwd()
-		return filepath.Join(cwd, ".grimoire", "settings.toml"), nil
+		return filepath.Join(getProjectDir(), ".grimoire", "settings.toml"), nil
 	case "global":
 		return settings.GlobalPath(), nil
 	case "system":
 		return settings.SystemPath(), nil
 	default: // "" — same auto-defaults as targetFilePath
 		if strings.HasPrefix(key, "standards.") {
-			cwd, _ := os.Getwd()
-			return filepath.Join(cwd, ".grimoire", "settings.toml"), nil
+			return filepath.Join(getProjectDir(), ".grimoire", "settings.toml"), nil
 		}
 		return settings.GlobalPath(), nil
 	}

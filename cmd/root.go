@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"os"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 )
@@ -9,6 +10,26 @@ import (
 var cliVersion = "dev"
 
 func SetVersion(v string) { cliVersion = v }
+
+var flagProjectDir string
+
+// getProjectDir returns the project directory to use for all project-scoped
+// operations. Priority: --project-dir flag > GRIMOIRE_PROJECT_DIR env var > cwd.
+func getProjectDir() string {
+	p := flagProjectDir
+	if p == "" {
+		p = os.Getenv("GRIMOIRE_PROJECT_DIR")
+	}
+	if p == "" {
+		cwd, _ := os.Getwd()
+		return cwd
+	}
+	abs, err := filepath.Abs(p)
+	if err != nil {
+		return p
+	}
+	return abs
+}
 
 var flagInteractive bool
 
@@ -46,6 +67,7 @@ func Execute() {
 }
 
 func init() {
+	rootCmd.PersistentFlags().StringVar(&flagProjectDir, "project-dir", "", "project directory (default: current working directory)")
 	rootCmd.Flags().BoolVarP(&flagInteractive, "interactive", "i", false, "open the interactive TUI")
 	rootCmd.AddCommand(initCmd)
 	rootCmd.AddCommand(checkCmd)

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 
@@ -42,7 +43,11 @@ func init() {
 }
 
 func runCheck(cmd *cobra.Command, args []string) error {
-	report, err := compliance.Load(flagReport)
+	reportPath := flagReport
+	if reportPath == "" {
+		reportPath = filepath.Join(getProjectDir(), compliance.DefaultReportPath)
+	}
+	report, err := compliance.Load(reportPath)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(2) //nolint:revive // intentional: compliance failure must return exit code 2
@@ -50,7 +55,7 @@ func runCheck(cmd *cobra.Command, args []string) error {
 
 	eng := &rules.Engine{
 		SkillsSources: skills.AllSkillsSources(),
-		ProjectDir:    ".",
+		ProjectDir:    getProjectDir(),
 	}
 	if found := eng.Run(); len(found) > 0 {
 		report.Diagnostics = append(found, report.Diagnostics...)
@@ -66,7 +71,7 @@ func runCheck(cmd *cobra.Command, args []string) error {
 
 	// Settings-driven thresholds override what the AI wrote in the report,
 	// making CI gating deterministic regardless of LLM output variation.
-	resolved, _ := settings.Load(".")
+	resolved, _ := settings.Load(getProjectDir())
 	section := resolved.ResolveSection(report.Scope)
 
 	failed := false

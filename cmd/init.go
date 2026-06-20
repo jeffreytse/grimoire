@@ -18,10 +18,7 @@ var initCmd = &cobra.Command{
 }
 
 func runInit(cmd *cobra.Command, args []string) error {
-	cwd, err := os.Getwd()
-	if err != nil {
-		return err
-	}
+	cwd := getProjectDir()
 
 	dir := filepath.Join(cwd, ".grimoire")
 	if _, err := os.Stat(dir); err == nil {

@@ -95,7 +95,7 @@ func listProfileEntries(cwd, grimoireHome string) []profileListEntry {
 }
 
 func runProfileList(_ *cobra.Command, _ []string) error {
-	cwd, _ := os.Getwd()
+	cwd := getProjectDir()
 	grimoireHome := skills.GrimoireHome()
 	entries := listProfileEntries(cwd, grimoireHome)
 	r, settingsErr := settings.Load(cwd)
@@ -165,7 +165,7 @@ func runProfileList(_ *cobra.Command, _ []string) error {
 
 func runProfileShow(_ *cobra.Command, args []string) error {
 	name := args[0]
-	cwd, _ := os.Getwd()
+	cwd := getProjectDir()
 
 	p, err := profiles.ResolveWithOptions(name, cwd, profiles.ResolveOptions{
 		Sources: skills.AllSkillsSources(),
@@ -243,7 +243,7 @@ description = ""
 
 func runProfileInit(_ *cobra.Command, args []string) error {
 	name := args[0]
-	cwd, _ := os.Getwd()
+	cwd := getProjectDir()
 	dir := filepath.Join(cwd, ".grimoire", "profiles")
 	path := filepath.Join(dir, name+".toml")
 

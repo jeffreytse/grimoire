@@ -38,7 +38,11 @@ AI assistants that support MCP (Claude Code, Cursor, Windsurf, Cline, etc.)
 can connect to grimoire tools natively once configured.
 
 To configure Claude Code, add to ~/.claude/mcp.json:
-  grimoire mcp config --target claude`,
+  grimoire mcp config --target claude
+
+To pin a specific project directory (recommended for MCP):
+  grimoire --project-dir /path/to/project mcp serve
+  GRIMOIRE_PROJECT_DIR=/path/to/project grimoire mcp serve`,
 	RunE: runMCPServe,
 }
 
@@ -173,11 +177,11 @@ func toolGrimoireContext(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToo
 
 	eng := &rules.Engine{
 		SkillsSources: skills.AllSkillsSources(),
-		ProjectDir:    ".",
+		ProjectDir:    getProjectDir(),
 	}
 
 	var complianceReport *compliance.Report
-	if r, err := compliance.Load(""); err == nil {
+	if r, err := compliance.Load(filepath.Join(getProjectDir(), compliance.DefaultReportPath)); err == nil {
 		complianceReport = r
 	}
 
@@ -200,13 +204,13 @@ func toolGrimoireContext(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToo
 }
 
 func toolGrimoireCheck(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
-	report, err := compliance.Load("")
+	report, err := compliance.Load(filepath.Join(getProjectDir(), compliance.DefaultReportPath))
 	if err != nil {
 		return mcp.NewToolResultError(err.Error()), nil
 	}
 	eng := &rules.Engine{
 		SkillsSources: skills.AllSkillsSources(),
-		ProjectDir:    ".",
+		ProjectDir:    getProjectDir(),
 	}
 	if found := eng.Run(); len(found) > 0 {
 		report.Diagnostics = append(found, report.Diagnostics...)
@@ -229,13 +233,13 @@ func toolGrimoireDoctor(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallTool
 func toolGrimoireRunRules(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
 	eng := &rules.Engine{
 		SkillsSources: skills.AllSkillsSources(),
-		ProjectDir:    ".",
+		ProjectDir:    getProjectDir(),
 	}
 	return jsonResult(eng.Run())
 }
 
 func toolGrimoireGetSettings(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
-	r, err := settings.Load(".")
+	r, err := settings.Load(getProjectDir())
 	if err != nil {
 		return mcp.NewToolResultError(err.Error()), nil
 	}
@@ -243,14 +247,12 @@ func toolGrimoireGetSettings(_ context.Context, _ mcp.CallToolRequest) (*mcp.Cal
 }
 
 func toolGrimoireProfileList(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
-	cwd, _ := os.Getwd()
-	return jsonResult(listProfileEntries(cwd, skills.GrimoireHome()))
+	return jsonResult(listProfileEntries(getProjectDir(), skills.GrimoireHome()))
 }
 
 func toolGrimoireProfileShow(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
 	name := request.GetString("name", "")
-	cwd, _ := os.Getwd()
-	p, err := profiles.ResolveWithOptions(name, cwd, profiles.ResolveOptions{Sources: skills.AllSkillsSources()})
+	p, err := profiles.ResolveWithOptions(name, getProjectDir(), profiles.ResolveOptions{Sources: skills.AllSkillsSources()})
 	if err != nil {
 		return mcp.NewToolResultError(err.Error()), nil
 	}
@@ -259,8 +261,7 @@ func toolGrimoireProfileShow(_ context.Context, request mcp.CallToolRequest) (*m
 
 func toolGrimoireProfileInit(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
 	name := request.GetString("name", "")
-	cwd, _ := os.Getwd()
-	dir := filepath.Join(cwd, ".grimoire", "profiles")
+	dir := filepath.Join(getProjectDir(), ".grimoire", "profiles")
 	path := filepath.Join(dir, name+".toml")
 	if _, err := os.Stat(path); err == nil {
 		return mcp.NewToolResultError("profile already exists: " + path), nil
@@ -271,13 +272,13 @@ func toolGrimoireProfileInit(_ context.Context, request mcp.CallToolRequest) (*m
 	if err := os.WriteFile(path, []byte(buildProfileTemplate(name)), 0o644); err != nil {
 		return mcp.NewToolResultError(err.Error()), nil
 	}
-	rel, _ := filepath.Rel(cwd, path)
+	rel, _ := filepath.Rel(getProjectDir(), path)
 	return jsonResult(map[string]any{"path": rel})
 }
 
 func toolGrimoireConfigGet(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
 	key := request.GetString("key", "")
-	r, err := settings.Load(".")
+	r, err := settings.Load(getProjectDir())
 	if err != nil {
 		return mcp.NewToolResultError(err.Error()), nil
 	}
