@@ -10,12 +10,32 @@ type Report struct {
 	Coverage    Coverage     `json:"coverage"`
 	Threshold   Threshold    `json:"threshold"`
 	Diagnostics []Diagnostic `json:"diagnostics"`
+	Git         GitMeta      `json:"git,omitempty"`
+}
+
+// GitMeta records the git context at report generation time.
+// All fields are optional — omitted when git is unavailable or not applicable.
+type GitMeta struct {
+	Commit string `json:"commit,omitempty"`
+	Branch string `json:"branch,omitempty"`
+	Dirty  bool   `json:"dirty,omitempty"`
 }
 
 type Coverage struct {
-	OverallPct float64         `json:"overall_pct"`
-	Practices  PracticeSummary `json:"practices"`
-	Criteria   CriteriaSummary `json:"criteria"`
+	OverallPct float64          `json:"overall_pct"`
+	Practices  PracticeSummary  `json:"practices"`
+	Criteria   CriteriaSummary  `json:"criteria"`
+	Details    []PracticeDetail `json:"details,omitempty"`
+}
+
+// PracticeDetail holds per-skill coverage scores within a report.
+type PracticeDetail struct {
+	Name        string  `json:"name"`
+	Total       int     `json:"total"`
+	Passing     int     `json:"passing"`
+	Partial     int     `json:"partial"`
+	Failing     int     `json:"failing"`
+	CoveragePct float64 `json:"coverage_pct"`
 }
 
 type PracticeSummary struct {

@@ -129,6 +129,21 @@ func printSummary(r *compliance.Report) {
 		fmt.Printf("  %s All criteria pass.\n", colorize(ansiGreen, "✓"))
 	}
 
+	if len(r.Coverage.Details) > 0 {
+		fmt.Println()
+		fmt.Println("  Practices:")
+		for _, d := range r.Coverage.Details {
+			bar := colorize(ansiGreen, "✓")
+			if d.Failing > 0 {
+				bar = colorize(ansiRed, "✗")
+			} else if d.Partial > 0 {
+				bar = colorize(ansiYellow, "~")
+			}
+			fmt.Printf("    %s  %-40s %d/%d  %.0f%%\n",
+				bar, d.Name, d.Passing, d.Total, d.CoveragePct)
+		}
+	}
+
 	fmt.Printf("\nThreshold: %.0f%% required, %.1f%% actual — %s\n",
 		r.Threshold.Required,
 		r.Threshold.Actual,

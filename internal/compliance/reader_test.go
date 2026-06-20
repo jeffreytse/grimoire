@@ -245,6 +245,84 @@ func TestLoad_EmptyFile_ReturnsError(t *testing.T) {
 	}
 }
 
+func TestLoad_PracticeDetails_RoundTrip(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "report.json")
+	r := minimalReport()
+	r.Coverage.Details = []PracticeDetail{
+		{Name: "apply-solid-principles", Total: 5, Passing: 4, Partial: 1, Failing: 0, CoveragePct: 90.0},
+		{Name: "apply-tdd", Total: 3, Passing: 1, Partial: 0, Failing: 2, CoveragePct: 33.3},
+	}
+	writeReport(t, path, &r)
+
+	got, err := Load(path)
+	if err != nil {
+		t.Fatalf("Load: %v", err)
+	}
+	if len(got.Coverage.Details) != 2 {
+		t.Fatalf("Details len = %d; want 2", len(got.Coverage.Details))
+	}
+	if got.Coverage.Details[0].Name != "apply-solid-principles" {
+		t.Errorf("Details[0].Name = %q", got.Coverage.Details[0].Name)
+	}
+	if got.Coverage.Details[1].Failing != 2 {
+		t.Errorf("Details[1].Failing = %d; want 2", got.Coverage.Details[1].Failing)
+	}
+}
+
+func TestLoad_PracticeDetails_OmittedWhenAbsent(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "report.json")
+	r := minimalReport() // no Details
+	writeReport(t, path, &r)
+
+	got, err := Load(path)
+	if err != nil {
+		t.Fatalf("Load: %v", err)
+	}
+	if len(got.Coverage.Details) != 0 {
+		t.Errorf("Details should be empty for reports without per-practice breakdown, got %d", len(got.Coverage.Details))
+	}
+}
+
+func TestLoad_GitMeta_RoundTrip(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "report.json")
+	r := minimalReport()
+	r.Git = GitMeta{Commit: "abc1234", Branch: "main", Dirty: true}
+	writeReport(t, path, &r)
+
+	got, err := Load(path)
+	if err != nil {
+		t.Fatalf("Load: %v", err)
+	}
+	if got.Git.Commit != "abc1234" {
+		t.Errorf("Git.Commit = %q; want abc1234", got.Git.Commit)
+	}
+	if got.Git.Branch != "main" {
+		t.Errorf("Git.Branch = %q; want main", got.Git.Branch)
+	}
+	if !got.Git.Dirty {
+		t.Error("Git.Dirty should be true")
+	}
+}
+
+func TestLoad_GitMeta_OmittedWhenAbsent(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "report.json")
+	r := minimalReport() // no Git field
+	writeReport(t, path, &r)
+
+	got, err := Load(path)
+	if err != nil {
+		t.Fatalf("Load: %v", err)
+	}
+	// zero-value GitMeta — no commit, no branch, not dirty
+	if got.Git.Commit != "" || got.Git.Branch != "" || got.Git.Dirty {
+		t.Errorf("GitMeta should be zero for reports without git context, got %+v", got.Git)
+	}
+}
+
 func TestLoad_FailThreshold(t *testing.T) {
 	dir := t.TempDir()
 	path := filepath.Join(dir, "fail.json")
