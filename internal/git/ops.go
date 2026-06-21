@@ -130,6 +130,18 @@ func CheckoutTag(dir, tag string) error {
 	return w.Checkout(&gogit.CheckoutOptions{Hash: hash})
 }
 
+// CheckoutVersion fetches tags and checks out the given tag/branch/commit in dir.
+// No-op when version is empty.
+func CheckoutVersion(dir, version string) error {
+	if version == "" {
+		return nil
+	}
+	if err := FetchTags(dir); err != nil {
+		return err
+	}
+	return CheckoutTag(dir, version)
+}
+
 // Clone clones the grimoire repo to dest.
 func Clone(repoURL, dest string) error {
 	_, err := gogit.PlainClone(dest, false, &gogit.CloneOptions{

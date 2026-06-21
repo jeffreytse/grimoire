@@ -142,16 +142,18 @@ name = "apply-tdd"
 
 func TestSearchPaths_Order(t *testing.T) {
 	paths := SearchPaths("engineering", "/project")
-	if len(paths) != 4 {
-		t.Fatalf("expected 4 search paths, got %d", len(paths))
+	// Minimum 2 paths: project-level profile + project-level default.
+	// More paths appear when registries are installed; don't assert a fixed count.
+	if len(paths) < 2 {
+		t.Fatalf("expected at least 2 search paths, got %d", len(paths))
 	}
-	// first path must be project-level
+	// First path must be the project-level profile.
 	if filepath.Base(filepath.Dir(paths[0])) != "profiles" {
-		t.Errorf("unexpected first path: %s", paths[0])
+		t.Errorf("first path should be project-level profiles dir, got %s", paths[0])
 	}
-	// third path must be project default
-	if filepath.Base(paths[2]) != "default.toml" {
-		t.Errorf("expected default.toml at index 2, got %s", paths[2])
+	// Last path must be a default.toml fallback.
+	if filepath.Base(paths[len(paths)-1]) != "default.toml" {
+		t.Errorf("last path should be default.toml, got %s", paths[len(paths)-1])
 	}
 }
 
@@ -409,6 +411,33 @@ name = "apply-law-of-demeter"
 	}
 	if resolved[0].Name != "apply-solid-principles" {
 		t.Errorf("order changed: %v", skillNames(resolved))
+	}
+}
+
+func TestParseProfileRef(t *testing.T) {
+	known := []string{"official", "acmecorp/standards", "gitlab.com/acmecorp/standards"}
+
+	cases := []struct {
+		ref      string
+		wantReg  string
+		wantName string
+	}{
+		{"engineering", "", "engineering"},
+		{"official/engineering", "official", "engineering"},
+		{"acmecorp/standards/engineering", "acmecorp/standards", "engineering"},
+		{"gitlab.com/acmecorp/standards/engineering", "gitlab.com/acmecorp/standards", "engineering"},
+		// longest match wins: gitlab.com/acmecorp/standards beats acmecorp/standards
+		{"gitlab.com/acmecorp/standards/go-service", "gitlab.com/acmecorp/standards", "go-service"},
+		// unknown registry → unqualified
+		{"unknown/org/profile", "", "unknown/org/profile"},
+	}
+
+	for _, c := range cases {
+		reg, name := ParseProfileRef(c.ref, known)
+		if reg != c.wantReg || name != c.wantName {
+			t.Errorf("ParseProfileRef(%q) = (%q, %q), want (%q, %q)",
+				c.ref, reg, name, c.wantReg, c.wantName)
+		}
 	}
 }
 

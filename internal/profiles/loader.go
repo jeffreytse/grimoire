@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strings"
 
 	"github.com/pelletier/go-toml/v2"
 
@@ -16,6 +17,9 @@ type ResolveOptions struct {
 	// Sources enables tag-query fallback and tag-field resolution.
 	// When nil, tag queries are skipped.
 	Sources []skills.SkillsSource
+	// InlineProfiles holds profiles defined inline in settings.toml [profiles.*].
+	// Checked after file lookup fails and before tag/domain fallback.
+	InlineProfiles map[string]Profile
 }
 
 // SkillRef is a skill entry inside a profile file or resolved list.
@@ -32,18 +36,60 @@ type Profile struct {
 	Tags        []string   // skill tags to bulk-activate
 	Skills      []SkillRef // after Resolve: explicit [[skills]]; after ResolveWithOptions: fully resolved
 	Exclude     []string   // skill names to remove after all inclusions
-	Source      string     // absolute path of the file; "" if not found; "(tag query)" if tag-only
+	Source      string     // absolute path of the file; "" if not found; "(tag query)" if tag-only; "(settings.toml)" if inline
+	// Compliance recommendations carried by the profile (0/-1 = not set).
+	ComplianceThreshold      float64
+	ComplianceThresholdError int // -1 = not set
 }
 
-// SearchPaths returns the ordered list of paths searched for a named profile.
-func SearchPaths(name, projectDir string) []string {
-	grimoireHome := skills.GrimoireHome()
-	return []string{
-		filepath.Join(projectDir, ".grimoire", "profiles", name+".toml"),
-		filepath.Join(grimoireHome, "profiles", name+".toml"),
-		filepath.Join(projectDir, ".grimoire", "profiles", "default.toml"),
-		filepath.Join(grimoireHome, "profiles", "default.toml"),
+// ParseProfileRef resolves a qualified profile ref against known registry names.
+// Qualified form: "<registry>/<profile>" where registry is any known registry name.
+// Longest match wins (handles overlapping prefixes across hosts).
+// Returns ("", ref) for unqualified refs — caller uses first-wins resolution.
+func ParseProfileRef(ref string, registryNames []string) (registry, name string) {
+	sorted := append([]string(nil), registryNames...)
+	sort.Slice(sorted, func(i, j int) bool { return len(sorted[i]) > len(sorted[j]) })
+	for _, reg := range sorted {
+		prefix := reg + "/"
+		if strings.HasPrefix(ref, prefix) {
+			return reg, ref[len(prefix):]
+		}
 	}
+	return "", ref
+}
+
+// allRegistryNames returns the Name field of every configured registry.
+func allRegistryNames() []string {
+	regs := skills.AllRegistries()
+	names := make([]string, len(regs))
+	for i, r := range regs {
+		names[i] = r.Name
+	}
+	return names
+}
+
+// SearchPaths returns the ordered list of paths searched for a named profile ref.
+// Qualified ref (e.g. "acmecorp/standards/engineering", "official/engineering",
+// "gitlab.com/org/repo/name") — resolved against known registry names, returns a
+// single path in that registry only.
+// Unqualified ref — covers project-local, then each registry's profiles dir.
+func SearchPaths(ref, projectDir string) []string {
+	reg, name := ParseProfileRef(ref, allRegistryNames())
+	if reg != "" {
+		return []string{filepath.Join(skills.RegistryHome(reg), "profiles", name+".toml")}
+	}
+	// Unqualified: project-local first, then all registries, then default fallback.
+	paths := []string{
+		filepath.Join(projectDir, ".grimoire", "profiles", name+".toml"),
+	}
+	for _, r := range skills.AllRegistries() {
+		paths = append(paths, filepath.Join(r.Home, "profiles", name+".toml"))
+	}
+	paths = append(paths, filepath.Join(projectDir, ".grimoire", "profiles", "default.toml"))
+	for _, r := range skills.AllRegistries() {
+		paths = append(paths, filepath.Join(r.Home, "profiles", "default.toml"))
+	}
+	return paths
 }
 
 // Resolve finds and parses a named profile file following the resolution order from docs/profiles.md.
@@ -77,6 +123,27 @@ func ResolveAll(names []string, projectDir string) ([]Profile, error) {
 		out = append(out, p)
 	}
 	return out, nil
+}
+
+// resolveByDomain returns all skills from sources whose domain path matches domain.
+func resolveByDomain(domain string, sources []skills.SkillsSource) []SkillRef {
+	var refs []SkillRef
+	seen := make(map[string]struct{})
+	for _, src := range sources {
+		all, err := skills.ListAllSkills(src.Root)
+		if err != nil {
+			continue
+		}
+		for _, sk := range all {
+			if sk.Domain == domain {
+				if _, ok := seen[sk.Name]; !ok {
+					seen[sk.Name] = struct{}{}
+					refs = append(refs, SkillRef{Name: sk.Name})
+				}
+			}
+		}
+	}
+	return refs
 }
 
 // ResolveByTags returns all skills from sources whose tags contain profileName.
@@ -157,9 +224,13 @@ func ResolveSkills(p *Profile, projectDir string, sources []skills.SkillsSource,
 		}
 	}
 
-	// Layer 2: tags
+	// Layer 2: tags — try frontmatter tag match, fall back to domain-path match
 	for _, tag := range p.Tags {
-		for _, ref := range ResolveByTags(tag, sources) {
+		tagRefs := ResolveByTags(tag, sources)
+		if len(tagRefs) == 0 {
+			tagRefs = resolveByDomain(tag, sources)
+		}
+		for _, ref := range tagRefs {
 			insert(ref)
 		}
 	}
@@ -206,12 +277,24 @@ func ResolveWithOptions(name, projectDir string, opts ResolveOptions) (Profile, 
 
 	visited := map[string]bool{name: true}
 
-	// If no profile file, treat the profile name itself as a tag query (backward compat).
+	// If no profile file, check inline settings.toml definition first.
+	if p.Source == "" {
+		if inline, ok := opts.InlineProfiles[name]; ok {
+			p = inline
+		}
+	}
+
+	// If still no source, try tag query then domain-path fallback.
 	if p.Source == "" && len(opts.Sources) > 0 {
 		refs := ResolveByTags(name, opts.Sources)
+		src := "(tag query)"
+		if len(refs) == 0 {
+			refs = resolveByDomain(name, opts.Sources)
+			src = "(domain)"
+		}
 		if len(refs) > 0 {
 			p.Skills = refs
-			p.Source = "(tag query)"
+			p.Source = src
 			return p, nil
 		}
 	}
@@ -224,6 +307,26 @@ func ResolveWithOptions(name, projectDir string, opts ResolveOptions) (Profile, 
 	return p, nil
 }
 
+// ProfileMeta holds lightweight metadata for ranking profiles without full resolution.
+type ProfileMeta struct {
+	Extends []string
+	Tags    []string
+}
+
+// ReadMeta parses only extends and tags from a profile TOML file — cheap, no skill resolution.
+func ReadMeta(path string) ProfileMeta {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return ProfileMeta{}
+	}
+	var raw struct {
+		Extends []string `toml:"extends"`
+		Tags    []string `toml:"tags"`
+	}
+	_ = toml.Unmarshal(data, &raw)
+	return ProfileMeta{Extends: raw.Extends, Tags: raw.Tags}
+}
+
 func parseFile(path, profileName string) (Profile, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
@@ -231,12 +334,14 @@ func parseFile(path, profileName string) (Profile, error) {
 	}
 
 	var raw struct {
-		Name        string     `toml:"name"`
-		Description string     `toml:"description"`
-		Extends     []string   `toml:"extends"`
-		Tags        []string   `toml:"tags"`
-		Skills      []SkillRef `toml:"skills"`
-		Exclude     []string   `toml:"exclude"`
+		Name                     string     `toml:"name"`
+		Description              string     `toml:"description"`
+		Extends                  []string   `toml:"extends"`
+		Tags                     []string   `toml:"tags"`
+		Skills                   []SkillRef `toml:"skills"`
+		Exclude                  []string   `toml:"exclude"`
+		ComplianceThreshold      float64    `toml:"compliance-threshold"`
+		ComplianceThresholdError *int       `toml:"compliance-threshold-error"` // pointer: nil = absent
 	}
 	if err := toml.Unmarshal(data, &raw); err != nil {
 		return Profile{}, err
@@ -246,13 +351,19 @@ func parseFile(path, profileName string) (Profile, error) {
 	if name == "" {
 		name = profileName
 	}
+	maxErr := -1 // sentinel: not set
+	if raw.ComplianceThresholdError != nil {
+		maxErr = *raw.ComplianceThresholdError
+	}
 	return Profile{
-		Name:        name,
-		Description: raw.Description,
-		Extends:     raw.Extends,
-		Tags:        raw.Tags,
-		Skills:      raw.Skills,
-		Exclude:     raw.Exclude,
-		Source:      path,
+		Name:                     name,
+		Description:              raw.Description,
+		Extends:                  raw.Extends,
+		Tags:                     raw.Tags,
+		Skills:                   raw.Skills,
+		Exclude:                  raw.Exclude,
+		Source:                   path,
+		ComplianceThreshold:      raw.ComplianceThreshold,
+		ComplianceThresholdError: maxErr,
 	}, nil
 }
