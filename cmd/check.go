@@ -45,7 +45,7 @@ func init() {
 func runCheck(cmd *cobra.Command, args []string) error {
 	reportPath := flagReport
 	if reportPath == "" {
-		reportPath = filepath.Join(getProjectDir(), compliance.DefaultReportPath)
+		reportPath = resolvedReportPath(getProjectDir())
 	}
 	report, err := compliance.Load(reportPath)
 	if err != nil {
@@ -189,4 +189,15 @@ func colorize(code, s string) string {
 		return s
 	}
 	return code + s + ansiReset
+}
+
+func resolvedReportPath(cwd string) string {
+	r, _ := settings.Load(cwd)
+	if r.ReportPath != "" {
+		if filepath.IsAbs(r.ReportPath) {
+			return r.ReportPath
+		}
+		return filepath.Join(cwd, r.ReportPath)
+	}
+	return filepath.Join(cwd, compliance.DefaultReportPath)
 }

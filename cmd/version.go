@@ -26,7 +26,7 @@ func init() {
 }
 
 func runVersion(cmd *cobra.Command, args []string) error {
-	home := skills.GrimoireHome()
+	home := skills.OfficialRegistryHome()
 
 	type versionOut struct {
 		CLI      string `json:"cli"`

@@ -11,7 +11,6 @@ import (
 
 	"github.com/jeffreytse/grimoire/internal/profiles"
 	"github.com/jeffreytse/grimoire/internal/settings"
-	"github.com/jeffreytse/grimoire/internal/skills"
 	"github.com/jeffreytse/grimoire/internal/tui"
 )
 
@@ -57,14 +56,14 @@ func printSettingsHuman(r settings.Resolved) {
 
 	// [core] section — machine-only keys
 	core := r.Core
-	if core.Home != "" || core.Source != "" {
+	if core.Home != "" || core.Registry != "" {
 		fmt.Println()
 		fmt.Printf("    %s\n", tui.StyleDim.Render("[core]"))
 		if core.Home != "" {
 			fmt.Printf("    home: %s%s\n", core.Home, sourceTag(r.Sources["core.home"]))
 		}
-		if core.Source != "" {
-			fmt.Printf("    source: %s%s\n", core.Source, sourceTag(r.Sources["core.source"]))
+		if core.Registry != "" {
+			fmt.Printf("    registry: %s%s\n", core.Registry, sourceTag(r.Sources["core.registry"]))
 		}
 		printed = true
 	}
@@ -80,9 +79,13 @@ func printSettingsHuman(r settings.Resolved) {
 		}
 	}
 
-	if hasProfiles || len(filteredKeys) > 0 {
+	hasExtends := len(r.StandardsExtends) > 0
+	if hasProfiles || hasExtends || len(filteredKeys) > 0 {
 		fmt.Println()
 		fmt.Printf("    %s\n", tui.StyleDim.Render("[standards]"))
+		if hasExtends {
+			fmt.Printf("    extends: %s%s\n", strings.Join(r.StandardsExtends, ", "), sourceTag(r.Sources["standards.extends"]))
+		}
 		if hasProfiles {
 			fmt.Printf("    profiles: %s%s\n", strings.Join(core.Profiles, ", "), sourceTag(r.Sources["standards.profiles"]))
 			printExpandedProfiles(core.Profiles)
@@ -114,7 +117,7 @@ func printSettingsHuman(r settings.Resolved) {
 
 func printExpandedProfiles(profileNames []string) {
 	cwd := getProjectDir()
-	opts := profiles.ResolveOptions{Sources: skills.AllSkillsSources()}
+	opts := resolveOpts(cwd)
 	for _, name := range profileNames {
 		p, err := profiles.ResolveWithOptions(name, cwd, opts)
 		if err != nil {
@@ -179,8 +182,8 @@ func settingsToMap(r settings.Resolved) map[string]any {
 	if r.Core.Home != "" {
 		core["home"] = r.Core.Home
 	}
-	if r.Core.Source != "" {
-		core["source"] = r.Core.Source
+	if r.Core.Registry != "" {
+		core["registry"] = r.Core.Registry
 	}
 	if len(r.Core.Profiles) > 0 {
 		core["profiles"] = r.Core.Profiles

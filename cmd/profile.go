@@ -96,7 +96,7 @@ func listProfileEntries(cwd, grimoireHome string) []profileListEntry {
 
 func runProfileList(_ *cobra.Command, _ []string) error {
 	cwd := getProjectDir()
-	grimoireHome := skills.GrimoireHome()
+	grimoireHome := skills.OfficialRegistryHome()
 	entries := listProfileEntries(cwd, grimoireHome)
 	r, settingsErr := settings.Load(cwd)
 
@@ -117,7 +117,7 @@ func runProfileList(_ *cobra.Command, _ []string) error {
 		return nil
 	}
 
-	opts := profiles.ResolveOptions{Sources: skills.AllSkillsSources()}
+	opts := resolveOpts(cwd)
 	for _, e := range entries {
 		if e.Source == "active" {
 			continue
@@ -167,9 +167,7 @@ func runProfileShow(_ *cobra.Command, args []string) error {
 	name := args[0]
 	cwd := getProjectDir()
 
-	p, err := profiles.ResolveWithOptions(name, cwd, profiles.ResolveOptions{
-		Sources: skills.AllSkillsSources(),
-	})
+	p, err := profiles.ResolveWithOptions(name, cwd, resolveOpts(cwd))
 	if err != nil {
 		return fmt.Errorf("resolving profile %q: %w", name, err)
 	}

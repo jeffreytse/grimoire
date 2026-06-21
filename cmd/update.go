@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 
@@ -32,7 +33,7 @@ func init() {
 }
 
 func runUpdate(cmd *cobra.Command, args []string) error {
-	home := skills.GrimoireHome()
+	home := skills.OfficialRegistryHome()
 
 	// Clone if not present
 	if _, err := os.Stat(home); err != nil {
@@ -45,6 +46,9 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 			}
 		}
 		fmt.Printf("Cloning %s...\n", skills.GrimoireRepoURL())
+		if err := os.MkdirAll(filepath.Dir(home), 0o755); err != nil {
+			return fmt.Errorf("creating dir: %w", err)
+		}
 		if err := gitops.Clone(skills.GrimoireRepoURL(), home); err != nil {
 			return fmt.Errorf("cloning grimoire: %w", err)
 		}
@@ -196,24 +200,42 @@ func relinkNewSkills(home, oldCommit string) {
 	fmt.Println()
 }
 
-// updateCustomRegistries pulls or clones all custom registries configured in global settings.
+// updateCustomRegistries pulls or clones all extends targets from resolved settings.
 func updateCustomRegistries() {
-	fs, err := settings.LoadGlobal()
-	if err != nil || len(fs.Registries) == 0 {
+	r, err := settings.Load(getProjectDir())
+	if err != nil {
+		return
+	}
+	if len(r.StandardsExtends) == 0 {
 		return
 	}
 	fmt.Println()
-	for name, rc := range fs.Registries {
-		if name == skills.OfficialRegistryName {
-			continue
-		}
-		dest := skills.RegistryHome(name)
+	for _, ref := range r.StandardsExtends {
+		u, ver := settings.ParseRef(ref)
+		name := settings.DeriveRegistryName(u)
+		dest := skills.ExtendsHome(name)
 		if _, err := os.Stat(dest); err != nil {
-			fmt.Printf("  cloning registry %s...\n", name)
-			if err := gitops.Clone(rc.URL, dest); err != nil {
+			fmt.Printf("  cloning extends %s...\n", name)
+			if err := os.MkdirAll(dest, 0o755); err != nil {
+				fmt.Fprintf(os.Stderr, "  warn: %s: mkdir: %v\n", name, err)
+				continue
+			}
+			if err := gitops.Clone(u, dest); err != nil {
 				fmt.Fprintf(os.Stderr, "  warn: %s: %v\n", name, err)
+				continue
+			}
+			if ver != "" {
+				if err := gitops.CheckoutTag(dest, ver); err != nil {
+					fmt.Fprintf(os.Stderr, "  warn: %s: checkout %s: %v\n", name, ver, err)
+				}
+			}
+			fmt.Printf("  %s  %s cloned\n", tui.IconOK, name)
+		} else if ver != "" {
+			// pinned — ensure correct tag checked out, skip pull
+			if err := gitops.CheckoutTag(dest, ver); err != nil {
+				fmt.Fprintf(os.Stderr, "  warn: %s: checkout %s: %v\n", name, ver, err)
 			} else {
-				fmt.Printf("  %s  %s cloned\n", tui.IconOK, name)
+				fmt.Printf("  %s  %s pinned at %s\n", tui.IconOK, name, ver)
 			}
 		} else {
 			if err := gitops.Pull(dest); err != nil {

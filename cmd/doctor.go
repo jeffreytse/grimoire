@@ -6,6 +6,8 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
+	"time"
 
 	"github.com/spf13/cobra"
 
@@ -57,7 +59,7 @@ func collectDoctorChecks() doctorOutput {
 	ok := true
 
 	// ── Source ──────────────────────────────────────────────────────────────────
-	home := skills.GrimoireHome()
+	home := skills.OfficialRegistryHome()
 	if _, err := os.Stat(home); err != nil {
 		checks = append(checks, doctorCheck{
 			Name:   "grimoire-source",
@@ -186,13 +188,70 @@ func collectDoctorChecks() doctorOutput {
 
 	sharedPath := filepath.Join(getProjectDir(), ".grimoire", "settings.toml")
 	if shared, err := settings.ParseFile(sharedPath); err == nil {
-		if shared.Core.Home != "" || shared.Core.Source != "" {
+		if shared.Core.Home != "" || shared.Core.Registry != "" {
 			checks = append(checks, doctorCheck{
 				Name:   "config-core-in-shared",
 				Status: "warn",
-				Detail: "[core] home/source in .grimoire/settings.toml — move to global: grimoire config set core.home <path> --global",
+				Detail: "[core] section in .grimoire/settings.toml is ignored — [core] is user-level; move to global: grimoire config set core.home <path> --global",
 			})
 			ok = false
+		}
+	}
+
+	// ── Extends registries ───────────────────────────────────────────────────────
+	r, _ := settings.Load(cwd)
+	for _, ref := range r.StandardsExtends {
+		u, _ := settings.ParseRef(ref)
+		name := settings.DeriveRegistryName(u)
+		extHome := skills.ExtendsHome(name)
+		safeName := strings.ReplaceAll(strings.TrimPrefix(name, "/"), "/", "-")
+		if !dirExists(extHome) {
+			checks = append(checks, doctorCheck{
+				Name:   "extends-" + safeName,
+				Status: "warn",
+				Detail: fmt.Sprintf("extends %s not cloned — run: grimoire registry update %s", name, name),
+			})
+			ok = false
+			continue
+		}
+		// Local registries: no staleness check (user manages the checkout)
+		if filepath.IsAbs(name) {
+			checks = append(checks, doctorCheck{
+				Name:   "extends-" + safeName,
+				Status: "ok",
+				Detail: fmt.Sprintf("extends %s (local)", name),
+			})
+			continue
+		}
+		// Git registries: check FETCH_HEAD mtime as proxy for last pull
+		fetchHead := filepath.Join(extHome, ".git", "FETCH_HEAD")
+		if fi, err := os.Stat(fetchHead); err == nil {
+			age := time.Since(fi.ModTime())
+			days := int(age.Hours() / 24)
+			threshold := r.StalenessDays
+			if threshold == 0 {
+				threshold = 7
+			}
+			if days > threshold {
+				checks = append(checks, doctorCheck{
+					Name:   "extends-" + safeName,
+					Status: "warn",
+					Detail: fmt.Sprintf("extends %s not pulled in %d days — run: grimoire registry update %s", name, days, name),
+				})
+				ok = false
+			} else {
+				checks = append(checks, doctorCheck{
+					Name:   "extends-" + safeName,
+					Status: "ok",
+					Detail: fmt.Sprintf("extends %s cloned (pulled %d day(s) ago)", name, days),
+				})
+			}
+		} else {
+			checks = append(checks, doctorCheck{
+				Name:   "extends-" + safeName,
+				Status: "ok",
+				Detail: fmt.Sprintf("extends %s cloned", name),
+			})
 		}
 	}
 
@@ -248,6 +307,31 @@ func printDoctorHuman(out doctorOutput) {
 			errs++
 		case "warn":
 			warnings++
+		}
+	}
+
+	hasExtends := false
+	for _, c := range out.Checks {
+		if strings.HasPrefix(c.Name, "extends-") {
+			hasExtends = true
+			break
+		}
+	}
+	if hasExtends {
+		fmt.Println()
+		fmt.Println("  Registries")
+		for _, c := range out.Checks {
+			if !strings.HasPrefix(c.Name, "extends-") {
+				continue
+			}
+			icon, _ := doctorIcon(c.Status)
+			fmt.Printf("    %s  %s\n", icon, c.Detail)
+			switch c.Status {
+			case "error":
+				errs++
+			case "warn":
+				warnings++
+			}
 		}
 	}
 

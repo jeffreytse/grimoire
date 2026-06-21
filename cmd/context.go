@@ -85,7 +85,7 @@ type contextOutput struct {
 }
 
 func runContext(cmd *cobra.Command, args []string) error {
-	home := skills.GrimoireHome()
+	home := skills.OfficialRegistryHome()
 
 	// grimoire version
 	grimoireVer := ""
@@ -103,7 +103,7 @@ func runContext(cmd *cobra.Command, args []string) error {
 
 	// compliance — nil if no report
 	var complianceReport *compliance.Report
-	if r, err := compliance.Load(filepath.Join(getProjectDir(), compliance.DefaultReportPath)); err == nil {
+	if r, err := compliance.Load(resolvedReportPath(getProjectDir())); err == nil {
 		complianceReport = r
 	}
 
@@ -175,13 +175,13 @@ func buildSettingsMap() map[string]any {
 	}
 	m := map[string]any{}
 
-	// [core]: home, source only
+	// [core]: home + registry
 	core := map[string]any{}
 	if r.Core.Home != "" {
 		core["home"] = r.Core.Home
 	}
-	if r.Core.Source != "" {
-		core["source"] = r.Core.Source
+	if r.Core.Registry != "" {
+		core["registry"] = r.Core.Registry
 	}
 	if len(core) > 0 {
 		m["core"] = core
@@ -221,14 +221,15 @@ func buildSettingsMap() map[string]any {
 }
 
 func buildResolvedProfiles() map[string][]string {
-	r, err := settings.Load(getProjectDir())
+	cwd := getProjectDir()
+	r, err := settings.Load(cwd)
 	if err != nil || len(r.Core.Profiles) == 0 {
 		return nil
 	}
-	opts := profiles.ResolveOptions{Sources: skills.AllSkillsSources()}
+	opts := resolveOpts(cwd)
 	out := make(map[string][]string, len(r.Core.Profiles))
 	for _, name := range r.Core.Profiles {
-		p, err := profiles.ResolveWithOptions(name, getProjectDir(), opts)
+		p, err := profiles.ResolveWithOptions(name, cwd, opts)
 		if err != nil {
 			out[name] = nil
 			continue
@@ -259,12 +260,12 @@ func buildSettingsSources() map[string]string {
 }
 
 func buildProfileSources() map[string]string {
-	r, err := settings.Load(getProjectDir())
+	cwd := getProjectDir()
+	r, err := settings.Load(cwd)
 	if err != nil || len(r.Core.Profiles) == 0 {
 		return nil
 	}
-	cwd := getProjectDir()
-	opts := profiles.ResolveOptions{Sources: skills.AllSkillsSources()}
+	opts := resolveOpts(cwd)
 	out := make(map[string]string, len(r.Core.Profiles))
 	home, _ := os.UserHomeDir()
 	for _, name := range r.Core.Profiles {
@@ -314,34 +315,27 @@ func buildProfileDirs(home string) []string {
 func buildRegistryInfos() []contextRegistryInfo {
 	officialURL := skills.GrimoireRepoURL()
 	officialRoot := skills.SkillsRoot()
-	officialCloned := false
-	if _, err := os.Stat(officialRoot); err == nil {
-		officialCloned = true
-	}
 	infos := []contextRegistryInfo{{
 		Name:        "official",
 		URL:         officialURL,
 		SkillsCount: countSkills(officialRoot),
-		Cloned:      officialCloned,
+		Cloned:      dirExists(officialRoot),
 	}}
 
-	fs, err := settings.LoadGlobal()
+	// Extends targets from resolved settings
+	r, err := settings.Load(getProjectDir())
 	if err != nil {
 		return infos
 	}
-	for _, name := range sortedRegistryNames(fs.Registries) {
-		rc := fs.Registries[name]
-		regHome := skills.RegistryHome(name)
-		regRoot := regHome + "/skills"
-		cloned := false
-		if _, err := os.Stat(regHome); err == nil {
-			cloned = true
-		}
+	for _, ref := range r.StandardsExtends {
+		u, _ := settings.ParseRef(ref)
+		name := settings.DeriveRegistryName(u)
+		extHome := skills.ExtendsHome(name)
 		infos = append(infos, contextRegistryInfo{
 			Name:        name,
-			URL:         rc.URL,
-			SkillsCount: countSkills(regRoot),
-			Cloned:      cloned,
+			URL:         u,
+			SkillsCount: countSkills(filepath.Join(extHome, "skills")),
+			Cloned:      dirExists(extHome),
 		})
 	}
 	return infos
@@ -408,7 +402,7 @@ func printContextHuman(out *contextOutput, r *settings.Resolved) {
 					strings.Join(r.Core.Profiles, ", "),
 					sourceTag(r.Sources["standards.profiles"]))
 				cwd := getProjectDir()
-				opts := profiles.ResolveOptions{Sources: skills.AllSkillsSources()}
+				opts := resolveOpts(cwd)
 				for _, name := range r.Core.Profiles {
 					p, err := profiles.ResolveWithOptions(name, cwd, opts)
 					if err != nil {

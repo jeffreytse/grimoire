@@ -9,6 +9,7 @@ import (
 
 	"github.com/jeffreytse/grimoire/internal/agent"
 	gitops "github.com/jeffreytse/grimoire/internal/git"
+	"github.com/jeffreytse/grimoire/internal/settings"
 	"github.com/jeffreytse/grimoire/internal/skills"
 	"github.com/jeffreytse/grimoire/internal/tui"
 )
@@ -56,6 +57,9 @@ func runInstall(cmd *cobra.Command, args []string) error {
 		return runInstallFromRoot(resolved)
 	}
 
+	// fetch any extends targets not yet cloned (idempotent for existing targets)
+	updateCustomRegistries()
+
 	// determine which registry sources to use
 	sources := skills.AllSkillsSources()
 
@@ -83,6 +87,12 @@ func runInstall(cmd *cobra.Command, args []string) error {
 	}
 
 	symlink := !flagInstallCopy
+	if !flagInstallCopy {
+		r, _ := settings.Load(getProjectDir())
+		if r.Core.InstallMode == "copy" {
+			symlink = false
+		}
+	}
 	target := flagInstallTarget
 	if flagInstallYes && target == "" {
 		target = "auto"
@@ -192,6 +202,12 @@ func runInstallFromRoot(root string) error {
 		return fmt.Errorf("skills not found at %s", root)
 	}
 	symlink := !flagInstallCopy
+	if !flagInstallCopy {
+		r, _ := settings.Load(getProjectDir())
+		if r.Core.InstallMode == "copy" {
+			symlink = false
+		}
+	}
 	target := flagInstallTarget
 	if flagInstallYes && target == "" {
 		target = "auto"
@@ -256,7 +272,7 @@ func resolveSkillFromSources(sources []skills.SkillsSource, ref string) (path st
 // Returns ("", nil) when the user cancels.
 func resolveAndPersistSource(from string) (string, error) {
 	if skills.IsGitURL(from) {
-		home := skills.GrimoireHome()
+		home := skills.OfficialRegistryHome()
 		if _, err := os.Stat(home); err == nil {
 			chosen, ok := tui.RunSelect(
 				fmt.Sprintf("Replace existing grimoire at %s with %s?", home, from),
@@ -271,6 +287,9 @@ func resolveAndPersistSource(from string) (string, error) {
 			}
 		}
 		fmt.Printf("Cloning %s → %s...\n", from, home)
+		if err := os.MkdirAll(filepath.Dir(home), 0o755); err != nil {
+			return "", fmt.Errorf("creating dir: %w", err)
+		}
 		if err := gitops.Clone(from, home); err != nil {
 			return "", fmt.Errorf("cloning: %w", err)
 		}
