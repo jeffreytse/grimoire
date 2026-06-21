@@ -64,6 +64,50 @@ func Pull(dir string) error {
 	return err
 }
 
+// PullWithForceFallback attempts a normal pull. If the remote was force-pushed
+// (non-fast-forward), it warns to stderr and recovers with FetchReset.
+func PullWithForceFallback(dir string) error {
+	err := Pull(dir)
+	if err == nil {
+		return nil
+	}
+	if !strings.Contains(err.Error(), "non-fast-forward") {
+		return err
+	}
+	fmt.Fprintf(os.Stderr, "warn: registry was force-pushed; resetting local clone to remote HEAD\n")
+	return FetchReset(dir)
+}
+
+// FetchReset fetches from origin (with force) and hard-resets to the remote HEAD.
+// Use for read-only registry clones: handles force-pushed remotes without error.
+func FetchReset(dir string) error {
+	r, err := gogit.PlainOpen(dir)
+	if err != nil {
+		return fmt.Errorf("opening repo: %w", err)
+	}
+	if err := r.Fetch(&gogit.FetchOptions{Force: true}); err != nil && !errors.Is(err, gogit.NoErrAlreadyUpToDate) {
+		return fmt.Errorf("fetching: %w", err)
+	}
+	remoteRef, err := resolveRemoteHead(r)
+	if err != nil {
+		return err
+	}
+	w, err := r.Worktree()
+	if err != nil {
+		return err
+	}
+	return w.Reset(&gogit.ResetOptions{Commit: remoteRef.Hash(), Mode: gogit.HardReset})
+}
+
+func resolveRemoteHead(r *gogit.Repository) (*plumbing.Reference, error) {
+	for _, name := range []string{"HEAD", "main", "master"} {
+		if ref, err := r.Reference(plumbing.NewRemoteReferenceName("origin", name), true); err == nil {
+			return ref, nil
+		}
+	}
+	return nil, fmt.Errorf("cannot resolve remote HEAD")
+}
+
 // FetchTags fetches all tags from the remote.
 func FetchTags(dir string) error {
 	r, err := gogit.PlainOpen(dir)

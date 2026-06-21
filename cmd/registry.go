@@ -303,8 +303,8 @@ func updateCoreRegistry() error {
 			return fmt.Errorf("checking out version: %w", err)
 		}
 	} else {
-		if err := gitops.Pull(dest); err != nil {
-			return fmt.Errorf("pulling: %w", err)
+		if err := gitops.PullWithForceFallback(dest); err != nil {
+			return fmt.Errorf("updating: %w", err)
 		}
 	}
 	fmt.Printf("  %s  official up to date\n", tui.IconOK)
@@ -357,8 +357,8 @@ func updateExtendsTarget(name string, r settings.Resolved) error {
 			return fmt.Errorf("checking out version: %w", err)
 		}
 	} else {
-		if err := gitops.Pull(dest); err != nil {
-			return fmt.Errorf("pulling: %w", err)
+		if err := gitops.PullWithForceFallback(dest); err != nil {
+			return fmt.Errorf("updating: %w", err)
 		}
 	}
 	fmt.Printf("  %s  %s up to date\n", tui.IconOK, name)

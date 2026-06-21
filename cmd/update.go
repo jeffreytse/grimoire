@@ -146,8 +146,8 @@ func updateUnstable(home string) error {
 	}
 
 	fmt.Printf("Pulling latest grimoire at %s...\n", home)
-	if err := gitops.Pull(home); err != nil {
-		return fmt.Errorf("pulling: %w", err)
+	if err := gitops.PullWithForceFallback(home); err != nil {
+		return fmt.Errorf("updating: %w", err)
 	}
 
 	newState, _ := gitops.CurrentState(home)
@@ -238,7 +238,7 @@ func updateCustomRegistries() {
 				fmt.Printf("  %s  %s pinned at %s\n", tui.IconOK, name, ver)
 			}
 		} else {
-			if err := gitops.Pull(dest); err != nil {
+			if err := gitops.PullWithForceFallback(dest); err != nil {
 				fmt.Fprintf(os.Stderr, "  warn: %s: %v\n", name, err)
 			} else {
 				fmt.Printf("  %s  %s up to date\n", tui.IconOK, name)
