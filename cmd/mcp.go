@@ -166,6 +166,26 @@ func registerMCPTools(s *server.MCPServer) {
 	)
 
 	s.AddTool(
+		mcp.NewTool("grimoire_config_add",
+			mcp.WithDescription("Append a value to a list-type config key (idempotent). Supports: standards.extends, standards.profiles, standards.<domain>.practices, standards.<domain>.disabled."),
+			mcp.WithString("key", mcp.Required(), mcp.Description("Dotted config key (must be a list key)")),
+			mcp.WithString("value", mcp.Required(), mcp.Description("Value to append")),
+			mcp.WithString("level", mcp.Description("Target layer: local | global | system (default: auto)")),
+		),
+		toolGrimoireConfigAdd,
+	)
+
+	s.AddTool(
+		mcp.NewTool("grimoire_config_remove",
+			mcp.WithDescription("Remove a value from a list-type config key (idempotent, no error if not present). Mirrors grimoire_config_add."),
+			mcp.WithString("key", mcp.Required(), mcp.Description("Dotted config key (must be a list key)")),
+			mcp.WithString("value", mcp.Required(), mcp.Description("Value to remove")),
+			mcp.WithString("level", mcp.Description("Target layer: local | global | system (default: auto)")),
+		),
+		toolGrimoireConfigRemove,
+	)
+
+	s.AddTool(
 		mcp.NewTool("grimoire_install",
 			mcp.WithDescription("Install grimoire skills to AI agent directories. Omit all params to install everything."),
 			mcp.WithString("domain", mcp.Description("Domain to install (e.g. engineering)")),
@@ -213,6 +233,9 @@ func registerMCPTools(s *server.MCPServer) {
 	s.AddTool(
 		mcp.NewTool("grimoire_init",
 			mcp.WithDescription("Initialize .grimoire/ in the project directory. Creates settings.toml with auto-detected profile."),
+			mcp.WithString("profile", mcp.Description("Profile to activate (e.g. engineering, writing, design). Defaults to auto-detected.")),
+			mcp.WithNumber("threshold", mcp.Description("Compliance threshold percentage (0–100). Default: 80.")),
+			mcp.WithNumber("max_errors", mcp.Description("Max allowed compliance errors. Default: 0.")),
 		),
 		toolGrimoireInit,
 	)
@@ -234,17 +257,16 @@ func registerMCPTools(s *server.MCPServer) {
 
 	s.AddTool(
 		mcp.NewTool("grimoire_registry_add",
-			mcp.WithDescription("Add a new skill registry and clone it locally."),
-			mcp.WithString("name", mcp.Required(), mcp.Description("Registry name")),
-			mcp.WithString("url", mcp.Required(), mcp.Description("Git URL of the registry")),
+			mcp.WithDescription("Add a registry to standards.extends and clone it. Accepts owner/repo shorthand, full git URL, or absolute local path."),
+			mcp.WithString("ref", mcp.Required(), mcp.Description("Registry ref: owner/repo, git URL, or absolute local path")),
 		),
 		toolGrimoireRegistryAdd,
 	)
 
 	s.AddTool(
 		mcp.NewTool("grimoire_registry_remove",
-			mcp.WithDescription("Remove a registry from config and delete its local clone."),
-			mcp.WithString("name", mcp.Required(), mcp.Description("Registry name to remove")),
+			mcp.WithDescription("Remove a registry from standards.extends by name (derived owner/repo or absolute path)."),
+			mcp.WithString("name", mcp.Required(), mcp.Description("Registry name as returned by grimoire_registry_list")),
 		),
 		toolGrimoireRegistryRemove,
 	)
@@ -256,10 +278,40 @@ func registerMCPTools(s *server.MCPServer) {
 		),
 		toolGrimoireRegistryUpdate,
 	)
+
+	s.AddTool(
+		mcp.NewTool("grimoire_registry_set",
+			mcp.WithDescription("Set the official (core) registry. Accepts owner/repo shorthand, full git URL, or absolute local path. Run grimoire_update after to apply."),
+			mcp.WithString("ref", mcp.Required(), mcp.Description("Registry ref: owner/repo[@version], git URL, or absolute local path")),
+		),
+		toolGrimoireRegistrySet,
+	)
+
+	s.AddTool(
+		mcp.NewTool("grimoire_registry_reset",
+			mcp.WithDescription("Clear core.registry and revert to the built-in official default (jeffreytse/grimoire-hub)."),
+		),
+		toolGrimoireRegistryReset,
+	)
+
+	s.AddTool(
+		mcp.NewTool("grimoire_registry_validate",
+			mcp.WithDescription("Validate a registry's structure before publishing. Pass a path or installed registry name; omit to validate the current directory."),
+			mcp.WithString("target", mcp.Description("Absolute path, installed registry name (owner/repo), or omit for current directory")),
+		),
+		toolGrimoireRegistryValidate,
+	)
+
+	s.AddTool(
+		mcp.NewTool("grimoire_preset_list",
+			mcp.WithDescription("List all available presets from all installed registries."),
+		),
+		toolGrimoirePresetList,
+	)
 }
 
 func toolGrimoireContext(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
-	home := skills.GrimoireHome()
+	home := skills.OfficialRegistryHome()
 	grimoireVer := ""
 	if state, err := git.CurrentState(home); err == nil {
 		grimoireVer = state.Version
@@ -273,7 +325,7 @@ func toolGrimoireContext(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToo
 	}
 
 	var complianceReport *compliance.Report
-	if r, err := compliance.Load(filepath.Join(getProjectDir(), compliance.DefaultReportPath)); err == nil {
+	if r, err := compliance.Load(resolvedReportPath(getProjectDir())); err == nil {
 		complianceReport = r
 	}
 
@@ -296,7 +348,7 @@ func toolGrimoireContext(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToo
 }
 
 func toolGrimoireCheck(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
-	report, err := compliance.Load(filepath.Join(getProjectDir(), compliance.DefaultReportPath))
+	report, err := compliance.Load(resolvedReportPath(getProjectDir()))
 	if err != nil {
 		return mcp.NewToolResultError(err.Error()), nil
 	}
@@ -339,12 +391,13 @@ func toolGrimoireGetSettings(_ context.Context, _ mcp.CallToolRequest) (*mcp.Cal
 }
 
 func toolGrimoireProfileList(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
-	return jsonResult(listProfileEntries(getProjectDir(), skills.GrimoireHome()))
+	return jsonResult(listProfileEntries(getProjectDir(), skills.OfficialRegistryHome()))
 }
 
 func toolGrimoireProfileShow(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
 	name := request.GetString("name", "")
-	p, err := profiles.ResolveWithOptions(name, getProjectDir(), profiles.ResolveOptions{Sources: skills.AllSkillsSources()})
+	cwd := getProjectDir()
+	p, err := profiles.ResolveWithOptions(name, cwd, resolveOpts(cwd))
 	if err != nil {
 		return mcp.NewToolResultError(err.Error()), nil
 	}
@@ -420,6 +473,48 @@ func toolGrimoireConfigUnset(_ context.Context, request mcp.CallToolRequest) (*m
 		return mcp.NewToolResultError(err.Error()), nil
 	}
 	return jsonResult(map[string]any{"key": key, "path": path})
+}
+
+func toolGrimoireConfigAdd(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
+	key := request.GetString("key", "")
+	value := request.GetString("value", "")
+	level := request.GetString("level", "")
+	path, err := levelToFilePath(key, level)
+	if err != nil {
+		return mcp.NewToolResultError(err.Error()), nil
+	}
+	fs, err := settings.LoadFile(path)
+	if err != nil {
+		return mcp.NewToolResultError(err.Error()), nil
+	}
+	if err := appendToKey(&fs, key, value); err != nil {
+		return mcp.NewToolResultError(err.Error()), nil
+	}
+	if err := settings.WriteFile(path, fs); err != nil {
+		return mcp.NewToolResultError(err.Error()), nil
+	}
+	return jsonResult(map[string]any{"key": key, "value": value, "path": path})
+}
+
+func toolGrimoireConfigRemove(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
+	key := request.GetString("key", "")
+	value := request.GetString("value", "")
+	level := request.GetString("level", "")
+	path, err := levelToFilePath(key, level)
+	if err != nil {
+		return mcp.NewToolResultError(err.Error()), nil
+	}
+	fs, err := settings.LoadFile(path)
+	if err != nil {
+		return mcp.NewToolResultError(err.Error()), nil
+	}
+	if err := removeFromKey(&fs, key, value); err != nil {
+		return mcp.NewToolResultError(err.Error()), nil
+	}
+	if err := settings.WriteFile(path, fs); err != nil {
+		return mcp.NewToolResultError(err.Error()), nil
+	}
+	return jsonResult(map[string]any{"key": key, "value": value, "path": path})
 }
 
 func jsonResult(v any) (*mcp.CallToolResult, error) {

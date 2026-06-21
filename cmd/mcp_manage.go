@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/mark3labs/mcp-go/mcp"
 
@@ -302,10 +303,22 @@ func uninstallDomainSilent(root, domain, subdomain, ag string) (count int, errs 
 // ── Update ────────────────────────────────────────────────────────────────────
 
 func performUpdate(stable bool) (mcpUpdateOutput, error) {
-	home := skills.GrimoireHome()
+	home := skills.OfficialRegistryHome()
+	url := skills.GrimoireRepoURL()
+
+	// Local registry: skip all git ops
+	if filepath.IsAbs(url) {
+		if _, err := os.Stat(home); err != nil {
+			return mcpUpdateOutput{}, fmt.Errorf("local registry %q not found", home)
+		}
+		return mcpUpdateOutput{AlreadyUpToDate: true}, nil
+	}
 
 	if _, err := os.Stat(home); err != nil {
-		if err := gitops.Clone(skills.GrimoireRepoURL(), home); err != nil {
+		if err := os.MkdirAll(filepath.Dir(home), 0o755); err != nil {
+			return mcpUpdateOutput{}, fmt.Errorf("creating dir: %w", err)
+		}
+		if err := gitops.Clone(url, home); err != nil {
 			return mcpUpdateOutput{}, fmt.Errorf("cloning grimoire: %w", err)
 		}
 		state, _ := gitops.CurrentState(home)
