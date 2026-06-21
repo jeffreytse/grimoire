@@ -11,9 +11,11 @@ import (
 // CoreSection holds machine-level and top-level runtime settings.
 // These live under the [core] TOML section.
 type CoreSection struct {
-	Home     string
-	Source   string
-	Profiles []string
+	Home        string
+	Profiles    []string // from [standards] profiles — stored here for convenience
+	Registry    string   // [core] registry — single source ref ("owner/repo[@version]" or full URL)
+	Agents      []string // [core] agents — pinned agent targets (empty = auto-detect)
+	InstallMode string   // [core] install-mode — "symlink" (default) | "copy"
 }
 
 // DomainSection holds skill practice settings for one domain or subdomain.
@@ -26,22 +28,43 @@ type DomainSection struct {
 	ComplianceThresholdError int      // -1 = unset; 0 = allow none; N = allow up to N
 }
 
-// RegistryConfig holds the configuration for one named skill registry.
-type RegistryConfig struct {
-	URL string
+// InlineSkillRef is a skill entry inside an inline profile definition.
+type InlineSkillRef struct {
+	Name     string
+	Priority int
+}
+
+// InlineProfileDef is a profile definition embedded inside settings.toml under [profiles.*].
+// It mirrors the profile TOML file format and may also carry compliance settings.
+type InlineProfileDef struct {
+	Name                     string         // optional — overrides map key; defaults to map key
+	Description              string
+	Tags                     []string
+	Extends                  []string
+	Skills                   []InlineSkillRef
+	Exclude                  []string
+	ComplianceThreshold      float64
+	ComplianceThresholdError int // -1 = unset
 }
 
 // FileSettings is one parsed settings.toml file.
 type FileSettings struct {
-	Core       CoreSection
-	Registries map[string]RegistryConfig // name → config; "official" may be explicit or implicit
-	Sections   map[string]DomainSection  // dotted keys: "engineering", "engineering.architecture"
+	Core             CoreSection
+	StandardsExtends []string                    // from [standards] extends = [...]
+	ReportPath       string                      // from [standards] report-path
+	StalenessDays    int                         // from [standards] staleness-days (0 = unset)
+	Sections         map[string]DomainSection    // dotted keys: "engineering", "engineering.architecture"
+	InlineProfiles   map[string]InlineProfileDef // from [profiles.*]
 }
 
 // Resolved holds the effective settings after merging all file layers.
 type Resolved struct {
-	Core     CoreSection
-	sections map[string]DomainSection
+	Core             CoreSection
+	StandardsExtends []string                    // deduped union from all file layers
+	ReportPath       string                      // first non-empty across layers
+	StalenessDays    int                         // first nonzero across layers (default 7 when 0)
+	sections         map[string]DomainSection
+	InlineProfiles   map[string]InlineProfileDef // merged, higher-priority layers win per name
 	// Sources maps dotted key paths to the file that provided them.
 	// E.g. "core.home" → "/path/to/settings.toml"
 	Sources map[string]string
@@ -71,7 +94,10 @@ func SystemPath() string {
 }
 
 var validStandardsFields = map[string]bool{
+	"extends":                    true,
 	"profiles":                   true,
+	"report-path":                true,
+	"staleness-days":             true,
 	"practices":                  true,
 	"disabled":                   true,
 	"fallback":                   true,
@@ -109,23 +135,54 @@ func ParseStandardsKey(dotted string) (domain, field string, err error) {
 // paths must be the same length as layers and contains the source file path for each.
 func Merge(layers []FileSettings, paths []string) Resolved {
 	r := Resolved{
-		sections: make(map[string]DomainSection),
-		Sources:  make(map[string]string),
+		sections:       make(map[string]DomainSection),
+		InlineProfiles: make(map[string]InlineProfileDef),
+		Sources:        make(map[string]string),
 	}
 
+	// Core scalar fields: first non-empty wins (layers[0] = highest priority).
+	// StandardsExtends: union across all layers, deduped by derived name.
+	seenExt := make(map[string]bool)
 	for i, fs := range layers {
 		src := paths[i]
 		if r.Core.Home == "" && fs.Core.Home != "" {
 			r.Core.Home = fs.Core.Home
 			r.Sources["core.home"] = src
 		}
-		if r.Core.Source == "" && fs.Core.Source != "" {
-			r.Core.Source = fs.Core.Source
-			r.Sources["core.source"] = src
+		if r.Core.Registry == "" && fs.Core.Registry != "" {
+			r.Core.Registry = fs.Core.Registry
+			r.Sources["core.registry"] = src
+		}
+		if len(r.Core.Agents) == 0 && len(fs.Core.Agents) > 0 {
+			r.Core.Agents = fs.Core.Agents
+			r.Sources["core.agents"] = src
+		}
+		if r.Core.InstallMode == "" && fs.Core.InstallMode != "" {
+			r.Core.InstallMode = fs.Core.InstallMode
+			r.Sources["core.install-mode"] = src
 		}
 		if len(r.Core.Profiles) == 0 && len(fs.Core.Profiles) > 0 {
 			r.Core.Profiles = fs.Core.Profiles
 			r.Sources["standards.profiles"] = src
+		}
+		if r.ReportPath == "" && fs.ReportPath != "" {
+			r.ReportPath = fs.ReportPath
+			r.Sources["standards.report-path"] = src
+		}
+		if r.StalenessDays == 0 && fs.StalenessDays > 0 {
+			r.StalenessDays = fs.StalenessDays
+			r.Sources["standards.staleness-days"] = src
+		}
+		for _, ref := range fs.StandardsExtends {
+			u, _ := ParseRef(ref)
+			name := DeriveRegistryName(u)
+			if !seenExt[name] {
+				seenExt[name] = true
+				r.StandardsExtends = append(r.StandardsExtends, ref)
+				if r.Sources["standards.extends"] == "" {
+					r.Sources["standards.extends"] = src
+				}
+			}
 		}
 	}
 
@@ -134,6 +191,13 @@ func Merge(layers []FileSettings, paths []string) Resolved {
 	for _, fs := range layers {
 		for k := range fs.Sections {
 			allKeys[k] = struct{}{}
+		}
+	}
+
+	// InlineProfiles: higher-priority layers win per profile name (project > global > system)
+	for i := len(layers) - 1; i >= 0; i-- {
+		for name, def := range layers[i].InlineProfiles {
+			r.InlineProfiles[name] = def
 		}
 	}
 

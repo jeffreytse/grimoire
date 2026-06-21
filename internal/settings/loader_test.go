@@ -24,7 +24,7 @@ func TestParseFile_MissingFile(t *testing.T) {
 	if err != nil {
 		t.Fatalf("missing file should not error: %v", err)
 	}
-	if fs.Core.Home != "" || fs.Core.Source != "" || len(fs.Core.Profiles) != 0 {
+	if fs.Core.Home != "" || fs.Core.Registry != "" || len(fs.Core.Profiles) != 0 {
 		t.Error("missing file should return zero CoreSection")
 	}
 	if len(fs.Sections) != 0 {
@@ -37,7 +37,7 @@ func TestParseFile_CoreSection(t *testing.T) {
 	path := writeSettingsFile(t, dir, "settings.toml", `
 [core]
 home = "/opt/grimoire"
-source = "https://example.com/skills.git"
+registry = "https://company-mirror.example.com/grimoire-hub.git"
 `)
 	fs, err := ParseFile(path)
 	if err != nil {
@@ -46,12 +46,38 @@ source = "https://example.com/skills.git"
 	if fs.Core.Home != "/opt/grimoire" {
 		t.Errorf("Core.Home = %q, want /opt/grimoire", fs.Core.Home)
 	}
-	if fs.Core.Source != "https://example.com/skills.git" {
-		t.Errorf("Core.Source = %q", fs.Core.Source)
+	if fs.Core.Registry != "https://company-mirror.example.com/grimoire-hub.git" {
+		t.Errorf("Core.Registry = %q", fs.Core.Registry)
 	}
 	// profiles must NOT be parsed from [core]
 	if len(fs.Core.Profiles) != 0 {
 		t.Errorf("Core.Profiles should be empty when not set in [standards], got %v", fs.Core.Profiles)
+	}
+}
+
+func TestParseFile_StandardsExtends(t *testing.T) {
+	dir := t.TempDir()
+	path := writeSettingsFile(t, dir, "settings.toml", `
+[standards]
+extends = ["mycompany/standards@v1.0.0", "https://github.com/acme/practices.git"]
+profiles = ["backend-service"]
+`)
+	fs, err := ParseFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(fs.StandardsExtends) != 2 {
+		t.Fatalf("StandardsExtends = %v, want 2 entries", fs.StandardsExtends)
+	}
+	if fs.StandardsExtends[0] != "mycompany/standards@v1.0.0" {
+		t.Errorf("StandardsExtends[0] = %q", fs.StandardsExtends[0])
+	}
+	if fs.StandardsExtends[1] != "https://github.com/acme/practices.git" {
+		t.Errorf("StandardsExtends[1] = %q", fs.StandardsExtends[1])
+	}
+	// profiles should still parse correctly alongside extends
+	if len(fs.Core.Profiles) != 1 || fs.Core.Profiles[0] != "backend-service" {
+		t.Errorf("Core.Profiles = %v", fs.Core.Profiles)
 	}
 }
 
@@ -305,51 +331,67 @@ func TestMerge_DisabledFirstWins(t *testing.T) {
 }
 
 func TestLoad_EnvVarOverridesFileLayer(t *testing.T) {
-	dir := t.TempDir()
-	writeSettingsFile(t, dir, ".grimoire/settings.toml", `
+	tmpGlobal := t.TempDir()
+	t.Setenv("XDG_CONFIG_HOME", tmpGlobal)
+	writeSettingsFile(t, tmpGlobal, "grimoire/settings.toml", `
 [core]
 home = "/file/home"
-source = "https://file-source.example.com/skills.git"
+registry = "https://mirror.example.com/grimoire-hub.git"
 `)
 
 	t.Setenv("GRIMOIRE_HOME", "/env/home")
-	t.Setenv("GRIMOIRE_SOURCE", "https://env-source.example.com/skills.git")
 
-	r, err := Load(dir)
+	r, err := Load(t.TempDir())
 	if err != nil {
 		t.Fatal(err)
 	}
 	if r.Core.Home != "/env/home" {
-		t.Errorf("GRIMOIRE_HOME should override file: Core.Home = %q", r.Core.Home)
-	}
-	if r.Core.Source != "https://env-source.example.com/skills.git" {
-		t.Errorf("GRIMOIRE_SOURCE should override file: Core.Source = %q", r.Core.Source)
+		t.Errorf("GRIMOIRE_HOME should override: Core.Home = %q", r.Core.Home)
 	}
 	if src := r.Sources["core.home"]; src != "$GRIMOIRE_HOME" {
 		t.Errorf("source tag should be $GRIMOIRE_HOME, got %q", src)
 	}
-	if src := r.Sources["core.source"]; src != "$GRIMOIRE_SOURCE" {
-		t.Errorf("source tag should be $GRIMOIRE_SOURCE, got %q", src)
+	if r.Core.Registry != "https://mirror.example.com/grimoire-hub.git" {
+		t.Errorf("Core.Registry should be loaded from global layer, got %q", r.Core.Registry)
 	}
 }
 
-func TestLoad_EnvVarNotSet_UsesFileValue(t *testing.T) {
+func TestLoad_CoreKeysIgnoredFromLocalLayer(t *testing.T) {
 	dir := t.TempDir()
 	writeSettingsFile(t, dir, ".grimoire/settings.toml", `
 [core]
-home = "/file/home"
+home = "/local/home"
+registry = "https://local-mirror.example.com/grimoire-hub.git"
 `)
-
-	// ensure env vars not set
 	t.Setenv("GRIMOIRE_HOME", "")
-	t.Setenv("GRIMOIRE_SOURCE", "")
 
 	r, err := Load(dir)
 	if err != nil {
 		t.Fatal(err)
 	}
+	if r.Core.Home == "/local/home" {
+		t.Error("core.home from local layer must be ignored")
+	}
+	if r.Core.Registry == "https://local-mirror.example.com/grimoire-hub.git" {
+		t.Error("core.registry from local layer must be ignored")
+	}
+}
+
+func TestLoad_EnvVarNotSet_UsesFileValue(t *testing.T) {
+	tmpGlobal := t.TempDir()
+	t.Setenv("XDG_CONFIG_HOME", tmpGlobal)
+	writeSettingsFile(t, tmpGlobal, "grimoire/settings.toml", `
+[core]
+home = "/file/home"
+`)
+	t.Setenv("GRIMOIRE_HOME", "")
+
+	r, err := Load(t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
 	if r.Core.Home != "/file/home" {
-		t.Errorf("file value should be used when env unset: Core.Home = %q", r.Core.Home)
+		t.Errorf("global value should be used when env unset: Core.Home = %q", r.Core.Home)
 	}
 }
 
@@ -406,5 +448,36 @@ func TestWriteFile_RoundTrip(t *testing.T) {
 	ds := got.Sections["engineering"]
 	if ds.ComplianceThreshold != 80 {
 		t.Errorf("threshold = %v", ds.ComplianceThreshold)
+	}
+}
+
+func TestDeriveRegistryName(t *testing.T) {
+	cases := []struct {
+		input string
+		want  string
+	}{
+		// GitHub shorthand — no host in result
+		{"acmecorp/standards", "acmecorp/standards"},
+		{"acmecorp/standards.git", "acmecorp/standards"},
+		// GitHub HTTPS — no host prefix
+		{"https://github.com/acmecorp/standards.git", "acmecorp/standards"},
+		{"https://github.com/acmecorp/standards", "acmecorp/standards"},
+		// GitHub SSH — no host prefix
+		{"git@github.com:acmecorp/standards.git", "acmecorp/standards"},
+		// GitLab HTTPS — host preserved
+		{"https://gitlab.com/acmecorp/standards.git", "gitlab.com/acmecorp/standards"},
+		// GitLab SSH — host preserved
+		{"git@gitlab.com:acmecorp/standards.git", "gitlab.com/acmecorp/standards"},
+		// self-hosted — host preserved
+		{"https://git.internal.corp/team/practices.git", "git.internal.corp/team/practices"},
+		// version suffix handled by ParseRef before DeriveRegistryName is called
+		{"https://github.com/acmecorp/standards", "acmecorp/standards"},
+	}
+
+	for _, c := range cases {
+		got := DeriveRegistryName(c.input)
+		if got != c.want {
+			t.Errorf("DeriveRegistryName(%q) = %q, want %q", c.input, got, c.want)
+		}
 	}
 }
