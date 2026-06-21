@@ -21,33 +21,40 @@ var (
 var configCmd = &cobra.Command{
 	Use:   "config",
 	Short: "Get or set grimoire configuration values",
-	Long: `Manage grimoire configuration across three levels (highest priority first):
+	Long: `Manage grimoire configuration (like git config).
 
-  --local    .grimoire/settings.toml       project, committed — shared with team
-  --global   ~/.config/grimoire/settings.toml  per-user (default for core.* keys)
-  --system   /etc/grimoire/settings.toml   machine-wide (requires admin)
+Levels (highest priority first):
+  default    .grimoire/settings.toml             project — committed, shared with team
+  -g/--global  ~/.config/grimoire/settings.toml  per-user
+  --system   /etc/grimoire/settings.toml         machine-wide (requires admin)
 
-  grimoire config get <key>          print current resolved value and source
-  grimoire config set <key> <value>  write to target level
-  grimoire config unset <key>        clear from target level
+  grimoire config get <key>               print current resolved value and source
+  grimoire config set <key> <value>       write to target level (overwrites)
+  grimoire config add <key> <value>       append a value to a list key (idempotent)
+  grimoire config remove <key> <value>    remove a value from a list key
+  grimoire config unset <key>             clear from target level
 
-Core keys (default level: --global):
-  core.home     local directory where grimoire is installed
-  core.source   local path or git URL for the skills library
+Core keys (always global — no flag needed, --local rejected):
+  core.home      directory where grimoire is installed
+  core.registry  official registry ref (owner/repo[@version] or URL)
 
-Standards keys (default level: --local):
-  standards.profiles                       active profiles (comma-separated)
-  standards.<domain>.practices             practice names (comma-separated)
-  standards.<domain>.disabled              skill names to suppress (comma-separated)
+Standards keys (default: project; use -g for user level):
+  standards.extends                        additional registries (list)
+  standards.profiles                       active profiles (list)
+  standards.<domain>.practices             practice names (list)
+  standards.<domain>.disabled              skill names to suppress (list)
   standards.<domain>.fallback              "ask" | "skip"
   standards.<domain>.compliance-threshold  number 0–100
   standards.<domain>.compliance-threshold-error  max allowed errors (-1 = unset)
 
 Examples:
   grimoire config set standards.profiles "clean-architecture,tdd"
+  grimoire config add standards.extends acmecorp/standards
+  grimoire config add standards.extends acmecorp/standards -g
+  grimoire config add standards.engineering.practices apply-solid-principles
   grimoire config set standards.engineering.compliance-threshold 75
-  grimoire config set standards.engineering.testing.practices "apply-tdd"
-  grimoire config set core.home ~/.grimoire --global`,
+  grimoire config set core.home ~/.grimoire
+  grimoire config set core.registry acmecorp/fork`,
 }
 
 var configGetCmd = &cobra.Command{
@@ -71,15 +78,31 @@ var configUnsetCmd = &cobra.Command{
 	RunE:  runConfigUnset,
 }
 
+var configAddCmd = &cobra.Command{
+	Use:   "add <key> <value>",
+	Short: "Append a value to a list config key (idempotent)",
+	Args:  cobra.ExactArgs(2),
+	RunE:  runConfigAdd,
+}
+
+var configRemoveCmd = &cobra.Command{
+	Use:   "remove <key> <value>",
+	Short: "Remove a value from a list config key",
+	Args:  cobra.ExactArgs(2),
+	RunE:  runConfigRemove,
+}
+
 func init() {
-	for _, cmd := range []*cobra.Command{configGetCmd, configSetCmd, configUnsetCmd} {
-		cmd.Flags().BoolVar(&flagConfigLocal, "local", false, "use project settings (.grimoire/settings.toml)")
-		cmd.Flags().BoolVar(&flagConfigGlobal, "global", false, "use user settings (~/.config/grimoire/settings.toml)")
+	for _, cmd := range []*cobra.Command{configGetCmd, configSetCmd, configUnsetCmd, configAddCmd, configRemoveCmd} {
+		cmd.Flags().BoolVar(&flagConfigLocal, "local", false, "use project settings (.grimoire/settings.toml) — same as default")
+		cmd.Flags().BoolVarP(&flagConfigGlobal, "global", "g", false, "use user settings (~/.config/grimoire/settings.toml)")
 		cmd.Flags().BoolVar(&flagConfigSystem, "system", false, "use system settings (/etc/grimoire/settings.toml)")
 	}
 	configCmd.AddCommand(configGetCmd)
 	configCmd.AddCommand(configSetCmd)
 	configCmd.AddCommand(configUnsetCmd)
+	configCmd.AddCommand(configAddCmd)
+	configCmd.AddCommand(configRemoveCmd)
 }
 
 func runConfigGet(_ *cobra.Command, args []string) error {
@@ -142,7 +165,16 @@ func runConfigUnset(_ *cobra.Command, args []string) error {
 }
 
 // targetFilePath resolves which settings file to write based on flags and key prefix.
+// core.* keys are always written to global (they have no effect at project level).
+// All other keys default to project level; -g/--global overrides to user level.
 func targetFilePath(key string) (string, error) {
+	if strings.HasPrefix(key, "core.") {
+		if flagConfigLocal {
+			return "", fmt.Errorf("[core] keys are always global — omit --local or use -g")
+		}
+		return settings.GlobalPath(), nil
+	}
+
 	count := 0
 	if flagConfigLocal {
 		count++
@@ -154,23 +186,17 @@ func targetFilePath(key string) (string, error) {
 		count++
 	}
 	if count > 1 {
-		return "", fmt.Errorf("only one of --local, --global, --system may be specified")
+		return "", fmt.Errorf("only one of --local, -g/--global, --system may be specified")
 	}
 
-	if flagConfigLocal {
-		return filepath.Join(getProjectDir(), ".grimoire", "settings.toml"), nil
-	}
 	if flagConfigGlobal {
 		return settings.GlobalPath(), nil
 	}
 	if flagConfigSystem {
 		return settings.SystemPath(), nil
 	}
-	// defaults
-	if strings.HasPrefix(key, "standards.") {
-		return filepath.Join(getProjectDir(), ".grimoire", "settings.toml"), nil
-	}
-	return settings.GlobalPath(), nil
+	// default: project level (like git config)
+	return filepath.Join(getProjectDir(), ".grimoire", "settings.toml"), nil
 }
 
 // levelToFilePath maps an explicit level string to a settings file path.
@@ -178,16 +204,19 @@ func targetFilePath(key string) (string, error) {
 func levelToFilePath(key, level string) (string, error) {
 	switch level {
 	case "local":
+		if strings.HasPrefix(key, "core.") {
+			return "", fmt.Errorf("[core] keys are always global — omit level or use global")
+		}
 		return filepath.Join(getProjectDir(), ".grimoire", "settings.toml"), nil
 	case "global":
 		return settings.GlobalPath(), nil
 	case "system":
 		return settings.SystemPath(), nil
 	default: // "" — same auto-defaults as targetFilePath
-		if strings.HasPrefix(key, "standards.") {
-			return filepath.Join(getProjectDir(), ".grimoire", "settings.toml"), nil
+		if strings.HasPrefix(key, "core.") {
+			return settings.GlobalPath(), nil
 		}
-		return settings.GlobalPath(), nil
+		return filepath.Join(getProjectDir(), ".grimoire", "settings.toml"), nil
 	}
 }
 
@@ -196,8 +225,12 @@ func getKeyResolved(r settings.Resolved, key string) (val, src string, err error
 	switch key {
 	case "core.home":
 		return r.Core.Home, r.Sources["core.home"], nil
-	case "core.source":
-		return r.Core.Source, r.Sources["core.source"], nil
+	case "core.registry":
+		return r.Core.Registry, r.Sources["core.registry"], nil
+	case "core.agents":
+		return strings.Join(r.Core.Agents, ", "), r.Sources["core.agents"], nil
+	case "core.install-mode":
+		return r.Core.InstallMode, r.Sources["core.install-mode"], nil
 	}
 	if strings.HasPrefix(key, "standards.") {
 		domain, field, err := settings.ParseStandardsKey(key)
@@ -205,8 +238,17 @@ func getKeyResolved(r settings.Resolved, key string) (val, src string, err error
 			return "", "", err
 		}
 		switch field {
+		case "extends":
+			return strings.Join(r.StandardsExtends, ", "), r.Sources["standards.extends"], nil
 		case "profiles":
 			return strings.Join(r.Core.Profiles, ", "), r.Sources["standards.profiles"], nil
+		case "report-path":
+			return r.ReportPath, r.Sources["standards.report-path"], nil
+		case "staleness-days":
+			if r.StalenessDays == 0 {
+				return "", r.Sources["standards.staleness-days"], nil
+			}
+			return strconv.Itoa(r.StalenessDays), r.Sources["standards.staleness-days"], nil
 		default:
 			if domain == "" {
 				return "", "", fmt.Errorf("field %q requires a domain (e.g. standards.engineering.%s)", field, field)
@@ -246,8 +288,17 @@ func applyKey(fs *settings.FileSettings, key, value string) error {
 	case "core.home":
 		fs.Core.Home = value
 		return nil
-	case "core.source":
-		fs.Core.Source = value
+	case "core.registry":
+		fs.Core.Registry = value
+		return nil
+	case "core.agents":
+		fs.Core.Agents = splitCSV(value)
+		return nil
+	case "core.install-mode":
+		if value != "" && value != "symlink" && value != "copy" {
+			return fmt.Errorf("core.install-mode must be \"symlink\" or \"copy\"")
+		}
+		fs.Core.InstallMode = value
 		return nil
 	}
 	if strings.HasPrefix(key, "standards.") {
@@ -257,8 +308,26 @@ func applyKey(fs *settings.FileSettings, key, value string) error {
 		}
 		if domain == "" {
 			// top-level standards field
-			if field == "profiles" {
+			switch field {
+			case "extends":
+				fs.StandardsExtends = splitCSV(value)
+				return nil
+			case "profiles":
 				fs.Core.Profiles = splitCSV(value)
+				return nil
+			case "report-path":
+				fs.ReportPath = value
+				return nil
+			case "staleness-days":
+				if value == "" {
+					fs.StalenessDays = 0
+					return nil
+				}
+				n, err := strconv.Atoi(value)
+				if err != nil || n < 0 {
+					return fmt.Errorf("staleness-days must be a non-negative integer")
+				}
+				fs.StalenessDays = n
 				return nil
 			}
 		}
@@ -302,6 +371,153 @@ func applyKey(fs *settings.FileSettings, key, value string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown config key %q", key)
+}
+
+func runConfigAdd(_ *cobra.Command, args []string) error {
+	key, value := args[0], args[1]
+	path, err := targetFilePath(key)
+	if err != nil {
+		return err
+	}
+	fs, err := settings.LoadFile(path)
+	if err != nil {
+		return fmt.Errorf("loading %s: %w", path, err)
+	}
+	if err := appendToKey(&fs, key, value); err != nil {
+		return err
+	}
+	if err := settings.WriteFile(path, fs); err != nil {
+		return fmt.Errorf("saving %s: %w", path, err)
+	}
+	fmt.Printf("%s  %s += %s\n", tui.IconOK, key, value)
+	fmt.Printf("   saved to %s\n", path)
+	return nil
+}
+
+func runConfigRemove(_ *cobra.Command, args []string) error {
+	key, value := args[0], args[1]
+	path, err := targetFilePath(key)
+	if err != nil {
+		return err
+	}
+	fs, err := settings.LoadFile(path)
+	if err != nil {
+		return fmt.Errorf("loading %s: %w", path, err)
+	}
+	if err := removeFromKey(&fs, key, value); err != nil {
+		return err
+	}
+	if err := settings.WriteFile(path, fs); err != nil {
+		return fmt.Errorf("saving %s: %w", path, err)
+	}
+	fmt.Printf("%s  %s -= %s\n", tui.IconOK, key, value)
+	fmt.Printf("   saved to %s\n", path)
+	return nil
+}
+
+// appendToKey appends value to a list-type key in fs (idempotent).
+func appendToKey(fs *settings.FileSettings, key, value string) error {
+	switch key {
+	case "core.agents":
+		for _, v := range fs.Core.Agents {
+			if v == value {
+				return nil
+			}
+		}
+		fs.Core.Agents = append(fs.Core.Agents, value)
+		return nil
+	case "standards.extends":
+		for _, v := range fs.StandardsExtends {
+			if v == value {
+				return nil
+			}
+		}
+		fs.StandardsExtends = append(fs.StandardsExtends, value)
+		return nil
+	case "standards.profiles":
+		for _, v := range fs.Core.Profiles {
+			if v == value {
+				return nil
+			}
+		}
+		fs.Core.Profiles = append(fs.Core.Profiles, value)
+		return nil
+	}
+	if strings.HasPrefix(key, "standards.") {
+		domain, field, err := settings.ParseStandardsKey(key)
+		if err != nil {
+			return err
+		}
+		if domain != "" && (field == "practices" || field == "disabled") {
+			if fs.Sections == nil {
+				fs.Sections = make(map[string]settings.DomainSection)
+			}
+			ds := fs.Sections[domain]
+			if ds.ComplianceThresholdError == 0 {
+				ds.ComplianceThresholdError = -1
+			}
+			ptr := &ds.Practices
+			if field == "disabled" {
+				ptr = &ds.Disabled
+			}
+			for _, v := range *ptr {
+				if v == value {
+					fs.Sections[domain] = ds
+					return nil
+				}
+			}
+			*ptr = append(*ptr, value)
+			fs.Sections[domain] = ds
+			return nil
+		}
+	}
+	return fmt.Errorf("key %q is not a list — use 'config set' instead", key)
+}
+
+// removeFromKey removes value from a list-type key in fs (idempotent — no error if not present).
+func removeFromKey(fs *settings.FileSettings, key, value string) error {
+	switch key {
+	case "core.agents":
+		fs.Core.Agents = filterOut(fs.Core.Agents, value)
+		return nil
+	case "standards.extends":
+		fs.StandardsExtends = filterOut(fs.StandardsExtends, value)
+		return nil
+	case "standards.profiles":
+		fs.Core.Profiles = filterOut(fs.Core.Profiles, value)
+		return nil
+	}
+	if strings.HasPrefix(key, "standards.") {
+		domain, field, err := settings.ParseStandardsKey(key)
+		if err != nil {
+			return err
+		}
+		if domain != "" && (field == "practices" || field == "disabled") {
+			if fs.Sections == nil {
+				return nil
+			}
+			ds := fs.Sections[domain]
+			if field == "practices" {
+				ds.Practices = filterOut(ds.Practices, value)
+			} else {
+				ds.Disabled = filterOut(ds.Disabled, value)
+			}
+			fs.Sections[domain] = ds
+			return nil
+		}
+	}
+	return fmt.Errorf("key %q is not a list — use 'config unset' instead", key)
+}
+
+// filterOut returns a new slice with all occurrences of value removed.
+func filterOut(slice []string, value string) []string {
+	out := slice[:0:0]
+	for _, v := range slice {
+		if v != value {
+			out = append(out, v)
+		}
+	}
+	return out
 }
 
 func splitCSV(s string) []string {
