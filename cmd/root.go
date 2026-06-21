@@ -31,15 +31,13 @@ func getProjectDir() string {
 	return abs
 }
 
-var flagInteractive bool
-
 var rootCmd = &cobra.Command{
 	SilenceUsage: true,
 	Use:          "grimoire",
 	Short:        "Grimoire — best practice enforcement for AI assistants",
 	Long: `Grimoire skills enforce best practices in AI-assisted development.
 
-  grimoire -i            Open the interactive TUI
+  grimoire wizard        Open the interactive TUI wizard
   grimoire install       Install skills to AI agent directories
   grimoire uninstall     Remove skills from AI agent directories
   grimoire update        Pull the latest grimoire skills and relink
@@ -53,9 +51,6 @@ var rootCmd = &cobra.Command{
   grimoire profile       Manage profiles (list, show, init)
   grimoire self-update   Update the grimoire CLI binary to the latest release`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if flagInteractive {
-			return runInteractive()
-		}
 		return cmd.Help()
 	},
 }
@@ -68,7 +63,7 @@ func Execute() {
 
 func init() {
 	rootCmd.PersistentFlags().StringVar(&flagProjectDir, "project-dir", "", "project directory (default: current working directory)")
-	rootCmd.Flags().BoolVarP(&flagInteractive, "interactive", "i", false, "open the interactive TUI")
+	rootCmd.AddCommand(wizardCmd)
 	rootCmd.AddCommand(initCmd)
 	rootCmd.AddCommand(checkCmd)
 	rootCmd.AddCommand(installCmd)
@@ -83,6 +78,7 @@ func init() {
 	rootCmd.AddCommand(settingsCmd)
 	rootCmd.AddCommand(registryCmd)
 	rootCmd.AddCommand(profileCmd)
+	rootCmd.AddCommand(presetCmd)
 	rootCmd.AddCommand(contextCmd)
 	rootCmd.AddCommand(mcpCmd)
 }

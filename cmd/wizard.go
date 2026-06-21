@@ -4,13 +4,23 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/spf13/cobra"
+
 	"github.com/jeffreytse/grimoire/internal/agent"
 	"github.com/jeffreytse/grimoire/internal/skills"
 	"github.com/jeffreytse/grimoire/internal/tui"
 )
 
-func runInteractive() error {
-	home := skills.GrimoireHome()
+var wizardCmd = &cobra.Command{
+	Use:   "wizard",
+	Short: "Open the interactive TUI wizard",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return runWizard()
+	},
+}
+
+func runWizard() error {
+	home := skills.OfficialRegistryHome()
 	tui.PrintBanner(skills.GrimoireVersion())
 
 	mode, ok := tui.RunSelect("⚙️  What would you like to do?",
