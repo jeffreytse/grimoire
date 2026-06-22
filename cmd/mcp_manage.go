@@ -125,7 +125,7 @@ func performInstall(domain, subdomain, skill, target string) (mcpInstallOutput, 
 		}
 
 	default:
-		all, err := skills.ListAllSkillsFromSources(sources)
+		all, _, err := skills.ListAllSkillsFromSources(sources)
 		if err != nil {
 			return mcpInstallOutput{}, err
 		}

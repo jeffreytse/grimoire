@@ -114,22 +114,34 @@ func runInstall(cmd *cobra.Command, args []string) error {
 		}
 
 	case flagInstallDomain != "":
-		for _, src := range sources {
+		all, conflicts, err := skills.ListAllSkillsFromSources(sources)
+		if err != nil {
+			return err
+		}
+		printConflicts(conflicts)
+		for _, sk := range all {
+			if sk.Domain != flagInstallDomain {
+				continue
+			}
+			if flagInstallSubdomain != "" && sk.Subdomain != flagInstallSubdomain {
+				continue
+			}
 			for _, ag := range targets {
-				n, err := installDomainToAgent(src.Root, flagInstallDomain, flagInstallSubdomain, ag, symlink)
+				n, err := installSkillToAgent(sk.Path, ag, symlink)
 				if err != nil {
-					fmt.Fprintf(os.Stderr, "  error: %v\n", err)
+					fmt.Fprintf(os.Stderr, "  warn: %v\n", err)
 				}
 				perAgent[ag] += n
 			}
 		}
 
 	default:
-		// install all skills from all sources (first-match-wins per skill name)
-		all, err := skills.ListAllSkillsFromSources(sources)
+		// install all skills from all sources (highest-priority registry wins per canonical path)
+		all, conflicts, err := skills.ListAllSkillsFromSources(sources)
 		if err != nil {
 			return err
 		}
+		printConflicts(conflicts)
 		for _, sk := range all {
 			for _, ag := range targets {
 				n, err := installSkillToAgent(sk.Path, ag, symlink)
@@ -369,6 +381,13 @@ func installSkillToAgent(skillPath, ag string, symlink bool) (int, error) {
 		return 1, nil
 	}
 	return 0, nil
+}
+
+func printConflicts(conflicts []skills.SkillConflict) {
+	for _, c := range conflicts {
+		fmt.Fprintf(os.Stderr, "  %s  %s: %s wins over %s (override: grimoire install --registry %s --skill %s)\n",
+			tui.IconWarn, c.CanonicalPath, c.WinnerRegistry, c.LoserRegistry, c.LoserRegistry, c.CanonicalPath)
+	}
 }
 
 func joinAgentNames(agents []string) string {

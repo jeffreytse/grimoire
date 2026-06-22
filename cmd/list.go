@@ -43,9 +43,13 @@ func runList(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("skills not found at %s — run: grimoire update", root)
 	}
 
-	allSkills, err := skills.ListAllSkillsFromSources(sources)
+	allSkills, conflicts, err := skills.ListAllSkillsFromSources(sources)
 	if err != nil {
 		return fmt.Errorf("listing skills: %w", err)
+	}
+	for _, c := range conflicts {
+		fmt.Fprintf(os.Stderr, "  %s  %s: %s wins over %s\n",
+			tui.IconWarn, c.CanonicalPath, c.WinnerRegistry, c.LoserRegistry)
 	}
 
 	if flagListDomain != "" {

@@ -363,7 +363,7 @@ func toolGrimoireCheck(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolR
 }
 
 func toolGrimoireListSkills(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
-	all, err := skills.ListAllSkillsFromSources(skills.AllSkillsSources())
+	all, _, err := skills.ListAllSkillsFromSources(skills.AllSkillsSources())
 	if err != nil {
 		return mcp.NewToolResultError(err.Error()), nil
 	}

@@ -16,6 +16,13 @@ type SkillsSource struct {
 	Root string // absolute path to the skills/ directory
 }
 
+// SkillConflict records a skill that was shadowed by a higher-priority registry.
+type SkillConflict struct {
+	CanonicalPath  string // e.g. "engineering/development/apply-solid"
+	WinnerRegistry string // registry whose version will be installed
+	LoserRegistry  string // registry whose version was suppressed
+}
+
 // RegistryEntry is a configured registry with its home directory.
 // Unlike SkillsSource, this includes registries that have no skills/ directory
 // (e.g. profiles-only or settings-only bundles).
@@ -113,25 +120,37 @@ func AllSkillsSources() []SkillsSource {
 }
 
 // ListAllSkillsFromSources lists skills from all sources, tagging each with its registry.
-// First source to provide a given skill name wins (official has highest priority).
-func ListAllSkillsFromSources(sources []SkillsSource) ([]Skill, error) {
-	seen := make(map[string]struct{}) // skill name → already included
+// First (highest-priority) source to provide a given canonical path wins.
+// Conflicts contains skills from lower-priority registries that were shadowed.
+func ListAllSkillsFromSources(sources []SkillsSource) ([]Skill, []SkillConflict, error) {
+	seen := make(map[string]string) // canonical path → registry name that claimed it
 	var all []Skill
+	var conflicts []SkillConflict
 
 	for _, src := range sources {
-		skills, err := ListAllSkills(src.Root)
+		list, err := ListAllSkills(src.Root)
 		if err != nil {
 			continue
 		}
-		for _, sk := range skills {
-			if _, exists := seen[sk.Name]; exists {
-				continue // higher-priority registry already provided this skill
+		for _, sk := range list {
+			dirName := filepath.Base(sk.Path)
+			key := sk.Domain + "/" + dirName
+			if sk.Subdomain != "" {
+				key = sk.Domain + "/" + sk.Subdomain + "/" + dirName
 			}
-			seen[sk.Name] = struct{}{}
+			if winner, exists := seen[key]; exists {
+				conflicts = append(conflicts, SkillConflict{
+					CanonicalPath:  key,
+					WinnerRegistry: winner,
+					LoserRegistry:  src.Name,
+				})
+				continue
+			}
+			seen[key] = src.Name
 			sk.Registry = src.Name
 			all = append(all, sk)
 		}
 	}
 
-	return all, nil
+	return all, conflicts, nil
 }
