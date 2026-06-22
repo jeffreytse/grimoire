@@ -38,6 +38,14 @@ func init() {
 
 func runUpdate(cmd *cobra.Command, args []string) error {
 	home := skills.OfficialRegistryHome()
+	url := skills.GrimoireRepoURL()
+
+	// Local path registry — nothing to pull, just update extends
+	if filepath.IsAbs(url) {
+		fmt.Printf("  %s  Official registry is a local path — no update needed.\n", tui.IconOK)
+		updateCustomRegistries()
+		return nil
+	}
 
 	// Clone if not present
 	if _, err := os.Stat(home); err != nil {
