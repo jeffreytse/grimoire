@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 
@@ -63,9 +64,8 @@ func runWizard() error {
 		selectedAgents[i] = agent.FromDisplayName(d)
 	}
 
-	// Pick domains
-	root := skills.SkillsRoot()
-	if _, err := os.Stat(root); err != nil {
+	// Download guard: check official registry exists
+	if _, err := os.Stat(home); err != nil {
 		choice, ok := tui.RunSelect(
 			"⚠️  Skills not downloaded yet. Download now?",
 			[]string{"Yes, download now", "Cancel"},
@@ -78,34 +78,96 @@ func runWizard() error {
 			return fmt.Errorf("update failed: %w", err)
 		}
 	}
-	domains, err := skills.ListDomains(root)
-	if err != nil {
-		return fmt.Errorf("listing domains: %w", err)
+
+	// Pick registries (skip step when only 1 available)
+	regs := skills.AllRegistries()
+	selectedRegs := regs
+	if len(regs) > 1 {
+		regNames := make([]string, len(regs))
+		for i, r := range regs {
+			regNames[i] = r.Name
+		}
+		presel := make([]bool, len(regs))
+		if len(presel) > 0 {
+			presel[0] = true // official is always first; pre-select it
+		}
+		chosenRegs, ok := tui.RunMultiselect("📦 Which registries?", regNames, presel)
+		if !ok || len(chosenRegs) == 0 {
+			fmt.Println("No registries selected. Exiting.")
+			return nil
+		}
+		chosenSet := make(map[string]bool, len(chosenRegs))
+		for _, n := range chosenRegs {
+			chosenSet[n] = true
+		}
+		var filtered []skills.RegistryEntry
+		for _, r := range regs {
+			if chosenSet[r.Name] {
+				filtered = append(filtered, r)
+			}
+		}
+		selectedRegs = filtered
 	}
-	domainNames := make([]string, len(domains))
-	for i, d := range domains {
-		domainNames[i] = d.Name
+
+	// Collect domains from all selected registries
+	type domainItem struct {
+		domain     skills.Domain
+		regName    string
+		skillsRoot string
 	}
-	selectedDomainNames, ok := tui.RunMultiselect(
-		"📚 Which domains?", domainNames, nil)
-	if !ok || len(selectedDomainNames) == 0 {
+	var domainItems []domainItem
+	for _, reg := range selectedRegs {
+		sr := filepath.Join(reg.Home, "skills")
+		if _, err := os.Stat(sr); err != nil {
+			continue
+		}
+		domains, err := skills.ListDomains(sr)
+		if err != nil {
+			continue
+		}
+		for _, d := range domains {
+			domainItems = append(domainItems, domainItem{domain: d, regName: reg.Name, skillsRoot: sr})
+		}
+	}
+
+	// Build display names, annotating with registry when >1 selected
+	displayNames := make([]string, len(domainItems))
+	for i, di := range domainItems {
+		if len(selectedRegs) > 1 {
+			displayNames[i] = fmt.Sprintf("%s  %s", di.domain.Name, tui.StyleDim.Render("["+di.regName+"]"))
+		} else {
+			displayNames[i] = di.domain.Name
+		}
+	}
+	displayToItem := make(map[string]domainItem, len(domainItems))
+	for i, di := range domainItems {
+		displayToItem[displayNames[i]] = di
+	}
+
+	selectedDisplays, ok := tui.RunMultiselect("📚 Which domains?", displayNames, nil)
+	if !ok || len(selectedDisplays) == 0 {
 		fmt.Println("No domains selected. Exiting.")
 		return nil
+	}
+	var selectedItems []domainItem
+	for _, d := range selectedDisplays {
+		selectedItems = append(selectedItems, displayToItem[d])
 	}
 
 	// For nested domains, pick subdomains
 	type domainSelection struct {
-		name string
-		subs []string // empty = all
+		name    string
+		root    string // skillsRoot for this domain's registry
+		regName string // for summary display
+		subs    []string // empty = all
 	}
 	var domainSelections []domainSelection
 
-	for _, dName := range selectedDomainNames {
-		dPath := fmt.Sprintf("%s/%s", root, dName)
-		if skills.IsNested(dPath) {
-			subs, err := skills.ListSubdomains(dPath)
+	for _, di := range selectedItems {
+		if di.domain.Nested {
+			subs, err := skills.ListSubdomains(di.domain.Path)
 			if err != nil || len(subs) == 0 {
-				domainSelections = append(domainSelections, domainSelection{name: dName})
+				domainSelections = append(domainSelections, domainSelection{name: di.domain.Name, root: di.skillsRoot, regName: di.regName})
 				continue
 			}
 			subNames := make([]string, len(subs))
@@ -117,15 +179,19 @@ func runWizard() error {
 			for i := range presel {
 				presel[i] = true
 			}
+			domainLabel := di.domain.Name
+			if len(selectedRegs) > 1 {
+				domainLabel = fmt.Sprintf("%s %s", di.domain.Name, tui.StyleDim.Render("["+di.regName+"]"))
+			}
 			chosen, ok := tui.RunMultiselect(
-				fmt.Sprintf("📂 %s: which sub-domains?", dName), subNames, presel)
+				fmt.Sprintf("📂 %s: which sub-domains?", domainLabel), subNames, presel)
 			if !ok {
 				fmt.Println("Cancelled.")
 				return nil
 			}
-			domainSelections = append(domainSelections, domainSelection{name: dName, subs: chosen})
+			domainSelections = append(domainSelections, domainSelection{name: di.domain.Name, root: di.skillsRoot, regName: di.regName, subs: chosen})
 		} else {
-			domainSelections = append(domainSelections, domainSelection{name: dName})
+			domainSelections = append(domainSelections, domainSelection{name: di.domain.Name, root: di.skillsRoot, regName: di.regName})
 		}
 	}
 
@@ -133,13 +199,19 @@ func runWizard() error {
 	fmt.Println()
 	fmt.Printf("  %s  %s\n", tui.StyleBold.Render("Agents:"), joinAgentNames(selectedAgents))
 	for _, ds := range domainSelections {
+		regAnnotation := ""
+		if len(selectedRegs) > 1 {
+			regAnnotation = "  " + tui.StyleDim.Render("["+ds.regName+"]")
+		}
 		if len(ds.subs) > 0 {
-			fmt.Printf("  %s  %s [%s]\n", tui.StyleBold.Render("Domain:"),
+			fmt.Printf("  %s  %s [%s]%s\n", tui.StyleBold.Render("Domain:"),
 				tui.StyleGold.Render(ds.name),
-				tui.StyleDim.Render(joinStrings(ds.subs)))
+				tui.StyleDim.Render(joinStrings(ds.subs)),
+				regAnnotation)
 		} else {
-			fmt.Printf("  %s  %s\n", tui.StyleBold.Render("Domain:"),
-				tui.StyleGold.Render(ds.name))
+			fmt.Printf("  %s  %s%s\n", tui.StyleBold.Render("Domain:"),
+				tui.StyleGold.Render(ds.name),
+				regAnnotation)
 		}
 	}
 	fmt.Println()
@@ -158,14 +230,14 @@ func runWizard() error {
 				// uninstall each selected sub
 				if len(ds.subs) > 1 {
 					for _, s := range ds.subs {
-						n, err := uninstallDomainFromAgent(root, ds.name, s, ag)
+						n, err := uninstallDomainFromAgent(ds.root, ds.name, s, ag)
 						if err != nil {
 							fmt.Fprintf(os.Stderr, "  error: %v\n", err)
 						}
 						totalCount += n
 					}
 				} else {
-					n, err := uninstallDomainFromAgent(root, ds.name, sub, ag)
+					n, err := uninstallDomainFromAgent(ds.root, ds.name, sub, ag)
 					if err != nil {
 						fmt.Fprintf(os.Stderr, "  error: %v\n", err)
 					}
@@ -186,14 +258,14 @@ func runWizard() error {
 			for _, ag := range selectedAgents {
 				if len(ds.subs) > 0 {
 					for _, s := range ds.subs {
-						n, err := installDomainToAgent(root, ds.name, s, ag, symlink)
+						n, err := installDomainToAgent(ds.root, ds.name, s, ag, symlink)
 						if err != nil {
 							fmt.Fprintf(os.Stderr, "  error: %v\n", err)
 						}
 						totalCount += n
 					}
 				} else {
-					n, err := installDomainToAgent(root, ds.name, "", ag, symlink)
+					n, err := installDomainToAgent(ds.root, ds.name, "", ag, symlink)
 					if err != nil {
 						fmt.Fprintf(os.Stderr, "  error: %v\n", err)
 					}
@@ -206,7 +278,6 @@ func runWizard() error {
 			_ = agent.ConfigureAgentMD(ag)
 		}
 
-		_ = home
 		fmt.Printf("\n%s  %d skills installed → %s\n",
 			tui.IconOK, totalCount/max(len(selectedAgents), 1), joinAgentNames(selectedAgents))
 	}

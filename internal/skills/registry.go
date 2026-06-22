@@ -63,7 +63,14 @@ func AllRegistries() []RegistryEntry {
 		}
 	}
 
+	// Always include the official registry, even when it lives outside RegistriesRoot
+	// (e.g. core.registry set to an absolute local path).
 	officialHome := OfficialRegistryHome()
+	if !seen[officialHome] && isRegistryDir(officialHome) {
+		seen[officialHome] = true
+		all = append(all, RegistryEntry{Name: OfficialRegistryName, Home: officialHome})
+	}
+
 	var ordered, rest []RegistryEntry
 	for _, e := range all {
 		if e.Home == officialHome {
