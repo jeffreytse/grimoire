@@ -490,7 +490,7 @@ func updateOneRegistrySilent(name string, cfg *settings.FileSettings) (string, e
 	}
 
 	if refURL == "" {
-		if name != skills.OfficialRegistryName {
+		if name != skills.OfficialRegistryName && name != skills.OfficialRegistryDerivedName() {
 			return "error", fmt.Errorf("target %q not configured", name)
 		}
 		refURL = skills.GrimoireRepoURL()

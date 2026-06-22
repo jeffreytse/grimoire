@@ -143,10 +143,12 @@ type registryListEntry struct {
 	URL         string `json:"url"`
 	Version     string `json:"version,omitempty"`
 	Priority    int    `json:"priority"`
-	SkillsCount int    `json:"skills_count"`
-	Cloned      bool   `json:"cloned"`
-	Enabled     bool   `json:"enabled"`
-	Kind        string `json:"kind"` // "official" | "user" | "local"
+	SkillsCount   int    `json:"skills_count"`
+	ProfilesCount int    `json:"profiles_count"`
+	PresetsCount  int    `json:"presets_count"`
+	Cloned        bool   `json:"cloned"`
+	Enabled       bool   `json:"enabled"`
+	Kind          string `json:"kind"` // "official" | "user" | "local"
 }
 
 func runRegistryList(cmd *cobra.Command, args []string) error {
@@ -157,6 +159,7 @@ func runRegistryList(cmd *cobra.Command, args []string) error {
 
 	regs := skills.AllRegistries()
 	entries := make([]registryListEntry, 0, len(regs))
+	officialSeen := false
 
 	for _, reg := range regs {
 		var url, ver string
@@ -175,8 +178,9 @@ func runRegistryList(cmd *cobra.Command, args []string) error {
 			url = skills.GrimoireRepoURL()
 		}
 		kind := "user"
-		if reg.Official {
+		if reg.Official && !officialSeen {
 			kind = "official"
+			officialSeen = true
 		}
 		if filepath.IsAbs(url) {
 			kind = "local"
@@ -185,14 +189,16 @@ func runRegistryList(cmd *cobra.Command, args []string) error {
 			ver = skills.GrimoireVersion()
 		}
 		entries = append(entries, registryListEntry{
-			Name:        reg.Name,
-			URL:         url,
-			Version:     ver,
-			Priority:    reg.Priority,
-			SkillsCount: countSkills(filepath.Join(reg.Home, "skills")),
-			Cloned:      dirExists(reg.Home),
-			Enabled:     enabled,
-			Kind:        kind,
+			Name:          reg.Name,
+			URL:           url,
+			Version:       ver,
+			Priority:      reg.Priority,
+			SkillsCount:   countSkills(filepath.Join(reg.Home, "skills")),
+			ProfilesCount: countProfiles(filepath.Join(reg.Home, "profiles")),
+			PresetsCount:  len(skills.ListPresets(reg.Home)),
+			Cloned:        dirExists(reg.Home),
+			Enabled:       enabled,
+			Kind:          kind,
 		})
 	}
 
@@ -224,7 +230,7 @@ func runRegistryList(cmd *cobra.Command, args []string) error {
 		case !e.Enabled:
 			fmt.Printf("         disabled — run: grimoire registry enable %s\n\n", e.Name)
 		case e.Cloned:
-			fmt.Printf("         %d skills\n\n", e.SkillsCount)
+			fmt.Printf("         %d skills · %d profiles · %d presets\n\n", e.SkillsCount, e.ProfilesCount, e.PresetsCount)
 		default:
 			fmt.Printf("         not cloned — run: grimoire registry update %s\n\n", e.Name)
 		}

@@ -83,6 +83,12 @@ func IsGitURL(s string) bool {
 		strings.HasPrefix(s, "git@")
 }
 
+// OfficialRegistryDerivedName returns the path-derived name for the official registry.
+// Matches the directory name under RegistriesRoot().
+func OfficialRegistryDerivedName() string {
+	return settings.DeriveRegistryName(GrimoireRepoURL())
+}
+
 func SkillsRoot() string {
 	return filepath.Join(OfficialRegistryHome(), "skills")
 }

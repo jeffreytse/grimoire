@@ -79,7 +79,7 @@ func printSkillTreeMulti(all []skills.Skill, showRegistry bool) {
 	for _, s := range all {
 		reg := s.Registry
 		if reg == "" {
-			reg = skills.OfficialRegistryName
+			reg = skills.OfficialRegistryDerivedName()
 		}
 		if _, ok := byRegistry[reg]; !ok {
 			registryOrder = append(registryOrder, reg)

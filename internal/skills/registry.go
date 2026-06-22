@@ -54,7 +54,7 @@ func AllRegistries() []RegistryEntry {
 
 	if len(cfg.Registries) == 0 {
 		return []RegistryEntry{{
-			Name:     OfficialRegistryName,
+			Name:     OfficialRegistryDerivedName(),
 			Home:     OfficialRegistryHome(),
 			Priority: 100,
 			Official: true,
