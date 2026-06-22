@@ -22,8 +22,8 @@ func makeSkillDir(t *testing.T, root, domain, skillName string, withSkillMd bool
 	}
 }
 
-func testSource(root string) []skills.SkillsSource {
-	return []skills.SkillsSource{{Name: "test", Root: root}}
+func testSource(root string) []skills.SkillsRegistry {
+	return []skills.SkillsRegistry{{Name: "test", Root: root}}
 }
 
 func TestCheckSkillHasSkillMd_Missing(t *testing.T) {
@@ -156,8 +156,8 @@ func TestCheckSettingsParseable_Invalid(t *testing.T) {
 
 func TestEngine_Run_Empty(t *testing.T) {
 	eng := &Engine{
-		SkillsSources: []skills.SkillsSource{},
-		ProjectDir:    t.TempDir(),
+		SkillsRegistries: []skills.SkillsRegistry{},
+		ProjectDir:       t.TempDir(),
 	}
 	diags := eng.Run()
 	// no sources, no project files → no findings (agent symlink checks may find nothing)

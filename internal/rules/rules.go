@@ -26,7 +26,7 @@ func diag(uri, code, message string, severity int) compliance.Diagnostic {
 }
 
 // checkSkillHasSkillMd reports Error for any skill directory missing SKILL.md.
-func checkSkillHasSkillMd(sources []skills.SkillsSource) []compliance.Diagnostic {
+func checkSkillHasSkillMd(sources []skills.SkillsRegistry) []compliance.Diagnostic {
 	var out []compliance.Diagnostic
 	for _, src := range sources {
 		domains, err := skills.ListDomains(src.Root)
@@ -51,7 +51,7 @@ func checkSkillHasSkillMd(sources []skills.SkillsSource) []compliance.Diagnostic
 }
 
 // checkSkillMdFrontmatter reports Warning when a SKILL.md lacks name or tags in frontmatter.
-func checkSkillMdFrontmatter(sources []skills.SkillsSource) []compliance.Diagnostic {
+func checkSkillMdFrontmatter(sources []skills.SkillsRegistry) []compliance.Diagnostic {
 	var out []compliance.Diagnostic
 	for _, src := range sources {
 		allSkills, err := skills.ListAllSkills(src.Root)

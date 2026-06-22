@@ -504,7 +504,7 @@ func printProfilePreview(profileName, projectDir string) {
 	if profileName == "" {
 		return
 	}
-	if len(skills.AllSkillsSources()) == 0 {
+	if len(skills.AllSkillsRegistries()) == 0 {
 		return // grimoire not yet installed — skip silently
 	}
 	p, err := profiles.ResolveWithOptions(profileName, projectDir, resolveOpts(projectDir))

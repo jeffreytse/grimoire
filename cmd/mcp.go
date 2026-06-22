@@ -320,8 +320,8 @@ func toolGrimoireContext(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToo
 	}
 
 	eng := &rules.Engine{
-		SkillsSources: skills.AllSkillsSources(),
-		ProjectDir:    getProjectDir(),
+		SkillsRegistries: skills.AllSkillsRegistries(),
+		ProjectDir:       getProjectDir(),
 	}
 
 	var complianceReport *compliance.Report
@@ -353,8 +353,8 @@ func toolGrimoireCheck(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolR
 		return mcp.NewToolResultError(err.Error()), nil
 	}
 	eng := &rules.Engine{
-		SkillsSources: skills.AllSkillsSources(),
-		ProjectDir:    getProjectDir(),
+		SkillsRegistries: skills.AllSkillsRegistries(),
+		ProjectDir:       getProjectDir(),
 	}
 	if found := eng.Run(); len(found) > 0 {
 		report.Diagnostics = append(found, report.Diagnostics...)
@@ -363,7 +363,7 @@ func toolGrimoireCheck(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolR
 }
 
 func toolGrimoireListSkills(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
-	all, _, err := skills.ListAllSkillsFromSources(skills.AllSkillsSources())
+	all, _, err := skills.ListAllSkillsFromRegistries(skills.AllSkillsRegistries())
 	if err != nil {
 		return mcp.NewToolResultError(err.Error()), nil
 	}
@@ -376,8 +376,8 @@ func toolGrimoireDoctor(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallTool
 
 func toolGrimoireRunRules(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
 	eng := &rules.Engine{
-		SkillsSources: skills.AllSkillsSources(),
-		ProjectDir:    getProjectDir(),
+		SkillsRegistries: skills.AllSkillsRegistries(),
+		ProjectDir:       getProjectDir(),
 	}
 	return jsonResult(eng.Run())
 }

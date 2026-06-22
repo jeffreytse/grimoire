@@ -6,16 +6,16 @@ import (
 	"testing"
 )
 
-// ── ListAllSkillsFromSources ─────────────────────────────────────────────────
+// ── ListAllSkillsFromRegistries ─────────────────────────────────────────────────
 
-func TestListAllSkillsFromSources_NoConflict(t *testing.T) {
+func TestListAllSkillsFromRegistries_NoConflict(t *testing.T) {
 	a := t.TempDir()
 	b := t.TempDir()
 	buildNestedDomain(t, a, "engineering", "development", "apply-solid")
 	buildNestedDomain(t, b, "design", "patterns", "observer")
 
-	srcs := []SkillsSource{{Name: "official", Root: a}, {Name: "myteam", Root: b}}
-	skills, conflicts, err := ListAllSkillsFromSources(srcs)
+	srcs := []SkillsRegistry{{Name: "official", Root: a}, {Name: "myteam", Root: b}}
+	skills, conflicts, err := ListAllSkillsFromRegistries(srcs)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -27,14 +27,14 @@ func TestListAllSkillsFromSources_NoConflict(t *testing.T) {
 	}
 }
 
-func TestListAllSkillsFromSources_ConflictNestedPath(t *testing.T) {
+func TestListAllSkillsFromRegistries_ConflictNestedPath(t *testing.T) {
 	a := t.TempDir()
 	b := t.TempDir()
 	buildNestedDomain(t, a, "engineering", "development", "apply-solid")
 	buildNestedDomain(t, b, "engineering", "development", "apply-solid")
 
-	srcs := []SkillsSource{{Name: "official", Root: a}, {Name: "myteam", Root: b}}
-	skills, conflicts, err := ListAllSkillsFromSources(srcs)
+	srcs := []SkillsRegistry{{Name: "official", Root: a}, {Name: "myteam", Root: b}}
+	skills, conflicts, err := ListAllSkillsFromRegistries(srcs)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -55,14 +55,14 @@ func TestListAllSkillsFromSources_ConflictNestedPath(t *testing.T) {
 	}
 }
 
-func TestListAllSkillsFromSources_SameLeafDifferentDomain(t *testing.T) {
+func TestListAllSkillsFromRegistries_SameLeafDifferentDomain(t *testing.T) {
 	a := t.TempDir()
 	b := t.TempDir()
 	buildFlatDomain(t, a, "engineering", "apply-solid")
 	buildFlatDomain(t, b, "design", "apply-solid")
 
-	srcs := []SkillsSource{{Name: "official", Root: a}, {Name: "myteam", Root: b}}
-	skills, conflicts, err := ListAllSkillsFromSources(srcs)
+	srcs := []SkillsRegistry{{Name: "official", Root: a}, {Name: "myteam", Root: b}}
+	skills, conflicts, err := ListAllSkillsFromRegistries(srcs)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -74,18 +74,18 @@ func TestListAllSkillsFromSources_SameLeafDifferentDomain(t *testing.T) {
 	}
 }
 
-func TestListAllSkillsFromSources_ThreeWayConflict(t *testing.T) {
+func TestListAllSkillsFromRegistries_ThreeWayConflict(t *testing.T) {
 	a, b, c := t.TempDir(), t.TempDir(), t.TempDir()
 	buildNestedDomain(t, a, "engineering", "development", "apply-solid")
 	buildNestedDomain(t, b, "engineering", "development", "apply-solid")
 	buildNestedDomain(t, c, "engineering", "development", "apply-solid")
 
-	srcs := []SkillsSource{
+	srcs := []SkillsRegistry{
 		{Name: "official", Root: a},
 		{Name: "teamA", Root: b},
 		{Name: "teamB", Root: c},
 	}
-	skills, conflicts, err := ListAllSkillsFromSources(srcs)
+	skills, conflicts, err := ListAllSkillsFromRegistries(srcs)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -100,13 +100,13 @@ func TestListAllSkillsFromSources_ThreeWayConflict(t *testing.T) {
 	}
 }
 
-func TestListAllSkillsFromSources_SingleSourceNoConflicts(t *testing.T) {
+func TestListAllSkillsFromRegistries_SingleSourceNoConflicts(t *testing.T) {
 	a := t.TempDir()
 	buildNestedDomain(t, a, "engineering", "development", "apply-solid")
 	buildNestedDomain(t, a, "engineering", "development", "write-tests")
 
-	srcs := []SkillsSource{{Name: "official", Root: a}}
-	skills, conflicts, err := ListAllSkillsFromSources(srcs)
+	srcs := []SkillsRegistry{{Name: "official", Root: a}}
+	skills, conflicts, err := ListAllSkillsFromRegistries(srcs)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -118,7 +118,7 @@ func TestListAllSkillsFromSources_SingleSourceNoConflicts(t *testing.T) {
 	}
 }
 
-func TestListAllSkillsFromSources_FrontmatterNameDiffers_SameDirName(t *testing.T) {
+func TestListAllSkillsFromRegistries_FrontmatterNameDiffers_SameDirName(t *testing.T) {
 	// Two registries have apply-solid/ with different frontmatter name: values.
 	// Conflict detection must key on the directory name, not the frontmatter name.
 	a := t.TempDir()
@@ -142,8 +142,8 @@ func TestListAllSkillsFromSources_FrontmatterNameDiffers_SameDirName(t *testing.
 		t.Fatal(err)
 	}
 
-	srcs := []SkillsSource{{Name: "official", Root: a}, {Name: "myteam", Root: b}}
-	skills, conflicts, err := ListAllSkillsFromSources(srcs)
+	srcs := []SkillsRegistry{{Name: "official", Root: a}, {Name: "myteam", Root: b}}
+	skills, conflicts, err := ListAllSkillsFromRegistries(srcs)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}

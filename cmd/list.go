@@ -30,20 +30,20 @@ func init() {
 }
 
 func runList(cmd *cobra.Command, args []string) error {
-	sources := skills.AllSkillsSources()
+	regs := skills.AllSkillsRegistries()
 	if flagListRegistry != "" {
-		sources = filterSources(sources, flagListRegistry)
-		if len(sources) == 0 {
+		regs = filterRegistries(regs, flagListRegistry)
+		if len(regs) == 0 {
 			return fmt.Errorf("registry %q not found or not cloned", flagListRegistry)
 		}
 	}
 
-	if len(sources) == 0 {
+	if len(regs) == 0 {
 		root := skills.SkillsRoot()
 		return fmt.Errorf("skills not found at %s — run: grimoire update", root)
 	}
 
-	allSkills, conflicts, err := skills.ListAllSkillsFromSources(sources)
+	allSkills, conflicts, err := skills.ListAllSkillsFromRegistries(regs)
 	if err != nil {
 		return fmt.Errorf("listing skills: %w", err)
 	}
@@ -68,7 +68,7 @@ func runList(cmd *cobra.Command, args []string) error {
 		return enc.Encode(allSkills)
 	}
 
-	printSkillTreeMulti(allSkills, len(sources) > 1)
+	printSkillTreeMulti(allSkills, len(regs) > 1)
 	return nil
 }
 
@@ -131,10 +131,10 @@ func printSkillTree(all []skills.Skill) {
 	fmt.Printf("\n%s\n", tui.StyleDim.Render(fmt.Sprintf("%d skills total", total)))
 }
 
-func filterSources(sources []skills.SkillsSource, name string) []skills.SkillsSource {
-	for _, s := range sources {
-		if s.Name == name {
-			return []skills.SkillsSource{s}
+func filterRegistries(regs []skills.SkillsRegistry, name string) []skills.SkillsRegistry {
+	for _, r := range regs {
+		if r.Name == name {
+			return []skills.SkillsRegistry{r}
 		}
 	}
 	return nil

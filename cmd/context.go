@@ -112,8 +112,8 @@ func runContext(cmd *cobra.Command, args []string) error {
 
 	// rule findings
 	eng := &rules.Engine{
-		SkillsSources: skills.AllSkillsSources(),
-		ProjectDir:    getProjectDir(),
+		SkillsRegistries: skills.AllSkillsRegistries(),
+		ProjectDir:       getProjectDir(),
 	}
 	ruleFindings := eng.Run()
 

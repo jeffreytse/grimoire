@@ -54,8 +54,8 @@ func runCheck(cmd *cobra.Command, args []string) error {
 	}
 
 	eng := &rules.Engine{
-		SkillsSources: skills.AllSkillsSources(),
-		ProjectDir:    getProjectDir(),
+		SkillsRegistries: skills.AllSkillsRegistries(),
+		ProjectDir:       getProjectDir(),
 	}
 	if found := eng.Run(); len(found) > 0 {
 		report.Diagnostics = append(found, report.Diagnostics...)

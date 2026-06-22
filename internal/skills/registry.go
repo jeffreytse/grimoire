@@ -10,8 +10,9 @@ import (
 
 const OfficialRegistryName = "official"
 
-// SkillsSource is a named registry with its resolved skills directory path.
-type SkillsSource struct {
+// SkillsRegistry is a named registry with its resolved skills directory path.
+// Narrower than RegistryEntry: only registries that have a skills/ directory.
+type SkillsRegistry struct {
 	Name string // derived registry name, e.g. "jeffreytse/grimoire-hub", "acmecorp/standards"
 	Root string // absolute path to the skills/ directory
 }
@@ -106,29 +107,29 @@ func effectivePriority(rd settings.RegistryDef) int {
 	return 50
 }
 
-// AllSkillsSources returns all configured registries' skills roots in priority order.
+// AllSkillsRegistries returns all configured registries' skills roots in priority order.
 // Derived from AllRegistries(); skips entries with no skills/ dir.
-func AllSkillsSources() []SkillsSource {
-	var sources []SkillsSource
+func AllSkillsRegistries() []SkillsRegistry {
+	var regs []SkillsRegistry
 	for _, reg := range AllRegistries() {
 		skillsRoot := filepath.Join(reg.Home, "skills")
 		if _, err := os.Stat(skillsRoot); err == nil {
-			sources = append(sources, SkillsSource{Name: reg.Name, Root: skillsRoot})
+			regs = append(regs, SkillsRegistry{Name: reg.Name, Root: skillsRoot})
 		}
 	}
-	return sources
+	return regs
 }
 
-// ListAllSkillsFromSources lists skills from all sources, tagging each with its registry.
-// First (highest-priority) source to provide a given canonical path wins.
+// ListAllSkillsFromRegistries lists skills from all registries, tagging each with its registry.
+// First (highest-priority) registry to provide a given canonical path wins.
 // Conflicts contains skills from lower-priority registries that were shadowed.
-func ListAllSkillsFromSources(sources []SkillsSource) ([]Skill, []SkillConflict, error) {
+func ListAllSkillsFromRegistries(regs []SkillsRegistry) ([]Skill, []SkillConflict, error) {
 	seen := make(map[string]string) // canonical path → registry name that claimed it
 	var all []Skill
 	var conflicts []SkillConflict
 
-	for _, src := range sources {
-		list, err := ListAllSkills(src.Root)
+	for _, reg := range regs {
+		list, err := ListAllSkills(reg.Root)
 		if err != nil {
 			continue
 		}
@@ -142,12 +143,12 @@ func ListAllSkillsFromSources(sources []SkillsSource) ([]Skill, []SkillConflict,
 				conflicts = append(conflicts, SkillConflict{
 					CanonicalPath:  key,
 					WinnerRegistry: winner,
-					LoserRegistry:  src.Name,
+					LoserRegistry:  reg.Name,
 				})
 				continue
 			}
-			seen[key] = src.Name
-			sk.Registry = src.Name
+			seen[key] = reg.Name
+			sk.Registry = reg.Name
 			all = append(all, sk)
 		}
 	}

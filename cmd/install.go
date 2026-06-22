@@ -57,19 +57,19 @@ func runInstall(cmd *cobra.Command, args []string) error {
 		return runInstallFromRoot(resolved)
 	}
 
-	// determine which registry sources to use
-	sources := skills.AllSkillsSources()
+	// determine which registries to install from
+	regs := skills.AllSkillsRegistries()
 
-	// --registry filters to one source
+	// --registry filters to one registry
 	if flagInstallRegistry != "" {
-		sources = filterSources(sources, flagInstallRegistry)
-		if len(sources) == 0 {
+		regs = filterRegistries(regs, flagInstallRegistry)
+		if len(regs) == 0 {
 			return fmt.Errorf("registry %q not found or not cloned — run: grimoire registry update %s",
 				flagInstallRegistry, flagInstallRegistry)
 		}
 	}
 
-	if len(sources) == 0 {
+	if len(regs) == 0 {
 		return fmt.Errorf("skills not found at %s — run: grimoire update", skills.SkillsRoot())
 	}
 
@@ -77,8 +77,8 @@ func runInstall(cmd *cobra.Command, args []string) error {
 	skillRef := flagInstallSkill
 	if regName, ref, ok := splitRegistryPrefix(skillRef); ok {
 		skillRef = ref
-		sources = filterSources(sources, regName)
-		if len(sources) == 0 {
+		regs = filterRegistries(regs, regName)
+		if len(regs) == 0 {
 			return fmt.Errorf("registry %q not found or not cloned", regName)
 		}
 	}
@@ -100,7 +100,7 @@ func runInstall(cmd *cobra.Command, args []string) error {
 
 	switch {
 	case skillRef != "":
-		skillPath, src, err := resolveSkillFromSources(sources, skillRef)
+		skillPath, src, err := resolveSkillFromRegistries(regs, skillRef)
 		if err != nil {
 			return err
 		}
@@ -114,7 +114,7 @@ func runInstall(cmd *cobra.Command, args []string) error {
 		}
 
 	case flagInstallDomain != "":
-		all, conflicts, err := skills.ListAllSkillsFromSources(sources)
+		all, conflicts, err := skills.ListAllSkillsFromRegistries(regs)
 		if err != nil {
 			return err
 		}
@@ -136,8 +136,8 @@ func runInstall(cmd *cobra.Command, args []string) error {
 		}
 
 	default:
-		// install all skills from all sources (highest-priority registry wins per canonical path)
-		all, conflicts, err := skills.ListAllSkillsFromSources(sources)
+		// install all skills (highest-priority registry wins per canonical path)
+		all, conflicts, err := skills.ListAllSkillsFromRegistries(regs)
 		if err != nil {
 			return err
 		}
@@ -265,15 +265,15 @@ func splitRegistryPrefix(ref string) (registry, skill string, ok bool) {
 	return "", "", false
 }
 
-// resolveSkillFromSources finds a skill by ref across multiple sources; first source wins.
-func resolveSkillFromSources(sources []skills.SkillsSource, ref string) (path string, src skills.SkillsSource, err error) {
-	for _, s := range sources {
-		p, e := skills.ResolveSkillPath(s.Root, ref)
+// resolveSkillFromRegistries finds a skill by ref across multiple registries; first match wins.
+func resolveSkillFromRegistries(regs []skills.SkillsRegistry, ref string) (path string, reg skills.SkillsRegistry, err error) {
+	for _, r := range regs {
+		p, e := skills.ResolveSkillPath(r.Root, ref)
 		if e == nil {
-			return p, s, nil
+			return p, r, nil
 		}
 	}
-	return "", skills.SkillsSource{}, fmt.Errorf("skill %q not found in any configured registry", ref)
+	return "", skills.SkillsRegistry{}, fmt.Errorf("skill %q not found in any configured registry", ref)
 }
 
 // resolveAndPersistSource resolves a --from value (local path or git URL),

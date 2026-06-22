@@ -182,7 +182,7 @@ func TestResolveByTags_MatchesTaggedSkills(t *testing.T) {
 	writeTaggedSkill(t, root, "engineering", "apply-tdd", []string{"tdd"})
 	writeTaggedSkill(t, root, "engineering", "apply-lod", []string{"oop"})
 
-	sources := []skills.SkillsSource{{Name: "test", Root: root}}
+	sources := []skills.SkillsRegistry{{Name: "test", Root: root}}
 	refs := ResolveByTags("oop", sources)
 	if len(refs) != 2 {
 		t.Fatalf("expected 2 oop-tagged skills, got %d: %v", len(refs), refs)
@@ -193,8 +193,8 @@ func TestResolveWithOptions_TagFallback(t *testing.T) {
 	root := t.TempDir()
 	writeTaggedSkill(t, root, "eng", "apply-solid", []string{"oop"})
 
-	sources := []skills.SkillsSource{{Name: "test", Root: root}}
-	p, err := ResolveWithOptions("oop", t.TempDir(), ResolveOptions{Sources: sources})
+	sources := []skills.SkillsRegistry{{Name: "test", Root: root}}
+	p, err := ResolveWithOptions("oop", t.TempDir(), ResolveOptions{Registries: sources})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -215,8 +215,8 @@ name = "file-based-skill"
 `)
 
 	// even with sources provided, file takes priority
-	sources := []skills.SkillsSource{{Name: "test", Root: t.TempDir()}}
-	p, err := ResolveWithOptions("oop", projectDir, ResolveOptions{Sources: sources})
+	sources := []skills.SkillsRegistry{{Name: "test", Root: t.TempDir()}}
+	p, err := ResolveWithOptions("oop", projectDir, ResolveOptions{Registries: sources})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -272,7 +272,7 @@ tags = ["oop"]
 	if err != nil {
 		t.Fatal(err)
 	}
-	sources := []skills.SkillsSource{{Name: "test", Root: root}}
+	sources := []skills.SkillsRegistry{{Name: "test", Root: root}}
 	resolved := ResolveSkills(&p, dir, sources, nil)
 	names := skillNames(resolved)
 	if len(names) != 2 {

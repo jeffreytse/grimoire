@@ -14,9 +14,9 @@ import (
 
 // ResolveOptions controls optional behaviour for profile resolution.
 type ResolveOptions struct {
-	// Sources enables tag-query fallback and tag-field resolution.
+	// Registries enables tag-query fallback and tag-field resolution.
 	// When nil, tag queries are skipped.
-	Sources []skills.SkillsSource
+	Registries []skills.SkillsRegistry
 	// InlineProfiles holds profiles defined inline in settings.toml [profiles.*].
 	// Checked after file lookup fails and before tag/domain fallback.
 	InlineProfiles map[string]Profile
@@ -126,11 +126,11 @@ func ResolveAll(names []string, projectDir string) ([]Profile, error) {
 }
 
 // resolveByDomain returns all skills from sources whose domain path matches domain.
-func resolveByDomain(domain string, sources []skills.SkillsSource) []SkillRef {
+func resolveByDomain(domain string, regs []skills.SkillsRegistry) []SkillRef {
 	var refs []SkillRef
 	seen := make(map[string]struct{})
-	for _, src := range sources {
-		all, err := skills.ListAllSkills(src.Root)
+	for _, reg := range regs {
+		all, err := skills.ListAllSkills(reg.Root)
 		if err != nil {
 			continue
 		}
@@ -147,10 +147,10 @@ func resolveByDomain(domain string, sources []skills.SkillsSource) []SkillRef {
 }
 
 // ResolveByTags returns all skills from sources whose tags contain profileName.
-func ResolveByTags(profileName string, sources []skills.SkillsSource) []SkillRef {
+func ResolveByTags(profileName string, regs []skills.SkillsRegistry) []SkillRef {
 	var refs []SkillRef
-	for _, src := range sources {
-		all, err := skills.ListAllSkills(src.Root)
+	for _, reg := range regs {
+		all, err := skills.ListAllSkills(reg.Root)
 		if err != nil {
 			continue
 		}
@@ -174,7 +174,7 @@ func ResolveByTags(profileName string, sources []skills.SkillsSource) []SkillRef
 //
 // Results are sorted by priority ascending (lower = higher priority), then insertion order.
 // visited tracks the current resolution stack to prevent infinite recursion.
-func ResolveSkills(p *Profile, projectDir string, sources []skills.SkillsSource, visited map[string]bool) []SkillRef {
+func ResolveSkills(p *Profile, projectDir string, regs []skills.SkillsRegistry, visited map[string]bool) []SkillRef {
 	if visited == nil {
 		visited = make(map[string]bool)
 	}
@@ -218,7 +218,7 @@ func ResolveSkills(p *Profile, projectDir string, sources []skills.SkillsSource,
 		visited[parentName] = true
 		parent, err := Resolve(parentName, projectDir)
 		if err == nil {
-			for _, ref := range ResolveSkills(&parent, projectDir, sources, visited) {
+			for _, ref := range ResolveSkills(&parent, projectDir, regs, visited) {
 				insert(ref)
 			}
 		}
@@ -226,9 +226,9 @@ func ResolveSkills(p *Profile, projectDir string, sources []skills.SkillsSource,
 
 	// Layer 2: tags — try frontmatter tag match, fall back to domain-path match
 	for _, tag := range p.Tags {
-		tagRefs := ResolveByTags(tag, sources)
+		tagRefs := ResolveByTags(tag, regs)
 		if len(tagRefs) == 0 {
-			tagRefs = resolveByDomain(tag, sources)
+			tagRefs = resolveByDomain(tag, regs)
 		}
 		for _, ref := range tagRefs {
 			insert(ref)
@@ -285,11 +285,11 @@ func ResolveWithOptions(name, projectDir string, opts ResolveOptions) (Profile, 
 	}
 
 	// If still no source, try tag query then domain-path fallback.
-	if p.Source == "" && len(opts.Sources) > 0 {
-		refs := ResolveByTags(name, opts.Sources)
+	if p.Source == "" && len(opts.Registries) > 0 {
+		refs := ResolveByTags(name, opts.Registries)
 		src := "(tag query)"
 		if len(refs) == 0 {
-			refs = resolveByDomain(name, opts.Sources)
+			refs = resolveByDomain(name, opts.Registries)
 			src = "(domain)"
 		}
 		if len(refs) > 0 {
@@ -301,7 +301,7 @@ func ResolveWithOptions(name, projectDir string, opts ResolveOptions) (Profile, 
 
 	// Full resolution via ResolveSkills (handles extends, tags, explicit skills, exclude).
 	if p.Source != "" || len(p.Extends) > 0 || len(p.Tags) > 0 {
-		p.Skills = ResolveSkills(&p, projectDir, opts.Sources, visited)
+		p.Skills = ResolveSkills(&p, projectDir, opts.Registries, visited)
 	}
 
 	return p, nil

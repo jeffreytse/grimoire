@@ -92,8 +92,8 @@ func toolGrimoireClean(_ context.Context, request mcp.CallToolRequest) (*mcp.Cal
 // ── Install ───────────────────────────────────────────────────────────────────
 
 func performInstall(domain, subdomain, skill, target string) (mcpInstallOutput, error) {
-	sources := skills.AllSkillsSources()
-	if len(sources) == 0 {
+	regs := skills.AllSkillsRegistries()
+	if len(regs) == 0 {
 		return mcpInstallOutput{}, fmt.Errorf("skills not found — run grimoire_update first")
 	}
 	targets := resolveTargets(target)
@@ -102,7 +102,7 @@ func performInstall(domain, subdomain, skill, target string) (mcpInstallOutput, 
 
 	switch {
 	case skill != "":
-		skillPath, _, err := resolveSkillFromSources(sources, skill)
+		skillPath, _, err := resolveSkillFromRegistries(regs, skill)
 		if err != nil {
 			return mcpInstallOutput{}, err
 		}
@@ -116,16 +116,16 @@ func performInstall(domain, subdomain, skill, target string) (mcpInstallOutput, 
 		}
 
 	case domain != "":
-		for _, src := range sources {
+		for _, reg := range regs {
 			for _, ag := range targets {
-				n, agErrs := installDomainSilent(src.Root, domain, subdomain, ag)
+				n, agErrs := installDomainSilent(reg.Root, domain, subdomain, ag)
 				perAgent[ag] += n
 				errs = append(errs, agErrs...)
 			}
 		}
 
 	default:
-		all, _, err := skills.ListAllSkillsFromSources(sources)
+		all, _, err := skills.ListAllSkillsFromRegistries(regs)
 		if err != nil {
 			return mcpInstallOutput{}, err
 		}

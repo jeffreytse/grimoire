@@ -13,7 +13,7 @@ import (
 // Inline profiles are loaded from all registry settings.toml files (lower priority)
 // then from the project's .grimoire/settings.toml (higher priority, overwrites registry).
 func resolveOpts(projectDir string) profiles.ResolveOptions {
-	opts := profiles.ResolveOptions{Sources: skills.AllSkillsSources()}
+	opts := profiles.ResolveOptions{Registries: skills.AllSkillsRegistries()}
 
 	inlines := make(map[string]profiles.Profile)
 	// Iterate registries in reverse so higher-priority registries overwrite lower-priority ones,
