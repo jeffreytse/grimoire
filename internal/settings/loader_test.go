@@ -51,20 +51,20 @@ home = "/opt/grimoire"
 	}
 }
 
-func TestParseFile_StandardsExtendsIgnored(t *testing.T) {
-	// standards.extends is no longer supported; it should be silently ignored
-	// and profiles should still parse correctly alongside it.
+func TestParseFile_StandardsExtends(t *testing.T) {
 	dir := t.TempDir()
 	path := writeSettingsFile(t, dir, "settings.toml", `
 [standards]
-extends = ["mycompany/standards@v1.0.0", "https://github.com/acme/practices.git"]
+extends = ["mycompany/standards", "acmecorp/standards/web-app"]
 profiles = ["backend-service"]
 `)
 	fs, err := ParseFile(path)
 	if err != nil {
 		t.Fatal(err)
 	}
-	// profiles should still parse correctly even when extends is present
+	if len(fs.Extends) != 2 || fs.Extends[0] != "mycompany/standards" || fs.Extends[1] != "acmecorp/standards/web-app" {
+		t.Errorf("Extends = %v", fs.Extends)
+	}
 	if len(fs.Core.Profiles) != 1 || fs.Core.Profiles[0] != "backend-service" {
 		t.Errorf("Core.Profiles = %v", fs.Core.Profiles)
 	}

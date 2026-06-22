@@ -57,6 +57,14 @@ func runInstall(cmd *cobra.Command, args []string) error {
 		return runInstallFromRoot(resolved)
 	}
 
+	// Warn about any standards.extends refs that reference uninstalled registries.
+	if r, err := settings.Load(getProjectDir()); err == nil {
+		for _, ref := range r.MissingExtends {
+			fmt.Fprintf(os.Stderr, "%s  standards.extends: registry %q is not installed\n", tui.IconWarn, ref)
+			fmt.Fprintf(os.Stderr, "   Install it: grimoire registry add <name> <url>\n")
+		}
+	}
+
 	// determine which registries to install from
 	regs := skills.AllSkillsRegistries()
 

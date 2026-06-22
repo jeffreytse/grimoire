@@ -64,6 +64,7 @@ type FileSettings struct {
 	Registries     []RegistryDef               // from [[registry]] table array
 	ReportPath     string                      // from [standards] report-path
 	StalenessDays  int                         // from [standards] staleness-days (0 = unset)
+	Extends        []string                    // from [standards] extends
 	Sections       map[string]DomainSection    // dotted keys: "engineering", "engineering.architecture"
 	InlineProfiles map[string]InlineProfileDef // from [profiles.*]
 }
@@ -79,6 +80,9 @@ type Resolved struct {
 	// Sources maps dotted key paths to the file that provided them.
 	// E.g. "core.home" → "/path/to/settings.toml"
 	Sources map[string]string
+	// MissingExtends holds standards.extends refs that could not be resolved
+	// because the referenced registry is not installed.
+	MissingExtends []string
 }
 
 // GlobalPath returns the path to the user-global settings file, respecting XDG_CONFIG_HOME.
@@ -105,6 +109,7 @@ func SystemPath() string {
 }
 
 var validStandardsFields = map[string]bool{
+	"extends":                    true,
 	"profiles":                   true,
 	"report-path":                true,
 	"staleness-days":             true,

@@ -2,6 +2,7 @@ package settings
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"sort"
@@ -76,16 +77,7 @@ func Load(projectDir string) (Resolved, error) {
 				continue
 			}
 			seenExt[rd.Name] = true
-			var regHome string
-			u, _ := ParseRef(rd.URL)
-			if filepath.IsAbs(u) {
-				regHome = u
-			} else if h := os.Getenv("GRIMOIRE_HOME"); h != "" {
-				regHome = filepath.Join(h, "registries", rd.Name)
-			} else {
-				home, _ := os.UserHomeDir()
-				regHome = filepath.Join(home, ".grimoire", "registries", rd.Name)
-			}
+			regHome := registryDefHome(rd)
 			rf, err := ParseFile(filepath.Join(regHome, "settings.toml"))
 			if err != nil {
 				continue
@@ -98,7 +90,51 @@ func Load(projectDir string) (Resolved, error) {
 		}
 	}
 
+	// Build registry name → home dir map for extends resolution.
+	regHomes := make(map[string]string)
+	for i := range layers {
+		for _, rd := range layers[i].Registries {
+			if rd.Name != "" {
+				if _, seen := regHomes[rd.Name]; !seen {
+					regHomes[rd.Name] = registryDefHome(rd)
+				}
+			}
+		}
+	}
+
+	// Load standards.extends targets as additional base layers (lowest priority).
+	seenExtends := make(map[string]bool)
+	var missingExtends []string
+	seenMissing := make(map[string]bool)
+	for i := range layers {
+		for _, ref := range layers[i].Extends {
+			p, err := resolveExtendsRef(ref, regHomes)
+			if err != nil {
+				if !seenMissing[ref] {
+					seenMissing[ref] = true
+					missingExtends = append(missingExtends, ref)
+				}
+				continue
+			}
+			if seenExtends[p] {
+				continue
+			}
+			seenExtends[p] = true
+			ef, err := ParseFile(p)
+			if err != nil {
+				continue
+			}
+			ef.Core = CoreSection{}
+			ef.Registries = nil
+			ef.Extends = nil // no recursive extends in v1
+			ef.InlineProfiles = nil
+			layers = append(layers, ef)
+			paths = append(paths, p)
+		}
+	}
+
 	r := Merge(layers, paths)
+	r.MissingExtends = missingExtends
 
 	// GRIMOIRE_HOME env var override — highest priority.
 	if v := os.Getenv("GRIMOIRE_HOME"); v != "" {
@@ -107,6 +143,42 @@ func Load(projectDir string) (Resolved, error) {
 	}
 
 	return r, nil
+}
+
+// registryDefHome returns the local clone directory for a registry definition.
+func registryDefHome(rd RegistryDef) string {
+	u, _ := ParseRef(rd.URL)
+	if filepath.IsAbs(u) {
+		return u
+	}
+	if h := os.Getenv("GRIMOIRE_HOME"); h != "" {
+		return filepath.Join(h, "registries", rd.Name)
+	}
+	home, _ := os.UserHomeDir()
+	return filepath.Join(home, ".grimoire", "registries", rd.Name)
+}
+
+// resolveExtendsRef maps a standards.extends ref to a settings.toml path.
+// Format: "<registry-name>" → registry root settings.toml
+//
+//	"<registry-name>/<preset-name>" → preset settings.toml
+//
+// Longest installed registry name wins when names share a prefix.
+func resolveExtendsRef(ref string, regHomes map[string]string) (string, error) {
+	best := ""
+	for name := range regHomes {
+		if (ref == name || strings.HasPrefix(ref, name+"/")) && len(name) > len(best) {
+			best = name
+		}
+	}
+	if best == "" {
+		return "", fmt.Errorf("no installed registry matches extends ref %q", ref)
+	}
+	remainder := strings.TrimPrefix(strings.TrimPrefix(ref, best), "/")
+	if remainder == "" {
+		return filepath.Join(regHomes[best], "settings.toml"), nil
+	}
+	return filepath.Join(regHomes[best], "presets", remainder, "settings.toml"), nil
 }
 
 // LoadGlobal reads only the global settings file (no project layers).
@@ -157,13 +229,14 @@ func parseRaw(raw map[string]any) FileSettings {
 			}
 		case "standards":
 			if m, ok := val.(map[string]any); ok {
+				fs.Extends = parseStringSlice(m["extends"])
 				fs.Core.Profiles = append(fs.Core.Profiles, parseProfilesFromMap(m)...)
 				fs.ReportPath, _ = m["report-path"].(string) //nolint:revive // wrong type silently skipped
 				if v, ok := anyToInt(m["staleness-days"]); ok && v > 0 {
 					fs.StalenessDays = v
 				}
 				for domainName, val := range m {
-					if domainName == "profiles" {
+					if domainName == "profiles" || domainName == "extends" {
 						continue
 					}
 					if sub, ok := val.(map[string]any); ok {
@@ -379,6 +452,9 @@ func toMap(fs *FileSettings) map[string]any {
 
 	// profiles and domain sections all nest under [standards.*]
 	standardsMap := map[string]any{}
+	if len(fs.Extends) > 0 {
+		standardsMap["extends"] = fs.Extends
+	}
 	if len(fs.Core.Profiles) > 0 {
 		standardsMap["profiles"] = fs.Core.Profiles
 	}
