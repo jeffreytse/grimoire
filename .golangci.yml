@@ -33,6 +33,7 @@ linters:
             - "fmt.Println"
             - "fmt.Print"
             - "strings.Builder.WriteString"
+            - "os.File.Write"
         - name: unchecked-type-assertion
         # Imports
         - name: dot-imports
@@ -65,6 +66,16 @@ linters:
         - name: defer
         - name: useless-break
         - name: deep-exit
+
+    errcheck:
+      exclude-functions:
+        - fmt.Fprintf
+        - fmt.Fprintln
+        - fmt.Printf
+        - fmt.Println
+        - fmt.Print
+        - (strings.Builder).WriteString
+        - (*os.File).Write
 
     godot:
       scope: declarations
