@@ -1,10 +1,14 @@
 package cmd
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
+	"strings"
+	"sync"
 
 	"github.com/spf13/cobra"
 
@@ -166,15 +170,10 @@ func printUpgradeResult(old, updated gitops.State) {
 
 func relinkNewSkills(home, oldCommit string) {
 	root := skills.SkillsRoot()
-	added, updated, err := gitops.NewSkillsSince(home, oldCommit)
+	changes, err := gitops.RegistryChangesSince(home, oldCommit)
 	if err == nil {
-		if added > 0 {
-			fmt.Printf("  New skills:     %d\n", added)
-		}
-		if updated > 0 {
-			fmt.Printf("  Updated skills: %d\n", updated)
-		}
-		if added == 0 && updated == 0 {
+		printRegistryChanges(changes, home, oldCommit, os.Stdout)
+		if !changes.HasSkillChanges() {
 			fmt.Printf("  %s  No skill changes — skipping relink.\n", tui.IconOK)
 			fmt.Println()
 			return
@@ -200,7 +199,39 @@ func relinkNewSkills(home, oldCommit string) {
 	fmt.Println()
 }
 
-// updateCustomRegistries pulls or clones all extends targets from resolved settings.
+func printRegistryChanges(c gitops.RegistryChanges, dir, oldCommit string, w io.Writer) {
+	if dir != "" && oldCommit != "" {
+		if commits, _ := gitops.CommitsSince(dir, oldCommit); len(commits) > 0 {
+			fmt.Fprintf(w, "    %s\n", tui.StyleBold.Render("commits:"))
+			for _, line := range commits {
+				parts := strings.SplitN(line, " ", 2)
+				if len(parts) == 2 {
+					fmt.Fprintf(w, "      %s %s\n", tui.StyleDim.Render(parts[0]), parts[1])
+				} else {
+					fmt.Fprintf(w, "      %s\n", line)
+				}
+			}
+		}
+	}
+	printChangeSection("skills", c.SkillsAdded, c.SkillsUpdated, w)
+	printChangeSection("profiles", c.ProfilesAdded, c.ProfilesUpdated, w)
+	printChangeSection("presets", c.PresetsAdded, c.PresetsUpdated, w)
+}
+
+func printChangeSection(label string, added, updated []string, w io.Writer) {
+	if len(added)+len(updated) == 0 {
+		return
+	}
+	fmt.Fprintf(w, "    %s\n", tui.StyleBold.Render(label+":"))
+	for _, name := range added {
+		fmt.Fprintf(w, "      %s %s\n", tui.StyleGreen.Render("+"), name)
+	}
+	for _, name := range updated {
+		fmt.Fprintf(w, "      %s %s\n", tui.StyleGold.Render("~"), name)
+	}
+}
+
+// updateCustomRegistries pulls or clones all extends targets from resolved settings concurrently.
 func updateCustomRegistries() {
 	r, err := settings.Load(getProjectDir())
 	if err != nil {
@@ -210,39 +241,94 @@ func updateCustomRegistries() {
 		return
 	}
 	fmt.Println()
-	for _, ref := range r.StandardsExtends {
-		u, ver := settings.ParseRef(ref)
-		name := settings.DeriveRegistryName(u)
-		dest := skills.ExtendsHome(name)
-		if _, err := os.Stat(dest); err != nil {
-			fmt.Printf("  cloning extends %s...\n", name)
-			if err := os.MkdirAll(dest, 0o755); err != nil {
-				fmt.Fprintf(os.Stderr, "  warn: %s: mkdir: %v\n", name, err)
-				continue
-			}
-			if err := gitops.Clone(u, dest); err != nil {
-				fmt.Fprintf(os.Stderr, "  warn: %s: %v\n", name, err)
-				continue
-			}
-			if ver != "" {
+
+	n := len(r.StandardsExtends)
+
+	names := make([]string, n)
+	for i, ref := range r.StandardsExtends {
+		u, _ := settings.ParseRef(ref)
+		names[i] = settings.DeriveRegistryName(u)
+	}
+	board := tui.NewStatusBoard(names)
+	stopSpinner := board.StartSpinner()
+
+	limit := 8 // default
+	if r.Core.UpdateConcurrency != nil {
+		if *r.Core.UpdateConcurrency == 0 {
+			limit = n // unlimited
+		} else {
+			limit = *r.Core.UpdateConcurrency
+		}
+	}
+	if limit > n {
+		limit = n
+	}
+	sem := make(chan struct{}, limit)
+
+	bufs := make([]*bytes.Buffer, n)
+	var wg sync.WaitGroup
+	for i, ref := range r.StandardsExtends {
+		wg.Add(1)
+		sem <- struct{}{}
+		board.SetUpdating(i)
+		go func(i int, ref string) {
+			defer wg.Done()
+			defer func() { <-sem }()
+			buf := &bytes.Buffer{}
+			u, ver := settings.ParseRef(ref)
+			name := settings.DeriveRegistryName(u)
+			dest := skills.ExtendsHome(name)
+			ok := true
+			if _, err := os.Stat(dest); err != nil {
+				if err := os.MkdirAll(dest, 0o755); err != nil {
+					fmt.Fprintf(os.Stderr, "  warn: %s: mkdir: %v\n", name, err)
+					ok = false
+				} else if err := gitops.Clone(u, dest); err != nil {
+					fmt.Fprintf(os.Stderr, "  warn: %s: %v\n", name, err)
+					ok = false
+				} else {
+					if ver != "" {
+						if err := gitops.CheckoutTag(dest, ver); err != nil {
+							fmt.Fprintf(os.Stderr, "  warn: %s: checkout %s: %v\n", name, ver, err)
+						}
+					}
+					fmt.Fprintf(buf, "  %s  %s cloned\n", tui.IconOK, name)
+				}
+			} else if ver != "" {
+				// pinned — ensure correct tag checked out, skip pull
 				if err := gitops.CheckoutTag(dest, ver); err != nil {
 					fmt.Fprintf(os.Stderr, "  warn: %s: checkout %s: %v\n", name, ver, err)
+					ok = false
+				} else {
+					fmt.Fprintf(buf, "  %s  %s pinned at %s\n", tui.IconOK, name, ver)
+				}
+			} else {
+				oldState, _ := gitops.CurrentState(dest)
+				if err := gitops.PullWithForceFallback(dest); err != nil {
+					fmt.Fprintf(os.Stderr, "  warn: %s: %v\n", name, err)
+					ok = false
+				} else {
+					fmt.Fprintf(buf, "  %s  %s up to date\n", tui.IconOK, name)
+					if changes, err := gitops.RegistryChangesSince(dest, oldState.Commit); err == nil {
+						printRegistryChanges(changes, dest, oldState.Commit, buf)
+					}
 				}
 			}
-			fmt.Printf("  %s  %s cloned\n", tui.IconOK, name)
-		} else if ver != "" {
-			// pinned — ensure correct tag checked out, skip pull
-			if err := gitops.CheckoutTag(dest, ver); err != nil {
-				fmt.Fprintf(os.Stderr, "  warn: %s: checkout %s: %v\n", name, ver, err)
+			if ok {
+				board.SetDone(i, tui.IconDone)
 			} else {
-				fmt.Printf("  %s  %s pinned at %s\n", tui.IconOK, name, ver)
+				board.SetDone(i, tui.IconError)
 			}
-		} else {
-			if err := gitops.PullWithForceFallback(dest); err != nil {
-				fmt.Fprintf(os.Stderr, "  warn: %s: %v\n", name, err)
-			} else {
-				fmt.Printf("  %s  %s up to date\n", tui.IconOK, name)
-			}
+			bufs[i] = buf
+		}(i, ref)
+	}
+	wg.Wait()
+	stopSpinner()
+	board.Finish()
+
+	for _, buf := range bufs {
+		if buf != nil {
+			os.Stdout.Write(buf.Bytes())
 		}
 	}
 }

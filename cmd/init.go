@@ -598,6 +598,7 @@ func writeSettings(dir string, cfg initConfig) error {
 # home = "~/.grimoire"                  # override grimoire home
 # agents = ["claude", "codex"]          # pinned targets; empty = auto-detect
 # install-mode = "symlink"              # "symlink" (default) | "copy"
+# update-concurrency = 8               # max concurrent registry pulls (default 8); 0 = unlimited
 
 [standards]
 %s

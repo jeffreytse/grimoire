@@ -239,50 +239,148 @@ func IsUpToDate(dir string) (upToDate bool, local, remote State, err error) {
 	return false, local, remote, nil
 }
 
-// NewSkillsSince counts SKILL.md files added/updated since oldCommit.
-func NewSkillsSince(dir, oldCommit string) (added, updated int, err error) {
+// RegistryChanges holds the categorized artifact changes in a registry since a given commit.
+type RegistryChanges struct {
+	SkillsAdded    []string
+	SkillsUpdated  []string
+	ProfilesAdded  []string
+	ProfilesUpdated []string
+	PresetsAdded   []string
+	PresetsUpdated []string
+}
+
+// HasChanges reports whether any artifact changed.
+func (c RegistryChanges) HasChanges() bool {
+	return len(c.SkillsAdded)+len(c.SkillsUpdated)+
+		len(c.ProfilesAdded)+len(c.ProfilesUpdated)+
+		len(c.PresetsAdded)+len(c.PresetsUpdated) > 0
+}
+
+// HasSkillChanges reports whether any skill was added or updated.
+func (c RegistryChanges) HasSkillChanges() bool {
+	return len(c.SkillsAdded)+len(c.SkillsUpdated) > 0
+}
+
+// RegistryChangesSince returns categorized artifact changes since oldCommit.
+func RegistryChangesSince(dir, oldCommit string) (RegistryChanges, error) {
 	r, err := gogit.PlainOpen(dir)
 	if err != nil {
-		return 0, 0, err
+		return RegistryChanges{}, err
 	}
 	old, err := r.CommitObject(plumbing.NewHash(oldCommit))
 	if err != nil {
-		return 0, 0, err
+		return RegistryChanges{}, err
 	}
 	head, err := r.Head()
 	if err != nil {
-		return 0, 0, err
+		return RegistryChanges{}, err
 	}
 	headCommit, err := r.CommitObject(head.Hash())
 	if err != nil {
-		return 0, 0, err
+		return RegistryChanges{}, err
 	}
 	oldTree, err := old.Tree()
 	if err != nil {
-		return 0, 0, err
+		return RegistryChanges{}, err
 	}
 	headTree, err := headCommit.Tree()
 	if err != nil {
-		return 0, 0, err
+		return RegistryChanges{}, err
 	}
-	changes, err := object.DiffTree(oldTree, headTree)
+	diffs, err := object.DiffTree(oldTree, headTree)
 	if err != nil {
-		return 0, 0, err
+		return RegistryChanges{}, err
 	}
-	for _, c := range changes {
-		from := c.From.Name
-		to := c.To.Name
-		isSkill := strings.HasSuffix(to, "SKILL.md") || strings.HasSuffix(from, "SKILL.md")
-		if !isSkill {
+
+	var out RegistryChanges
+	for _, c := range diffs {
+		from, to := c.From.Name, c.To.Name
+		activePath := to
+		if activePath == "" {
+			activePath = from
+		}
+		kind, name := classifyPath(activePath)
+		if kind == "" {
 			continue
 		}
-		if from == "" || !strings.HasSuffix(from, "SKILL.md") {
-			added++
-		} else if to != "" {
-			updated++
+		isAdd := from == ""
+		isDel := to == ""
+		_ = isDel // deletions noted but not surfaced separately yet
+		switch kind {
+		case "skill":
+			if isAdd {
+				out.SkillsAdded = append(out.SkillsAdded, name)
+			} else {
+				out.SkillsUpdated = append(out.SkillsUpdated, name)
+			}
+		case "profile":
+			if isAdd {
+				out.ProfilesAdded = append(out.ProfilesAdded, name)
+			} else {
+				out.ProfilesUpdated = append(out.ProfilesUpdated, name)
+			}
+		case "preset":
+			if isAdd {
+				out.PresetsAdded = append(out.PresetsAdded, name)
+			} else {
+				out.PresetsUpdated = append(out.PresetsUpdated, name)
+			}
 		}
 	}
-	return added, updated, nil
+	return out, nil
+}
+
+// classifyPath returns the artifact kind and derived display name for a registry path.
+func classifyPath(p string) (kind, name string) {
+	switch {
+	case strings.HasSuffix(p, "SKILL.md"):
+		return "skill", skillPathToName(p)
+	case strings.HasPrefix(p, "profiles/") && strings.HasSuffix(p, ".toml"):
+		return "profile", strings.TrimSuffix(strings.TrimPrefix(p, "profiles/"), ".toml")
+	case strings.HasPrefix(p, "presets/") && strings.HasSuffix(p, "/settings.toml"):
+		return "preset", strings.TrimSuffix(strings.TrimPrefix(p, "presets/"), "/settings.toml")
+	}
+	return "", ""
+}
+
+// CommitsSince returns one-line summaries ("abc1234 subject") for commits reachable
+// from HEAD but not from oldCommit, newest first. Used when no artifact changed.
+func CommitsSince(dir, oldCommit string) ([]string, error) {
+	r, err := gogit.PlainOpen(dir)
+	if err != nil {
+		return nil, err
+	}
+	head, err := r.Head()
+	if err != nil {
+		return nil, err
+	}
+	oldHash := plumbing.NewHash(oldCommit)
+	iter, err := r.Log(&gogit.LogOptions{From: head.Hash()})
+	if err != nil {
+		return nil, err
+	}
+	var lines []string
+	for {
+		c, err := iter.Next()
+		if err != nil {
+			break
+		}
+		if c.Hash == oldHash {
+			break
+		}
+		short := c.Hash.String()[:7]
+		subject := strings.SplitN(strings.TrimSpace(c.Message), "\n", 2)[0]
+		lines = append(lines, short+" "+subject)
+	}
+	return lines, nil
+}
+
+// skillPathToName converts "skills/engineering/development/apply-solid/SKILL.md"
+// to "engineering/development/apply-solid".
+func skillPathToName(p string) string {
+	p = strings.TrimPrefix(p, "skills/")
+	p = strings.TrimSuffix(p, "/SKILL.md")
+	return p
 }
 
 func readVersion(dir string) string {

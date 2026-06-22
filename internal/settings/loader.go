@@ -224,10 +224,13 @@ func parseStringSlice(v any) []string {
 
 func parseCoreSection(m map[string]any) CoreSection {
 	var cs CoreSection
-	cs.Home, _ = m["home"].(string)        //nolint:revive // wrong type silently skipped
-	cs.Registry, _ = m["registry"].(string) //nolint:revive
+	cs.Home, _ = m["home"].(string)               //nolint:revive // wrong type silently skipped
+	cs.Registry, _ = m["registry"].(string)        //nolint:revive
 	cs.InstallMode, _ = m["install-mode"].(string) //nolint:revive
 	cs.Agents = parseStringSlice(m["agents"])
+	if v, ok := anyToInt(m["update-concurrency"]); ok && v >= 0 {
+		cs.UpdateConcurrency = &v
+	}
 	return cs
 }
 
@@ -302,6 +305,9 @@ func toMap(fs FileSettings) map[string]any {
 	}
 	if fs.Core.InstallMode != "" {
 		core["install-mode"] = fs.Core.InstallMode
+	}
+	if fs.Core.UpdateConcurrency != nil {
+		core["update-concurrency"] = *fs.Core.UpdateConcurrency
 	}
 	if len(core) > 0 {
 		m["core"] = core

@@ -11,11 +11,12 @@ import (
 // CoreSection holds machine-level and top-level runtime settings.
 // These live under the [core] TOML section.
 type CoreSection struct {
-	Home        string
-	Profiles    []string // from [standards] profiles — stored here for convenience
-	Registry    string   // [core] registry — single source ref ("owner/repo[@version]" or full URL)
-	Agents      []string // [core] agents — pinned agent targets (empty = auto-detect)
-	InstallMode string   // [core] install-mode — "symlink" (default) | "copy"
+	Home              string
+	Profiles          []string // from [standards] profiles — stored here for convenience
+	Registry          string   // [core] registry — single source ref ("owner/repo[@version]" or full URL)
+	Agents            []string // [core] agents — pinned agent targets (empty = auto-detect)
+	InstallMode       string   // [core] install-mode — "symlink" (default) | "copy"
+	UpdateConcurrency *int     // [core] update-concurrency — nil=default(8), 0=unlimited, N=cap at N
 }
 
 // DomainSection holds skill practice settings for one domain or subdomain.
@@ -160,6 +161,10 @@ func Merge(layers []FileSettings, paths []string) Resolved {
 		if r.Core.InstallMode == "" && fs.Core.InstallMode != "" {
 			r.Core.InstallMode = fs.Core.InstallMode
 			r.Sources["core.install-mode"] = src
+		}
+		if r.Core.UpdateConcurrency == nil && fs.Core.UpdateConcurrency != nil {
+			r.Core.UpdateConcurrency = fs.Core.UpdateConcurrency
+			r.Sources["core.update-concurrency"] = src
 		}
 		if len(r.Core.Profiles) == 0 && len(fs.Core.Profiles) > 0 {
 			r.Core.Profiles = fs.Core.Profiles

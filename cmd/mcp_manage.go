@@ -32,8 +32,12 @@ type mcpUpdateOutput struct {
 	NewVersion      string `json:"new_version,omitempty"`
 	OldCommit       string `json:"old_commit,omitempty"`
 	NewCommit       string `json:"new_commit,omitempty"`
-	SkillsAdded     int    `json:"skills_added,omitempty"`
-	SkillsUpdated   int    `json:"skills_updated,omitempty"`
+	SkillsAdded     []string `json:"skills_added,omitempty"`
+	SkillsUpdated   []string `json:"skills_updated,omitempty"`
+	ProfilesAdded   []string `json:"profiles_added,omitempty"`
+	ProfilesUpdated []string `json:"profiles_updated,omitempty"`
+	PresetsAdded    []string `json:"presets_added,omitempty"`
+	PresetsUpdated  []string `json:"presets_updated,omitempty"`
 }
 
 type mcpCleanOutput struct {
@@ -350,12 +354,14 @@ func performUpdate(stable bool) (mcpUpdateOutput, error) {
 		if err := gitops.CheckoutTag(home, latest); err != nil {
 			return mcpUpdateOutput{}, fmt.Errorf("checking out %s: %w", latest, err)
 		}
-		added, updated, _ := gitops.NewSkillsSince(home, current.Commit)
+		ch, _ := gitops.RegistryChangesSince(home, current.Commit)
 		relinkNewSkills(home, current.Commit)
 		return mcpUpdateOutput{
 			OldVersion: current.Version, OldCommit: current.Commit,
 			NewVersion: tagState.Version, NewCommit: tagState.Commit,
-			SkillsAdded: added, SkillsUpdated: updated,
+			SkillsAdded: ch.SkillsAdded, SkillsUpdated: ch.SkillsUpdated,
+			ProfilesAdded: ch.ProfilesAdded, ProfilesUpdated: ch.ProfilesUpdated,
+			PresetsAdded: ch.PresetsAdded, PresetsUpdated: ch.PresetsUpdated,
 		}, nil
 	}
 
@@ -370,17 +376,19 @@ func performUpdate(stable bool) (mcpUpdateOutput, error) {
 			OldCommit:       current.Commit,
 		}, nil
 	}
-	if err := gitops.Pull(home); err != nil {
-		return mcpUpdateOutput{}, fmt.Errorf("pulling: %w", err)
+	if err := gitops.PullWithForceFallback(home); err != nil {
+		return mcpUpdateOutput{}, fmt.Errorf("updating: %w", err)
 	}
 	newState, _ := gitops.CurrentState(home)
-	added, updated, _ := gitops.NewSkillsSince(home, current.Commit)
+	ch, _ := gitops.RegistryChangesSince(home, current.Commit)
 	relinkNewSkills(home, current.Commit)
 	updateCustomRegistries()
 	return mcpUpdateOutput{
 		OldVersion: current.Version, OldCommit: current.Commit,
 		NewVersion: newState.Version, NewCommit: newState.Commit,
-		SkillsAdded: added, SkillsUpdated: updated,
+		SkillsAdded: ch.SkillsAdded, SkillsUpdated: ch.SkillsUpdated,
+		ProfilesAdded: ch.ProfilesAdded, ProfilesUpdated: ch.ProfilesUpdated,
+		PresetsAdded: ch.PresetsAdded, PresetsUpdated: ch.PresetsUpdated,
 	}, nil
 }
 

@@ -1,11 +1,14 @@
 package cmd
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 
 	"github.com/spf13/cobra"
 
@@ -241,30 +244,105 @@ func runRegistryUpdate(cmd *cobra.Command, args []string) error {
 
 	if len(args) == 1 {
 		name := args[0]
+		board := tui.NewStatusBoard([]string{name})
+		stopSpinner := board.StartSpinner()
+		board.SetUpdating(0)
+		buf := &bytes.Buffer{}
+		var err error
 		if name == "official" {
-			return updateCoreRegistry()
+			err = updateCoreRegistry(buf)
+		} else {
+			err = updateExtendsTarget(name, r, buf)
 		}
-		return updateExtendsTarget(name, r)
+		stopSpinner()
+		if err != nil {
+			board.SetDone(0, tui.IconError)
+			board.Finish()
+			return err
+		}
+		board.SetDone(0, tui.IconDone)
+		board.Finish()
+		os.Stdout.Write(buf.Bytes())
+		return nil
 	}
 
-	// update all
-	if err := updateCoreRegistry(); err != nil {
-		fmt.Fprintf(os.Stderr, "  warn: official: %v\n", err)
+	// update all — fan out concurrently, flush output in stable order
+	type workItem struct {
+		name   string
+		isCore bool
 	}
+	items := []workItem{{name: "official", isCore: true}}
 	for _, ref := range r.StandardsExtends {
 		u, _ := settings.ParseRef(ref)
 		name := settings.DeriveRegistryName(u)
 		if filepath.IsAbs(name) {
 			continue // local registry — user manages the checkout
 		}
-		if err := updateExtendsTarget(name, r); err != nil {
-			fmt.Fprintf(os.Stderr, "  warn: %s: %v\n", name, err)
+		items = append(items, workItem{name: name})
+	}
+
+	names := make([]string, len(items))
+	for i, item := range items {
+		names[i] = item.name
+	}
+	board := tui.NewStatusBoard(names)
+	stopSpinner := board.StartSpinner()
+
+	limit := 8 // default
+	if r.Core.UpdateConcurrency != nil {
+		if *r.Core.UpdateConcurrency == 0 {
+			limit = len(items) // unlimited
+		} else {
+			limit = *r.Core.UpdateConcurrency
 		}
+	}
+	if limit > len(items) {
+		limit = len(items)
+	}
+	sem := make(chan struct{}, limit)
+
+	type result struct {
+		buf *bytes.Buffer
+		err error
+	}
+	results := make([]result, len(items))
+	var wg sync.WaitGroup
+	for i, item := range items {
+		wg.Add(1)
+		sem <- struct{}{}
+		board.SetUpdating(i)
+		go func(i int, item workItem) {
+			defer wg.Done()
+			defer func() { <-sem }()
+			buf := &bytes.Buffer{}
+			var err error
+			if item.isCore {
+				err = updateCoreRegistry(buf)
+			} else {
+				err = updateExtendsTarget(item.name, r, buf)
+			}
+			if err != nil {
+				board.SetDone(i, tui.IconError)
+			} else {
+				board.SetDone(i, tui.IconDone)
+			}
+			results[i] = result{buf: buf, err: err}
+		}(i, item)
+	}
+	wg.Wait()
+	stopSpinner()
+	board.Finish()
+
+	for i, res := range results {
+		if res.err != nil {
+			fmt.Fprintf(os.Stderr, "  warn: %s: %v\n", items[i].name, res.err)
+		}
+		os.Stdout.Write(res.buf.Bytes())
 	}
 	return nil
 }
 
-func updateCoreRegistry() error {
+func updateCoreRegistry(w io.Writer) error {
 	dest := skills.OfficialRegistryHome()
 	url := skills.GrimoireRepoURL()
 
@@ -273,19 +351,18 @@ func updateCoreRegistry() error {
 		if _, err := os.Stat(dest); err != nil {
 			return fmt.Errorf("local registry %q not found", dest)
 		}
-		fmt.Printf("  %s  official registry is a local path — no update needed\n", tui.IconOK)
+		fmt.Fprintf(w, "  %s  official registry is a local path — no update needed\n", tui.IconOK)
 		return nil
 	}
 
 	if !dirExists(dest) {
-		fmt.Printf("  cloning official registry...\n")
 		if err := os.MkdirAll(filepath.Dir(dest), 0o755); err != nil {
 			return fmt.Errorf("creating dir: %w", err)
 		}
 		if err := gitops.Clone(url, dest); err != nil {
 			return fmt.Errorf("cloning: %w", err)
 		}
-		fmt.Printf("  %s  official cloned\n", tui.IconOK)
+		fmt.Fprintf(w, "  %s  official cloned\n", tui.IconOK)
 		return nil
 	}
 
@@ -297,7 +374,7 @@ func updateCoreRegistry() error {
 		_ = settings.SaveGlobal(fs)
 	}
 
-	fmt.Printf("  updating official registry...\n")
+	oldState, _ := gitops.CurrentState(dest)
 	if ver != "" {
 		if err := gitops.CheckoutVersion(dest, ver); err != nil {
 			return fmt.Errorf("checking out version: %w", err)
@@ -307,16 +384,19 @@ func updateCoreRegistry() error {
 			return fmt.Errorf("updating: %w", err)
 		}
 	}
-	fmt.Printf("  %s  official up to date\n", tui.IconOK)
+	fmt.Fprintf(w, "  %s  official up to date\n", tui.IconOK)
+	if changes, err := gitops.RegistryChangesSince(dest, oldState.Commit); err == nil {
+		printRegistryChanges(changes, dest, oldState.Commit, w)
+	}
 	return nil
 }
 
-func updateExtendsTarget(name string, r settings.Resolved) error {
+func updateExtendsTarget(name string, r settings.Resolved, w io.Writer) error {
 	if filepath.IsAbs(name) {
 		if _, err := os.Stat(name); err != nil {
 			return fmt.Errorf("local registry %q not found", name)
 		}
-		fmt.Printf("  %s  %s is a local path — no update needed\n", tui.IconOK, name)
+		fmt.Fprintf(w, "  %s  %s is a local path — no update needed\n", tui.IconOK, name)
 		return nil
 	}
 
@@ -337,21 +417,20 @@ func updateExtendsTarget(name string, r settings.Resolved) error {
 		if err := os.MkdirAll(filepath.Dir(dest), 0o755); err != nil {
 			return fmt.Errorf("creating dir: %w", err)
 		}
-		fmt.Printf("  cloning %s...\n", name)
 		if err := gitops.Clone(extURL, dest); err != nil {
 			return fmt.Errorf("cloning: %w", err)
 		}
 		if err := gitops.CheckoutVersion(dest, extVer); err != nil {
 			return fmt.Errorf("checkout: %w", err)
 		}
-		fmt.Printf("  %s  %s cloned\n", tui.IconOK, name)
+		fmt.Fprintf(w, "  %s  %s cloned\n", tui.IconOK, name)
 		return nil
 	}
 
-	fmt.Printf("  updating %s...\n", name)
 	if flagRegistryUpdateRef != "" {
 		extVer = flagRegistryUpdateRef
 	}
+	oldState, _ := gitops.CurrentState(dest)
 	if extVer != "" {
 		if err := gitops.CheckoutVersion(dest, extVer); err != nil {
 			return fmt.Errorf("checking out version: %w", err)
@@ -361,7 +440,10 @@ func updateExtendsTarget(name string, r settings.Resolved) error {
 			return fmt.Errorf("updating: %w", err)
 		}
 	}
-	fmt.Printf("  %s  %s up to date\n", tui.IconOK, name)
+	fmt.Fprintf(w, "  %s  %s up to date\n", tui.IconOK, name)
+	if changes, err := gitops.RegistryChangesSince(dest, oldState.Commit); err == nil {
+		printRegistryChanges(changes, dest, oldState.Commit, w)
+	}
 	return nil
 }
 
@@ -389,7 +471,7 @@ func runRegistryAdd(cmd *cobra.Command, args []string) error {
 		if settings.DeriveRegistryName(eu) == name {
 			fmt.Printf("%s  %s already in standards.extends\n", tui.IconOK, name)
 			r, _ := settings.Load(getProjectDir())
-			return updateExtendsTarget(name, r)
+			return updateExtendsTarget(name, r, os.Stdout)
 		}
 	}
 
@@ -400,7 +482,7 @@ func runRegistryAdd(cmd *cobra.Command, args []string) error {
 	fmt.Printf("%s  added %s to standards.extends\n", tui.IconOK, name)
 
 	r, _ := settings.Load(getProjectDir())
-	if err := updateExtendsTarget(name, r); err != nil {
+	if err := updateExtendsTarget(name, r, os.Stdout); err != nil {
 		return err
 	}
 
