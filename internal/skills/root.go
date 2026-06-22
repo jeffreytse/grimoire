@@ -31,10 +31,26 @@ func RegistriesRoot() string {
 	return filepath.Join(GrimoireHome(), "registries")
 }
 
+// highestPriorityOfficialDef returns the official=true RegistryDef with the highest priority.
+// Priorities are already normalized to 100/50 by Merge(), so comparison is valid.
+// Cannot use AllRegistries() here — circular: AllRegistries() calls OfficialRegistryHome() in
+// its no-registries fallback path.
+func highestPriorityOfficialDef(regs []settings.RegistryDef) (settings.RegistryDef, bool) {
+	var best settings.RegistryDef
+	found := false
+	for _, rd := range regs {
+		if rd.Official && (!found || rd.Priority > best.Priority) {
+			best = rd
+			found = true
+		}
+	}
+	return best, found
+}
+
 // GrimoireRepoURL returns the git URL or absolute local path for the official skills source.
 // Resolution order:
 //  1. GRIMOIRE_SOURCE env var
-//  2. official=true entry in [[registry]]
+//  2. highest-priority official=true entry in [[registry]]
 //  3. Built-in GrimoireRepo constant
 func GrimoireRepoURL() string {
 	if s := os.Getenv("GRIMOIRE_SOURCE"); s != "" {
@@ -43,22 +59,20 @@ func GrimoireRepoURL() string {
 		}
 	}
 	cfg, _ := settings.LoadGlobal()
-	for _, rd := range cfg.Registries {
-		if rd.Official && rd.URL != "" {
-			u, _ := settings.ParseRef(rd.URL)
-			if u == "" {
-				u = rd.URL
-			}
-			if IsGitURL(u) || filepath.IsAbs(u) {
-				return u
-			}
+	if rd, ok := highestPriorityOfficialDef(cfg.Registries); ok && rd.URL != "" {
+		u, _ := settings.ParseRef(rd.URL)
+		if u == "" {
+			u = rd.URL
+		}
+		if IsGitURL(u) || filepath.IsAbs(u) {
+			return u
 		}
 	}
 	return GrimoireRepo
 }
 
 // OfficialRegistryHome returns the local directory for the official registry.
-// Uses the name from the official=true [[registry]] entry as the subdir.
+// Uses the name from the highest-priority official=true [[registry]] entry as the subdir.
 // When no [[registry]] is configured, derives the name from the GrimoireRepo constant.
 // For local registries (absolute paths) the path itself is returned directly.
 func OfficialRegistryHome() string {
@@ -67,10 +81,8 @@ func OfficialRegistryHome() string {
 		return url
 	}
 	cfg, _ := settings.LoadGlobal()
-	for _, rd := range cfg.Registries {
-		if rd.Official && rd.URL != "" {
-			return filepath.Join(RegistriesRoot(), rd.Name)
-		}
+	if rd, ok := highestPriorityOfficialDef(cfg.Registries); ok && rd.URL != "" {
+		return filepath.Join(RegistriesRoot(), rd.Name)
 	}
 	return filepath.Join(RegistriesRoot(), settings.DeriveRegistryName(GrimoireRepo))
 }

@@ -410,7 +410,7 @@ func runRegistryUpdate(cmd *cobra.Command, args []string) error {
 		board.SetUpdating(0)
 		buf := &bytes.Buffer{}
 		var updateErr error
-		if name == skills.OfficialRegistryName || isOfficialByName(name, &cfg) {
+		if name == skills.OfficialRegistryName || isOfficialByName(name) {
 			updateErr = updateCoreRegistry(buf)
 		} else if ref := findRegistryRef(name, &cfg); ref != "" {
 			updateErr = updateNamedRegistry(name, ref, "", buf)
@@ -525,10 +525,11 @@ func runRegistryUpdate(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-// isOfficialByName checks if a named registry has official=true in [[registry]].
-func isOfficialByName(name string, cfg *settings.FileSettings) bool {
-	for _, rd := range cfg.Registries {
-		if rd.Name == name && rd.Official {
+// isOfficialByName checks if a named registry is the (demote-resolved) official registry.
+// Uses AllRegistries() so demoted lower-priority official entries return false.
+func isOfficialByName(name string) bool {
+	for _, reg := range skills.AllRegistries() {
+		if reg.Official && reg.Name == name {
 			return true
 		}
 	}

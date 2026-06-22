@@ -68,15 +68,20 @@ func AllRegistries() []RegistryEntry {
 	})
 
 	var all []RegistryEntry
+	officialSeen := false
 	for _, rd := range sorted {
 		if !rd.Enabled {
 			continue
+		}
+		isOfficial := rd.Official && !officialSeen
+		if isOfficial {
+			officialSeen = true
 		}
 		all = append(all, RegistryEntry{
 			Name:     rd.Name,
 			Home:     registryDefHome(rd),
 			Priority: effectivePriority(rd),
-			Official: rd.Official,
+			Official: isOfficial,
 		})
 	}
 	return all
