@@ -83,8 +83,7 @@ func runInit(cmd *cobra.Command, args []string) error {
 				if err := os.MkdirAll(dir, 0o755); err != nil {
 					return fmt.Errorf("creating .grimoire/: %w", err)
 				}
-				regHome := skills.RegistryHome(cand.regName)
-				if err := skills.ApplyPreset(regHome, cand.presetName, dir); err != nil {
+				if err := skills.ApplyPreset(cand.regHome, cand.presetName, dir); err != nil {
 					return fmt.Errorf("applying preset: %w", err)
 				}
 				printInitSuccess(reinit, cand.presetName)
@@ -165,6 +164,7 @@ func applyNamedPreset(name, dir, cwd string, reinit bool) error {
 type presetCandidate struct {
 	presetName string
 	regName    string
+	regHome    string
 }
 
 // promptPreset shows a TUI preset picker and returns the chosen candidate plus
@@ -206,7 +206,7 @@ func listRankedPresetItems(detected string) ([]string, map[string]string, map[st
 			}
 			seen[pname] = struct{}{}
 			annotations[pname] = "[" + reg.Name + "]"
-			candMap[pname] = presetCandidate{pname, reg.Name}
+			candMap[pname] = presetCandidate{pname, reg.Name, reg.Home}
 			if detected != "" && pname == detected {
 				suggested = append(suggested, pname)
 			} else {
