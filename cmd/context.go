@@ -175,13 +175,10 @@ func buildSettingsMap() map[string]any {
 	}
 	m := map[string]any{}
 
-	// [core]: home + registry
+	// [core]: home
 	core := map[string]any{}
 	if r.Core.Home != "" {
 		core["home"] = r.Core.Home
-	}
-	if r.Core.Registry != "" {
-		core["registry"] = r.Core.Registry
 	}
 	if len(core) > 0 {
 		m["core"] = core
@@ -313,29 +310,29 @@ func buildProfileDirs(home string) []string {
 }
 
 func buildRegistryInfos() []contextRegistryInfo {
-	officialURL := skills.GrimoireRepoURL()
-	officialRoot := skills.SkillsRoot()
-	infos := []contextRegistryInfo{{
-		Name:        "official",
-		URL:         officialURL,
-		SkillsCount: countSkills(officialRoot),
-		Cloned:      dirExists(officialRoot),
-	}}
-
-	// Extends targets from resolved settings
-	r, err := settings.Load(getProjectDir())
-	if err != nil {
-		return infos
-	}
-	for _, ref := range r.StandardsExtends {
-		u, _ := settings.ParseRef(ref)
-		name := settings.DeriveRegistryName(u)
-		extHome := skills.ExtendsHome(name)
+	regs := skills.AllRegistries()
+	infos := make([]contextRegistryInfo, 0, len(regs))
+	for _, reg := range regs {
+		var url string
+		cfg, _ := settings.LoadGlobal()
+		for _, rd := range cfg.Registries {
+			if rd.Name == reg.Name {
+				u, _ := settings.ParseRef(rd.URL)
+				if u == "" {
+					u = rd.URL
+				}
+				url = u
+				break
+			}
+		}
+		if url == "" {
+			url = skills.GrimoireRepoURL()
+		}
 		infos = append(infos, contextRegistryInfo{
-			Name:        name,
-			URL:         u,
-			SkillsCount: countSkills(filepath.Join(extHome, "skills")),
-			Cloned:      dirExists(extHome),
+			Name:        reg.Name,
+			URL:         url,
+			SkillsCount: countSkills(filepath.Join(reg.Home, "skills")),
+			Cloned:      dirExists(reg.Home),
 		})
 	}
 	return infos

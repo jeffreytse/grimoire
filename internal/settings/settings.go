@@ -13,7 +13,6 @@ import (
 type CoreSection struct {
 	Home              string
 	Profiles          []string // from [standards] profiles — stored here for convenience
-	Registry          string   // [core] registry — single source ref ("owner/repo[@version]" or full URL)
 	Agents            []string // [core] agents — pinned agent targets (empty = auto-detect)
 	InstallMode       string   // [core] install-mode — "symlink" (default) | "copy"
 	UpdateConcurrency *int     // [core] update-concurrency — nil=default(8), 0=unlimited, N=cap at N
@@ -35,6 +34,17 @@ type InlineSkillRef struct {
 	Priority int
 }
 
+// RegistryDef is one entry in the [[registry]] table array.
+// It represents a named, priority-ordered skill registry (git URL or local path).
+// Multiple registries are searched in priority order (highest first) for skill resolution.
+type RegistryDef struct {
+	Name     string // user-chosen identifier, e.g. "official", "my-team"
+	URL      string // git URL, owner/repo[@version] shorthand, or absolute path
+	Official bool   // exactly one entry should be official (STANDARD.md-compliant registry)
+	Priority int    // 0 = unset; normalized in Merge: 100 if Official, else 50
+	Enabled  bool   // false = skip in resolution without removing the entry
+}
+
 // InlineProfileDef is a profile definition embedded inside settings.toml under [profiles.*].
 // It mirrors the profile TOML file format and may also carry compliance settings.
 type InlineProfileDef struct {
@@ -50,22 +60,22 @@ type InlineProfileDef struct {
 
 // FileSettings is one parsed settings.toml file.
 type FileSettings struct {
-	Core             CoreSection
-	StandardsExtends []string                    // from [standards] extends = [...]
-	ReportPath       string                      // from [standards] report-path
-	StalenessDays    int                         // from [standards] staleness-days (0 = unset)
-	Sections         map[string]DomainSection    // dotted keys: "engineering", "engineering.architecture"
-	InlineProfiles   map[string]InlineProfileDef // from [profiles.*]
+	Core           CoreSection
+	Registries     []RegistryDef               // from [[registry]] table array
+	ReportPath     string                      // from [standards] report-path
+	StalenessDays  int                         // from [standards] staleness-days (0 = unset)
+	Sections       map[string]DomainSection    // dotted keys: "engineering", "engineering.architecture"
+	InlineProfiles map[string]InlineProfileDef // from [profiles.*]
 }
 
 // Resolved holds the effective settings after merging all file layers.
 type Resolved struct {
-	Core             CoreSection
-	StandardsExtends []string                    // deduped union from all file layers
-	ReportPath       string                      // first non-empty across layers
-	StalenessDays    int                         // first nonzero across layers (default 7 when 0)
-	sections         map[string]DomainSection
-	InlineProfiles   map[string]InlineProfileDef // merged, higher-priority layers win per name
+	Core           CoreSection
+	Registries     []RegistryDef               // merged [[registry]] entries, deduped by name
+	ReportPath     string                      // first non-empty across layers
+	StalenessDays  int                         // first nonzero across layers (default 7 when 0)
+	sections       map[string]DomainSection
+	InlineProfiles map[string]InlineProfileDef // merged, higher-priority layers win per name
 	// Sources maps dotted key paths to the file that provided them.
 	// E.g. "core.home" → "/path/to/settings.toml"
 	Sources map[string]string
@@ -95,7 +105,6 @@ func SystemPath() string {
 }
 
 var validStandardsFields = map[string]bool{
-	"extends":                    true,
 	"profiles":                   true,
 	"report-path":                true,
 	"staleness-days":             true,
@@ -142,17 +151,11 @@ func Merge(layers []FileSettings, paths []string) Resolved {
 	}
 
 	// Core scalar fields: first non-empty wins (layers[0] = highest priority).
-	// StandardsExtends: union across all layers, deduped by derived name.
-	seenExt := make(map[string]bool)
 	for i, fs := range layers {
 		src := paths[i]
 		if r.Core.Home == "" && fs.Core.Home != "" {
 			r.Core.Home = fs.Core.Home
 			r.Sources["core.home"] = src
-		}
-		if r.Core.Registry == "" && fs.Core.Registry != "" {
-			r.Core.Registry = fs.Core.Registry
-			r.Sources["core.registry"] = src
 		}
 		if len(r.Core.Agents) == 0 && len(fs.Core.Agents) > 0 {
 			r.Core.Agents = fs.Core.Agents
@@ -178,16 +181,25 @@ func Merge(layers []FileSettings, paths []string) Resolved {
 			r.StalenessDays = fs.StalenessDays
 			r.Sources["standards.staleness-days"] = src
 		}
-		for _, ref := range fs.StandardsExtends {
-			u, _ := ParseRef(ref)
-			name := DeriveRegistryName(u)
-			if !seenExt[name] {
-				seenExt[name] = true
-				r.StandardsExtends = append(r.StandardsExtends, ref)
-				if r.Sources["standards.extends"] == "" {
-					r.Sources["standards.extends"] = src
+	}
+
+	// Registries: union by name; first occurrence (highest-priority layer) wins per name.
+	// Normalize unset priorities: 100 for official, 50 for user registries.
+	seenReg := make(map[string]bool)
+	for _, fs := range layers {
+		for _, rd := range fs.Registries {
+			if rd.Name == "" || seenReg[rd.Name] {
+				continue
+			}
+			seenReg[rd.Name] = true
+			if rd.Priority == 0 {
+				if rd.Official {
+					rd.Priority = 100
+				} else {
+					rd.Priority = 50
 				}
 			}
+			r.Registries = append(r.Registries, rd)
 		}
 	}
 

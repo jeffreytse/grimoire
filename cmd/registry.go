@@ -20,32 +20,38 @@ import (
 
 var registryCmd = &cobra.Command{
 	Use:   "registry",
-	Short: "Manage the grimoire skill registry",
-	Long: `View and manage the grimoire skill registry (official source or company mirror).
+	Short: "Manage grimoire skill registries",
+	Long: `Manage grimoire skill registries — official and user-defined.
 
-  grimoire registry list               show current registry and extends targets
-  grimoire registry add <ref>          add a registry to standards.extends and clone it
-  grimoire registry remove <name>      remove a registry from standards.extends
-  grimoire registry set <ref>          set core.registry (owner/repo[@version] or URL)
-  grimoire registry reset              clear core.registry (revert to built-in default)
-  grimoire registry update [<name>]    pull latest from registry and extends targets
-  grimoire registry validate [<path>]  validate a registry's structure before publishing`,
+Multiple registries are searched in priority order (highest first).
+User registries do not need to follow the official STANDARD.md.
+
+  grimoire registry list                        list all registries
+  grimoire registry add <name> <url>            add a registry and clone it
+  grimoire registry remove <name>               remove a registry
+  grimoire registry enable <name>               enable a disabled registry
+  grimoire registry disable <name>              disable a registry without removing it
+  grimoire registry set <ref>                   set the official registry URL
+  grimoire registry reset                       revert official registry to built-in default
+  grimoire registry update [<name>]             pull latest from all (or named) registries
+  grimoire registry validate [<path-or-name>]   validate a registry's structure`,
 }
 
 var (
-	flagRegistryListJSON  bool
-	flagRegistryUpdateRef string
+	flagRegistryListJSON    bool
+	flagRegistryUpdateRef   string
+	flagRegistryAddPriority int
 )
 
 var registryListCmd = &cobra.Command{
 	Use:   "list",
-	Short: "List current registry and extends targets",
+	Short: "List all configured registries",
 	RunE:  runRegistryList,
 }
 
 var registrySetCmd = &cobra.Command{
 	Use:   "set <ref>",
-	Short: "Set the core registry (owner/repo[@version] or full URL)",
+	Short: "Set the official registry URL (owner/repo[@version] or full URL)",
 	Args:  cobra.ExactArgs(1),
 	RunE:  runRegistrySet,
 }
@@ -58,22 +64,43 @@ var registryResetCmd = &cobra.Command{
 }
 
 var registryAddCmd = &cobra.Command{
-	Use:   "add <ref>",
-	Short: "Add a registry to standards.extends and clone it",
-	Args:  cobra.ExactArgs(1),
-	RunE:  runRegistryAdd,
+	Use:   "add <name> <url>",
+	Short: "Add a named registry and clone it",
+	Long: `Add a named registry to the [[registry]] list and clone it locally.
+
+<name>  short identifier for this registry (e.g. "my-team", "plugins")
+<url>   git URL, owner/repo[@version] shorthand, or absolute local path
+
+User registries do not need to follow the official STANDARD.md — any
+directory with a skills/ folder (or flat .md files) is accepted.`,
+	Args: cobra.RangeArgs(1, 2),
+	RunE: runRegistryAdd,
 }
 
 var registryRemoveCmd = &cobra.Command{
 	Use:   "remove <name>",
-	Short: "Remove a registry from standards.extends",
+	Short: "Remove a registry by name",
 	Args:  cobra.ExactArgs(1),
 	RunE:  runRegistryRemove,
 }
 
+var registryEnableCmd = &cobra.Command{
+	Use:   "enable <name>",
+	Short: "Enable a previously disabled registry",
+	Args:  cobra.ExactArgs(1),
+	RunE:  runRegistryEnable,
+}
+
+var registryDisableCmd = &cobra.Command{
+	Use:   "disable <name>",
+	Short: "Disable a registry without removing it",
+	Args:  cobra.ExactArgs(1),
+	RunE:  runRegistryDisable,
+}
+
 var registryUpdateCmd = &cobra.Command{
 	Use:   "update [<name>]",
-	Short: "Pull latest from registry and extends targets",
+	Short: "Pull latest from all (or one named) registry",
 	Args:  cobra.MaximumNArgs(1),
 	RunE:  runRegistryUpdate,
 }
@@ -99,9 +126,12 @@ Checks:
 func init() {
 	registryListCmd.Flags().BoolVar(&flagRegistryListJSON, "json", false, "output as JSON")
 	registryUpdateCmd.Flags().StringVar(&flagRegistryUpdateRef, "ref", "", "change pinned version/branch/commit")
+	registryAddCmd.Flags().IntVar(&flagRegistryAddPriority, "priority", 0, "skill resolution priority (higher wins; default 50 for user registries)")
 	registryCmd.AddCommand(registryListCmd)
 	registryCmd.AddCommand(registryAddCmd)
 	registryCmd.AddCommand(registryRemoveCmd)
+	registryCmd.AddCommand(registryEnableCmd)
+	registryCmd.AddCommand(registryDisableCmd)
 	registryCmd.AddCommand(registrySetCmd)
 	registryCmd.AddCommand(registryResetCmd)
 	registryCmd.AddCommand(registryUpdateCmd)
@@ -112,58 +142,56 @@ type registryListEntry struct {
 	Name        string `json:"name"`
 	URL         string `json:"url"`
 	Version     string `json:"version,omitempty"`
+	Priority    int    `json:"priority"`
 	SkillsCount int    `json:"skills_count"`
 	Cloned      bool   `json:"cloned"`
-	Kind        string `json:"kind"` // "core" | "extends"
+	Enabled     bool   `json:"enabled"`
+	Kind        string `json:"kind"` // "official" | "user" | "local"
 }
 
 func runRegistryList(cmd *cobra.Command, args []string) error {
-	fs, err := settings.LoadGlobal()
+	cfg, err := settings.LoadGlobal()
 	if err != nil {
 		return fmt.Errorf("loading settings: %w", err)
 	}
-	r, _ := settings.Load(getProjectDir())
 
-	var entries []registryListEntry
+	regs := skills.AllRegistries()
+	entries := make([]registryListEntry, 0, len(regs))
 
-	// Core registry entry
-	coreURL := skills.GrimoireRepoURL()
-	coreVersion := skills.GrimoireVersion()
-	if fs.Core.Registry != "" {
-		_, v := settings.ParseRef(fs.Core.Registry)
-		if v != "" {
-			coreVersion = v
+	for _, reg := range regs {
+		var url, ver string
+		enabled := true
+		for _, rd := range cfg.Registries {
+			if rd.Name == reg.Name {
+				url, ver = settings.ParseRef(rd.URL)
+				if url == "" {
+					url = rd.URL
+				}
+				enabled = rd.Enabled
+				break
+			}
 		}
-	}
-	officialHome := skills.OfficialRegistryHome()
-	coreKind := "core"
-	if filepath.IsAbs(coreURL) {
-		coreKind = "local"
-	}
-	entries = append(entries, registryListEntry{
-		Name:        settings.DeriveRegistryName(coreURL),
-		URL:         coreURL,
-		Version:     coreVersion,
-		SkillsCount: countSkills(skills.SkillsRoot()),
-		Cloned:      dirExists(officialHome),
-		Kind:        coreKind,
-	})
-
-	// Extends targets from resolved settings
-	for _, ref := range r.StandardsExtends {
-		u, ver := settings.ParseRef(ref)
-		name := settings.DeriveRegistryName(u)
-		extHome := skills.ExtendsHome(name)
-		kind := "extends"
-		if filepath.IsAbs(u) {
+		if url == "" {
+			url = skills.GrimoireRepoURL()
+		}
+		kind := "user"
+		if reg.Official {
+			kind = "official"
+		}
+		if filepath.IsAbs(url) {
 			kind = "local"
 		}
+		if ver == "" && reg.Official {
+			ver = skills.GrimoireVersion()
+		}
 		entries = append(entries, registryListEntry{
-			Name:        name,
-			URL:         u,
+			Name:        reg.Name,
+			URL:         url,
 			Version:     ver,
-			SkillsCount: countSkills(filepath.Join(extHome, "skills")),
-			Cloned:      dirExists(extHome),
+			Priority:    reg.Priority,
+			SkillsCount: countSkills(filepath.Join(reg.Home, "skills")),
+			Cloned:      dirExists(reg.Home),
+			Enabled:     enabled,
 			Kind:        kind,
 		})
 	}
@@ -179,13 +207,22 @@ func runRegistryList(cmd *cobra.Command, args []string) error {
 		if !e.Cloned {
 			icon = tui.IconWarn
 		}
+		if !e.Enabled {
+			icon = tui.IconSkip
+		}
 		ref := e.URL
 		if e.Version != "" {
 			ref += "@" + e.Version
 		}
 		tag := tui.StyleDim.Render("[" + e.Kind + "]")
-		fmt.Printf("  %s  %-30s %s %s\n", icon, e.Name, tag, tui.StyleDim.Render(ref))
-		if e.Cloned {
+		priStr := fmt.Sprintf("p%d", e.Priority)
+		if !e.Enabled {
+			priStr = "disabled"
+		}
+		fmt.Printf("  %s  %-30s %s %-10s %s\n", icon, e.Name, tag, priStr, tui.StyleDim.Render(ref))
+		if !e.Enabled {
+			fmt.Printf("         disabled — run: grimoire registry enable %s\n\n", e.Name)
+		} else if e.Cloned {
 			fmt.Printf("         %d skills\n\n", e.SkillsCount)
 		} else {
 			fmt.Printf("         not cloned — run: grimoire registry update %s\n\n", e.Name)
@@ -206,41 +243,156 @@ func runRegistrySet(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	fs, err := settings.LoadGlobal()
+	cfg, err := settings.LoadGlobal()
 	if err != nil {
 		return fmt.Errorf("loading settings: %w", err)
 	}
-	fs.Core.Registry = ref
-	if err := settings.SaveGlobal(fs); err != nil {
+	// Update or add the official=true [[registry]] entry.
+	for i, rd := range cfg.Registries {
+		if rd.Official {
+			cfg.Registries[i].URL = ref
+			if err := settings.SaveGlobal(cfg); err != nil {
+				return fmt.Errorf("saving settings: %w", err)
+			}
+			fmt.Printf("%s  official registry = %s\n", tui.IconOK, ref)
+			if filepath.IsAbs(u) {
+				fmt.Printf("   local registry set as official\n")
+			} else {
+				fmt.Printf("   run: grimoire registry update official  to apply\n")
+			}
+			return nil
+		}
+	}
+	cfg.Registries = append(cfg.Registries, settings.RegistryDef{
+		Name:    "official",
+		URL:     ref,
+		Official: true,
+		Priority: 100,
+		Enabled:  true,
+	})
+	if err := settings.SaveGlobal(cfg); err != nil {
 		return fmt.Errorf("saving settings: %w", err)
 	}
-	fmt.Printf("%s  core.registry = %s\n", tui.IconOK, ref)
+	fmt.Printf("%s  official registry = %s\n", tui.IconOK, ref)
 	if filepath.IsAbs(u) {
-		fmt.Printf("   local registry set as official — grimoire install will symlink from %s\n", u)
+		fmt.Printf("   local registry set as official\n")
 	} else {
-		fmt.Printf("   run: grimoire update  to apply\n")
+		fmt.Printf("   run: grimoire registry update official  to apply\n")
 	}
 	return nil
 }
 
 func runRegistryReset(cmd *cobra.Command, args []string) error {
-	fs, err := settings.LoadGlobal()
+	cfg, err := settings.LoadGlobal()
 	if err != nil {
 		return fmt.Errorf("loading settings: %w", err)
 	}
-	fs.Core.Registry = ""
-	if err := settings.SaveGlobal(fs); err != nil {
+	// Remove the official=true [[registry]] entry so GrimoireRepo constant takes effect.
+	var kept []settings.RegistryDef
+	for _, rd := range cfg.Registries {
+		if !rd.Official {
+			kept = append(kept, rd)
+		}
+	}
+	cfg.Registries = kept
+	if err := settings.SaveGlobal(cfg); err != nil {
 		return fmt.Errorf("saving settings: %w", err)
 	}
-	fmt.Printf("%s  core.registry cleared — using built-in default (%s)\n", tui.IconOK, skills.GrimoireRepo)
+	fmt.Printf("%s  official registry reset — using built-in default (%s)\n", tui.IconOK, skills.GrimoireRepo)
+	return nil
+}
+
+func runRegistryEnable(cmd *cobra.Command, args []string) error {
+	return setRegistryEnabled(args[0], true)
+}
+
+func runRegistryDisable(cmd *cobra.Command, args []string) error {
+	return setRegistryEnabled(args[0], false)
+}
+
+func setRegistryEnabled(name string, enabled bool) error {
+	cfg, err := settings.LoadGlobal()
+	if err != nil {
+		return fmt.Errorf("loading settings: %w", err)
+	}
+	for i, rd := range cfg.Registries {
+		if rd.Name == name {
+			cfg.Registries[i].Enabled = enabled
+			if err := settings.SaveGlobal(cfg); err != nil {
+				return fmt.Errorf("saving settings: %w", err)
+			}
+			verb := "enabled"
+			if !enabled {
+				verb = "disabled"
+			}
+			fmt.Printf("%s  %s %s\n", tui.IconOK, verb, name)
+			return nil
+		}
+	}
+	return fmt.Errorf("registry %q not found in [[registry]] — check: grimoire registry list", name)
+}
+
+// updateNamedRegistry clones or pulls a named [[registry]] entry.
+func updateNamedRegistry(name, ref, forceVer string, w io.Writer) error {
+	u, ver := settings.ParseRef(ref)
+	if u == "" {
+		u = ref
+	}
+	if forceVer != "" {
+		ver = forceVer
+	}
+	if flagRegistryUpdateRef != "" {
+		ver = flagRegistryUpdateRef
+	}
+
+	if filepath.IsAbs(u) {
+		if _, err := os.Stat(u); err != nil {
+			return fmt.Errorf("local registry %q not found", u)
+		}
+		fmt.Fprintf(w, "  %s  %s is a local path — no update needed\n", tui.IconOK, name)
+		return nil
+	}
+
+	dest := filepath.Join(skills.RegistriesRoot(), name)
+	if !dirExists(dest) {
+		if err := os.MkdirAll(filepath.Dir(dest), 0o755); err != nil {
+			return fmt.Errorf("creating dir: %w", err)
+		}
+		if err := gitops.Clone(u, dest); err != nil {
+			return fmt.Errorf("cloning %s: %w", name, err)
+		}
+		if ver != "" {
+			if err := gitops.CheckoutVersion(dest, ver); err != nil {
+				return fmt.Errorf("checkout %s: %w", name, err)
+			}
+		}
+		fmt.Fprintf(w, "  %s  %s cloned\n", tui.IconOK, name)
+		return nil
+	}
+
+	oldState, _ := gitops.CurrentState(dest)
+	if ver != "" {
+		if err := gitops.CheckoutVersion(dest, ver); err != nil {
+			return fmt.Errorf("checking out version for %s: %w", name, err)
+		}
+	} else {
+		if err := gitops.PullWithForceFallback(dest); err != nil {
+			return fmt.Errorf("updating %s: %w", name, err)
+		}
+	}
+	fmt.Fprintf(w, "  %s  %s up to date\n", tui.IconOK, name)
+	if changes, err := gitops.RegistryChangesSince(dest, oldState.Commit); err == nil {
+		printRegistryChanges(changes, dest, oldState.Commit, w)
+	}
 	return nil
 }
 
 func runRegistryUpdate(cmd *cobra.Command, args []string) error {
-	r, err := settings.Load(getProjectDir())
+	cfg, err := settings.LoadGlobal()
 	if err != nil {
 		return fmt.Errorf("loading settings: %w", err)
 	}
+	r, _ := settings.Load(getProjectDir())
 
 	if len(args) == 1 {
 		name := args[0]
@@ -248,17 +400,19 @@ func runRegistryUpdate(cmd *cobra.Command, args []string) error {
 		stopSpinner := board.StartSpinner()
 		board.SetUpdating(0)
 		buf := &bytes.Buffer{}
-		var err error
-		if name == "official" {
-			err = updateCoreRegistry(buf)
+		var updateErr error
+		if name == skills.OfficialRegistryName || isOfficialByName(name, cfg) {
+			updateErr = updateCoreRegistry(buf)
+		} else if ref := findRegistryRef(name, cfg); ref != "" {
+			updateErr = updateNamedRegistry(name, ref, "", buf)
 		} else {
-			err = updateExtendsTarget(name, r, buf)
+			updateErr = fmt.Errorf("registry %q not found — check: grimoire registry list", name)
 		}
 		stopSpinner()
-		if err != nil {
+		if updateErr != nil {
 			board.SetDone(0, tui.IconError)
 			board.Finish()
-			return err
+			return updateErr
 		}
 		board.SetDone(0, tui.IconDone)
 		board.Finish()
@@ -266,19 +420,35 @@ func runRegistryUpdate(cmd *cobra.Command, args []string) error {
 		return nil
 	}
 
-	// update all — fan out concurrently, flush output in stable order
+	// Build work list: new-model registries + old-model extends targets.
 	type workItem struct {
 		name   string
+		ref    string
 		isCore bool
 	}
-	items := []workItem{{name: "official", isCore: true}}
-	for _, ref := range r.StandardsExtends {
-		u, _ := settings.ParseRef(ref)
-		name := settings.DeriveRegistryName(u)
-		if filepath.IsAbs(name) {
-			continue // local registry — user manages the checkout
+	var items []workItem
+
+	if len(cfg.Registries) > 0 {
+		for _, rd := range cfg.Registries {
+			if !rd.Enabled {
+				continue
+			}
+			u, _ := settings.ParseRef(rd.URL)
+			if u == "" {
+				u = rd.URL
+			}
+			if filepath.IsAbs(u) {
+				continue // local registry — user manages checkout
+			}
+			items = append(items, workItem{
+				name:   rd.Name,
+				ref:    rd.URL,
+				isCore: rd.Official,
+			})
 		}
-		items = append(items, workItem{name: name})
+	} else {
+		// No [[registry]] configured — update the implicit official registry.
+		items = append(items, workItem{name: skills.OfficialRegistryName, isCore: true})
 	}
 
 	names := make([]string, len(items))
@@ -288,16 +458,19 @@ func runRegistryUpdate(cmd *cobra.Command, args []string) error {
 	board := tui.NewStatusBoard(names)
 	stopSpinner := board.StartSpinner()
 
-	limit := 8 // default
+	limit := 8
 	if r.Core.UpdateConcurrency != nil {
 		if *r.Core.UpdateConcurrency == 0 {
-			limit = len(items) // unlimited
+			limit = len(items)
 		} else {
 			limit = *r.Core.UpdateConcurrency
 		}
 	}
 	if limit > len(items) {
 		limit = len(items)
+	}
+	if limit == 0 {
+		limit = 1
 	}
 	sem := make(chan struct{}, limit)
 
@@ -316,10 +489,11 @@ func runRegistryUpdate(cmd *cobra.Command, args []string) error {
 			defer func() { <-sem }()
 			buf := &bytes.Buffer{}
 			var err error
-			if item.isCore {
+			switch {
+			case item.isCore:
 				err = updateCoreRegistry(buf)
-			} else {
-				err = updateExtendsTarget(item.name, r, buf)
+			default:
+				err = updateNamedRegistry(item.name, item.ref, "", buf)
 			}
 			if err != nil {
 				board.SetDone(i, tui.IconError)
@@ -340,6 +514,26 @@ func runRegistryUpdate(cmd *cobra.Command, args []string) error {
 		os.Stdout.Write(res.buf.Bytes())
 	}
 	return nil
+}
+
+// isOfficialByName checks if a named registry has official=true in [[registry]].
+func isOfficialByName(name string, cfg settings.FileSettings) bool {
+	for _, rd := range cfg.Registries {
+		if rd.Name == name && rd.Official {
+			return true
+		}
+	}
+	return false
+}
+
+// findRegistryRef returns the URL ref for a named registry in [[registry]], or "".
+func findRegistryRef(name string, cfg settings.FileSettings) string {
+	for _, rd := range cfg.Registries {
+		if rd.Name == name {
+			return rd.URL
+		}
+	}
+	return ""
 }
 
 func updateCoreRegistry(w io.Writer) error {
@@ -366,12 +560,23 @@ func updateCoreRegistry(w io.Writer) error {
 		return nil
 	}
 
-	fs, _ := settings.LoadGlobal()
-	_, ver := settings.ParseRef(fs.Core.Registry)
+	ver := ""
+	cfg, _ := settings.LoadGlobal()
+	for _, rd := range cfg.Registries {
+		if rd.Official {
+			_, ver = settings.ParseRef(rd.URL)
+			break
+		}
+	}
 	if flagRegistryUpdateRef != "" {
 		ver = flagRegistryUpdateRef
-		fs.Core.Registry = url + "@" + ver
-		_ = settings.SaveGlobal(fs)
+		for i, rd := range cfg.Registries {
+			if rd.Official {
+				cfg.Registries[i].URL = url + "@" + ver
+				_ = settings.SaveGlobal(cfg)
+				break
+			}
+		}
 	}
 
 	oldState, _ := gitops.CurrentState(dest)
@@ -391,172 +596,122 @@ func updateCoreRegistry(w io.Writer) error {
 	return nil
 }
 
-func updateExtendsTarget(name string, r settings.Resolved, w io.Writer) error {
-	if filepath.IsAbs(name) {
-		if _, err := os.Stat(name); err != nil {
-			return fmt.Errorf("local registry %q not found", name)
-		}
-		fmt.Fprintf(w, "  %s  %s is a local path — no update needed\n", tui.IconOK, name)
-		return nil
-	}
-
-	var extURL, extVer string
-	for _, ref := range r.StandardsExtends {
-		u, ver := settings.ParseRef(ref)
-		if settings.DeriveRegistryName(u) == name {
-			extURL, extVer = u, ver
-			break
-		}
-	}
-	if extURL == "" {
-		return fmt.Errorf("extends target %q not declared in any settings file", name)
-	}
-
-	dest := skills.ExtendsHome(name)
-	if !dirExists(dest) {
-		if err := os.MkdirAll(filepath.Dir(dest), 0o755); err != nil {
-			return fmt.Errorf("creating dir: %w", err)
-		}
-		if err := gitops.Clone(extURL, dest); err != nil {
-			return fmt.Errorf("cloning: %w", err)
-		}
-		if err := gitops.CheckoutVersion(dest, extVer); err != nil {
-			return fmt.Errorf("checkout: %w", err)
-		}
-		fmt.Fprintf(w, "  %s  %s cloned\n", tui.IconOK, name)
-		return nil
-	}
-
-	if flagRegistryUpdateRef != "" {
-		extVer = flagRegistryUpdateRef
-	}
-	oldState, _ := gitops.CurrentState(dest)
-	if extVer != "" {
-		if err := gitops.CheckoutVersion(dest, extVer); err != nil {
-			return fmt.Errorf("checking out version: %w", err)
-		}
-	} else {
-		if err := gitops.PullWithForceFallback(dest); err != nil {
-			return fmt.Errorf("updating: %w", err)
-		}
-	}
-	fmt.Fprintf(w, "  %s  %s up to date\n", tui.IconOK, name)
-	if changes, err := gitops.RegistryChangesSince(dest, oldState.Commit); err == nil {
-		printRegistryChanges(changes, dest, oldState.Commit, w)
-	}
-	return nil
-}
 
 func runRegistryAdd(cmd *cobra.Command, args []string) error {
-	ref := args[0]
+	if len(args) == 1 {
+		return fmt.Errorf("usage: grimoire registry add <name> <url>\n\nExample:\n  grimoire registry add my-team https://github.com/acme/grimoire.git")
+	}
 
-	if filepath.IsAbs(ref) {
-		return runRegistryAddLocal(ref)
+	name := args[0]
+	ref := args[1]
+
+	if strings.ContainsAny(name, "/\\") {
+		return fmt.Errorf("registry name %q must not contain path separators — use a short identifier like %q", name, strings.ReplaceAll(name, "/", "-"))
 	}
 
 	u, _ := settings.ParseRef(ref)
-	if !skills.IsGitURL(u) {
-		return fmt.Errorf("invalid ref %q — expected owner/repo[@version], git URL, or absolute path", ref)
+	if u == "" {
+		u = ref
 	}
-	name := settings.DeriveRegistryName(u)
+	if !skills.IsGitURL(u) && !filepath.IsAbs(u) {
+		return fmt.Errorf("invalid url %q — expected git URL, owner/repo[@version], or absolute path", ref)
+	}
+	if filepath.IsAbs(u) {
+		if _, err := os.Stat(u); err != nil {
+			return fmt.Errorf("local path %q not found", u)
+		}
+	}
 
-	fs, err := settings.LoadGlobal()
+	cfg, err := settings.LoadGlobal()
 	if err != nil {
 		return fmt.Errorf("loading settings: %w", err)
 	}
 
-	// idempotent: skip if already present
-	for _, existing := range fs.StandardsExtends {
-		eu, _ := settings.ParseRef(existing)
-		if settings.DeriveRegistryName(eu) == name {
-			fmt.Printf("%s  %s already in standards.extends\n", tui.IconOK, name)
-			r, _ := settings.Load(getProjectDir())
-			return updateExtendsTarget(name, r, os.Stdout)
+	// Idempotent: if name already exists, update URL/priority.
+	for i, existing := range cfg.Registries {
+		if existing.Name == name {
+			cfg.Registries[i].URL = ref
+			if flagRegistryAddPriority > 0 {
+				cfg.Registries[i].Priority = flagRegistryAddPriority
+			}
+			if err := settings.SaveGlobal(cfg); err != nil {
+				return fmt.Errorf("saving settings: %w", err)
+			}
+			fmt.Printf("%s  updated registry %s → %s\n", tui.IconOK, name, u)
+			if filepath.IsAbs(u) {
+				return nil
+			}
+			return updateNamedRegistry(name, ref, "", os.Stdout)
 		}
 	}
 
-	fs.StandardsExtends = append(fs.StandardsExtends, ref)
-	if err := settings.SaveGlobal(fs); err != nil {
+	rd := settings.RegistryDef{
+		Name:    name,
+		URL:     ref,
+		Enabled: true,
+	}
+	if flagRegistryAddPriority > 0 {
+		rd.Priority = flagRegistryAddPriority
+	}
+	cfg.Registries = append(cfg.Registries, rd)
+	if err := settings.SaveGlobal(cfg); err != nil {
 		return fmt.Errorf("saving settings: %w", err)
 	}
-	fmt.Printf("%s  added %s to standards.extends\n", tui.IconOK, name)
+	fmt.Printf("%s  added registry %s\n", tui.IconOK, name)
 
-	r, _ := settings.Load(getProjectDir())
-	if err := updateExtendsTarget(name, r, os.Stdout); err != nil {
+	if filepath.IsAbs(u) {
+		sc := countSkills(filepath.Join(u, "skills"))
+		pc := countProfiles(filepath.Join(u, "profiles"))
+		if sc > 0 {
+			fmt.Printf("   %d skills available from %s\n", sc, name)
+		}
+		if pc > 0 {
+			fmt.Printf("   %d profiles available from %s\n", pc, name)
+		}
+		return nil
+	}
+
+	if err := updateNamedRegistry(name, ref, "", os.Stdout); err != nil {
 		return err
 	}
-
-	extHome := skills.ExtendsHome(name)
-	if sc := countSkills(filepath.Join(extHome, "skills")); sc > 0 {
+	home := filepath.Join(skills.RegistriesRoot(), name)
+	if sc := countSkills(filepath.Join(home, "skills")); sc > 0 {
 		fmt.Printf("   %d skills available from %s\n", sc, name)
 	}
-	if pc := countProfiles(filepath.Join(extHome, "profiles")); pc > 0 {
+	if pc := countProfiles(filepath.Join(home, "profiles")); pc > 0 {
 		fmt.Printf("   %d profiles available from %s\n", pc, name)
 	}
 	return nil
 }
 
-func runRegistryAddLocal(path string) error {
-	if _, err := os.Stat(path); err != nil {
-		return fmt.Errorf("local path %q not found", path)
-	}
-
-	fs, err := settings.LoadGlobal()
-	if err != nil {
-		return fmt.Errorf("loading settings: %w", err)
-	}
-	for _, existing := range fs.StandardsExtends {
-		eu, _ := settings.ParseRef(existing)
-		if eu == path {
-			fmt.Printf("%s  %s already in standards.extends\n", tui.IconOK, path)
-			return nil
-		}
-	}
-
-	fs.StandardsExtends = append(fs.StandardsExtends, path)
-	if err := settings.SaveGlobal(fs); err != nil {
-		return fmt.Errorf("saving settings: %w", err)
-	}
-	fmt.Printf("%s  added %s to standards.extends\n", tui.IconOK, path)
-
-	if sc := countSkills(filepath.Join(path, "skills")); sc > 0 {
-		fmt.Printf("   %d skills available\n", sc)
-	}
-	if pc := countProfiles(filepath.Join(path, "profiles")); pc > 0 {
-		fmt.Printf("   %d profiles available\n", pc)
-	}
-	return nil
-}
 
 func runRegistryRemove(cmd *cobra.Command, args []string) error {
 	target := args[0]
 
-	fs, err := settings.LoadGlobal()
+	cfg, err := settings.LoadGlobal()
 	if err != nil {
 		return fmt.Errorf("loading settings: %w", err)
 	}
 
-	var kept []string
+	var kept []settings.RegistryDef
 	removed := false
-	for _, existing := range fs.StandardsExtends {
-		eu, _ := settings.ParseRef(existing)
-		if settings.DeriveRegistryName(eu) == target {
+	for _, rd := range cfg.Registries {
+		if rd.Name == target {
 			removed = true
 			continue
 		}
-		kept = append(kept, existing)
+		kept = append(kept, rd)
 	}
 	if !removed {
-		return fmt.Errorf("registry %q not found in standards.extends", target)
+		return fmt.Errorf("registry %q not found — check: grimoire registry list", target)
 	}
-
-	fs.StandardsExtends = kept
-	if err := settings.SaveGlobal(fs); err != nil {
+	cfg.Registries = kept
+	if err := settings.SaveGlobal(cfg); err != nil {
 		return fmt.Errorf("saving settings: %w", err)
 	}
-	fmt.Printf("%s  removed %s from standards.extends\n", tui.IconOK, target)
-	fmt.Printf("   local clone at %s preserved — delete manually if no longer needed\n",
-		skills.ExtendsHome(target))
+	home := filepath.Join(skills.RegistriesRoot(), target)
+	fmt.Printf("%s  removed %s from [[registry]]\n", tui.IconOK, target)
+	fmt.Printf("   local clone at %s preserved — delete manually if no longer needed\n", home)
 	return nil
 }
 

@@ -225,8 +225,6 @@ func getKeyResolved(r settings.Resolved, key string) (val, src string, err error
 	switch key {
 	case "core.home":
 		return r.Core.Home, r.Sources["core.home"], nil
-	case "core.registry":
-		return r.Core.Registry, r.Sources["core.registry"], nil
 	case "core.agents":
 		return strings.Join(r.Core.Agents, ", "), r.Sources["core.agents"], nil
 	case "core.install-mode":
@@ -238,8 +236,6 @@ func getKeyResolved(r settings.Resolved, key string) (val, src string, err error
 			return "", "", err
 		}
 		switch field {
-		case "extends":
-			return strings.Join(r.StandardsExtends, ", "), r.Sources["standards.extends"], nil
 		case "profiles":
 			return strings.Join(r.Core.Profiles, ", "), r.Sources["standards.profiles"], nil
 		case "report-path":
@@ -288,9 +284,6 @@ func applyKey(fs *settings.FileSettings, key, value string) error {
 	case "core.home":
 		fs.Core.Home = value
 		return nil
-	case "core.registry":
-		fs.Core.Registry = value
-		return nil
 	case "core.agents":
 		fs.Core.Agents = splitCSV(value)
 		return nil
@@ -309,9 +302,6 @@ func applyKey(fs *settings.FileSettings, key, value string) error {
 		if domain == "" {
 			// top-level standards field
 			switch field {
-			case "extends":
-				fs.StandardsExtends = splitCSV(value)
-				return nil
 			case "profiles":
 				fs.Core.Profiles = splitCSV(value)
 				return nil
@@ -426,14 +416,6 @@ func appendToKey(fs *settings.FileSettings, key, value string) error {
 		}
 		fs.Core.Agents = append(fs.Core.Agents, value)
 		return nil
-	case "standards.extends":
-		for _, v := range fs.StandardsExtends {
-			if v == value {
-				return nil
-			}
-		}
-		fs.StandardsExtends = append(fs.StandardsExtends, value)
-		return nil
 	case "standards.profiles":
 		for _, v := range fs.Core.Profiles {
 			if v == value {
@@ -479,9 +461,6 @@ func removeFromKey(fs *settings.FileSettings, key, value string) error {
 	switch key {
 	case "core.agents":
 		fs.Core.Agents = filterOut(fs.Core.Agents, value)
-		return nil
-	case "standards.extends":
-		fs.StandardsExtends = filterOut(fs.StandardsExtends, value)
 		return nil
 	case "standards.profiles":
 		fs.Core.Profiles = filterOut(fs.Core.Profiles, value)

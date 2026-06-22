@@ -247,134 +247,129 @@ func performSelfUpdateBinaryPlatform(exePath string, rel *ghRelease) error {
 // ── Registry ──────────────────────────────────────────────────────────────────
 
 func collectRegistryList() ([]registryListEntry, error) {
-	fs, err := settings.LoadGlobal()
+	cfg, err := settings.LoadGlobal()
 	if err != nil {
 		return nil, fmt.Errorf("loading settings: %w", err)
 	}
-	r, _ := settings.Load(getProjectDir())
 
-	coreURL := skills.GrimoireRepoURL()
-	coreKind := "core"
-	if filepath.IsAbs(coreURL) {
-		coreKind = "local"
-	}
-	coreVersion := skills.GrimoireVersion()
-	if fs.Core.Registry != "" {
-		_, v := settings.ParseRef(fs.Core.Registry)
-		if v != "" {
-			coreVersion = v
+	regs := skills.AllRegistries()
+	entries := make([]registryListEntry, 0, len(regs))
+	for _, reg := range regs {
+		var url, ver string
+		for _, rd := range cfg.Registries {
+			if rd.Name == reg.Name {
+				url, ver = settings.ParseRef(rd.URL)
+				if url == "" {
+					url = rd.URL
+				}
+				break
+			}
 		}
-	}
-	officialHome := skills.OfficialRegistryHome()
-	entries := []registryListEntry{{
-		Name:        settings.DeriveRegistryName(coreURL),
-		URL:         coreURL,
-		Version:     coreVersion,
-		SkillsCount: countSkills(skills.SkillsRoot()),
-		Cloned:      dirExists(officialHome),
-		Kind:        coreKind,
-	}}
-
-	for _, ref := range r.StandardsExtends {
-		u, ver := settings.ParseRef(ref)
-		name := settings.DeriveRegistryName(u)
-		extHome := skills.ExtendsHome(name)
-		kind := "extends"
-		if filepath.IsAbs(u) {
+		if url == "" {
+			url = skills.GrimoireRepoURL()
+		}
+		kind := "user"
+		if reg.Official {
+			kind = "official"
+		}
+		if filepath.IsAbs(url) {
 			kind = "local"
 		}
+		if ver == "" && reg.Official {
+			ver = skills.GrimoireVersion()
+		}
 		entries = append(entries, registryListEntry{
-			Name:        name,
-			URL:         u,
+			Name:        reg.Name,
+			URL:         url,
 			Version:     ver,
-			SkillsCount: countSkills(filepath.Join(extHome, "skills")),
-			Cloned:      dirExists(extHome),
+			SkillsCount: countSkills(filepath.Join(reg.Home, "skills")),
+			Cloned:      dirExists(reg.Home),
 			Kind:        kind,
 		})
 	}
 	return entries, nil
 }
 
-// performRegistryAdd adds a registry to standards.extends and clones it.
+// performRegistryAdd adds a named registry to [[registry]] and clones it.
 // Mirrors CLI `grimoire registry add` behaviour.
+// Name is derived from the URL when not explicitly provided.
 func performRegistryAdd(ref string) (registryListEntry, error) {
-	if filepath.IsAbs(ref) {
-		if _, err := os.Stat(ref); err != nil {
-			return registryListEntry{}, fmt.Errorf("local path %q not found", ref)
-		}
-		gfs, err := settings.LoadGlobal()
-		if err != nil {
-			return registryListEntry{}, fmt.Errorf("loading settings: %w", err)
-		}
-		for _, existing := range gfs.StandardsExtends {
-			eu, _ := settings.ParseRef(existing)
-			if eu == ref {
-				return registryListEntry{Name: ref, URL: ref, Cloned: true, Kind: "local"}, nil
-			}
-		}
-		gfs.StandardsExtends = append(gfs.StandardsExtends, ref)
-		if err := settings.SaveGlobal(gfs); err != nil {
-			return registryListEntry{}, fmt.Errorf("saving settings: %w", err)
-		}
-		return registryListEntry{
-			Name:        ref,
-			URL:         ref,
-			SkillsCount: countSkills(filepath.Join(ref, "skills")),
-			Cloned:      true,
-			Kind:        "local",
-		}, nil
-	}
-
 	u, _ := settings.ParseRef(ref)
-	if !skills.IsGitURL(u) {
+	if u == "" {
+		u = ref
+	}
+	if !skills.IsGitURL(u) && !filepath.IsAbs(u) {
 		return registryListEntry{}, fmt.Errorf("invalid ref %q — expected owner/repo, git URL, or absolute path", ref)
 	}
+
 	name := settings.DeriveRegistryName(u)
 
 	gfs, err := settings.LoadGlobal()
 	if err != nil {
 		return registryListEntry{}, fmt.Errorf("loading settings: %w", err)
 	}
-	for _, existing := range gfs.StandardsExtends {
-		eu, _ := settings.ParseRef(existing)
-		if settings.DeriveRegistryName(eu) == name {
-			// already present — just ensure cloned
-			dest := skills.ExtendsHome(name)
-			if !dirExists(dest) {
-				_ = os.MkdirAll(filepath.Dir(dest), 0o755)
-				_ = gitops.Clone(u, dest)
+
+	// Idempotent: if name already exists, just ensure cloned.
+	for _, rd := range gfs.Registries {
+		if rd.Name == name {
+			home := filepath.Join(skills.RegistriesRoot(), name)
+			if filepath.IsAbs(u) {
+				home = u
+			}
+			if !dirExists(home) && !filepath.IsAbs(u) {
+				_ = os.MkdirAll(filepath.Dir(home), 0o755)
+				_ = gitops.Clone(u, home)
+			}
+			kind := "user"
+			if filepath.IsAbs(u) {
+				kind = "local"
 			}
 			return registryListEntry{
-				Name: name, URL: u,
-				SkillsCount: countSkills(filepath.Join(dest, "skills")),
-				Cloned:      true, Kind: "extends",
+				Name:        name,
+				URL:         u,
+				SkillsCount: countSkills(filepath.Join(home, "skills")),
+				Cloned:      dirExists(home),
+				Kind:        kind,
 			}, nil
 		}
 	}
 
-	gfs.StandardsExtends = append(gfs.StandardsExtends, ref)
+	rd := settings.RegistryDef{Name: name, URL: ref, Enabled: true}
+	gfs.Registries = append(gfs.Registries, rd)
 	if err := settings.SaveGlobal(gfs); err != nil {
 		return registryListEntry{}, fmt.Errorf("saving settings: %w", err)
 	}
 
-	dest := skills.ExtendsHome(name)
-	if err := os.MkdirAll(filepath.Dir(dest), 0o755); err != nil {
+	home := filepath.Join(skills.RegistriesRoot(), name)
+	if filepath.IsAbs(u) {
+		home = u
+		kind := "local"
+		return registryListEntry{
+			Name:        name,
+			URL:         u,
+			SkillsCount: countSkills(filepath.Join(home, "skills")),
+			Cloned:      true,
+			Kind:        kind,
+		}, nil
+	}
+
+	if err := os.MkdirAll(filepath.Dir(home), 0o755); err != nil {
 		return registryListEntry{}, fmt.Errorf("creating dir: %w", err)
 	}
-	if err := gitops.Clone(u, dest); err != nil {
+	if err := gitops.Clone(u, home); err != nil {
 		return registryListEntry{}, fmt.Errorf("cloning registry: %w", err)
 	}
 
 	return registryListEntry{
 		Name:        name,
 		URL:         u,
-		SkillsCount: countSkills(filepath.Join(dest, "skills")),
+		SkillsCount: countSkills(filepath.Join(home, "skills")),
 		Cloned:      true,
-		Kind:        "extends",
+		Kind:        "user",
 	}, nil
 }
 
-// performRegistryRemove removes a registry from standards.extends by name.
+// performRegistryRemove removes a registry from [[registry]] by name.
 // Mirrors CLI `grimoire registry remove` behaviour.
 func performRegistryRemove(name string) (mcpRegistryRemoveOutput, error) {
 	gfs, err := settings.LoadGlobal()
@@ -382,28 +377,27 @@ func performRegistryRemove(name string) (mcpRegistryRemoveOutput, error) {
 		return mcpRegistryRemoveOutput{}, fmt.Errorf("loading settings: %w", err)
 	}
 
-	var kept []string
+	var kept []settings.RegistryDef
 	removed := false
-	for _, existing := range gfs.StandardsExtends {
-		eu, _ := settings.ParseRef(existing)
-		if settings.DeriveRegistryName(eu) == name {
+	for _, rd := range gfs.Registries {
+		if rd.Name == name {
 			removed = true
 			continue
 		}
-		kept = append(kept, existing)
+		kept = append(kept, rd)
 	}
 	if !removed {
-		return mcpRegistryRemoveOutput{}, fmt.Errorf("registry %q not found in standards.extends", name)
+		return mcpRegistryRemoveOutput{}, fmt.Errorf("registry %q not found in [[registry]]", name)
 	}
 
-	gfs.StandardsExtends = kept
+	gfs.Registries = kept
 	if err := settings.SaveGlobal(gfs); err != nil {
 		return mcpRegistryRemoveOutput{}, fmt.Errorf("saving settings: %w", err)
 	}
 	return mcpRegistryRemoveOutput{Name: name, Removed: true}, nil
 }
 
-// performRegistrySet sets core.registry (the official source).
+// performRegistrySet sets the official registry URL via the [[registry]] model.
 func performRegistrySet(ref string) (mcpRegistrySetOutput, error) {
 	u, _ := settings.ParseRef(ref)
 	if !skills.IsGitURL(u) && !filepath.IsAbs(u) {
@@ -418,7 +412,22 @@ func performRegistrySet(ref string) (mcpRegistrySetOutput, error) {
 	if err != nil {
 		return mcpRegistrySetOutput{}, fmt.Errorf("loading settings: %w", err)
 	}
-	gfs.Core.Registry = ref
+	for i, rd := range gfs.Registries {
+		if rd.Official {
+			gfs.Registries[i].URL = ref
+			if err := settings.SaveGlobal(gfs); err != nil {
+				return mcpRegistrySetOutput{}, fmt.Errorf("saving settings: %w", err)
+			}
+			return mcpRegistrySetOutput{Registry: ref, IsLocal: filepath.IsAbs(u)}, nil
+		}
+	}
+	gfs.Registries = append(gfs.Registries, settings.RegistryDef{
+		Name:     "official",
+		URL:      ref,
+		Official: true,
+		Priority: 100,
+		Enabled:  true,
+	})
 	if err := settings.SaveGlobal(gfs); err != nil {
 		return mcpRegistrySetOutput{}, fmt.Errorf("saving settings: %w", err)
 	}
@@ -426,64 +435,66 @@ func performRegistrySet(ref string) (mcpRegistrySetOutput, error) {
 }
 
 func performRegistryUpdate(name string) ([]mcpRegistryUpdateResult, error) {
-	r, err := settings.Load(getProjectDir())
+	cfg, err := settings.LoadGlobal()
 	if err != nil {
 		return nil, fmt.Errorf("loading settings: %w", err)
 	}
 
-	var results []mcpRegistryUpdateResult
-
-	if name == "" || name == "official" {
-		status, err := updateOneRegistrySilent("official", r)
-		res := mcpRegistryUpdateResult{Name: "official", Status: status}
-		if err != nil {
-			res.Status = "error"
-			res.Error = err.Error()
-		}
-		results = append(results, res)
-	}
-
-	if name != "" && name != "official" {
-		status, err := updateOneRegistrySilent(name, r)
-		res := mcpRegistryUpdateResult{Name: name, Status: status}
-		if err != nil {
-			res.Status = "error"
-			res.Error = err.Error()
-		}
-		return append(results, res), nil
-	}
-
-	for _, ref := range r.StandardsExtends {
-		u, _ := settings.ParseRef(ref)
-		n := settings.DeriveRegistryName(u)
-		status, err := updateOneRegistrySilent(n, r)
+	updateOne := func(n string) mcpRegistryUpdateResult {
+		status, err := updateOneRegistrySilent(n, cfg)
 		res := mcpRegistryUpdateResult{Name: n, Status: status}
 		if err != nil {
 			res.Status = "error"
 			res.Error = err.Error()
 		}
-		results = append(results, res)
+		return res
+	}
+
+	if name != "" {
+		return []mcpRegistryUpdateResult{updateOne(name)}, nil
+	}
+
+	if len(cfg.Registries) == 0 {
+		return []mcpRegistryUpdateResult{updateOne("official")}, nil
+	}
+
+	var results []mcpRegistryUpdateResult
+	for _, rd := range cfg.Registries {
+		if rd.Enabled {
+			results = append(results, updateOne(rd.Name))
+		}
 	}
 	return results, nil
 }
 
-func updateOneRegistrySilent(name string, r settings.Resolved) (string, error) {
+func updateOneRegistrySilent(name string, cfg settings.FileSettings) (string, error) {
 	var refURL, ver string
-	if name == "official" {
-		refURL = skills.GrimoireRepoURL()
-	} else {
-		for _, ref := range r.StandardsExtends {
-			u, v := settings.ParseRef(ref)
-			if settings.DeriveRegistryName(u) == name {
-				refURL, ver = u, v
-				break
+	var dest string
+
+	for _, rd := range cfg.Registries {
+		if rd.Name == name {
+			u, v := settings.ParseRef(rd.URL)
+			if u == "" {
+				u = rd.URL
 			}
+			refURL, ver = u, v
+			if filepath.IsAbs(u) {
+				dest = u
+			} else {
+				dest = skills.RegistryHome(name)
+			}
+			break
 		}
 	}
-	if refURL == "" {
-		return "error", fmt.Errorf("target %q not configured", name)
-	}
 
+	if refURL == "" {
+		if name == skills.OfficialRegistryName {
+			refURL = skills.GrimoireRepoURL()
+			dest = skills.OfficialRegistryHome()
+		} else {
+			return "error", fmt.Errorf("target %q not configured", name)
+		}
+	}
 	// Local path: verify it exists, skip git ops
 	if filepath.IsAbs(refURL) {
 		if _, err := os.Stat(refURL); err != nil {
@@ -491,8 +502,6 @@ func updateOneRegistrySilent(name string, r settings.Resolved) (string, error) {
 		}
 		return "ok", nil
 	}
-
-	dest := skills.RegistryHome(name)
 
 	if !dirExists(dest) {
 		if err := os.MkdirAll(filepath.Dir(dest), 0o755); err != nil {
@@ -557,7 +566,13 @@ func toolGrimoireRegistryReset(_ context.Context, _ mcp.CallToolRequest) (*mcp.C
 	if err != nil {
 		return mcp.NewToolResultError(err.Error()), nil
 	}
-	gfs.Core.Registry = ""
+	var kept []settings.RegistryDef
+	for _, rd := range gfs.Registries {
+		if !rd.Official {
+			kept = append(kept, rd)
+		}
+	}
+	gfs.Registries = kept
 	if err := settings.SaveGlobal(gfs); err != nil {
 		return mcp.NewToolResultError(err.Error()), nil
 	}

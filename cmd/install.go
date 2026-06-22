@@ -57,9 +57,6 @@ func runInstall(cmd *cobra.Command, args []string) error {
 		return runInstallFromRoot(resolved)
 	}
 
-	// fetch any extends targets not yet cloned (idempotent for existing targets)
-	updateCustomRegistries()
-
 	// determine which registry sources to use
 	sources := skills.AllSkillsSources()
 

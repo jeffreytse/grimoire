@@ -32,9 +32,10 @@ func RegistriesRoot() string {
 }
 
 // GrimoireRepoURL returns the git URL or absolute local path for the official skills source.
-// GRIMOIRE_SOURCE env var overrides all other configuration.
-// Otherwise reads core.registry from global settings.
-// Returns a git URL or an absolute path — callers must handle both.
+// Resolution order:
+//  1. GRIMOIRE_SOURCE env var
+//  2. official=true entry in [[registry]]
+//  3. Built-in GrimoireRepo constant
 func GrimoireRepoURL() string {
 	if s := os.Getenv("GRIMOIRE_SOURCE"); s != "" {
 		if IsGitURL(s) || filepath.IsAbs(s) {
@@ -42,35 +43,36 @@ func GrimoireRepoURL() string {
 		}
 	}
 	cfg, _ := settings.LoadGlobal()
-	if cfg.Core.Registry != "" {
-		u, _ := settings.ParseRef(cfg.Core.Registry)
-		if u != "" && (IsGitURL(u) || filepath.IsAbs(u)) {
-			return u
+	for _, rd := range cfg.Registries {
+		if rd.Official && rd.URL != "" {
+			u, _ := settings.ParseRef(rd.URL)
+			if u == "" {
+				u = rd.URL
+			}
+			if IsGitURL(u) || filepath.IsAbs(u) {
+				return u
+			}
 		}
 	}
 	return GrimoireRepo
 }
 
 // OfficialRegistryHome returns the local directory for the official registry.
-// For git-hosted registries the path is derived from the URL and lives under RegistriesRoot.
+// Uses the name from the official=true [[registry]] entry as the subdir.
+// When no [[registry]] is configured, derives the name from the GrimoireRepo constant.
 // For local registries (absolute paths) the path itself is returned directly.
-// Default: <RegistriesRoot>/jeffreytse/grimoire-hub
 func OfficialRegistryHome() string {
 	url := GrimoireRepoURL()
 	if filepath.IsAbs(url) {
 		return url
 	}
-	name := settings.DeriveRegistryName(url)
-	return filepath.Join(RegistriesRoot(), name)
-}
-
-// ExtendsHome returns the local clone directory for a standards extends target.
-// For absolute paths (local registries), the path itself is returned directly.
-func ExtendsHome(name string) string {
-	if filepath.IsAbs(name) {
-		return name
+	cfg, _ := settings.LoadGlobal()
+	for _, rd := range cfg.Registries {
+		if rd.Official && rd.URL != "" {
+			return filepath.Join(RegistriesRoot(), rd.Name)
+		}
 	}
-	return filepath.Join(RegistriesRoot(), name)
+	return filepath.Join(RegistriesRoot(), settings.DeriveRegistryName(GrimoireRepo))
 }
 
 // IsGitURL reports whether s looks like a git remote URL.

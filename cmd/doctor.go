@@ -7,7 +7,6 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
-	"time"
 
 	"github.com/spf13/cobra"
 
@@ -188,7 +187,7 @@ func collectDoctorChecks() doctorOutput {
 
 	sharedPath := filepath.Join(getProjectDir(), ".grimoire", "settings.toml")
 	if shared, err := settings.ParseFile(sharedPath); err == nil {
-		if shared.Core.Home != "" || shared.Core.Registry != "" {
+		if shared.Core.Home != "" {
 			checks = append(checks, doctorCheck{
 				Name:   "config-core-in-shared",
 				Status: "warn",
@@ -198,60 +197,21 @@ func collectDoctorChecks() doctorOutput {
 		}
 	}
 
-	// ── Extends registries ───────────────────────────────────────────────────────
-	r, _ := settings.Load(cwd)
-	for _, ref := range r.StandardsExtends {
-		u, _ := settings.ParseRef(ref)
-		name := settings.DeriveRegistryName(u)
-		extHome := skills.ExtendsHome(name)
-		safeName := strings.ReplaceAll(strings.TrimPrefix(name, "/"), "/", "-")
-		if !dirExists(extHome) {
+	// ── Registry config ───────────────────────────────────────────────────────────
+	if cfg, err := settings.LoadGlobal(); err == nil {
+		officialCount := 0
+		for _, rd := range cfg.Registries {
+			if rd.Official {
+				officialCount++
+			}
+		}
+		if officialCount > 1 {
 			checks = append(checks, doctorCheck{
-				Name:   "extends-" + safeName,
+				Name:   "registry-multiple-official",
 				Status: "warn",
-				Detail: fmt.Sprintf("extends %s not cloned — run: grimoire registry update %s", name, name),
+				Detail: fmt.Sprintf("%d registries have official=true — only the first is used; run: grimoire registry list to review", officialCount),
 			})
 			ok = false
-			continue
-		}
-		// Local registries: no staleness check (user manages the checkout)
-		if filepath.IsAbs(name) {
-			checks = append(checks, doctorCheck{
-				Name:   "extends-" + safeName,
-				Status: "ok",
-				Detail: fmt.Sprintf("extends %s (local)", name),
-			})
-			continue
-		}
-		// Git registries: check FETCH_HEAD mtime as proxy for last pull
-		fetchHead := filepath.Join(extHome, ".git", "FETCH_HEAD")
-		if fi, err := os.Stat(fetchHead); err == nil {
-			age := time.Since(fi.ModTime())
-			days := int(age.Hours() / 24)
-			threshold := r.StalenessDays
-			if threshold == 0 {
-				threshold = 7
-			}
-			if days > threshold {
-				checks = append(checks, doctorCheck{
-					Name:   "extends-" + safeName,
-					Status: "warn",
-					Detail: fmt.Sprintf("extends %s not pulled in %d days — run: grimoire registry update %s", name, days, name),
-				})
-				ok = false
-			} else {
-				checks = append(checks, doctorCheck{
-					Name:   "extends-" + safeName,
-					Status: "ok",
-					Detail: fmt.Sprintf("extends %s cloned (pulled %d day(s) ago)", name, days),
-				})
-			}
-		} else {
-			checks = append(checks, doctorCheck{
-				Name:   "extends-" + safeName,
-				Status: "ok",
-				Detail: fmt.Sprintf("extends %s cloned", name),
-			})
 		}
 	}
 

@@ -56,32 +56,41 @@ func Load(projectDir string) (Resolved, error) {
 		return Resolved{}, layerErrors[0]
 	}
 
-	// [core] section is user-level; strip it from the local project layer.
+	// [core] and [[registry]] are user-level; strip from the local project layer.
 	// Core.Profiles is NOT cleared — it comes from [standards], not [core].
 	if len(layers) > 0 {
 		layers[0].Core.Home = ""
-		layers[0].Core.Registry = ""
+		layers[0].Registries = nil
 	}
 
-	// Resolve [standards] extends: load each target's settings.toml as a base layer.
-	// Dedup by derived registry name across all layers.
+	// Load settings.toml from non-official [[registry]] entries as base layers.
+	// Each registry can ship a settings.toml with practices/profiles for automatic inheritance.
 	seenExt := make(map[string]bool)
 	for _, layer := range layers {
-		for _, ref := range layer.StandardsExtends {
-			u, _ := ParseRef(ref)
-			name := DeriveRegistryName(u)
-			if seenExt[name] {
+		for _, rd := range layer.Registries {
+			if rd.Official || !rd.Enabled || rd.Name == "" {
 				continue
 			}
-			seenExt[name] = true
-			regHome := extendsHomePath(name)
+			if seenExt[rd.Name] {
+				continue
+			}
+			seenExt[rd.Name] = true
+			var regHome string
+			u, _ := ParseRef(rd.URL)
+			if filepath.IsAbs(u) {
+				regHome = u
+			} else if h := os.Getenv("GRIMOIRE_HOME"); h != "" {
+				regHome = filepath.Join(h, "registries", rd.Name)
+			} else {
+				home, _ := os.UserHomeDir()
+				regHome = filepath.Join(home, ".grimoire", "registries", rd.Name)
+			}
 			rf, err := ParseFile(filepath.Join(regHome, "settings.toml"))
 			if err != nil {
-				continue // not cloned yet — skip silently
+				continue
 			}
-			// inherit only [standards.*] sections
 			rf.Core = CoreSection{}
-			rf.StandardsExtends = nil
+			rf.Registries = nil
 			rf.InlineProfiles = nil
 			layers = append(layers, rf)
 			paths = append(paths, filepath.Join(regHome, "settings.toml"))
@@ -140,16 +149,20 @@ func parseRaw(raw map[string]any) FileSettings {
 			if m, ok := val.(map[string]any); ok {
 				fs.Core = parseCoreSection(m)
 			}
+		case "registry":
+			// [[registry]] is a TOML table array → []any of map[string]any
+			if arr, ok := val.([]any); ok {
+				fs.Registries = parseRegistryDefs(arr)
+			}
 		case "standards":
 			if m, ok := val.(map[string]any); ok {
-				fs.StandardsExtends = parseStringSlice(m["extends"])
 				fs.Core.Profiles = append(fs.Core.Profiles, parseProfilesFromMap(m)...)
 				fs.ReportPath, _ = m["report-path"].(string)
 				if v, ok := anyToInt(m["staleness-days"]); ok && v > 0 {
 					fs.StalenessDays = v
 				}
 				for domainName, val := range m {
-					if domainName == "profiles" || domainName == "extends" {
+					if domainName == "profiles" {
 						continue
 					}
 					if sub, ok := val.(map[string]any); ok {
@@ -164,6 +177,31 @@ func parseRaw(raw map[string]any) FileSettings {
 		}
 	}
 	return fs
+}
+
+// parseRegistryDefs parses a [[registry]] TOML table array into RegistryDef entries.
+func parseRegistryDefs(arr []any) []RegistryDef {
+	var result []RegistryDef
+	for _, item := range arr {
+		m, ok := item.(map[string]any)
+		if !ok {
+			continue
+		}
+		rd := RegistryDef{Enabled: true}
+		rd.Name, _ = m["name"].(string)
+		rd.URL, _ = m["url"].(string)
+		rd.Official, _ = m["official"].(bool)
+		if n, ok := anyToInt(m["priority"]); ok {
+			rd.Priority = n
+		}
+		if v, ok := m["enabled"].(bool); ok {
+			rd.Enabled = v
+		}
+		if rd.Name != "" && rd.URL != "" {
+			result = append(result, rd)
+		}
+	}
+	return result
 }
 
 // parseInlineProfiles parses the top-level [profiles.*] section into InlineProfileDef entries.
@@ -225,7 +263,6 @@ func parseStringSlice(v any) []string {
 func parseCoreSection(m map[string]any) CoreSection {
 	var cs CoreSection
 	cs.Home, _ = m["home"].(string)               //nolint:revive // wrong type silently skipped
-	cs.Registry, _ = m["registry"].(string)        //nolint:revive
 	cs.InstallMode, _ = m["install-mode"].(string) //nolint:revive
 	cs.Agents = parseStringSlice(m["agents"])
 	if v, ok := anyToInt(m["update-concurrency"]); ok && v >= 0 {
@@ -293,12 +330,31 @@ func parseDomainInto(prefix string, m map[string]any, fs *FileSettings) {
 func toMap(fs FileSettings) map[string]any {
 	m := map[string]any{}
 
+	// [[registry]] table array
+	if len(fs.Registries) > 0 {
+		var regArr []any
+		for _, rd := range fs.Registries {
+			rm := map[string]any{
+				"name": rd.Name,
+				"url":  rd.URL,
+			}
+			if rd.Official {
+				rm["official"] = true
+			}
+			if rd.Priority > 0 {
+				rm["priority"] = rd.Priority
+			}
+			if !rd.Enabled {
+				rm["enabled"] = false
+			}
+			regArr = append(regArr, rm)
+		}
+		m["registry"] = regArr
+	}
+
 	core := map[string]any{}
 	if fs.Core.Home != "" {
 		core["home"] = fs.Core.Home
-	}
-	if fs.Core.Registry != "" {
-		core["registry"] = fs.Core.Registry
 	}
 	if len(fs.Core.Agents) > 0 {
 		core["agents"] = fs.Core.Agents
@@ -322,9 +378,6 @@ func toMap(fs FileSettings) map[string]any {
 
 	// profiles and domain sections all nest under [standards.*]
 	standardsMap := map[string]any{}
-	if len(fs.StandardsExtends) > 0 {
-		standardsMap["extends"] = fs.StandardsExtends
-	}
 	if len(fs.Core.Profiles) > 0 {
 		standardsMap["profiles"] = fs.Core.Profiles
 	}
@@ -386,18 +439,6 @@ func domainToMap(ds *DomainSection) map[string]any {
 	return m
 }
 
-// extendsHomePath returns the local clone directory for a standards extends target.
-// Inline equivalent of skills.ExtendsHome — avoids circular import (skills imports settings).
-func extendsHomePath(name string) string {
-	if filepath.IsAbs(name) {
-		return name // local registry: path is already the home
-	}
-	if h := os.Getenv("GRIMOIRE_HOME"); h != "" {
-		return filepath.Join(h, "registries", name)
-	}
-	home, _ := os.UserHomeDir()
-	return filepath.Join(home, ".grimoire", "registries", name)
-}
 
 func anyToFloat64(v any) float64 {
 	switch x := v.(type) {

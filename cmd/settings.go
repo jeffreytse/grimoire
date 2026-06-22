@@ -56,15 +56,10 @@ func printSettingsHuman(r settings.Resolved) {
 
 	// [core] section — machine-only keys
 	core := r.Core
-	if core.Home != "" || core.Registry != "" {
+	if core.Home != "" {
 		fmt.Println()
 		fmt.Printf("    %s\n", tui.StyleDim.Render("[core]"))
-		if core.Home != "" {
-			fmt.Printf("    home: %s%s\n", core.Home, sourceTag(r.Sources["core.home"]))
-		}
-		if core.Registry != "" {
-			fmt.Printf("    registry: %s%s\n", core.Registry, sourceTag(r.Sources["core.registry"]))
-		}
+		fmt.Printf("    home: %s%s\n", core.Home, sourceTag(r.Sources["core.home"]))
 		printed = true
 	}
 
@@ -79,13 +74,9 @@ func printSettingsHuman(r settings.Resolved) {
 		}
 	}
 
-	hasExtends := len(r.StandardsExtends) > 0
-	if hasProfiles || hasExtends || len(filteredKeys) > 0 {
+	if hasProfiles || len(filteredKeys) > 0 {
 		fmt.Println()
 		fmt.Printf("    %s\n", tui.StyleDim.Render("[standards]"))
-		if hasExtends {
-			fmt.Printf("    extends: %s%s\n", strings.Join(r.StandardsExtends, ", "), sourceTag(r.Sources["standards.extends"]))
-		}
 		if hasProfiles {
 			fmt.Printf("    profiles: %s%s\n", strings.Join(core.Profiles, ", "), sourceTag(r.Sources["standards.profiles"]))
 			printExpandedProfiles(core.Profiles)
@@ -181,9 +172,6 @@ func settingsToMap(r settings.Resolved) map[string]any {
 	core := map[string]any{}
 	if r.Core.Home != "" {
 		core["home"] = r.Core.Home
-	}
-	if r.Core.Registry != "" {
-		core["registry"] = r.Core.Registry
 	}
 	if len(r.Core.Profiles) > 0 {
 		core["profiles"] = r.Core.Profiles

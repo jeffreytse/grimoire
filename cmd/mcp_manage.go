@@ -382,7 +382,6 @@ func performUpdate(stable bool) (mcpUpdateOutput, error) {
 	newState, _ := gitops.CurrentState(home)
 	ch, _ := gitops.RegistryChangesSince(home, current.Commit)
 	relinkNewSkills(home, current.Commit)
-	updateCustomRegistries()
 	return mcpUpdateOutput{
 		OldVersion: current.Version, OldCommit: current.Commit,
 		NewVersion: newState.Version, NewCommit: newState.Commit,

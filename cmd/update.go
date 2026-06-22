@@ -1,20 +1,17 @@
 package cmd
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
 	"io"
 	"os"
 	"path/filepath"
 	"strings"
-	"sync"
 
 	"github.com/spf13/cobra"
 
 	"github.com/jeffreytse/grimoire/internal/agent"
 	gitops "github.com/jeffreytse/grimoire/internal/git"
-	"github.com/jeffreytse/grimoire/internal/settings"
 	"github.com/jeffreytse/grimoire/internal/skills"
 	"github.com/jeffreytse/grimoire/internal/tui"
 )
@@ -40,10 +37,9 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	home := skills.OfficialRegistryHome()
 	url := skills.GrimoireRepoURL()
 
-	// Local path registry — nothing to pull, just update extends
+	// Local path registry — nothing to pull
 	if filepath.IsAbs(url) {
 		fmt.Printf("  %s  Official registry is a local path — no update needed.\n", tui.IconOK)
-		updateCustomRegistries()
 		return nil
 	}
 
@@ -165,7 +161,6 @@ func updateUnstable(home string) error {
 	newState, _ := gitops.CurrentState(home)
 	printUpgradeResult(current, newState)
 	relinkNewSkills(home, current.Commit)
-	updateCustomRegistries()
 	return nil
 }
 
@@ -239,107 +234,6 @@ func printChangeSection(label string, added, updated []string, w io.Writer) {
 	}
 }
 
-// updateCustomRegistries pulls or clones all extends targets from resolved settings concurrently.
-func updateCustomRegistries() {
-	r, err := settings.Load(getProjectDir())
-	if err != nil {
-		return
-	}
-	if len(r.StandardsExtends) == 0 {
-		return
-	}
-	fmt.Println()
-
-	n := len(r.StandardsExtends)
-
-	names := make([]string, n)
-	for i, ref := range r.StandardsExtends {
-		u, _ := settings.ParseRef(ref)
-		names[i] = settings.DeriveRegistryName(u)
-	}
-	board := tui.NewStatusBoard(names)
-	stopSpinner := board.StartSpinner()
-
-	limit := 8 // default
-	if r.Core.UpdateConcurrency != nil {
-		if *r.Core.UpdateConcurrency == 0 {
-			limit = n // unlimited
-		} else {
-			limit = *r.Core.UpdateConcurrency
-		}
-	}
-	if limit > n {
-		limit = n
-	}
-	sem := make(chan struct{}, limit)
-
-	bufs := make([]*bytes.Buffer, n)
-	var wg sync.WaitGroup
-	for i, ref := range r.StandardsExtends {
-		wg.Add(1)
-		sem <- struct{}{}
-		board.SetUpdating(i)
-		go func(i int, ref string) {
-			defer wg.Done()
-			defer func() { <-sem }()
-			buf := &bytes.Buffer{}
-			u, ver := settings.ParseRef(ref)
-			name := settings.DeriveRegistryName(u)
-			dest := skills.ExtendsHome(name)
-			ok := true
-			if _, err := os.Stat(dest); err != nil {
-				if err := os.MkdirAll(dest, 0o755); err != nil {
-					fmt.Fprintf(os.Stderr, "  warn: %s: mkdir: %v\n", name, err)
-					ok = false
-				} else if err := gitops.Clone(u, dest); err != nil {
-					fmt.Fprintf(os.Stderr, "  warn: %s: %v\n", name, err)
-					ok = false
-				} else {
-					if ver != "" {
-						if err := gitops.CheckoutTag(dest, ver); err != nil {
-							fmt.Fprintf(os.Stderr, "  warn: %s: checkout %s: %v\n", name, ver, err)
-						}
-					}
-					fmt.Fprintf(buf, "  %s  %s cloned\n", tui.IconOK, name)
-				}
-			} else if ver != "" {
-				// pinned — ensure correct tag checked out, skip pull
-				if err := gitops.CheckoutTag(dest, ver); err != nil {
-					fmt.Fprintf(os.Stderr, "  warn: %s: checkout %s: %v\n", name, ver, err)
-					ok = false
-				} else {
-					fmt.Fprintf(buf, "  %s  %s pinned at %s\n", tui.IconOK, name, ver)
-				}
-			} else {
-				oldState, _ := gitops.CurrentState(dest)
-				if err := gitops.PullWithForceFallback(dest); err != nil {
-					fmt.Fprintf(os.Stderr, "  warn: %s: %v\n", name, err)
-					ok = false
-				} else {
-					fmt.Fprintf(buf, "  %s  %s up to date\n", tui.IconOK, name)
-					if changes, err := gitops.RegistryChangesSince(dest, oldState.Commit); err == nil {
-						printRegistryChanges(changes, dest, oldState.Commit, buf)
-					}
-				}
-			}
-			if ok {
-				board.SetDone(i, tui.IconDone)
-			} else {
-				board.SetDone(i, tui.IconError)
-			}
-			bufs[i] = buf
-		}(i, ref)
-	}
-	wg.Wait()
-	stopSpinner()
-	board.Finish()
-
-	for _, buf := range bufs {
-		if buf != nil {
-			os.Stdout.Write(buf.Bytes())
-		}
-	}
-}
 
 func errNotGit(dir string) error {
 	return fmt.Errorf("%s is not a git repository", dir)
