@@ -93,7 +93,7 @@ func runInit(cmd *cobra.Command, args []string) error {
 				}
 				printInitReport(cwd)
 				return nil
-			// case "custom": fall through to wizard below
+				// case "custom": fall through to wizard below
 			}
 		}
 	}
@@ -144,17 +144,18 @@ func printInitSuccess(reinit bool, preset string) {
 func applyNamedPreset(name, dir, cwd string, reinit bool) error {
 	for _, reg := range skills.AllRegistries() {
 		for _, p := range skills.ListPresets(reg.Home) {
-			if p == name {
-				if err := skills.ApplyPreset(reg.Home, name, dir); err != nil {
-					return fmt.Errorf("applying preset: %w", err)
-				}
-				printInitSuccess(reinit, name)
-				if r, err := settings.Load(cwd); err == nil && len(r.Core.Profiles) > 0 {
-					printProfilePreview(r.Core.Profiles[0], cwd)
-				}
-				printInitReport(cwd)
-				return nil
+			if p != name {
+				continue
 			}
+			if err := skills.ApplyPreset(reg.Home, name, dir); err != nil {
+				return fmt.Errorf("applying preset: %w", err)
+			}
+			printInitSuccess(reinit, name)
+			if r, err := settings.Load(cwd); err == nil && len(r.Core.Profiles) > 0 {
+				printProfilePreview(r.Core.Profiles[0], cwd)
+			}
+			printInitReport(cwd)
+			return nil
 		}
 	}
 	return fmt.Errorf("preset %q not found — run `grimoire registry update` to refresh installed registries", name)
@@ -168,7 +169,7 @@ type presetCandidate struct {
 
 // promptPreset shows a TUI preset picker and returns the chosen candidate plus
 // a mode string: "preset" (apply it), "custom" (fall through to wizard), or "skip".
-func promptPreset(detected string) (*presetCandidate, string) {
+func promptPreset(detected string) (cand *presetCandidate, mode string) {
 	items, annotations, candMap := listRankedPresetItems(detected)
 	if len(items) == 0 {
 		return nil, "custom"
@@ -192,7 +193,7 @@ func promptPreset(detected string) (*presetCandidate, string) {
 
 // listRankedPresetItems builds the TUI item list for the preset picker.
 // Returns items (for RunProfileSelect), annotations, and a lookup map from item key → presetCandidate.
-func listRankedPresetItems(detected string) ([]string, map[string]string, map[string]presetCandidate) {
+func listRankedPresetItems(detected string) ([]string, map[string]string, map[string]presetCandidate) { //nolint:gocritic // three-tuple return; naming doesn't improve clarity
 	annotations := make(map[string]string)
 	candMap := make(map[string]presetCandidate)
 	seen := make(map[string]struct{})
@@ -493,7 +494,6 @@ func rankProfileFile(name, path, detected string) (tier int, ann string) {
 	}
 	return 4, ""
 }
-
 
 func readLine(r *bufio.Reader) string {
 	line, _ := r.ReadString('\n')

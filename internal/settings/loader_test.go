@@ -358,7 +358,6 @@ home = "/local/home"
 	}
 }
 
-
 func TestLoad_EnvVarNotSet_UsesFileValue(t *testing.T) {
 	tmpGlobal := t.TempDir()
 	t.Setenv("XDG_CONFIG_HOME", tmpGlobal)

@@ -311,27 +311,28 @@ func performRegistryAdd(ref string) (registryListEntry, error) {
 
 	// Idempotent: if name already exists, just ensure cloned.
 	for _, rd := range gfs.Registries {
-		if rd.Name == name {
-			home := filepath.Join(skills.RegistriesRoot(), name)
-			if filepath.IsAbs(u) {
-				home = u
-			}
-			if !dirExists(home) && !filepath.IsAbs(u) {
-				_ = os.MkdirAll(filepath.Dir(home), 0o755)
-				_ = gitops.Clone(u, home)
-			}
-			kind := "user"
-			if filepath.IsAbs(u) {
-				kind = "local"
-			}
-			return registryListEntry{
-				Name:        name,
-				URL:         u,
-				SkillsCount: countSkills(filepath.Join(home, "skills")),
-				Cloned:      dirExists(home),
-				Kind:        kind,
-			}, nil
+		if rd.Name != name {
+			continue
 		}
+		home := filepath.Join(skills.RegistriesRoot(), name)
+		if filepath.IsAbs(u) {
+			home = u
+		}
+		if !dirExists(home) && !filepath.IsAbs(u) {
+			_ = os.MkdirAll(filepath.Dir(home), 0o755)
+			_ = gitops.Clone(u, home)
+		}
+		kind := "user"
+		if filepath.IsAbs(u) {
+			kind = "local"
+		}
+		return registryListEntry{
+			Name:        name,
+			URL:         u,
+			SkillsCount: countSkills(filepath.Join(home, "skills")),
+			Cloned:      dirExists(home),
+			Kind:        kind,
+		}, nil
 	}
 
 	rd := settings.RegistryDef{Name: name, URL: ref, Enabled: true}
@@ -441,7 +442,7 @@ func performRegistryUpdate(name string) ([]mcpRegistryUpdateResult, error) {
 	}
 
 	updateOne := func(n string) mcpRegistryUpdateResult {
-		status, err := updateOneRegistrySilent(n, cfg)
+		status, err := updateOneRegistrySilent(n, &cfg)
 		res := mcpRegistryUpdateResult{Name: n, Status: status}
 		if err != nil {
 			res.Status = "error"
@@ -467,33 +468,33 @@ func performRegistryUpdate(name string) ([]mcpRegistryUpdateResult, error) {
 	return results, nil
 }
 
-func updateOneRegistrySilent(name string, cfg settings.FileSettings) (string, error) {
+func updateOneRegistrySilent(name string, cfg *settings.FileSettings) (string, error) {
 	var refURL, ver string
 	var dest string
 
 	for _, rd := range cfg.Registries {
-		if rd.Name == name {
-			u, v := settings.ParseRef(rd.URL)
-			if u == "" {
-				u = rd.URL
-			}
-			refURL, ver = u, v
-			if filepath.IsAbs(u) {
-				dest = u
-			} else {
-				dest = skills.RegistryHome(name)
-			}
-			break
+		if rd.Name != name {
+			continue
 		}
+		u, v := settings.ParseRef(rd.URL)
+		if u == "" {
+			u = rd.URL
+		}
+		refURL, ver = u, v
+		if filepath.IsAbs(u) {
+			dest = u
+		} else {
+			dest = skills.RegistryHome(name)
+		}
+		break
 	}
 
 	if refURL == "" {
-		if name == skills.OfficialRegistryName {
-			refURL = skills.GrimoireRepoURL()
-			dest = skills.OfficialRegistryHome()
-		} else {
+		if name != skills.OfficialRegistryName {
 			return "error", fmt.Errorf("target %q not configured", name)
 		}
+		refURL = skills.GrimoireRepoURL()
+		dest = skills.OfficialRegistryHome()
 	}
 	// Local path: verify it exists, skip git ops
 	if filepath.IsAbs(refURL) {
@@ -583,15 +584,16 @@ func toolGrimoireRegistryValidate(_ context.Context, request mcp.CallToolRequest
 	target := request.GetString("target", "")
 
 	var resolvedTarget string
-	if target == "" {
+	switch {
+	case target == "":
 		cwd, err := os.Getwd()
 		if err != nil {
 			return mcp.NewToolResultError(err.Error()), nil
 		}
 		resolvedTarget = cwd
-	} else if filepath.IsAbs(target) {
+	case filepath.IsAbs(target):
 		resolvedTarget = target
-	} else {
+	default:
 		u, _ := settings.ParseRef(target)
 		name := settings.DeriveRegistryName(u)
 		home := skills.RegistryHome(name)
@@ -664,11 +666,12 @@ func toolGrimoireRegistryValidate(_ context.Context, request mcp.CallToolRequest
 				invalid++
 			}
 		}
-		if total == 0 {
+		switch {
+		case total == 0:
 			check("profiles-structure", "warn", "profiles/ found but empty")
-		} else if invalid > 0 {
+		case invalid > 0:
 			check("profiles-structure", "error", fmt.Sprintf("%d/%d profile TOML file(s) failed to parse", invalid, total))
-		} else {
+		default:
 			check("profiles-structure", "ok", fmt.Sprintf("%d profile(s), all valid TOML", total))
 		}
 	} else {

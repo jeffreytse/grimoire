@@ -111,7 +111,7 @@ func runConfigGet(_ *cobra.Command, args []string) error {
 	if err != nil {
 		return fmt.Errorf("loading settings: %w", err)
 	}
-	val, src, err := getKeyResolved(r, key)
+	val, src, err := getKeyResolved(&r, key)
 	if err != nil {
 		return err
 	}
@@ -221,7 +221,7 @@ func levelToFilePath(key, level string) (string, error) {
 }
 
 // getKeyResolved returns the resolved value and source for a key.
-func getKeyResolved(r settings.Resolved, key string) (val, src string, err error) {
+func getKeyResolved(r *settings.Resolved, key string) (val, src string, err error) {
 	switch key {
 	case "core.home":
 		return r.Core.Home, r.Sources["core.home"], nil

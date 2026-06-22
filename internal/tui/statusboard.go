@@ -11,9 +11,9 @@ var spinnerFrames = []string{"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "�
 type lineState int
 
 const (
-	stateWaiting  lineState = iota
-	stateUpdating           //nolint:deadcode,varcheck
-	stateDone               //nolint:deadcode,varcheck
+	stateWaiting lineState = iota
+	stateUpdating
+	stateDone
 )
 
 // StatusBoard prints per-registry status lines and updates them in-place on a TTY.

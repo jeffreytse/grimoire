@@ -66,7 +66,8 @@ func Load(projectDir string) (Resolved, error) {
 	// Load settings.toml from non-official [[registry]] entries as base layers.
 	// Each registry can ship a settings.toml with practices/profiles for automatic inheritance.
 	seenExt := make(map[string]bool)
-	for _, layer := range layers {
+	for i := range layers {
+		layer := &layers[i]
 		for _, rd := range layer.Registries {
 			if rd.Official || !rd.Enabled || rd.Name == "" {
 				continue
@@ -120,16 +121,16 @@ func LoadFile(path string) (FileSettings, error) {
 }
 
 // SaveGlobal writes fs to the global settings file, creating parent dirs as needed.
-func SaveGlobal(fs FileSettings) error {
+func SaveGlobal(fs FileSettings) error { //nolint:gocritic // value semantics intentional for config snapshot
 	return WriteFile(GlobalPath(), fs)
 }
 
 // WriteFile serializes fs to a settings.toml file, creating parent dirs as needed.
-func WriteFile(path string, fs FileSettings) error {
+func WriteFile(path string, fs FileSettings) error { //nolint:gocritic // value semantics intentional for config snapshot
 	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
 		return err
 	}
-	m := toMap(fs)
+	m := toMap(&fs)
 	data, err := toml.Marshal(m)
 	if err != nil {
 		return err
@@ -157,7 +158,7 @@ func parseRaw(raw map[string]any) FileSettings {
 		case "standards":
 			if m, ok := val.(map[string]any); ok {
 				fs.Core.Profiles = append(fs.Core.Profiles, parseProfilesFromMap(m)...)
-				fs.ReportPath, _ = m["report-path"].(string)
+				fs.ReportPath, _ = m["report-path"].(string) //nolint:revive // wrong type silently skipped
 				if v, ok := anyToInt(m["staleness-days"]); ok && v > 0 {
 					fs.StalenessDays = v
 				}
@@ -188,9 +189,9 @@ func parseRegistryDefs(arr []any) []RegistryDef {
 			continue
 		}
 		rd := RegistryDef{Enabled: true}
-		rd.Name, _ = m["name"].(string)
-		rd.URL, _ = m["url"].(string)
-		rd.Official, _ = m["official"].(bool)
+		rd.Name, _ = m["name"].(string)       //nolint:revive // wrong type silently skipped
+		rd.URL, _ = m["url"].(string)         //nolint:revive // wrong type silently skipped
+		rd.Official, _ = m["official"].(bool) //nolint:revive // wrong type silently skipped
 		if n, ok := anyToInt(m["priority"]); ok {
 			rd.Priority = n
 		}
@@ -213,8 +214,8 @@ func parseInlineProfiles(m map[string]any) map[string]InlineProfileDef {
 			continue
 		}
 		def := InlineProfileDef{ComplianceThresholdError: -1}
-		def.Name, _ = sub["name"].(string)
-		def.Description, _ = sub["description"].(string)
+		def.Name, _ = sub["name"].(string)               //nolint:revive // wrong type silently skipped
+		def.Description, _ = sub["description"].(string) //nolint:revive // wrong type silently skipped
 		def.Tags = parseStringSlice(sub["tags"])
 		def.Extends = parseStringSlice(sub["extends"])
 		def.Exclude = parseStringSlice(sub["exclude"])
@@ -230,7 +231,7 @@ func parseInlineProfiles(m map[string]any) map[string]InlineProfileDef {
 			for _, item := range arr {
 				if sm, ok := item.(map[string]any); ok {
 					ref := InlineSkillRef{}
-					ref.Name, _ = sm["name"].(string)
+					ref.Name, _ = sm["name"].(string) //nolint:revive // wrong type silently skipped
 					if n, ok := anyToInt(sm["priority"]); ok {
 						ref.Priority = n
 					}
@@ -262,8 +263,8 @@ func parseStringSlice(v any) []string {
 
 func parseCoreSection(m map[string]any) CoreSection {
 	var cs CoreSection
-	cs.Home, _ = m["home"].(string)               //nolint:revive // wrong type silently skipped
-	cs.InstallMode, _ = m["install-mode"].(string) //nolint:revive
+	cs.Home, _ = m["home"].(string)                //nolint:revive // wrong type silently skipped
+	cs.InstallMode, _ = m["install-mode"].(string) //nolint:revive // wrong type silently skipped
 	cs.Agents = parseStringSlice(m["agents"])
 	if v, ok := anyToInt(m["update-concurrency"]); ok && v >= 0 {
 		cs.UpdateConcurrency = &v
@@ -327,7 +328,7 @@ func parseDomainInto(prefix string, m map[string]any, fs *FileSettings) {
 }
 
 // toMap converts FileSettings to a nested map[string]any for TOML marshaling.
-func toMap(fs FileSettings) map[string]any {
+func toMap(fs *FileSettings) map[string]any {
 	m := map[string]any{}
 
 	// [[registry]] table array
@@ -438,7 +439,6 @@ func domainToMap(ds *DomainSection) map[string]any {
 	}
 	return m
 }
-
 
 func anyToFloat64(v any) float64 {
 	switch x := v.(type) {

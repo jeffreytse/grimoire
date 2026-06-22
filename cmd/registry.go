@@ -220,11 +220,12 @@ func runRegistryList(cmd *cobra.Command, args []string) error {
 			priStr = "disabled"
 		}
 		fmt.Printf("  %s  %-30s %s %-10s %s\n", icon, e.Name, tag, priStr, tui.StyleDim.Render(ref))
-		if !e.Enabled {
+		switch {
+		case !e.Enabled:
 			fmt.Printf("         disabled — run: grimoire registry enable %s\n\n", e.Name)
-		} else if e.Cloned {
+		case e.Cloned:
 			fmt.Printf("         %d skills\n\n", e.SkillsCount)
-		} else {
+		default:
 			fmt.Printf("         not cloned — run: grimoire registry update %s\n\n", e.Name)
 		}
 	}
@@ -249,23 +250,24 @@ func runRegistrySet(cmd *cobra.Command, args []string) error {
 	}
 	// Update or add the official=true [[registry]] entry.
 	for i, rd := range cfg.Registries {
-		if rd.Official {
-			cfg.Registries[i].URL = ref
-			if err := settings.SaveGlobal(cfg); err != nil {
-				return fmt.Errorf("saving settings: %w", err)
-			}
-			fmt.Printf("%s  official registry = %s\n", tui.IconOK, ref)
-			if filepath.IsAbs(u) {
-				fmt.Printf("   local registry set as official\n")
-			} else {
-				fmt.Printf("   run: grimoire registry update official  to apply\n")
-			}
-			return nil
+		if !rd.Official {
+			continue
 		}
+		cfg.Registries[i].URL = ref
+		if err := settings.SaveGlobal(cfg); err != nil {
+			return fmt.Errorf("saving settings: %w", err)
+		}
+		fmt.Printf("%s  official registry = %s\n", tui.IconOK, ref)
+		if filepath.IsAbs(u) {
+			fmt.Printf("   local registry set as official\n")
+		} else {
+			fmt.Printf("   run: grimoire registry update official  to apply\n")
+		}
+		return nil
 	}
 	cfg.Registries = append(cfg.Registries, settings.RegistryDef{
-		Name:    "official",
-		URL:     ref,
+		Name:     "official",
+		URL:      ref,
 		Official: true,
 		Priority: 100,
 		Enabled:  true,
@@ -316,18 +318,19 @@ func setRegistryEnabled(name string, enabled bool) error {
 		return fmt.Errorf("loading settings: %w", err)
 	}
 	for i, rd := range cfg.Registries {
-		if rd.Name == name {
-			cfg.Registries[i].Enabled = enabled
-			if err := settings.SaveGlobal(cfg); err != nil {
-				return fmt.Errorf("saving settings: %w", err)
-			}
-			verb := "enabled"
-			if !enabled {
-				verb = "disabled"
-			}
-			fmt.Printf("%s  %s %s\n", tui.IconOK, verb, name)
-			return nil
+		if rd.Name != name {
+			continue
 		}
+		cfg.Registries[i].Enabled = enabled
+		if err := settings.SaveGlobal(cfg); err != nil {
+			return fmt.Errorf("saving settings: %w", err)
+		}
+		verb := "enabled"
+		if !enabled {
+			verb = "disabled"
+		}
+		fmt.Printf("%s  %s %s\n", tui.IconOK, verb, name)
+		return nil
 	}
 	return fmt.Errorf("registry %q not found in [[registry]] — check: grimoire registry list", name)
 }
@@ -401,9 +404,9 @@ func runRegistryUpdate(cmd *cobra.Command, args []string) error {
 		board.SetUpdating(0)
 		buf := &bytes.Buffer{}
 		var updateErr error
-		if name == skills.OfficialRegistryName || isOfficialByName(name, cfg) {
+		if name == skills.OfficialRegistryName || isOfficialByName(name, &cfg) {
 			updateErr = updateCoreRegistry(buf)
-		} else if ref := findRegistryRef(name, cfg); ref != "" {
+		} else if ref := findRegistryRef(name, &cfg); ref != "" {
 			updateErr = updateNamedRegistry(name, ref, "", buf)
 		} else {
 			updateErr = fmt.Errorf("registry %q not found — check: grimoire registry list", name)
@@ -517,7 +520,7 @@ func runRegistryUpdate(cmd *cobra.Command, args []string) error {
 }
 
 // isOfficialByName checks if a named registry has official=true in [[registry]].
-func isOfficialByName(name string, cfg settings.FileSettings) bool {
+func isOfficialByName(name string, cfg *settings.FileSettings) bool {
 	for _, rd := range cfg.Registries {
 		if rd.Name == name && rd.Official {
 			return true
@@ -527,7 +530,7 @@ func isOfficialByName(name string, cfg settings.FileSettings) bool {
 }
 
 // findRegistryRef returns the URL ref for a named registry in [[registry]], or "".
-func findRegistryRef(name string, cfg settings.FileSettings) string {
+func findRegistryRef(name string, cfg *settings.FileSettings) string {
 	for _, rd := range cfg.Registries {
 		if rd.Name == name {
 			return rd.URL
@@ -596,7 +599,6 @@ func updateCoreRegistry(w io.Writer) error {
 	return nil
 }
 
-
 func runRegistryAdd(cmd *cobra.Command, args []string) error {
 	if len(args) == 1 {
 		return fmt.Errorf("usage: grimoire registry add <name> <url>\n\nExample:\n  grimoire registry add my-team https://github.com/acme/grimoire.git")
@@ -629,20 +631,21 @@ func runRegistryAdd(cmd *cobra.Command, args []string) error {
 
 	// Idempotent: if name already exists, update URL/priority.
 	for i, existing := range cfg.Registries {
-		if existing.Name == name {
-			cfg.Registries[i].URL = ref
-			if flagRegistryAddPriority > 0 {
-				cfg.Registries[i].Priority = flagRegistryAddPriority
-			}
-			if err := settings.SaveGlobal(cfg); err != nil {
-				return fmt.Errorf("saving settings: %w", err)
-			}
-			fmt.Printf("%s  updated registry %s → %s\n", tui.IconOK, name, u)
-			if filepath.IsAbs(u) {
-				return nil
-			}
-			return updateNamedRegistry(name, ref, "", os.Stdout)
+		if existing.Name != name {
+			continue
 		}
+		cfg.Registries[i].URL = ref
+		if flagRegistryAddPriority > 0 {
+			cfg.Registries[i].Priority = flagRegistryAddPriority
+		}
+		if err := settings.SaveGlobal(cfg); err != nil {
+			return fmt.Errorf("saving settings: %w", err)
+		}
+		fmt.Printf("%s  updated registry %s → %s\n", tui.IconOK, name, u)
+		if filepath.IsAbs(u) {
+			return nil
+		}
+		return updateNamedRegistry(name, ref, "", os.Stdout)
 	}
 
 	rd := settings.RegistryDef{
@@ -683,7 +686,6 @@ func runRegistryAdd(cmd *cobra.Command, args []string) error {
 	}
 	return nil
 }
-
 
 func runRegistryRemove(cmd *cobra.Command, args []string) error {
 	target := args[0]
@@ -833,11 +835,12 @@ func runRegistryValidate(cmd *cobra.Command, args []string) error {
 				invalid++
 			}
 		}
-		if total == 0 {
+		switch {
+		case total == 0:
 			warn("profiles/ found but empty (expected: profiles/<name>.toml)")
-		} else if invalid > 0 {
+		case invalid > 0:
 			fail(fmt.Sprintf("%d/%d profile TOML file(s) failed to parse", invalid, total))
-		} else {
+		default:
 			pass(fmt.Sprintf("%d profile(s), all valid TOML", total))
 		}
 	} else {

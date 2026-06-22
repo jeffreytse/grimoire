@@ -157,8 +157,8 @@ func runWizard() error {
 	// For nested domains, pick subdomains
 	type domainSelection struct {
 		name    string
-		root    string // skillsRoot for this domain's registry
-		regName string // for summary display
+		root    string   // skillsRoot for this domain's registry
+		regName string   // for summary display
 		subs    []string // empty = all
 	}
 	var domainSelections []domainSelection

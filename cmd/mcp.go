@@ -427,7 +427,7 @@ func toolGrimoireConfigGet(_ context.Context, request mcp.CallToolRequest) (*mcp
 	if err != nil {
 		return mcp.NewToolResultError(err.Error()), nil
 	}
-	val, src, err := getKeyResolved(r, key)
+	val, src, err := getKeyResolved(&r, key)
 	if err != nil {
 		return mcp.NewToolResultError(err.Error()), nil
 	}

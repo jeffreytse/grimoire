@@ -23,14 +23,14 @@ func resolveOpts(projectDir string) profiles.ResolveOptions {
 		regPath := filepath.Join(regs[i].Home, "settings.toml")
 		if fs, err := settings.ParseFile(regPath); err == nil {
 			r := settings.Merge([]settings.FileSettings{fs}, []string{regPath})
-			for name, p := range inlineProfilesFromSettings(r) {
+			for name, p := range inlineProfilesFromSettings(&r) { //nolint:gocritic // map range copy is unavoidable
 				inlines[name] = p
 			}
 		}
 	}
 	// Project always wins last
 	if r, err := settings.Load(projectDir); err == nil {
-		for name, p := range inlineProfilesFromSettings(r) {
+		for name, p := range inlineProfilesFromSettings(&r) { //nolint:gocritic // map range copy is unavoidable
 			inlines[name] = p
 		}
 	}
@@ -41,28 +41,28 @@ func resolveOpts(projectDir string) profiles.ResolveOptions {
 }
 
 // inlineProfilesFromSettings converts settings.Resolved InlineProfiles to profiles.Profile map.
-func inlineProfilesFromSettings(r settings.Resolved) map[string]profiles.Profile {
+func inlineProfilesFromSettings(r *settings.Resolved) map[string]profiles.Profile {
 	if len(r.InlineProfiles) == 0 {
 		return nil
 	}
 	result := make(map[string]profiles.Profile, len(r.InlineProfiles))
-	for key, def := range r.InlineProfiles {
+	for key, def := range r.InlineProfiles { //nolint:gocritic // map range copy unavoidable
 		refs := make([]profiles.SkillRef, len(def.Skills))
-		for i, s := range def.Skills {
-			refs[i] = profiles.SkillRef{Name: s.Name, Priority: s.Priority}
+		for i := range def.Skills {
+			refs[i] = profiles.SkillRef{Name: def.Skills[i].Name, Priority: def.Skills[i].Priority}
 		}
 		profileName := key
 		if def.Name != "" {
 			profileName = def.Name
 		}
 		result[key] = profiles.Profile{
-			Name:                profileName,
-			Description:         def.Description,
-			Tags:                def.Tags,
-			Extends:             def.Extends,
-			Exclude:             def.Exclude,
-			Skills:              refs,
-			Source:              "(settings.toml)",
+			Name:                     profileName,
+			Description:              def.Description,
+			Tags:                     def.Tags,
+			Extends:                  def.Extends,
+			Exclude:                  def.Exclude,
+			Skills:                   refs,
+			Source:                   "(settings.toml)",
 			ComplianceThreshold:      def.ComplianceThreshold,
 			ComplianceThresholdError: def.ComplianceThresholdError,
 		}

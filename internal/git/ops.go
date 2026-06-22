@@ -241,23 +241,23 @@ func IsUpToDate(dir string) (upToDate bool, local, remote State, err error) {
 
 // RegistryChanges holds the categorized artifact changes in a registry since a given commit.
 type RegistryChanges struct {
-	SkillsAdded    []string
-	SkillsUpdated  []string
-	ProfilesAdded  []string
+	SkillsAdded     []string
+	SkillsUpdated   []string
+	ProfilesAdded   []string
 	ProfilesUpdated []string
-	PresetsAdded   []string
-	PresetsUpdated []string
+	PresetsAdded    []string
+	PresetsUpdated  []string
 }
 
 // HasChanges reports whether any artifact changed.
-func (c RegistryChanges) HasChanges() bool {
+func (c *RegistryChanges) HasChanges() bool {
 	return len(c.SkillsAdded)+len(c.SkillsUpdated)+
 		len(c.ProfilesAdded)+len(c.ProfilesUpdated)+
 		len(c.PresetsAdded)+len(c.PresetsUpdated) > 0
 }
 
 // HasSkillChanges reports whether any skill was added or updated.
-func (c RegistryChanges) HasSkillChanges() bool {
+func (c *RegistryChanges) HasSkillChanges() bool {
 	return len(c.SkillsAdded)+len(c.SkillsUpdated) > 0
 }
 

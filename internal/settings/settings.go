@@ -48,7 +48,7 @@ type RegistryDef struct {
 // InlineProfileDef is a profile definition embedded inside settings.toml under [profiles.*].
 // It mirrors the profile TOML file format and may also carry compliance settings.
 type InlineProfileDef struct {
-	Name                     string         // optional — overrides map key; defaults to map key
+	Name                     string // optional — overrides map key; defaults to map key
 	Description              string
 	Tags                     []string
 	Extends                  []string
@@ -71,9 +71,9 @@ type FileSettings struct {
 // Resolved holds the effective settings after merging all file layers.
 type Resolved struct {
 	Core           CoreSection
-	Registries     []RegistryDef               // merged [[registry]] entries, deduped by name
-	ReportPath     string                      // first non-empty across layers
-	StalenessDays  int                         // first nonzero across layers (default 7 when 0)
+	Registries     []RegistryDef // merged [[registry]] entries, deduped by name
+	ReportPath     string        // first non-empty across layers
+	StalenessDays  int           // first nonzero across layers (default 7 when 0)
 	sections       map[string]DomainSection
 	InlineProfiles map[string]InlineProfileDef // merged, higher-priority layers win per name
 	// Sources maps dotted key paths to the file that provided them.
@@ -151,7 +151,8 @@ func Merge(layers []FileSettings, paths []string) Resolved {
 	}
 
 	// Core scalar fields: first non-empty wins (layers[0] = highest priority).
-	for i, fs := range layers {
+	for i := range layers {
+		fs := &layers[i]
 		src := paths[i]
 		if r.Core.Home == "" && fs.Core.Home != "" {
 			r.Core.Home = fs.Core.Home
@@ -186,8 +187,8 @@ func Merge(layers []FileSettings, paths []string) Resolved {
 	// Registries: union by name; first occurrence (highest-priority layer) wins per name.
 	// Normalize unset priorities: 100 for official, 50 for user registries.
 	seenReg := make(map[string]bool)
-	for _, fs := range layers {
-		for _, rd := range fs.Registries {
+	for i := range layers {
+		for _, rd := range layers[i].Registries {
 			if rd.Name == "" || seenReg[rd.Name] {
 				continue
 			}
@@ -205,24 +206,24 @@ func Merge(layers []FileSettings, paths []string) Resolved {
 
 	// collect all section keys across all layers
 	allKeys := make(map[string]struct{})
-	for _, fs := range layers {
-		for k := range fs.Sections {
+	for i := range layers {
+		for k := range layers[i].Sections {
 			allKeys[k] = struct{}{}
 		}
 	}
 
 	// InlineProfiles: higher-priority layers win per profile name (project > global > system)
 	for i := len(layers) - 1; i >= 0; i-- {
-		for name, def := range layers[i].InlineProfiles {
+		for name, def := range layers[i].InlineProfiles { //nolint:gocritic // map range copy unavoidable
 			r.InlineProfiles[name] = def
 		}
 	}
 
 	for key := range allKeys {
 		merged := DomainSection{ComplianceThresholdError: -1}
-		for i, fs := range layers {
+		for i := range layers {
 			src := paths[i]
-			ds, ok := fs.Sections[key]
+			ds, ok := layers[i].Sections[key]
 			if !ok {
 				continue
 			}
@@ -254,7 +255,7 @@ func Merge(layers []FileSettings, paths []string) Resolved {
 }
 
 // SectionKeys returns all domain/subdomain keys present in the resolved settings.
-func (r Resolved) SectionKeys() []string {
+func (r Resolved) SectionKeys() []string { //nolint:gocritic // value receiver is intentional for immutable Resolved
 	keys := make([]string, 0, len(r.sections))
 	for k := range r.sections {
 		keys = append(keys, k)
@@ -265,7 +266,7 @@ func (r Resolved) SectionKeys() []string {
 // ResolveSection returns the effective DomainSection for scope (e.g. "engineering.testing").
 // Subdomain keys overlay domain keys; unset subdomain keys inherit from the domain.
 // Only one level of nesting is supported (domain.subdomain).
-func (r Resolved) ResolveSection(scope string) DomainSection {
+func (r Resolved) ResolveSection(scope string) DomainSection { //nolint:gocritic // value receiver is intentional for immutable Resolved
 	parts := strings.SplitN(scope, ".", 2)
 	domain := r.sections[parts[0]]
 	if len(parts) == 1 {

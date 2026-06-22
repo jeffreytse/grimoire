@@ -56,4 +56,3 @@ func ApplyPreset(registryHome, presetName, destDir string) error {
 
 	return nil
 }
-

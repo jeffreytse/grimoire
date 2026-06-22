@@ -51,7 +51,7 @@ func runSettings(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func printSettingsHuman(r settings.Resolved) {
+func printSettingsHuman(r settings.Resolved) { //nolint:gocritic // value semantics intentional; callers pass local Resolved vars
 	printed := false
 
 	// [core] section — machine-only keys
@@ -167,7 +167,7 @@ func sourceTag(path string) string {
 	return tui.StyleDim.Render("   (" + path + ")")
 }
 
-func settingsToMap(r settings.Resolved) map[string]any {
+func settingsToMap(r settings.Resolved) map[string]any { //nolint:gocritic // value semantics intentional
 	out := map[string]any{}
 	core := map[string]any{}
 	if r.Core.Home != "" {
@@ -199,7 +199,7 @@ func settingsToMap(r settings.Resolved) map[string]any {
 	return out
 }
 
-func printSettingsJSON(r settings.Resolved) error {
+func printSettingsJSON(r settings.Resolved) error { //nolint:gocritic // value semantics intentional
 	m := settingsToMap(r)
 	if flagSettingsDomain != "" {
 		for k := range m {

@@ -202,7 +202,7 @@ func relinkNewSkills(home, oldCommit string) {
 	fmt.Println()
 }
 
-func printRegistryChanges(c gitops.RegistryChanges, dir, oldCommit string, w io.Writer) {
+func printRegistryChanges(c gitops.RegistryChanges, dir, oldCommit string, w io.Writer) { //nolint:gocritic // callers in two files; value semantics avoids pointer threading
 	if dir != "" && oldCommit != "" {
 		if commits, _ := gitops.CommitsSince(dir, oldCommit); len(commits) > 0 {
 			fmt.Fprintf(w, "    %s\n", tui.StyleBold.Render("commits:"))
@@ -233,7 +233,6 @@ func printChangeSection(label string, added, updated []string, w io.Writer) {
 		fmt.Fprintf(w, "      %s %s\n", tui.StyleGold.Render("~"), name)
 	}
 }
-
 
 func errNotGit(dir string) error {
 	return fmt.Errorf("%s is not a git repository", dir)

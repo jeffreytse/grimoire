@@ -99,7 +99,6 @@ func effectivePriority(rd settings.RegistryDef) int {
 	return 50
 }
 
-
 // AllSkillsSources returns all configured registries' skills roots in priority order.
 // Derived from AllRegistries(); skips entries with no skills/ dir.
 func AllSkillsSources() []SkillsSource {

@@ -27,11 +27,11 @@ type mcpUninstallOutput struct {
 }
 
 type mcpUpdateOutput struct {
-	AlreadyUpToDate bool   `json:"already_up_to_date"`
-	OldVersion      string `json:"old_version,omitempty"`
-	NewVersion      string `json:"new_version,omitempty"`
-	OldCommit       string `json:"old_commit,omitempty"`
-	NewCommit       string `json:"new_commit,omitempty"`
+	AlreadyUpToDate bool     `json:"already_up_to_date"`
+	OldVersion      string   `json:"old_version,omitempty"`
+	NewVersion      string   `json:"new_version,omitempty"`
+	OldCommit       string   `json:"old_commit,omitempty"`
+	NewCommit       string   `json:"new_commit,omitempty"`
 	SkillsAdded     []string `json:"skills_added,omitempty"`
 	SkillsUpdated   []string `json:"skills_updated,omitempty"`
 	ProfilesAdded   []string `json:"profiles_added,omitempty"`
