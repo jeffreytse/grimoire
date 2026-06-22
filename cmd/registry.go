@@ -436,18 +436,23 @@ func runRegistryUpdate(cmd *cobra.Command, args []string) error {
 		isCore bool
 	}
 	var items []workItem
+	var pinnedSkipped []string
 
 	if len(cfg.Registries) > 0 {
 		for _, rd := range cfg.Registries {
 			if !rd.Enabled {
 				continue
 			}
-			u, _ := settings.ParseRef(rd.URL)
+			u, ver := settings.ParseRef(rd.URL)
 			if u == "" {
 				u = rd.URL
 			}
 			if filepath.IsAbs(u) {
 				continue // local registry — user manages checkout
+			}
+			if ver != "" {
+				pinnedSkipped = append(pinnedSkipped, rd.Name)
+				continue // pinned registry — immutable by intent; skip bulk update
 			}
 			items = append(items, workItem{
 				name:   rd.Name,
@@ -515,6 +520,11 @@ func runRegistryUpdate(cmd *cobra.Command, args []string) error {
 	wg.Wait()
 	stopSpinner()
 	board.Finish()
+
+	if len(pinnedSkipped) > 0 {
+		fmt.Printf("  %s  pinned (skipped): %s\n", tui.IconSkip, strings.Join(pinnedSkipped, ", "))
+		fmt.Printf("       to force-update: grimoire registry update <name>\n")
+	}
 
 	for i, res := range results {
 		if res.err != nil {
