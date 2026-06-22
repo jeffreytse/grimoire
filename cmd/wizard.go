@@ -74,8 +74,11 @@ func runWizard() error {
 			fmt.Println("Run: grimoire update")
 			return nil
 		}
-		if err := runUpdate(nil, nil); err != nil {
-			return fmt.Errorf("update failed: %w", err)
+		flagUpdateYes = true
+		err2 := runUpdate(nil, nil)
+		flagUpdateYes = false
+		if err2 != nil {
+			return fmt.Errorf("update failed: %w", err2)
 		}
 	}
 
