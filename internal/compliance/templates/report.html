@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Grimoire Compliance Report</title>
+<style>
+/* ── Theme variables ──────────────────────────────────────────────── */
+html[data-theme="light"]{
+  --bg:#f1f5f9;--surface:#ffffff;--surface2:#f8fafc;--border:#e2e8f0;
+  --text:#0f172a;--muted:#64748b;
+  --pass:#16a34a;--fail:#dc2626;--warn:#d97706;--info:#0284c7;
+  --pass-bg:#f0fdf4;--fail-bg:#fef2f2;--warn-bg:#fffbeb;--info-bg:#f0f9ff;
+  --pass-border:#86efac;--fail-border:#fca5a5;--warn-border:#fcd34d;--info-border:#7dd3fc;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.06);
+  --header-bg:#0f172a;--header-text:#f8fafc;--header-muted:#94a3b8;
+  --bar-track:#e2e8f0;--code-bg:#f1f5f9;
+}
+html[data-theme="dark"]{
+  --bg:#0f172a;--surface:#1e293b;--surface2:#162032;--border:#334155;
+  --text:#f1f5f9;--muted:#94a3b8;
+  --pass:#22c55e;--fail:#ef4444;--warn:#f59e0b;--info:#38bdf8;
+  --pass-bg:#052e16;--fail-bg:#2d1b1b;--warn-bg:#2d2410;--info-bg:#0d2233;
+  --pass-border:#166534;--fail-border:#7f1d1d;--warn-border:#78350f;--info-border:#0c4a6e;
+  --shadow:0 1px 3px rgba(0,0,0,.4);
+  --header-bg:#020617;--header-text:#f8fafc;--header-muted:#64748b;
+  --bar-track:#334155;--code-bg:#0f172a;
+}
+
+/* ── Reset & base ─────────────────────────────────────────────────── */
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;font-size:14px;line-height:1.6;background:var(--bg);color:var(--text);min-height:100vh;transition:background .2s,color .2s}
+a{color:var(--info);text-decoration:none}
+a:hover{text-decoration:underline}
+code{font-family:'SF Mono','Cascadia Code','Fira Code',ui-monospace,monospace;font-size:12px;background:var(--code-bg);padding:1px 6px;border-radius:4px;border:1px solid var(--border)}
+
+/* ── Header ───────────────────────────────────────────────────────── */
+.hdr{background:var(--header-bg);color:var(--header-text);padding:0 24px;height:56px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,.06)}
+.hdr-brand{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:700;letter-spacing:.2px;color:var(--header-text);white-space:nowrap}
+.hdr-sep{width:1px;height:20px;background:rgba(255,255,255,.12);flex-shrink:0}
+.hdr-scope{font-size:12px;color:var(--header-muted);font-weight:500;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hdr-mode{font-size:11px;color:var(--header-muted);background:rgba(255,255,255,.07);padding:2px 8px;border-radius:4px;border:1px solid rgba(255,255,255,.1)}
+.hdr-spacer{flex:1}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:5px 13px;border-radius:6px;font-size:12px;font-weight:700;letter-spacing:.6px}
+.badge.pass{background:rgba(34,197,94,.15);color:#4ade80;border:1px solid rgba(34,197,94,.25)}
+.badge.fail{background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.25)}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+.theme-btn{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.11);color:var(--header-muted);padding:5px 11px;border-radius:6px;cursor:pointer;font-size:13px;display:flex;align-items:center;gap:5px;transition:all .15s;white-space:nowrap}
+.theme-btn:hover{background:rgba(255,255,255,.14);color:var(--header-text)}
+
+/* ── Main layout ──────────────────────────────────────────────────── */
+.main{max-width:1100px;margin:0 auto;padding:28px 24px}
+
+/* ── Stat cards ───────────────────────────────────────────────────── */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+@media(max-width:760px){.stat-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:420px){.stat-grid{grid-template-columns:1fr}}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 20px 16px;box-shadow:var(--shadow);transition:background .2s,border-color .2s}
+.stat-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin-bottom:10px}
+.stat-value{font-size:34px;font-weight:700;line-height:1;letter-spacing:-1.5px}
+.stat-sub{font-size:12px;color:var(--muted);margin-top:5px}
+.stat-card.cov .stat-value{color:var(--pass)}
+.stat-card.cov.fail .stat-value{color:var(--fail)}
+.stat-card.errs .stat-value{color:var(--fail)}
+.stat-card.errs.zero .stat-value{color:var(--muted)}
+.stat-card.warns .stat-value{color:var(--warn)}
+.stat-card.warns.zero .stat-value{color:var(--muted)}
+.mini-gauge{width:100%;height:5px;background:var(--bar-track);border-radius:999px;overflow:hidden;margin-top:10px}
+.mini-gauge-fill{height:5px;border-radius:999px}
+.mini-gauge-fill.pass{background:var(--pass)}
+.mini-gauge-fill.fail{background:var(--fail)}
+
+/* ── Card container ───────────────────────────────────────────────── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:20px;box-shadow:var(--shadow);overflow:hidden;transition:background .2s,border-color .2s}
+.card-hdr{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;background:var(--surface)}
+.card-hdr h2{font-size:13px;font-weight:600;letter-spacing:.1px}
+.card-cnt{font-size:11px;color:var(--muted);background:var(--surface2);padding:2px 8px;border-radius:999px;border:1px solid var(--border)}
+
+/* ── Practices table ──────────────────────────────────────────────── */
+.ptable{width:100%;border-collapse:collapse}
+.ptable th{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);padding:9px 16px;text-align:left;border-bottom:1px solid var(--border);background:var(--surface2)}
+.ptable td{padding:11px 16px;border-bottom:1px solid var(--border);vertical-align:middle;font-size:13px}
+.ptable tr:last-child td{border-bottom:none}
+.ptable tr:hover td{background:var(--surface2);transition:background .1s}
+.p-icon{width:24px;text-align:center;font-size:14px}
+.p-icon.ok{color:var(--pass)}
+.p-icon.fail{color:var(--fail)}
+.p-icon.partial{color:var(--warn)}
+.p-name{font-weight:500}
+.p-crit{color:var(--muted);font-size:12px;white-space:nowrap;width:80px}
+.p-bar-cell{width:180px}
+.p-bar{background:var(--bar-track);border-radius:999px;height:6px;overflow:hidden}
+.p-bar-fill{height:6px;border-radius:999px;transition:width .4s}
+.p-bar-fill.ok{background:var(--pass)}
+.p-bar-fill.partial{background:var(--warn)}
+.p-bar-fill.fail{background:var(--fail)}
+.p-pct{width:44px;text-align:right;font-weight:600;font-size:12px;color:var(--muted)}
+
+/* ── Diagnostics ──────────────────────────────────────────────────── */
+.diag-group{padding:16px 20px}
+.diag-group+.diag-group{border-top:1px solid var(--border)}
+.diag-group-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.diag-group-title.error{color:var(--fail)}
+.diag-group-title.warning{color:var(--warn)}
+.diag-group-title.info{color:var(--info)}
+.diag-group-title .cnt{font-size:11px;font-weight:700;background:currentColor;color:var(--surface);padding:1px 6px;border-radius:999px;opacity:.9}
+.diag{padding:11px 14px;border-radius:8px;margin-bottom:8px;border-left:3px solid}
+.diag:last-child{margin-bottom:0}
+.diag.error{background:var(--fail-bg);border-color:var(--fail)}
+.diag.warning{background:var(--warn-bg);border-color:var(--warn)}
+.diag.info{background:var(--info-bg);border-color:var(--info)}
+.diag-msg{font-size:13px;font-weight:500;margin-bottom:5px;word-break:break-word}
+.diag-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.diag-loc{font-family:'SF Mono','Cascadia Code',ui-monospace,monospace;font-size:11px;color:var(--muted)}
+.diag-practice{font-size:11px;color:var(--muted);background:var(--surface);padding:1px 7px;border-radius:4px;border:1px solid var(--border)}
+.diag-sev{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:1px 6px;border-radius:3px}
+.diag-sev-error{background:var(--fail);color:#fff}
+.diag-sev-warning{background:var(--warn);color:#fff}
+.diag-sev-info{background:var(--info);color:#fff}
+.diag-criterion{font-size:11px;font-family:'SF Mono','Cascadia Code',ui-monospace,monospace;color:var(--muted);background:var(--surface);padding:1px 7px;border-radius:4px;border:1px solid var(--border)}
+
+/* ── Code snippet ─────────────────────────────────────────────────── */
+.code-snippet{margin-top:8px;border-radius:6px;overflow:hidden;border:1px solid var(--border);background:var(--code-bg)}
+.code-snippet pre{margin:0;padding:4px 0;font-family:'SF Mono','Cascadia Code','Fira Code',ui-monospace,monospace;font-size:12px;line-height:1.6;overflow-x:auto}
+.code-line{display:flex}
+.code-line.hl{background:rgba(251,191,36,.13)}
+.code-lnum{user-select:none;min-width:48px;padding:0 10px;text-align:right;color:var(--muted);border-right:1px solid var(--border);flex-shrink:0;font-size:11px;opacity:.6}
+.code-line.hl .code-lnum{color:var(--warn);opacity:1;font-weight:700}
+.code-text{padding:0 12px;white-space:pre;overflow:hidden}
+.code-char-hl{background:#f59e0b;color:#000;border-radius:2px;padding:0 1px}
+.code-inline-crit{display:flex;align-items:flex-start;background:var(--info-bg);border-top:1px solid var(--info-border);border-bottom:1px solid var(--info-border)}
+.code-inline-crit-gutter{min-width:48px;padding:5px 10px;flex-shrink:0;display:flex;align-items:center;justify-content:flex-end;color:var(--info);font-size:11px;border-right:1px solid var(--info-border)}
+.code-inline-crit-body{padding:5px 12px;font-size:11px;font-family:'SF Mono','Cascadia Code',ui-monospace,monospace;color:var(--text);white-space:pre-wrap;word-break:break-word;flex:1}
+.code-inline-crit-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-right:6px;color:var(--info)}
+
+/* ── Practices criteria breakdown ─────────────────────────────────── */
+.ptable tr:not(.p-criteria-row):hover td{background:var(--surface2);transition:background .1s}
+.p-criteria-row{display:none}
+.p-criteria-row.open{display:table-row}
+.p-criteria-row td{padding:10px 16px;border-bottom:1px solid var(--border)}
+.p-criteria{display:flex;flex-wrap:wrap;gap:6px}
+.p-crit-item{font-size:11px;padding:2px 8px;border-radius:4px;border:1px solid}
+.p-crit-item.fail{color:var(--fail);border-color:var(--fail-border);background:var(--fail-bg)}
+.p-crit-item.ok{color:var(--pass);border-color:var(--pass-border);background:var(--pass-bg)}
+.p-crit-cnt{font-weight:700;margin-left:3px}
+.p-summary{cursor:pointer;user-select:none}
+.p-expand{float:right;font-size:9px;color:var(--muted);transition:transform .15s;margin-left:6px;line-height:1.8}
+.p-row-open .p-expand{transform:rotate(180deg)}
+
+/* ── Footer ───────────────────────────────────────────────────────── */
+.footer{margin-top:32px;padding:14px 0 24px;border-top:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.footer span{font-size:12px;color:var(--muted)}
+.footer-dot{color:var(--border)!important}
+</style>
+<script>
+(function(){var h=new Date().getHours();document.documentElement.setAttribute('data-theme',(h<6||h>=18)?'dark':'light')})();
+</script>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-brand">📖&nbsp;grimoire</div>
+  <div class="hdr-sep"></div>
+  <div class="hdr-scope">{{.Scope}}</div>
+  <div class="hdr-mode">{{.Mode}}</div>
+  <div class="hdr-spacer"></div>
+  <span class="badge {{.BadgeClass}}"><span class="badge-dot"></span>{{.BadgeText}}</span>
+  <button class="theme-btn" onclick="toggleTheme()"><span id="ti">☀</span>&nbsp;Theme</button>
+</header>
+
+<div class="main">
+
+  <!-- ── Stat cards ───────────────────────────────────────────── -->
+  <div class="stat-grid">
+
+    <div class="stat-card cov{{if eq .BadgeClass "fail"}} fail{{end}}">
+      <div class="stat-label">Coverage</div>
+      <div class="stat-value">{{printf "%.1f" .CovPct}}<span style="font-size:18px;font-weight:400;letter-spacing:0">%</span></div>
+      <div class="stat-sub">{{printf "%.0f" .Required}}% required &middot; {{.BadgeText}}</div>
+      <div class="mini-gauge"><div class="mini-gauge-fill {{.BadgeClass}}" style="width:{{printf "%.2f" .CovPct}}%"></div></div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-label">Practices</div>
+      <div class="stat-value">{{.PracPassing}}</div>
+      <div class="stat-sub">of {{.PracTotal}} passing</div>
+    </div>
+
+    <div class="stat-card errs{{if eq .ErrCount 0}} zero{{end}}">
+      <div class="stat-label">Errors</div>
+      <div class="stat-value">{{.ErrCount}}</div>
+      <div class="stat-sub">{{.WarnCount}} warning(s) found</div>
+    </div>
+
+    <div class="stat-card warns{{if eq .WarnCount 0}} zero{{end}}">
+      <div class="stat-label">Warnings</div>
+      <div class="stat-value">{{.WarnCount}}</div>
+      <div class="stat-sub">{{.TimeStr}}</div>
+    </div>
+
+  </div>
+
+  <!-- ── Practices ────────────────────────────────────────────── -->
+  {{if .Practices}}
+  <div class="card">
+    <div class="card-hdr"><h2>Practices</h2><span class="card-cnt">{{len .Practices}}</span></div>
+    <table class="ptable">
+      <thead>
+        <tr>
+          <th class="p-icon"></th>
+          <th>Practice</th>
+          <th class="p-crit">Criteria</th>
+          <th class="p-bar-cell">Progress</th>
+          <th class="p-pct">Pct</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .Practices}}
+        <tr{{if or .FailingCriteria .PassingCriteria}} class="p-summary"{{end}}>
+          <td class="p-icon {{.IconClass}}">{{.IconChar}}</td>
+          <td class="p-name">{{.Name}}</td>
+          <td class="p-crit">{{.Passing}} / {{.Total}}</td>
+          <td class="p-bar-cell">
+            <div class="p-bar">
+              <div class="p-bar-fill {{.BarClass}}" style="width:{{printf "%.2f" .BarPct}}%"></div>
+            </div>
+          </td>
+          <td class="p-pct">{{printf "%.0f" .BarPct}}%{{if or .FailingCriteria .PassingCriteria}}<span class="p-expand">▼</span>{{end}}</td>
+        </tr>
+        {{if or .FailingCriteria .PassingCriteria}}
+        <tr class="p-criteria-row">
+          <td colspan="5">
+            <div class="p-criteria">
+              {{range .FailingCriteria}}<span class="p-crit-item fail">✗ {{.Name}}{{if .Count}}<span class="p-crit-cnt">{{.Count}}</span>{{end}}</span>{{end}}
+              {{range .PassingCriteria}}<span class="p-crit-item ok">✓ {{.Name}}</span>{{end}}
+              {{if and (eq (len .PassingCriteria) 0) (gt .Passing 0)}}<span class="p-crit-item ok">✓ {{.Passing}} passing</span>{{end}}
+            </div>
+          </td>
+        </tr>
+        {{end}}
+        {{end}}
+      </tbody>
+    </table>
+  </div>
+  {{end}}
+
+  <!-- ── Diagnostics ──────────────────────────────────────────── -->
+  {{if .DiagTotal}}
+  <div class="card">
+    <div class="card-hdr"><h2>Diagnostics</h2><span class="card-cnt">{{.DiagTotal}}</span></div>
+
+    {{if .Errors}}
+    <div class="diag-group">
+      <div class="diag-group-title error">Errors <span class="cnt">{{len .Errors}}</span></div>
+      {{range .Errors}}
+      <div class="diag error">
+        <div class="diag-msg">{{.Message}}</div>
+        {{if or .Loc .Practice .SeverityLabel}}
+        <div class="diag-meta">
+          {{if .SeverityLabel}}<span class="diag-sev diag-sev-{{lower .SeverityLabel}}">{{.SeverityLabel}}</span>{{end}}
+          {{if .Loc}}<span class="diag-loc">{{.Loc}}</span>{{end}}
+          {{if .Practice}}<span class="diag-practice">{{.Practice}}</span>{{end}}
+        </div>
+        {{end}}
+        {{if .CodeLines}}<div class="code-snippet"><pre>{{range .CodeLines}}<div class="code-line{{if .Highlighted}} hl{{end}}"><span class="code-lnum">{{.Num}}</span><span class="code-text">{{if .HasCharHL}}{{.PreHl}}<span class="code-char-hl">{{.InHl}}</span>{{.PostHl}}{{else}}{{.Text}}{{end}}</span></div>{{if .InlineCriterion}}<div class="code-inline-crit"><span class="code-inline-crit-gutter">◎</span><div class="code-inline-crit-body"><span class="code-inline-crit-label">criterion</span>{{.InlineCriterion}}</div></div>{{end}}{{end}}</pre></div>{{end}}
+      </div>
+      {{end}}
+    </div>
+    {{end}}
+
+    {{if .Warnings}}
+    <div class="diag-group">
+      <div class="diag-group-title warning">Warnings <span class="cnt">{{len .Warnings}}</span></div>
+      {{range .Warnings}}
+      <div class="diag warning">
+        <div class="diag-msg">{{.Message}}</div>
+        {{if or .Loc .Practice .SeverityLabel}}
+        <div class="diag-meta">
+          {{if .SeverityLabel}}<span class="diag-sev diag-sev-{{lower .SeverityLabel}}">{{.SeverityLabel}}</span>{{end}}
+          {{if .Loc}}<span class="diag-loc">{{.Loc}}</span>{{end}}
+          {{if .Practice}}<span class="diag-practice">{{.Practice}}</span>{{end}}
+        </div>
+        {{end}}
+        {{if .CodeLines}}<div class="code-snippet"><pre>{{range .CodeLines}}<div class="code-line{{if .Highlighted}} hl{{end}}"><span class="code-lnum">{{.Num}}</span><span class="code-text">{{if .HasCharHL}}{{.PreHl}}<span class="code-char-hl">{{.InHl}}</span>{{.PostHl}}{{else}}{{.Text}}{{end}}</span></div>{{if .InlineCriterion}}<div class="code-inline-crit"><span class="code-inline-crit-gutter">◎</span><div class="code-inline-crit-body"><span class="code-inline-crit-label">criterion</span>{{.InlineCriterion}}</div></div>{{end}}{{end}}</pre></div>{{end}}
+      </div>
+      {{end}}
+    </div>
+    {{end}}
+
+    {{if .Infos}}
+    <div class="diag-group">
+      <div class="diag-group-title info">Info <span class="cnt">{{len .Infos}}</span></div>
+      {{range .Infos}}
+      <div class="diag info">
+        <div class="diag-msg">{{.Message}}</div>
+        {{if or .Loc .Practice .SeverityLabel}}
+        <div class="diag-meta">
+          {{if .SeverityLabel}}<span class="diag-sev diag-sev-{{lower .SeverityLabel}}">{{.SeverityLabel}}</span>{{end}}
+          {{if .Loc}}<span class="diag-loc">{{.Loc}}</span>{{end}}
+          {{if .Practice}}<span class="diag-practice">{{.Practice}}</span>{{end}}
+        </div>
+        {{end}}
+        {{if .CodeLines}}<div class="code-snippet"><pre>{{range .CodeLines}}<div class="code-line{{if .Highlighted}} hl{{end}}"><span class="code-lnum">{{.Num}}</span><span class="code-text">{{if .HasCharHL}}{{.PreHl}}<span class="code-char-hl">{{.InHl}}</span>{{.PostHl}}{{else}}{{.Text}}{{end}}</span></div>{{if .InlineCriterion}}<div class="code-inline-crit"><span class="code-inline-crit-gutter">◎</span><div class="code-inline-crit-body"><span class="code-inline-crit-label">criterion</span>{{.InlineCriterion}}</div></div>{{end}}{{end}}</pre></div>{{end}}
+      </div>
+      {{end}}
+    </div>
+    {{end}}
+
+  </div>
+  {{end}}
+
+  <!-- ── Footer ───────────────────────────────────────────────── -->
+  <div class="footer">
+    <span>📖 grimoire v{{.CLIVersion}}</span>
+    <span class="footer-dot">&middot;</span>
+    <span>Refresh: <code>grimoire check</code></span>
+  </div>
+
+</div>
+
+<script>
+function toggleTheme(){
+  var el=document.documentElement,t=el.getAttribute('data-theme')==='dark'?'light':'dark';
+  el.setAttribute('data-theme',t);
+  document.getElementById('ti').textContent=t==='dark'?'☀':'☽';
+}
+document.querySelectorAll('.p-summary').forEach(function(row){
+  row.addEventListener('click',function(){
+    var next=row.nextElementSibling;
+    if(next&&next.classList.contains('p-criteria-row')){
+      next.classList.toggle('open');
+      row.classList.toggle('p-row-open');
+    }
+  });
+});
+</script>
+{{if .LiveMode}}
+<div id="_gl" style="position:fixed;bottom:20px;right:20px;z-index:9999;background:rgba(15,15,25,0.92);color:#e2e8f0;border-radius:10px;padding:8px 14px;font:12px/1.5 monospace;cursor:default;user-select:none;box-shadow:0 4px 16px rgba(0,0,0,0.5);min-width:90px;backdrop-filter:blur(4px)">
+  <div style="display:flex;align-items:center;gap:7px">
+    <span id="_gl_dot" style="width:8px;height:8px;border-radius:50%;background:#22c55e;flex-shrink:0;transition:background .3s"></span>
+    <span id="_gl_label">Live</span>
+  </div>
+  <div id="_gl_det" style="display:none;margin-top:6px;color:#94a3b8;font-size:11px;white-space:pre;max-width:220px;overflow:hidden;text-overflow:ellipsis"></div>
+</div>
+<script>(function(){
+var dot=document.getElementById('_gl_dot'),lbl=document.getElementById('_gl_label'),
+    det=document.getElementById('_gl_det'),badge=document.getElementById('_gl');
+badge.onmouseenter=function(){if(det.dataset.state==='done'&&det.textContent)det.style.display='block'};
+badge.onmouseleave=function(){if(det.dataset.state==='done')det.style.display='none'};
+function showOffline(){
+  dot.style.background='#ef4444';
+  lbl.textContent='Stopped';
+  det.style.display='none';
+}
+var retries=0,background=false;
+function connectSSE(){
+  var es=new EventSource('/events');
+  es.addEventListener('status',function(e){
+    retries=0;background=false;
+    var wasOffline=(lbl.textContent==='Stopped');
+    var d=JSON.parse(e.data),files=d.files||[];
+    if(d.status==='analyzing'){
+      dot.style.background='#f59e0b';lbl.textContent='Analyzing…';
+      if(files.length){
+        var shown=files.slice(0,5);
+        det.textContent=shown.join('\n')+(files.length>5?'\n+… '+(files.length-5)+' more':'');
+        det.style.display='block';
+      }else{det.style.display='none';}
+      det.dataset.state='analyzing';
+    }else{
+      if(wasOffline){location.reload();return;}
+      dot.style.background='#22c55e';lbl.textContent='Done'+(d.elapsed?' · '+d.elapsed:'');
+      det.style.display='none';det.dataset.state='done';
+    }
+  });
+  es.addEventListener('reload',function(){retries=0;background=false;location.reload()});
+  es.addEventListener('shutdown',function(){showOffline();background=true;setTimeout(connectSSE,5000)});
+  es.onerror=function(){
+    es.close();
+    if(background){setTimeout(connectSSE,5000);return;}
+    retries++;
+    if(retries>=3){showOffline();background=true;setTimeout(connectSSE,5000);return;}
+    dot.style.background='#f59e0b';lbl.textContent='Reconnecting…';
+    setTimeout(connectSSE,2000);
+  };
+}
+connectSSE();
+})()</script>
+{{end}}
+</body>
+</html>

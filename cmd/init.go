@@ -4,27 +4,32 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"os/signal"
 	"path/filepath"
 	"sort"
-	"strconv"
 	"strings"
+	"syscall"
 
 	"github.com/spf13/cobra"
 
 	"github.com/jeffreytse/grimoire/internal/compliance"
+	"github.com/jeffreytse/grimoire/internal/config"
+	grimctx "github.com/jeffreytse/grimoire/internal/context"
 	"github.com/jeffreytse/grimoire/internal/detect"
+	gitops "github.com/jeffreytse/grimoire/internal/git"
+	"github.com/jeffreytse/grimoire/internal/manifest"
 	"github.com/jeffreytse/grimoire/internal/profiles"
-	"github.com/jeffreytse/grimoire/internal/settings"
 	"github.com/jeffreytse/grimoire/internal/skills"
 	"github.com/jeffreytse/grimoire/internal/tui"
 )
 
 var (
 	flagInitYes       bool
+	flagInitAuto      bool
+	flagInitGlobal    bool
 	flagInitProfile   string
 	flagInitThreshold int
 	flagInitMaxErrors int
-	flagInitPreset    string
 )
 
 var initCmd = &cobra.Command{
@@ -35,10 +40,11 @@ var initCmd = &cobra.Command{
 
 func init() {
 	initCmd.Flags().BoolVarP(&flagInitYes, "yes", "y", false, "accept all defaults without prompting")
+	initCmd.Flags().BoolVar(&flagInitAuto, "auto", false, "detect project context and pre-populate grimoire.toml automatically")
+	initCmd.Flags().BoolVar(&flagInitGlobal, "global", false, "initialize global grimoire.toml (~/.config/grimoire/grimoire.toml)")
 	initCmd.Flags().StringVar(&flagInitProfile, "profile", "", "profile to activate (skips prompt)")
 	initCmd.Flags().IntVar(&flagInitThreshold, "threshold", 0, "compliance threshold % (skips prompt)")
 	initCmd.Flags().IntVar(&flagInitMaxErrors, "max-errors", -1, "max allowed errors (skips prompt)")
-	initCmd.Flags().StringVar(&flagInitPreset, "preset", "", "apply a named preset from an installed registry (skips wizard)")
 }
 
 // initConfig holds the answers collected by the wizard (or defaults).
@@ -54,46 +60,24 @@ func runInit(cmd *cobra.Command, args []string) error {
 	reinit := dirExists(dir)
 	detected := detect.Profile(cwd)
 
-	// --preset flag: apply named preset directly, skip wizard
-	if flagInitPreset != "" {
-		if err := os.MkdirAll(dir, 0o755); err != nil {
-			return fmt.Errorf("creating .grimoire/: %w", err)
-		}
-		return applyNamedPreset(flagInitPreset, dir, cwd, reinit)
+	// --global flag: initialize user-global grimoire.toml
+	if flagInitGlobal {
+		return runInitGlobal()
+	}
+
+	// --auto flag: detect context, populate grimoire.toml, run install
+	if flagInitAuto {
+		return runInitAuto(cwd, dir, reinit)
 	}
 
 	hasExplicit := flagInitProfile != "" || flagInitThreshold != 0 || flagInitMaxErrors != -1
 
-	// TTY interactive path: offer preset picker before wizard.
-	// Skip preset picker when the user already has profiles configured in global/extends
-	// settings — they've already committed to a workflow, so we pre-populate the wizard
-	// with those choices instead of interrupting with a preset menu.
+	// Skip wizard hint when user already has profiles configured in global/extends settings.
 	if !hasExplicit && tui.IsTTY() && !flagInitYes {
-		resolved, _ := settings.Load(cwd)
+		resolved, _ := config.Load(cwd)
 		if !reinit && len(resolved.Core.Profiles) > 0 {
 			fmt.Printf("  Using profiles from your settings: %s\n", strings.Join(resolved.Core.Profiles, ", "))
 			// fall through to wizard below — loadExistingInitConfig will pick these up
-		} else {
-			cand, mode := promptPreset(detected)
-			switch mode {
-			case "skip":
-				fmt.Println("  Skipped — run `grimoire init` to set up later.")
-				return nil
-			case "preset":
-				if err := os.MkdirAll(dir, 0o755); err != nil {
-					return fmt.Errorf("creating .grimoire/: %w", err)
-				}
-				if err := skills.ApplyPreset(cand.regHome, cand.presetName, dir); err != nil {
-					return fmt.Errorf("applying preset: %w", err)
-				}
-				printInitSuccess(reinit, cand.presetName)
-				if r, err := settings.Load(cwd); err == nil && len(r.Core.Profiles) > 0 {
-					printProfilePreview(r.Core.Profiles[0], cwd)
-				}
-				printInitReport(cwd)
-				return nil
-				// case "custom": fall through to wizard below
-			}
 		}
 	}
 
@@ -118,128 +102,58 @@ func runInit(cmd *cobra.Command, args []string) error {
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return fmt.Errorf("creating .grimoire/: %w", err)
 	}
-	if err := writeSettings(dir, cfg); err != nil {
-		return err
+	manifestPath := manifest.ProjectPath(cwd)
+	pkgName := filepath.Base(cwd)
+	if created, err := scaffoldManifest(manifestPath, pkgName, cfg.Profile, cfg.Threshold, cfg.MaxErrors); err != nil {
+		fmt.Fprintf(os.Stderr, "  warn: could not create grimoire.toml: %v\n", err)
+	} else if created {
+		fmt.Printf("  Created grimoire.toml (skill manifest and config)\n")
 	}
-	printInitSuccess(reinit, "")
+	printInitSuccess(reinit)
 	printProfilePreview(cfg.Profile, cwd)
 	printInitReport(cwd)
 	return nil
 }
 
-func printInitSuccess(reinit bool, preset string) {
-	suffix := ""
-	if preset != "" {
-		suffix = fmt.Sprintf(" with preset %q", preset)
+func runInitGlobal() error {
+	cwd := getProjectDir()
+	manifestPath := manifest.GlobalPath()
+	dir := filepath.Dir(manifestPath)
+	_, statErr := os.Stat(manifestPath)
+	reinit := statErr == nil
+	detected := detect.Profile(cwd)
+
+	existing := loadExistingInitConfig(cwd, detected)
+	cfg := runInitWizard(existing, detected, cwd)
+
+	if err := os.MkdirAll(dir, 0o755); err != nil {
+		return fmt.Errorf("creating config dir: %w", err)
 	}
+	if created, err := scaffoldManifest(manifestPath, "global", cfg.Profile, cfg.Threshold, cfg.MaxErrors); err != nil {
+		fmt.Fprintf(os.Stderr, "  warn: could not create grimoire.toml: %v\n", err)
+	} else if created {
+		fmt.Printf("  Created grimoire.toml (%s)\n", manifestPath)
+	}
+	printInitSuccess(reinit)
+	printProfilePreview(cfg.Profile, cwd)
+	printInitReport(cwd)
+	return nil
+}
+
+func printInitSuccess(reinit bool) {
 	if reinit {
-		fmt.Printf("✓ Grimoire reinitialized%s.\n", suffix)
+		fmt.Printf("✓ Grimoire reinitialized.\n")
 	} else {
-		fmt.Printf("✓ Grimoire initialized%s.\n", suffix)
+		fmt.Printf("✓ Grimoire initialized.\n")
 	}
 }
 
-// applyNamedPreset locates preset by name across all installed registries and applies it.
-func applyNamedPreset(name, dir, cwd string, reinit bool) error {
-	for _, reg := range skills.AllRegistries() {
-		for _, p := range skills.ListPresets(reg.Home) {
-			if p != name {
-				continue
-			}
-			if err := skills.ApplyPreset(reg.Home, name, dir); err != nil {
-				return fmt.Errorf("applying preset: %w", err)
-			}
-			printInitSuccess(reinit, name)
-			if r, err := settings.Load(cwd); err == nil && len(r.Core.Profiles) > 0 {
-				printProfilePreview(r.Core.Profiles[0], cwd)
-			}
-			printInitReport(cwd)
-			return nil
-		}
-	}
-	return fmt.Errorf("preset %q not found — run `grimoire registry update` to refresh installed registries", name)
-}
-
-// presetCandidate carries the registry context for a preset shown in the picker.
-type presetCandidate struct {
-	presetName string
-	regName    string
-	regHome    string
-}
-
-// promptPreset shows a TUI preset picker and returns the chosen candidate plus
-// a mode string: "preset" (apply it), "custom" (fall through to wizard), or "skip".
-func promptPreset(detected string) (cand *presetCandidate, mode string) {
-	items, annotations, candMap := listRankedPresetItems(detected)
-	if len(items) == 0 {
-		return nil, "custom"
-	}
-
-	fmt.Printf("  Initialize with:")
-	chosen, ok := tui.RunProfileSelect(items, annotations, detected)
-	if !ok {
-		return nil, "custom"
-	}
-	switch chosen {
-	case tui.PresetSelectCustom:
-		return nil, "custom"
-	case tui.PresetSelectSkip:
-		return nil, "skip"
-	default:
-		c := candMap[chosen]
-		return &c, "preset"
-	}
-}
-
-// listRankedPresetItems builds the TUI item list for the preset picker.
-// Returns items (for RunProfileSelect), annotations, and a lookup map from item key → presetCandidate.
-func listRankedPresetItems(detected string) ([]string, map[string]string, map[string]presetCandidate) { //nolint:gocritic // three-tuple return; naming doesn't improve clarity
-	annotations := make(map[string]string)
-	candMap := make(map[string]presetCandidate)
-	seen := make(map[string]struct{})
-
-	var suggested, others []string
-	for _, reg := range skills.AllRegistries() {
-		for _, pname := range skills.ListPresets(reg.Home) {
-			if _, ok := seen[pname]; ok {
-				continue
-			}
-			seen[pname] = struct{}{}
-			annotations[pname] = "[" + reg.Name + "]"
-			candMap[pname] = presetCandidate{pname, reg.Name, reg.Home}
-			if detected != "" && pname == detected {
-				suggested = append(suggested, pname)
-			} else {
-				others = append(others, pname)
-			}
-		}
-	}
-
-	if len(suggested) == 0 && len(others) == 0 {
-		return nil, annotations, candMap
-	}
-
-	var items []string
-	if len(suggested) > 0 {
-		items = append(items, tui.ProfileSectionPrefix+"Suggested")
-		items = append(items, suggested...)
-	}
-	if len(others) > 0 {
-		if len(suggested) > 0 {
-			items = append(items, tui.ProfileSectionPrefix+"All presets")
-		}
-		items = append(items, others...)
-	}
-	items = append(items, tui.PresetSelectCustom, tui.PresetSelectSkip)
-	return items, annotations, candMap
-}
-
-// loadExistingInitConfig reads current settings.toml (if any) and returns an
+// loadExistingInitConfig reads current grimoire.toml (if any) and returns an
 // initConfig pre-populated with those values — used as wizard defaults on re-init.
 func loadExistingInitConfig(cwd, detected string) initConfig {
 	cfg := initConfig{Profile: detected, Threshold: 0, MaxErrors: -1}
 
-	r, err := settings.Load(cwd)
+	r, err := config.Load(cwd)
 	if err != nil {
 		return cfg
 	}
@@ -260,12 +174,23 @@ func runInitWizard(defaults initConfig, detected, projectDir string) initConfig 
 	cfg := defaults
 	r := bufio.NewReader(os.Stdin)
 
+	// Exit cleanly on Ctrl+C (SIGINT), even if bubbletea left the terminal in raw mode.
+	sigCh := make(chan os.Signal, 1)
+	signal.Notify(sigCh, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		if _, ok := <-sigCh; ok {
+			fmt.Fprintln(os.Stderr)
+			os.Exit(0) //nolint:revive // intentional: cleanly exit on Ctrl+C inside blocking wizard goroutine
+		}
+	}()
+	defer signal.Stop(sigCh)
+
 	fmt.Println()
 
 	// Profile — show pick list when available
 	cfg.Profile = promptProfile(r, defaults.Profile, detected)
 
-	// Compliance defaults: profile recommendation → registry settings.toml → hardcoded fallback
+	// Compliance defaults: profile recommendation → package settings.toml → hardcoded fallback
 	thresholdDefault := defaults.Threshold
 	maxDefault := defaults.MaxErrors
 	if cfg.Profile != "" {
@@ -278,12 +203,12 @@ func runInitWizard(defaults initConfig, detected, projectDir string) initConfig 
 				maxDefault = p.ComplianceThresholdError
 			}
 		}
-		// Fall back to registry settings.toml if profile didn't carry compliance fields
+		// Fall back to package grimoire.toml if profile didn't carry compliance fields
 		if thresholdDefault == 0 || maxDefault < 0 {
-			if regHome := findProfileRegistry(cfg.Profile); regHome != "" {
-				regPath := filepath.Join(regHome, "settings.toml")
-				if fs, err := settings.ParseFile(regPath); err == nil {
-					r2 := settings.Merge([]settings.FileSettings{fs}, []string{regPath})
+			if regHome := findProfilePackage(cfg.Profile); regHome != "" {
+				regPath := filepath.Join(regHome, "grimoire.toml")
+				if fs, err := config.ParseFile(regPath); err == nil {
+					r2 := config.Merge([]config.FileConfig{fs}, []string{regPath})
 					sec := r2.ResolveSection(cfg.Profile)
 					if thresholdDefault == 0 && sec.ComplianceThreshold > 0 {
 						thresholdDefault = int(sec.ComplianceThreshold)
@@ -302,29 +227,8 @@ func runInitWizard(defaults initConfig, detected, projectDir string) initConfig 
 		maxDefault = 0
 	}
 
-	// Compliance threshold
-	fmt.Printf("  Compliance threshold %% [%d]: ", thresholdDefault)
-	line := readLine(r)
-	if line == "" {
-		cfg.Threshold = thresholdDefault
-	} else if n, err := strconv.Atoi(line); err == nil && n >= 0 && n <= 100 {
-		cfg.Threshold = n
-	} else {
-		fmt.Fprintf(os.Stderr, "  invalid threshold %q — using %d\n", line, thresholdDefault)
-		cfg.Threshold = thresholdDefault
-	}
-
-	// Max allowed errors
-	fmt.Printf("  Max allowed errors [%d]: ", maxDefault)
-	line = readLine(r)
-	if line == "" {
-		cfg.MaxErrors = maxDefault
-	} else if n, err := strconv.Atoi(line); err == nil && n >= 0 {
-		cfg.MaxErrors = n
-	} else {
-		fmt.Fprintf(os.Stderr, "  invalid value %q — using %d\n", line, maxDefault)
-		cfg.MaxErrors = maxDefault
-	}
+	cfg.Threshold = thresholdDefault
+	cfg.MaxErrors = maxDefault
 
 	fmt.Println()
 	return cfg
@@ -345,6 +249,11 @@ func promptProfile(r *bufio.Reader, current, detected string) string {
 	cursorItem := detected
 	if cursorItem == "" {
 		cursorItem = fallback
+	}
+
+	hasProfiles := len(items) > 2 // more than just ProfileSelectNone + ProfileSelectOther
+	if !hasProfiles {
+		fmt.Fprintf(os.Stderr, "  %s  no profiles found — run: grimoire package update\n", tui.IconWarn)
 	}
 
 	if len(items) == 0 {
@@ -381,19 +290,19 @@ func promptProfile(r *bufio.Reader, current, detected string) string {
 
 // profileEntry is used internally for ranking before building the picker list.
 type profileEntry struct {
-	name     string
-	registry string
-	tier     int    // 1=exact, 2=extends detected, 3=tags detected, 4=other
-	ann      string // picker annotation
+	name string
+	pkg  string
+	tier int    // 1=exact, 2=extends detected, 3=tags detected, 4=other
+	ann  string // picker annotation
 }
 
-// listRankedProfileItems scans all registries and returns a ranked picker list.
+// listRankedProfileItems scans all packages and returns a ranked picker list.
 // items may contain ProfileSectionPrefix headers, ProfileSelectNone, ProfileSelectOther.
 // annotations maps name → annotation string.
 func listRankedProfileItems(detected string) (items []string, annotations map[string]string) {
 	annotations = make(map[string]string)
 
-	regs := skills.AllRegistries()
+	regs := skills.AllPackages()
 	if len(regs) == 0 {
 		return nil, annotations
 	}
@@ -418,7 +327,7 @@ func listRankedProfileItems(detected string) (items []string, annotations map[st
 	for _, reg := range regs {
 		regName := reg.Name
 
-		// Named profile TOML files: <registry-home>/profiles/*.toml
+		// Named profile TOML files: <package-home>/profiles/*.toml
 		profDir := filepath.Join(reg.Home, "profiles")
 		if files, err := os.ReadDir(profDir); err == nil {
 			for _, f := range files {
@@ -496,7 +405,12 @@ func rankProfileFile(name, path, detected string) (tier int, ann string) {
 }
 
 func readLine(r *bufio.Reader) string {
-	line, _ := r.ReadString('\n')
+	line, err := r.ReadString('\n')
+	// Terminal in raw mode sends 0x03 for Ctrl+C instead of SIGINT.
+	if err != nil || strings.ContainsRune(line, '\x03') {
+		fmt.Fprintln(os.Stderr)
+		return ""
+	}
 	return strings.TrimSpace(line)
 }
 
@@ -504,7 +418,7 @@ func printProfilePreview(profileName, projectDir string) {
 	if profileName == "" {
 		return
 	}
-	if len(skills.AllSkillsRegistries()) == 0 {
+	if len(skills.AllSkillsPackages()) == 0 {
 		return // grimoire not yet installed — skip silently
 	}
 	p, err := profiles.ResolveWithOptions(profileName, projectDir, resolveOpts(projectDir))
@@ -572,58 +486,132 @@ func printInitReport(projectDir string) {
 	fmt.Printf("  Fix first finding: ask your AI to run %s\n", colorize(ansiGreen, "/fix-best-practice-finding"))
 }
 
-func writeSettings(dir string, cfg initConfig) error {
-	var profileLine string
-	if cfg.Profile != "" {
-		profileLine = fmt.Sprintf("profiles = [%q]", cfg.Profile)
+// runInitAuto implements `grimoire init --auto`:
+// detect project context → load profile's skill list → scaffold grimoire.toml with deps → run install.
+func runInitAuto(cwd, grimDir string, reinit bool) error {
+	// Bootstrap: auto-install the official package if nothing is installed yet.
+	if len(skills.AllPackages()) == 0 {
+		home := skills.OfficialPackageHome()
+		url := skills.GrimoireRepoURL()
+		if !filepath.IsAbs(url) {
+			fmt.Printf("  No packages installed — cloning official package…\n")
+			if mkErr := os.MkdirAll(filepath.Dir(home), 0o755); mkErr != nil {
+				return fmt.Errorf("creating package dir: %w", mkErr)
+			}
+			if cloneErr := gitops.Clone(url, home); cloneErr != nil {
+				return fmt.Errorf("cloning official package: %w", cloneErr)
+			}
+			fmt.Printf("  %s  Package installed to %s\n", tui.IconOK, home)
+		}
+	}
+
+	ctx := grimctx.Detect(cwd)
+
+	if ctx.Profile == "" {
+		fmt.Println("  No profile detected — falling back to interactive init.")
+		fmt.Println("  Run: grimoire init (interactive wizard)")
+		return nil
+	}
+
+	fmt.Printf("  Detected profile: %s\n", ctx.Profile)
+
+	// Scaffold grimoire.toml if absent, then populate with profile skills.
+	manifestPath := manifest.ProjectPath(cwd)
+	mf := manifest.ManifestFile{}
+	if _, err := os.Stat(manifestPath); err == nil {
+		mf, _ = manifest.ParseFile(manifestPath)
 	} else {
-		profileLine = `# profiles = ["engineering"]   # uncomment and set your profile`
+		// new file — fill in package name
+		mf.Package.Name = filepath.Base(cwd)
+		mf.Package.Version = "0.1.0"
+	}
+
+	// Resolve profile to get its skill list.
+	opts := resolveOpts(cwd)
+	p, err := profiles.ResolveWithOptions(ctx.Profile, cwd, opts)
+	if err != nil {
+		return fmt.Errorf("resolving profile %q: %w", ctx.Profile, err)
+	}
+	if len(p.Skills) == 0 {
+		fmt.Printf("  Profile %q has no skills — nothing to add.\n", ctx.Profile)
+	} else {
+		if mf.Deps == nil {
+			mf.Deps = make(map[string]manifest.DepSpec)
+		}
+		added := 0
+		for _, sk := range p.Skills {
+			if _, exists := mf.Deps[sk.Name]; !exists {
+				mf.Deps[sk.Name] = manifest.DepSpec{Version: "*"}
+				added++
+			}
+		}
+		fmt.Printf("  Added %d skill(s) from profile %q to grimoire.toml\n", added, ctx.Profile)
+	}
+
+	// Write standards section with detected profile.
+	if len(mf.Standards.Profiles) == 0 {
+		mf.Standards.Profiles = []string{ctx.Profile}
+	}
+
+	if err := manifest.WriteFile(manifestPath, &mf); err != nil {
+		return fmt.Errorf("writing grimoire.toml: %w", err)
+	}
+
+	if err := os.MkdirAll(grimDir, 0o755); err != nil {
+		return fmt.Errorf("creating .grimoire/: %w", err)
+	}
+
+	printInitSuccess(reinit)
+	printProfilePreview(ctx.Profile, cwd)
+
+	// Run install to materialize the deps we just wrote.
+	fmt.Println()
+	fmt.Println("  Installing skills from grimoire.toml…")
+	return runInstallFromManifest(cwd)
+}
+
+// scaffoldManifest writes a starter grimoire.toml at manifestPath if one does not already exist.
+// Returns (true, nil) when a new file is created; (false, nil) when it already exists.
+func scaffoldManifest(manifestPath, pkgName, profile string, threshold, maxErrors int) (bool, error) {
+	if _, err := os.Stat(manifestPath); err == nil {
+		return false, nil // already exists
+	}
+
+	if pkgName == "" || pkgName == "." || pkgName == "/" {
+		pkgName = "my-project"
+	}
+
+	profileLine := `# profiles = ["engineering"]   # uncomment and set your profile`
+	if profile != "" {
+		profileLine = fmt.Sprintf("profiles = [%q]", profile)
 	}
 
 	var thresholdBlock string
-	if cfg.Profile != "" && (cfg.Threshold > 0 || cfg.MaxErrors >= 0) {
-		thresholdBlock = fmt.Sprintf("\n[standards.%s]\n", cfg.Profile)
-		if cfg.Threshold > 0 {
-			thresholdBlock += fmt.Sprintf("compliance-threshold = %d\n", cfg.Threshold)
+	if profile != "" && (threshold > 0 || maxErrors >= 0) {
+		thresholdBlock = fmt.Sprintf("\n[standards.%s]\n", profile)
+		if threshold > 0 {
+			thresholdBlock += fmt.Sprintf("compliance-threshold = %d\n", threshold)
 		}
-		if cfg.MaxErrors >= 0 {
-			thresholdBlock += fmt.Sprintf("compliance-threshold-error = %d\n", cfg.MaxErrors)
+		if maxErrors >= 0 {
+			thresholdBlock += fmt.Sprintf("compliance-threshold-error = %d\n", maxErrors)
 		}
 	}
 
-	content := fmt.Sprintf(`# Grimoire settings
-# Docs: https://github.com/jeffreytse/grimoire/blob/main/docs/settings.md
+	content := fmt.Sprintf(`# grimoire.toml — skill manifest and config
+# Docs: https://grimoire.jeffreytse.net/docs/manifest
 
-[core]
-# home = "~/.grimoire"                  # override grimoire home
-# agents = ["claude", "codex"]          # pinned targets; empty = auto-detect
-# install-mode = "symlink"              # "symlink" (default) | "copy"
-# update-concurrency = 8               # max concurrent registry pulls (default 8); 0 = unlimited
+[package]
+name = %q
+version = "0.1.0"
+
+[dependencies]
+# Install skills with: grimoire install <skill-name>
+# apply-solid-principles = "*"
+# apply-dry-principle = "*"
 
 [standards]
 %s
-%s
-# report-path = ".grimoire/report.json" # custom compliance report path
-# staleness-days = 14                   # warn if registry not pulled in N days
-#
-# Domain standards example:
-# [standards.engineering]
-# practices = ["apply-solid-principles", "apply-kiss-principle"]
-# compliance-threshold = 80
-# compliance-threshold-error = 0
+%s`, pkgName, profileLine, thresholdBlock)
 
-# Inline profile (alternative to profiles/<name>.toml file):
-# [profiles.myteam]
-# description = "My team standards"
-# tags = ["engineering"]
-# compliance-threshold = 80
-# compliance-threshold-error = 0
-#
-# [[profiles.myteam.skills]]
-# name = "apply-solid-principles"
-# priority = 1
-`, profileLine, thresholdBlock)
-
-	path := filepath.Join(dir, "settings.toml")
-	return os.WriteFile(path, []byte(content), 0o644)
+	return true, os.WriteFile(manifestPath, []byte(content), 0o644)
 }

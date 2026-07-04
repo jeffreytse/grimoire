@@ -11,8 +11,8 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/jeffreytse/grimoire/internal/agent"
+	"github.com/jeffreytse/grimoire/internal/config"
 	"github.com/jeffreytse/grimoire/internal/git"
-	"github.com/jeffreytse/grimoire/internal/settings"
 	"github.com/jeffreytse/grimoire/internal/skills"
 	"github.com/jeffreytse/grimoire/internal/tui"
 )
@@ -58,7 +58,7 @@ func collectDoctorChecks() doctorOutput {
 	ok := true
 
 	// ── Source ──────────────────────────────────────────────────────────────────
-	home := skills.OfficialRegistryHome()
+	home := skills.OfficialPackageHome()
 	if _, err := os.Stat(home); err != nil {
 		checks = append(checks, doctorCheck{
 			Name:   "grimoire-source",
@@ -171,11 +171,10 @@ func collectDoctorChecks() doctorOutput {
 
 	// ── Config files ─────────────────────────────────────────────────────────────
 	cwd := getProjectDir()
-	home2, _ := os.UserHomeDir()
 	cfgPaths := []struct{ path, label string }{
-		{filepath.Join(cwd, ".grimoire", "settings.toml"), "project (.grimoire/settings.toml)"},
-		{filepath.Join(home2, ".config", "grimoire", "settings.toml"), "global (~/.config/grimoire/settings.toml)"},
-		{settings.SystemPath(), "system (" + settings.SystemPath() + ")"},
+		{config.ProjectPath(cwd), "project (grimoire.toml)"},
+		{config.GlobalPath(), "global (" + config.GlobalPath() + ")"},
+		{config.SystemPath(), "system (" + config.SystemPath() + ")"},
 	}
 	for _, c := range cfgPaths {
 		if _, err := os.Stat(c.path); err != nil {
@@ -185,37 +184,77 @@ func collectDoctorChecks() doctorOutput {
 		}
 	}
 
-	sharedPath := filepath.Join(getProjectDir(), ".grimoire", "settings.toml")
-	if shared, err := settings.ParseFile(sharedPath); err == nil {
+	if shared, err := config.ParseFile(config.ProjectPath(cwd)); err == nil {
 		if shared.Core.Home != "" {
 			checks = append(checks, doctorCheck{
-				Name:   "config-core-in-shared",
+				Name:   "config-core-in-project",
 				Status: "warn",
-				Detail: "[core] section in .grimoire/settings.toml is ignored — [core] is user-level; move to global: grimoire config set core.home <path> --global",
+				Detail: "[core] section in grimoire.toml is ignored — [core] is user-level; move to global: grimoire config set core.home <path> --global",
 			})
 			ok = false
 		}
 	}
 
-	// ── Registry config ───────────────────────────────────────────────────────────
-	if cfg, err := settings.LoadGlobal(); err == nil {
+	// ── Package config ────────────────────────────────────────────────────────────
+	if cfg, err := config.LoadGlobal(); err == nil {
 		officialCount := 0
-		for _, rd := range cfg.Registries {
+		for _, rd := range cfg.Packages {
 			if rd.Official {
 				officialCount++
 			}
 		}
 		if officialCount > 1 {
 			checks = append(checks, doctorCheck{
-				Name:   "registry-multiple-official",
+				Name:   "package-multiple-official",
 				Status: "warn",
-				Detail: fmt.Sprintf("%d registries have official=true — only the first is used; run: grimoire registry list to review", officialCount),
+				Detail: fmt.Sprintf("%d packages have official=true — only the first is used; run: grimoire package list to review", officialCount),
 			})
 			ok = false
 		}
 	}
 
+	// ── Migration: old unversioned package dirs ──────────────────────────────────
+	if old := scanUnversionedPackageDirs(skills.PackagesRoot()); len(old) > 0 {
+		checks = append(checks, doctorCheck{
+			Name:   "packages-unversioned",
+			Status: "warn",
+			Detail: fmt.Sprintf("%d old-style unversioned package dir(s) found (%s) — run: grimoire install to re-clone to versioned paths, then remove manually",
+				len(old), strings.Join(old, ", ")),
+		})
+		ok = false
+	}
+
 	return doctorOutput{OK: ok, Checks: checks}
+}
+
+// scanUnversionedPackageDirs walks PackagesRoot and finds repo-level dirs that
+// lack a "@version" suffix — these are from the pre-versioned-path layout.
+func scanUnversionedPackageDirs(root string) []string {
+	var found []string
+	// Structure: <root>/<host>/<owner>/<repo>[@version]
+	// Walk two levels deep, collect leaf dirs without '@'.
+	hosts, _ := os.ReadDir(root)
+	for _, h := range hosts {
+		if !h.IsDir() {
+			continue
+		}
+		owners, _ := os.ReadDir(filepath.Join(root, h.Name()))
+		for _, o := range owners {
+			if !o.IsDir() {
+				continue
+			}
+			repos, _ := os.ReadDir(filepath.Join(root, h.Name(), o.Name()))
+			for _, r := range repos {
+				if !r.IsDir() {
+					continue
+				}
+				if !strings.Contains(r.Name(), "@") {
+					found = append(found, h.Name()+"/"+o.Name()+"/"+r.Name())
+				}
+			}
+		}
+	}
+	return found
 }
 
 func printDoctorHuman(out doctorOutput) {
@@ -279,7 +318,7 @@ func printDoctorHuman(out doctorOutput) {
 	}
 	if hasExtends {
 		fmt.Println()
-		fmt.Println("  Registries")
+		fmt.Println("  Packages")
 		for _, c := range out.Checks {
 			if !strings.HasPrefix(c.Name, "extends-") {
 				continue

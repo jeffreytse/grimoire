@@ -9,8 +9,8 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/jeffreytse/grimoire/internal/config"
 	"github.com/jeffreytse/grimoire/internal/profiles"
-	"github.com/jeffreytse/grimoire/internal/settings"
 	"github.com/jeffreytse/grimoire/internal/tui"
 )
 
@@ -22,11 +22,11 @@ var (
 var settingsCmd = &cobra.Command{
 	Use:   "settings",
 	Short: "Show resolved grimoire settings for the current project",
-	Long: `Show the effective settings after merging all layers (highest priority first):
+	Long: `Show the effective config after merging all layers (highest priority first):
 
-  1. .grimoire/settings.toml          (project — committed, --local)
-  2. ~/.config/grimoire/settings.toml (user global, --global)
-  3. /etc/grimoire/settings.toml      (system-wide, --system)
+  1. grimoire.toml                       (project — committed, --local)
+  2. ~/.config/grimoire/grimoire.toml    (user global, --global)
+  3. /etc/grimoire/grimoire.toml         (system-wide, --system)
 
 Each key shows the source file that provided it.
 Use grimoire config get/set/unset to manage all keys.`,
@@ -39,7 +39,7 @@ func init() {
 }
 
 func runSettings(cmd *cobra.Command, args []string) error {
-	resolved, err := settings.Load(getProjectDir())
+	resolved, err := config.Load(getProjectDir())
 	if err != nil {
 		return fmt.Errorf("loading settings: %w", err)
 	}
@@ -51,7 +51,7 @@ func runSettings(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func printSettingsHuman(r settings.Resolved) { //nolint:gocritic // value semantics intentional; callers pass local Resolved vars
+func printSettingsHuman(r config.Config) { //nolint:gocritic // value semantics intentional; callers pass local Resolved vars
 	printed := false
 
 	// [core] section — machine-only keys
@@ -100,7 +100,7 @@ func printSettingsHuman(r settings.Resolved) { //nolint:gocritic // value semant
 	if !printed {
 		fmt.Printf("  %s  no settings configured\n", tui.IconWarn)
 		fmt.Printf("  run: grimoire init\n")
-		fmt.Printf("  or edit: %s\n", settings.GlobalPath())
+		fmt.Printf("  or edit: %s\n", config.GlobalPath())
 	} else {
 		fmt.Println()
 	}
@@ -131,7 +131,7 @@ func printExpandedProfiles(profileNames []string) {
 	}
 }
 
-func domainSectionLines(key string, ds *settings.DomainSection, sources map[string]string) []string {
+func domainSectionLines(key string, ds *config.DomainSection, sources map[string]string) []string {
 	var lines []string
 	if len(ds.Practices) > 0 {
 		lines = append(lines, fmt.Sprintf("    practices: %s%s",
@@ -167,7 +167,7 @@ func sourceTag(path string) string {
 	return tui.StyleDim.Render("   (" + path + ")")
 }
 
-func settingsToMap(r settings.Resolved) map[string]any { //nolint:gocritic // value semantics intentional
+func settingsToMap(r config.Config) map[string]any { //nolint:gocritic // value semantics intentional
 	out := map[string]any{}
 	core := map[string]any{}
 	if r.Core.Home != "" {
@@ -199,7 +199,7 @@ func settingsToMap(r settings.Resolved) map[string]any { //nolint:gocritic // va
 	return out
 }
 
-func printSettingsJSON(r settings.Resolved) error { //nolint:gocritic // value semantics intentional
+func printSettingsJSON(r config.Config) error { //nolint:gocritic // value semantics intentional
 	m := settingsToMap(r)
 	if flagSettingsDomain != "" {
 		for k := range m {

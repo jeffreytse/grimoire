@@ -22,15 +22,16 @@ func writeProfileFile(t *testing.T, dir, name, content string) string {
 
 func TestResolve_MissingFile(t *testing.T) {
 	dir := t.TempDir()
-	p, err := Resolve("engineering", dir)
+	// Use a name that cannot exist in any installed package.
+	p, err := Resolve("zzz-nonexistent-profile-grimoire-test", dir)
 	if err != nil {
 		t.Fatalf("missing file should not error: %v", err)
 	}
 	if p.Source != "" {
 		t.Errorf("expected empty Source for missing profile, got %q", p.Source)
 	}
-	if p.Name != "engineering" {
-		t.Errorf("Name = %q, want %q", p.Name, "engineering")
+	if p.Name != "zzz-nonexistent-profile-grimoire-test" {
+		t.Errorf("Name = %q, want %q", p.Name, "zzz-nonexistent-profile-grimoire-test")
 	}
 	if len(p.Skills) != 0 {
 		t.Errorf("Skills should be empty for missing profile, got %v", p.Skills)
@@ -96,7 +97,7 @@ name = "project-level-skill"
 	}
 }
 
-func TestResolve_FallbackToDefault(t *testing.T) {
+func TestResolve_NoFallbackToDefault(t *testing.T) {
 	dir := t.TempDir()
 	writeProfileFile(t, dir, ".grimoire/profiles/default.toml", `
 name = "default"
@@ -104,57 +105,89 @@ name = "default"
 name = "default-skill"
 `)
 
-	// "unknown" profile has no file, should fall back to default.toml
-	p, err := Resolve("unknown", dir)
+	// Profile resolution no longer falls back to default.toml.
+	// An unmatched name returns an empty Profile.
+	p, err := Resolve("zzz-nonexistent-for-fallback-test", dir)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(p.Skills) != 1 || p.Skills[0].Name != "default-skill" {
-		t.Errorf("expected default-skill, got %v", p.Skills)
+	if p.Source != "" {
+		t.Errorf("expected empty Source (no fallback), got %q", p.Source)
 	}
 }
 
 func TestResolveAll_MultipleProfiles(t *testing.T) {
 	dir := t.TempDir()
-	writeProfileFile(t, dir, ".grimoire/profiles/engineering.toml", `
+	// Use unlikely names to avoid matching real package profiles.
+	writeProfileFile(t, dir, ".grimoire/profiles/zzz-grimoire-test-solid.toml", `
 [[skills]]
 name = "apply-solid"
 `)
-	writeProfileFile(t, dir, ".grimoire/profiles/tdd.toml", `
+	writeProfileFile(t, dir, ".grimoire/profiles/zzz-grimoire-test-tdd.toml", `
 [[skills]]
 name = "apply-tdd"
 `)
 
-	profiles, err := ResolveAll([]string{"engineering", "tdd"}, dir)
+	got, err := ResolveAll([]string{"zzz-grimoire-test-solid", "zzz-grimoire-test-tdd"}, dir)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(profiles) != 2 {
-		t.Fatalf("expected 2 profiles, got %d", len(profiles))
+	if len(got) != 2 {
+		t.Fatalf("expected 2 profiles, got %d", len(got))
 	}
-	if profiles[0].Skills[0].Name != "apply-solid" {
-		t.Errorf("profiles[0] skill = %q", profiles[0].Skills[0].Name)
+	if got[0].Skills[0].Name != "apply-solid" {
+		t.Errorf("got[0] skill = %q", got[0].Skills[0].Name)
 	}
-	if profiles[1].Skills[0].Name != "apply-tdd" {
-		t.Errorf("profiles[1] skill = %q", profiles[1].Skills[0].Name)
+	if got[1].Skills[0].Name != "apply-tdd" {
+		t.Errorf("got[1] skill = %q", got[1].Skills[0].Name)
 	}
 }
 
-func TestSearchPaths_Order(t *testing.T) {
-	paths := SearchPaths("engineering", "/project")
-	// Minimum 2 paths: project-level profile + project-level default.
-	// More paths appear when registries are installed; don't assert a fixed count.
-	if len(paths) < 2 {
-		t.Fatalf("expected at least 2 search paths, got %d", len(paths))
+func TestProfilesMatchingGlob_DepthAnywhere(t *testing.T) {
+	root := t.TempDir()
+	write := func(rel string) {
+		p := filepath.Join(root, filepath.FromSlash(rel))
+		if err := os.MkdirAll(filepath.Dir(p), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(p, []byte(`name = "test"`), 0o644); err != nil {
+			t.Fatal(err)
+		}
 	}
-	// First path must be the project-level profile.
-	if filepath.Base(filepath.Dir(paths[0])) != "profiles" {
-		t.Errorf("first path should be project-level profiles dir, got %s", paths[0])
-	}
-	// Last path must be a default.toml fallback.
-	if filepath.Base(paths[len(paths)-1]) != "default.toml" {
-		t.Errorf("last path should be default.toml, got %s", paths[len(paths)-1])
-	}
+	// Nested layout — no top-level profiles/ directory
+	write("engineering/tdd.toml")
+	write("engineering/bdd.toml")
+	write("security/owasp.toml")
+
+	t.Run("name matches at any depth", func(t *testing.T) {
+		got, err := ProfilesMatchingGlob(root, "tdd")
+		if err != nil {
+			t.Fatal(err)
+		}
+		if len(got) != 1 {
+			t.Errorf("expected 1 profile, got %d", len(got))
+		}
+	})
+
+	t.Run("dir name returns all under dir", func(t *testing.T) {
+		got, err := ProfilesMatchingGlob(root, "engineering")
+		if err != nil {
+			t.Fatal(err)
+		}
+		if len(got) != 2 {
+			t.Errorf("expected 2 profiles under engineering/, got %d", len(got))
+		}
+	})
+
+	t.Run("empty glob returns all", func(t *testing.T) {
+		got, err := ProfilesMatchingGlob(root, "")
+		if err != nil {
+			t.Fatal(err)
+		}
+		if len(got) != 3 {
+			t.Errorf("expected 3 profiles, got %d", len(got))
+		}
+	})
 }
 
 func writeTaggedSkill(t *testing.T, root, domain, name string, tags []string) {
@@ -182,7 +215,7 @@ func TestResolveByTags_MatchesTaggedSkills(t *testing.T) {
 	writeTaggedSkill(t, root, "engineering", "apply-tdd", []string{"tdd"})
 	writeTaggedSkill(t, root, "engineering", "apply-lod", []string{"oop"})
 
-	sources := []skills.SkillsRegistry{{Name: "test", Root: root}}
+	sources := []skills.SkillsPackage{{Name: "test", Root: root}}
 	refs := ResolveByTags("oop", sources)
 	if len(refs) != 2 {
 		t.Fatalf("expected 2 oop-tagged skills, got %d: %v", len(refs), refs)
@@ -193,8 +226,8 @@ func TestResolveWithOptions_TagFallback(t *testing.T) {
 	root := t.TempDir()
 	writeTaggedSkill(t, root, "eng", "apply-solid", []string{"oop"})
 
-	sources := []skills.SkillsRegistry{{Name: "test", Root: root}}
-	p, err := ResolveWithOptions("oop", t.TempDir(), ResolveOptions{Registries: sources})
+	sources := []skills.SkillsPackage{{Name: "test", Root: root}}
+	p, err := ResolveWithOptions("oop", t.TempDir(), ResolveOptions{Packages: sources})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -215,8 +248,8 @@ name = "file-based-skill"
 `)
 
 	// even with sources provided, file takes priority
-	sources := []skills.SkillsRegistry{{Name: "test", Root: t.TempDir()}}
-	p, err := ResolveWithOptions("oop", projectDir, ResolveOptions{Registries: sources})
+	sources := []skills.SkillsPackage{{Name: "test", Root: t.TempDir()}}
+	p, err := ResolveWithOptions("oop", projectDir, ResolveOptions{Packages: sources})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -272,7 +305,7 @@ tags = ["oop"]
 	if err != nil {
 		t.Fatal(err)
 	}
-	sources := []skills.SkillsRegistry{{Name: "test", Root: root}}
+	sources := []skills.SkillsPackage{{Name: "test", Root: root}}
 	resolved := ResolveSkills(&p, dir, sources, nil)
 	names := skillNames(resolved)
 	if len(names) != 2 {
@@ -428,7 +461,7 @@ func TestParseProfileRef(t *testing.T) {
 		{"gitlab.com/acmecorp/standards/engineering", "gitlab.com/acmecorp/standards", "engineering"},
 		// longest match wins: gitlab.com/acmecorp/standards beats acmecorp/standards
 		{"gitlab.com/acmecorp/standards/go-service", "gitlab.com/acmecorp/standards", "go-service"},
-		// unknown registry → unqualified
+		// unknown package → unqualified
 		{"unknown/org/profile", "", "unknown/org/profile"},
 	}
 

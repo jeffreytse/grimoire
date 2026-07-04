@@ -1,7 +1,6 @@
 package profiles
 
 import (
-	"errors"
 	"os"
 	"path/filepath"
 	"sort"
@@ -9,14 +8,15 @@ import (
 
 	"github.com/pelletier/go-toml/v2"
 
+	"github.com/jeffreytse/grimoire/internal/config"
 	"github.com/jeffreytse/grimoire/internal/skills"
 )
 
 // ResolveOptions controls optional behaviour for profile resolution.
 type ResolveOptions struct {
-	// Registries enables tag-query fallback and tag-field resolution.
+	// Packages enables tag-query fallback and tag-field resolution.
 	// When nil, tag queries are skipped.
-	Registries []skills.SkillsRegistry
+	Packages []skills.SkillsPackage
 	// InlineProfiles holds profiles defined inline in settings.toml [profiles.*].
 	// Checked after file lookup fails and before tag/domain fallback.
 	InlineProfiles map[string]Profile
@@ -42,12 +42,12 @@ type Profile struct {
 	ComplianceThresholdError int // -1 = not set
 }
 
-// ParseProfileRef resolves a qualified profile ref against known registry names.
-// Qualified form: "<registry>/<profile>" where registry is any known registry name.
+// ParseProfileRef resolves a qualified profile ref against known package names.
+// Qualified form: "<package>/<profile>" where package is any known package name.
 // Longest match wins (handles overlapping prefixes across hosts).
 // Returns ("", ref) for unqualified refs — caller uses first-wins resolution.
-func ParseProfileRef(ref string, registryNames []string) (registry, name string) {
-	sorted := append([]string(nil), registryNames...)
+func ParseProfileRef(ref string, packageNames []string) (pkgName, name string) {
+	sorted := append([]string(nil), packageNames...)
 	sort.Slice(sorted, func(i, j int) bool { return len(sorted[i]) > len(sorted[j]) })
 	for _, reg := range sorted {
 		prefix := reg + "/"
@@ -58,9 +58,9 @@ func ParseProfileRef(ref string, registryNames []string) (registry, name string)
 	return "", ref
 }
 
-// allRegistryNames returns the Name field of every configured registry.
-func allRegistryNames() []string {
-	regs := skills.AllRegistries()
+// allPackageNames returns the Name field of every configured package.
+func allPackageNames() []string {
+	regs := skills.AllPackages()
 	names := make([]string, len(regs))
 	for i, r := range regs {
 		names[i] = r.Name
@@ -68,65 +68,180 @@ func allRegistryNames() []string {
 	return names
 }
 
-// SearchPaths returns the ordered list of paths searched for a named profile ref.
-// Qualified ref (e.g. "acmecorp/standards/engineering", "official/engineering",
-// "gitlab.com/org/repo/name") — resolved against known registry names, returns a
-// single path in that registry only.
-// Unqualified ref — covers project-local, then each registry's profiles dir.
-func SearchPaths(ref, projectDir string) []string {
-	reg, name := ParseProfileRef(ref, allRegistryNames())
-	if reg != "" {
-		return []string{filepath.Join(skills.RegistryHome(reg), "profiles", name+".toml")}
+// ResolveByGlob finds all profiles whose path matches name using depth-anywhere glob semantics.
+// Profile names use implicit ** prefix: "engineering" matches **/engineering.toml anywhere in
+// the package tree and all .toml files under any **/engineering/ directory.
+// For qualified refs ("acmecorp/engineering"), only the named package is searched.
+// For unqualified refs, project .grimoire is checked first, then all packages in priority order.
+// Deduplicates by Source path across packages.
+func ResolveByGlob(name, projectDir string) ([]Profile, error) {
+	// Package URL form: has ':' that is not a Windows drive letter (index 1).
+	// e.g. "acmecorp/standards@v0.1.0:engineering", "github.com/acmecorp/standards:engineering"
+	if strings.Contains(name, ":") && (len(name) < 2 || name[1] != ':') {
+		ref := config.ParsePackageRef(name)
+		var root string
+		switch {
+		case ref.IsLocal():
+			root = filepath.FromSlash(ref.LocalPath)
+		case ref.IsOfficialRepoPath():
+			root = skills.OfficialPackageHome()
+		default:
+			root = skills.PackageHome(ref.PackageName)
+		}
+		if root == "" {
+			return nil, nil
+		}
+		return ProfilesMatchingGlob(root, ref.Path)
 	}
-	// Unqualified: project-local first, then all registries, then default fallback.
-	paths := []string{
-		filepath.Join(projectDir, ".grimoire", "profiles", name+".toml"),
-	}
-	for _, r := range skills.AllRegistries() {
-		paths = append(paths, filepath.Join(r.Home, "profiles", name+".toml"))
-	}
-	paths = append(paths, filepath.Join(projectDir, ".grimoire", "profiles", "default.toml"))
-	for _, r := range skills.AllRegistries() {
-		paths = append(paths, filepath.Join(r.Home, "profiles", "default.toml"))
-	}
-	return paths
-}
 
-// Resolve finds and parses a named profile file following the resolution order from docs/profiles.md.
-// The returned Profile.Skills contains only the explicit [[skills]] from the file.
-// Call ResolveWithOptions to get the fully resolved skill list (extends + tags + exclude applied).
-// Returns a zero-value Profile (Source == "") with no error when no file is found.
-func Resolve(name, projectDir string) (Profile, error) {
-	for _, path := range SearchPaths(name, projectDir) {
-		p, err := parseFile(path, name)
-		if errors.Is(err, os.ErrNotExist) {
+	reg, localName := ParseProfileRef(name, allPackageNames())
+	if reg != "" {
+		return ProfilesMatchingGlob(skills.PackageHome(reg), localName)
+	}
+	seen := map[string]bool{}
+	seenRel := map[string]bool{}
+	var result []Profile
+	// Project-local profiles: no rel-path dedup (local always wins, path collisions are intentional).
+	if ps, err := ProfilesMatchingGlob(filepath.Join(projectDir, ".grimoire"), name); err == nil {
+		for i := range ps {
+			p := ps[i]
+			if !seen[p.Source] {
+				seen[p.Source] = true
+				result = append(result, p)
+			}
+		}
+	}
+	// Package profiles: dedup by both absolute Source and root-relative path.
+	// First (highest-priority) package wins when two packages have the same rel-path.
+	for _, r := range skills.AllPackages() {
+		ps, err := ProfilesMatchingGlob(r.Home, name)
+		if err != nil {
 			continue
 		}
-		if err != nil {
-			return Profile{}, err
+		for i := range ps {
+			p := ps[i]
+			rel, _ := filepath.Rel(r.Home, p.Source)
+			rel = filepath.ToSlash(rel)
+			if seen[p.Source] || seenRel[rel] {
+				continue
+			}
+			seenRel[rel] = true
+			seen[p.Source] = true
+			result = append(result, p)
 		}
-		return p, nil
 	}
-	return Profile{Name: name}, nil
+	return result, nil
 }
 
-// ResolveAll loads all named profiles and returns them in declaration order.
-// Each profile's Skills field contains only explicit [[skills]] entries.
-// Use ResolveWithOptions per profile for full resolution.
+// Resolve finds the first profile matching name using depth-anywhere glob semantics.
+// Returns a zero-value Profile (Source == "") with no error when no match is found.
+// Call ResolveWithOptions to get the fully resolved skill list (extends + tags + exclude applied).
+func Resolve(name, projectDir string) (Profile, error) {
+	ps, err := ResolveByGlob(name, projectDir)
+	if err != nil || len(ps) == 0 {
+		return Profile{Name: name}, err
+	}
+	return ps[0], nil
+}
+
+// ResolveAll expands each name via ResolveByGlob and returns the flat deduplicated list.
+// A single name may match multiple profiles (e.g. "engineering" activates all .toml under
+// any engineering/ directory). Deduplicates by Source path across all names.
 func ResolveAll(names []string, projectDir string) ([]Profile, error) {
-	out := make([]Profile, 0, len(names))
+	seen := map[string]bool{}
+	var out []Profile
 	for _, name := range names {
-		p, err := Resolve(name, projectDir)
+		ps, err := ResolveByGlob(name, projectDir)
 		if err != nil {
 			return nil, err
 		}
-		out = append(out, p)
+		for i := range ps {
+			p := ps[i]
+			if !seen[p.Source] {
+				seen[p.Source] = true
+				out = append(out, p)
+			}
+		}
 	}
 	return out, nil
 }
 
+// MergeProfiles merges the skill lists of multiple profiles into one deduplicated list.
+// Profiles must have their Skills field already populated via ResolveSkills or ResolveWithOptions.
+// First listed profile wins when the same skill name appears in more than one profile —
+// reflecting declaration order priority in standards.profiles.
+func MergeProfiles(ps []Profile) []SkillRef {
+	seen := map[string]bool{}
+	var result []SkillRef
+	for i := range ps {
+		p := ps[i]
+		for _, sk := range p.Skills {
+			if !seen[sk.Name] {
+				seen[sk.Name] = true
+				result = append(result, sk)
+			}
+		}
+	}
+	return result
+}
+
+// ResolveEffectiveSkills resolves the effective ordered skill list for a set of profile refs.
+// Pipeline:
+//  1. Resolve all profiles (depth-anywhere glob, deduplicated by Source and rel-path).
+//  2. Fully resolve each profile (extends + tags + exclude) via ResolveSkills.
+//  3. Merge: first listed profile wins for same skill name.
+//  4. Practices override: re-priorities matching skills in practices order; adds missing ones.
+//  5. Disabled: removes skills unconditionally, even if listed in practices.
+func ResolveEffectiveSkills(names []string, projectDir string, practices, disabled []string) ([]SkillRef, error) {
+	rawProfiles, err := ResolveAll(names, projectDir)
+	if err != nil {
+		return nil, err
+	}
+
+	for i := range rawProfiles {
+		rawProfiles[i].Skills = ResolveSkills(&rawProfiles[i], projectDir, nil, nil)
+	}
+
+	merged := MergeProfiles(rawProfiles)
+
+	if len(practices) > 0 {
+		byName := make(map[string]*SkillRef, len(merged))
+		for i := range merged {
+			byName[merged[i].Name] = &merged[i]
+		}
+		for i, name := range practices {
+			pri := i + 1
+			if sk, ok := byName[name]; ok {
+				sk.Priority = pri
+			} else {
+				merged = append(merged, SkillRef{Name: name, Priority: pri})
+				byName[name] = &merged[len(merged)-1]
+			}
+		}
+		sort.SliceStable(merged, func(i, j int) bool {
+			return merged[i].Priority < merged[j].Priority
+		})
+	}
+
+	if len(disabled) > 0 {
+		disSet := make(map[string]bool, len(disabled))
+		for _, name := range disabled {
+			disSet[name] = true
+		}
+		out := merged[:0]
+		for _, sk := range merged {
+			if !disSet[sk.Name] {
+				out = append(out, sk)
+			}
+		}
+		merged = out
+	}
+
+	return merged, nil
+}
+
 // resolveByDomain returns all skills from sources whose domain path matches domain.
-func resolveByDomain(domain string, regs []skills.SkillsRegistry) []SkillRef {
+func resolveByDomain(domain string, regs []skills.SkillsPackage) []SkillRef {
 	var refs []SkillRef
 	seen := make(map[string]struct{})
 	for _, reg := range regs {
@@ -134,7 +249,8 @@ func resolveByDomain(domain string, regs []skills.SkillsRegistry) []SkillRef {
 		if err != nil {
 			continue
 		}
-		for _, sk := range all {
+		for i := range all {
+			sk := all[i]
 			if sk.Domain == domain {
 				if _, ok := seen[sk.Name]; !ok {
 					seen[sk.Name] = struct{}{}
@@ -147,14 +263,15 @@ func resolveByDomain(domain string, regs []skills.SkillsRegistry) []SkillRef {
 }
 
 // ResolveByTags returns all skills from sources whose tags contain profileName.
-func ResolveByTags(profileName string, regs []skills.SkillsRegistry) []SkillRef {
+func ResolveByTags(profileName string, regs []skills.SkillsPackage) []SkillRef {
 	var refs []SkillRef
 	for _, reg := range regs {
 		all, err := skills.ListAllSkills(reg.Root)
 		if err != nil {
 			continue
 		}
-		for _, sk := range all {
+		for i := range all {
+			sk := all[i]
 			for _, tag := range sk.Tags {
 				if tag == profileName {
 					refs = append(refs, SkillRef{Name: sk.Name})
@@ -174,7 +291,7 @@ func ResolveByTags(profileName string, regs []skills.SkillsRegistry) []SkillRef 
 //
 // Results are sorted by priority ascending (lower = higher priority), then insertion order.
 // visited tracks the current resolution stack to prevent infinite recursion.
-func ResolveSkills(p *Profile, projectDir string, regs []skills.SkillsRegistry, visited map[string]bool) []SkillRef {
+func ResolveSkills(p *Profile, projectDir string, regs []skills.SkillsPackage, visited map[string]bool) []SkillRef {
 	if visited == nil {
 		visited = make(map[string]bool)
 	}
@@ -285,11 +402,11 @@ func ResolveWithOptions(name, projectDir string, opts ResolveOptions) (Profile, 
 	}
 
 	// If still no source, try tag query then domain-path fallback.
-	if p.Source == "" && len(opts.Registries) > 0 {
-		refs := ResolveByTags(name, opts.Registries)
+	if p.Source == "" && len(opts.Packages) > 0 {
+		refs := ResolveByTags(name, opts.Packages)
 		src := "(tag query)"
 		if len(refs) == 0 {
-			refs = resolveByDomain(name, opts.Registries)
+			refs = resolveByDomain(name, opts.Packages)
 			src = "(domain)"
 		}
 		if len(refs) > 0 {
@@ -301,7 +418,7 @@ func ResolveWithOptions(name, projectDir string, opts ResolveOptions) (Profile, 
 
 	// Full resolution via ResolveSkills (handles extends, tags, explicit skills, exclude).
 	if p.Source != "" || len(p.Extends) > 0 || len(p.Tags) > 0 {
-		p.Skills = ResolveSkills(&p, projectDir, opts.Registries, visited)
+		p.Skills = ResolveSkills(&p, projectDir, opts.Packages, visited)
 	}
 
 	return p, nil
@@ -325,6 +442,53 @@ func ReadMeta(path string) ProfileMeta {
 	}
 	_ = toml.Unmarshal(data, &raw)
 	return ProfileMeta{Extends: raw.Extends, Tags: raw.Tags}
+}
+
+// toProfileGlob auto-prepends "**/" to a pattern that has no "**", enabling depth-anywhere
+// matching. Patterns that already contain "**" are used as-is. Empty pattern is unchanged.
+func toProfileGlob(p string) string {
+	if p == "" || strings.Contains(p, "**") {
+		return p
+	}
+	return "**/" + p
+}
+
+// ProfilesMatchingGlob finds all profiles under root whose root-relative path matches glob.
+// Profile files are identified by the .toml extension (inferred — pattern must omit it).
+// A pattern matches either the file itself or any file under a matched directory.
+// Patterns without "**" are automatically treated as depth-anywhere ("engineering" → "**/engineering").
+// glob="" returns all profiles.
+func ProfilesMatchingGlob(root, glob string) ([]Profile, error) {
+	effectiveGlob := toProfileGlob(glob)
+	var result []Profile
+	err := filepath.WalkDir(root, func(p string, d os.DirEntry, err error) error {
+		if err != nil || d.IsDir() {
+			return nil
+		}
+		if filepath.Ext(p) != ".toml" {
+			return nil
+		}
+		rel, relErr := filepath.Rel(root, p)
+		if relErr != nil {
+			return nil
+		}
+		rel = filepath.ToSlash(rel)
+		relNoExt := strings.TrimSuffix(rel, ".toml")
+		dirPart := filepath.ToSlash(filepath.Dir(rel))
+		if dirPart == "." {
+			dirPart = ""
+		}
+
+		if glob == "" || skills.GlobMatch(effectiveGlob, relNoExt) || (dirPart != "" && skills.GlobMatch(effectiveGlob, dirPart)) {
+			name := filepath.Base(relNoExt)
+			prof, parseErr := parseFile(p, name)
+			if parseErr == nil {
+				result = append(result, prof)
+			}
+		}
+		return nil
+	})
+	return result, err
 }
 
 func parseFile(path, profileName string) (Profile, error) {

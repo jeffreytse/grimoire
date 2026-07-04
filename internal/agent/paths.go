@@ -6,7 +6,13 @@ import (
 	"path/filepath"
 )
 
+// All lists agents that receive installed skills (have a managed skills directory).
 var All = []string{"claude", "codex", "gemini", "openclaw", "opencode"}
+
+// CheckAgents is the default resolution order for `grimoire check --independent`.
+// Separate from All — includes "copilot" (maps to "gh copilot"), which cannot receive
+// skills but can perform compliance checks.
+var CheckAgents = []string{"claude", "gemini", "codex", "copilot", "opencode", "openclaw"}
 
 func mustHome() string {
 	home, err := os.UserHomeDir()
@@ -29,6 +35,24 @@ func SkillsDir(ag string) string {
 		return filepath.Join(home, ".openclaw", "skills")
 	case "opencode":
 		return filepath.Join(home, ".config", "opencode", "skills")
+	}
+	return ""
+}
+
+// ProjectSkillsDir returns the project-relative skills directory for an agent.
+// Mirrors SkillsDir but rooted at projectDir instead of the user home.
+func ProjectSkillsDir(ag, projectDir string) string {
+	switch ag {
+	case "claude":
+		return filepath.Join(projectDir, ".claude", "skills")
+	case "codex":
+		return filepath.Join(projectDir, ".agents", "skills")
+	case "gemini":
+		return filepath.Join(projectDir, ".gemini", "skills")
+	case "openclaw":
+		return filepath.Join(projectDir, ".openclaw", "skills")
+	case "opencode":
+		return filepath.Join(projectDir, ".opencode", "skills")
 	}
 	return ""
 }

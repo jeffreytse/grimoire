@@ -13,10 +13,10 @@ import (
 
 	"github.com/jeffreytse/grimoire/internal/agent"
 	"github.com/jeffreytse/grimoire/internal/compliance"
+	"github.com/jeffreytse/grimoire/internal/config"
 	"github.com/jeffreytse/grimoire/internal/git"
 	"github.com/jeffreytse/grimoire/internal/profiles"
 	"github.com/jeffreytse/grimoire/internal/rules"
-	"github.com/jeffreytse/grimoire/internal/settings"
 	"github.com/jeffreytse/grimoire/internal/skills"
 	"github.com/jeffreytse/grimoire/internal/tui"
 )
@@ -51,7 +51,7 @@ type contextAgentInfo struct {
 	Configured     bool   `json:"configured"`
 }
 
-type contextRegistryInfo struct {
+type contextPackageInfo struct {
 	Name        string `json:"name"`
 	URL         string `json:"url"`
 	SkillsCount int    `json:"skills_count"`
@@ -80,12 +80,12 @@ type contextOutput struct {
 	Agents           []contextAgentInfo      `json:"agents"`
 	Settings         map[string]any          `json:"settings,omitempty"`
 	Compliance       *compliance.Report      `json:"compliance,omitempty"`
-	Registries       []contextRegistryInfo   `json:"registries"`
+	Packages         []contextPackageInfo    `json:"packages"`
 	RuleFindings     []compliance.Diagnostic `json:"rule_findings,omitempty"`
 }
 
 func runContext(cmd *cobra.Command, args []string) error {
-	home := skills.OfficialRegistryHome()
+	home := skills.OfficialPackageHome()
 
 	// grimoire version
 	grimoireVer := ""
@@ -107,13 +107,13 @@ func runContext(cmd *cobra.Command, args []string) error {
 		complianceReport = r
 	}
 
-	// registries
-	registries := buildRegistryInfos()
+	// packages
+	packages := buildPackageInfos()
 
 	// rule findings
 	eng := &rules.Engine{
-		SkillsRegistries: skills.AllSkillsRegistries(),
-		ProjectDir:       getProjectDir(),
+		SkillsPackages: skills.AllSkillsPackages(),
+		ProjectDir:     getProjectDir(),
 	}
 	ruleFindings := eng.Run()
 
@@ -130,7 +130,7 @@ func runContext(cmd *cobra.Command, args []string) error {
 		Agents:           agentInfos,
 		Settings:         settingsMap,
 		Compliance:       complianceReport,
-		Registries:       registries,
+		Packages:         packages,
 		RuleFindings:     ruleFindings,
 	}
 
@@ -140,8 +140,8 @@ func runContext(cmd *cobra.Command, args []string) error {
 		return enc.Encode(out)
 	}
 
-	var resolvedSettings *settings.Resolved
-	if rs, err := settings.Load(getProjectDir()); err == nil {
+	var resolvedSettings *config.Config
+	if rs, err := config.Load(getProjectDir()); err == nil {
 		resolvedSettings = &rs
 	}
 	printContextHuman(&out, resolvedSettings)
@@ -169,7 +169,7 @@ func buildAgentInfos() []contextAgentInfo {
 }
 
 func buildSettingsMap() map[string]any {
-	r, err := settings.Load(getProjectDir())
+	r, err := config.Load(getProjectDir())
 	if err != nil {
 		return nil
 	}
@@ -219,7 +219,7 @@ func buildSettingsMap() map[string]any {
 
 func buildResolvedProfiles() map[string][]string {
 	cwd := getProjectDir()
-	r, err := settings.Load(cwd)
+	r, err := config.Load(cwd)
 	if err != nil || len(r.Core.Profiles) == 0 {
 		return nil
 	}
@@ -241,7 +241,7 @@ func buildResolvedProfiles() map[string][]string {
 }
 
 func buildSettingsSources() map[string]string {
-	r, err := settings.Load(getProjectDir())
+	r, err := config.Load(getProjectDir())
 	if err != nil || len(r.Sources) == 0 {
 		return nil
 	}
@@ -258,7 +258,7 @@ func buildSettingsSources() map[string]string {
 
 func buildProfileSources() map[string]string {
 	cwd := getProjectDir()
-	r, err := settings.Load(cwd)
+	r, err := config.Load(cwd)
 	if err != nil || len(r.Core.Profiles) == 0 {
 		return nil
 	}
@@ -280,7 +280,7 @@ func buildProfileSources() map[string]string {
 }
 
 func buildDomainSections() []contextDomainSection {
-	r, err := settings.Load(getProjectDir())
+	r, err := config.Load(getProjectDir())
 	if err != nil {
 		return nil
 	}
@@ -309,15 +309,15 @@ func buildProfileDirs(home string) []string {
 	}
 }
 
-func buildRegistryInfos() []contextRegistryInfo {
-	regs := skills.AllRegistries()
-	infos := make([]contextRegistryInfo, 0, len(regs))
+func buildPackageInfos() []contextPackageInfo {
+	regs := skills.AllPackages()
+	infos := make([]contextPackageInfo, 0, len(regs))
 	for _, reg := range regs {
 		var url string
-		cfg, _ := settings.LoadGlobal()
-		for _, rd := range cfg.Registries {
+		cfg, _ := config.LoadGlobal()
+		for _, rd := range cfg.Packages {
 			if rd.Name == reg.Name {
-				u, _ := settings.ParseRef(rd.URL)
+				u, _ := config.ParseRef(rd.URL)
 				if u == "" {
 					u = rd.URL
 				}
@@ -328,7 +328,7 @@ func buildRegistryInfos() []contextRegistryInfo {
 		if url == "" {
 			url = skills.GrimoireRepoURL()
 		}
-		infos = append(infos, contextRegistryInfo{
+		infos = append(infos, contextPackageInfo{
 			Name:        reg.Name,
 			URL:         url,
 			SkillsCount: countSkills(filepath.Join(reg.Home, "skills")),
@@ -338,7 +338,7 @@ func buildRegistryInfos() []contextRegistryInfo {
 	return infos
 }
 
-func printContextHuman(out *contextOutput, r *settings.Resolved) {
+func printContextHuman(out *contextOutput, r *config.Config) {
 	fmt.Printf("\nGrimoire context\n")
 	fmt.Printf("  cli:      %s\n", out.CLIVersion)
 	if out.GrimoireVersion != "" {
@@ -372,10 +372,10 @@ func printContextHuman(out *contextOutput, r *settings.Resolved) {
 		fmt.Println()
 	}
 
-	// Registries
+	// Packages
 	fmt.Println()
-	fmt.Println("  Registries")
-	for _, reg := range out.Registries {
+	fmt.Println("  Packages")
+	for _, reg := range out.Packages {
 		icon := tui.IconOK
 		if !reg.Cloned {
 			icon = tui.IconWarn

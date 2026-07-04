@@ -16,7 +16,7 @@ const (
 	stateDone
 )
 
-// StatusBoard prints per-registry status lines and updates them in-place on a TTY.
+// StatusBoard prints per-package status lines and updates them in-place on a TTY.
 // On non-TTY (pipe/CI), prints simple "updating X..." lines upfront and is a no-op thereafter.
 type StatusBoard struct {
 	mu     sync.Mutex

@@ -36,8 +36,6 @@ type mcpUpdateOutput struct {
 	SkillsUpdated   []string `json:"skills_updated,omitempty"`
 	ProfilesAdded   []string `json:"profiles_added,omitempty"`
 	ProfilesUpdated []string `json:"profiles_updated,omitempty"`
-	PresetsAdded    []string `json:"presets_added,omitempty"`
-	PresetsUpdated  []string `json:"presets_updated,omitempty"`
 }
 
 type mcpCleanOutput struct {
@@ -92,7 +90,7 @@ func toolGrimoireClean(_ context.Context, request mcp.CallToolRequest) (*mcp.Cal
 // ── Install ───────────────────────────────────────────────────────────────────
 
 func performInstall(domain, subdomain, skill, target string) (mcpInstallOutput, error) {
-	regs := skills.AllSkillsRegistries()
+	regs := skills.AllSkillsPackages()
 	if len(regs) == 0 {
 		return mcpInstallOutput{}, fmt.Errorf("skills not found — run grimoire_update first")
 	}
@@ -102,7 +100,7 @@ func performInstall(domain, subdomain, skill, target string) (mcpInstallOutput, 
 
 	switch {
 	case skill != "":
-		skillPath, _, err := resolveSkillFromRegistries(regs, skill)
+		skillPath, _, err := resolveSkillFromPackages(regs, skill)
 		if err != nil {
 			return mcpInstallOutput{}, err
 		}
@@ -125,11 +123,12 @@ func performInstall(domain, subdomain, skill, target string) (mcpInstallOutput, 
 		}
 
 	default:
-		all, _, err := skills.ListAllSkillsFromRegistries(regs)
+		all, _, err := skills.ListAllSkillsFromPackages(regs)
 		if err != nil {
 			return mcpInstallOutput{}, err
 		}
-		for _, sk := range all {
+		for i := range all {
+			sk := all[i]
 			for _, ag := range targets {
 				ok, err := skills.InstallSkill(sk.Path, agent.SkillsDir(ag), true)
 				if err != nil {
@@ -178,7 +177,8 @@ func installDomainSilent(root, domain, subdomain, ag string) (count int, errs []
 			if err != nil {
 				continue
 			}
-			for _, sk := range skillList {
+			for i := range skillList {
+				sk := skillList[i]
 				ok, err := skills.InstallSkill(sk.Path, destDir, true)
 				if err != nil {
 					errs = append(errs, err.Error())
@@ -192,7 +192,8 @@ func installDomainSilent(root, domain, subdomain, ag string) (count int, errs []
 		if err != nil {
 			return 0, []string{err.Error()}
 		}
-		for _, sk := range skillList {
+		for i := range skillList {
+			sk := skillList[i]
 			ok, err := skills.InstallSkill(sk.Path, destDir, true)
 			if err != nil {
 				errs = append(errs, err.Error())
@@ -278,7 +279,8 @@ func uninstallDomainSilent(root, domain, subdomain, ag string) (count int, errs 
 			if err != nil {
 				continue
 			}
-			for _, sk := range skillList {
+			for i := range skillList {
+				sk := skillList[i]
 				ok, err := skills.UninstallSkill(sk.Name, destDir)
 				if err != nil {
 					errs = append(errs, err.Error())
@@ -292,7 +294,8 @@ func uninstallDomainSilent(root, domain, subdomain, ag string) (count int, errs 
 		if err != nil {
 			return 0, []string{err.Error()}
 		}
-		for _, sk := range skillList {
+		for i := range skillList {
+			sk := skillList[i]
 			ok, err := skills.UninstallSkill(sk.Name, destDir)
 			if err != nil {
 				errs = append(errs, err.Error())
@@ -307,13 +310,13 @@ func uninstallDomainSilent(root, domain, subdomain, ag string) (count int, errs 
 // ── Update ────────────────────────────────────────────────────────────────────
 
 func performUpdate(stable bool) (mcpUpdateOutput, error) {
-	home := skills.OfficialRegistryHome()
+	home := skills.OfficialPackageHome()
 	url := skills.GrimoireRepoURL()
 
-	// Local registry: skip all git ops
+	// Local package: skip all git ops
 	if filepath.IsAbs(url) {
 		if _, err := os.Stat(home); err != nil {
-			return mcpUpdateOutput{}, fmt.Errorf("local registry %q not found", home)
+			return mcpUpdateOutput{}, fmt.Errorf("local package %q not found", home)
 		}
 		return mcpUpdateOutput{AlreadyUpToDate: true}, nil
 	}
@@ -354,14 +357,13 @@ func performUpdate(stable bool) (mcpUpdateOutput, error) {
 		if err := gitops.CheckoutTag(home, latest); err != nil {
 			return mcpUpdateOutput{}, fmt.Errorf("checking out %s: %w", latest, err)
 		}
-		ch, _ := gitops.RegistryChangesSince(home, current.Commit)
+		ch, _ := gitops.PackageChangesSince(home, current.Commit)
 		relinkNewSkills(home, current.Commit)
 		return mcpUpdateOutput{
 			OldVersion: current.Version, OldCommit: current.Commit,
 			NewVersion: tagState.Version, NewCommit: tagState.Commit,
 			SkillsAdded: ch.SkillsAdded, SkillsUpdated: ch.SkillsUpdated,
 			ProfilesAdded: ch.ProfilesAdded, ProfilesUpdated: ch.ProfilesUpdated,
-			PresetsAdded: ch.PresetsAdded, PresetsUpdated: ch.PresetsUpdated,
 		}, nil
 	}
 
@@ -380,14 +382,13 @@ func performUpdate(stable bool) (mcpUpdateOutput, error) {
 		return mcpUpdateOutput{}, fmt.Errorf("updating: %w", err)
 	}
 	newState, _ := gitops.CurrentState(home)
-	ch, _ := gitops.RegistryChangesSince(home, current.Commit)
+	ch, _ := gitops.PackageChangesSince(home, current.Commit)
 	relinkNewSkills(home, current.Commit)
 	return mcpUpdateOutput{
 		OldVersion: current.Version, OldCommit: current.Commit,
 		NewVersion: newState.Version, NewCommit: newState.Commit,
 		SkillsAdded: ch.SkillsAdded, SkillsUpdated: ch.SkillsUpdated,
 		ProfilesAdded: ch.ProfilesAdded, ProfilesUpdated: ch.ProfilesUpdated,
-		PresetsAdded: ch.PresetsAdded, PresetsUpdated: ch.PresetsUpdated,
 	}, nil
 }
 

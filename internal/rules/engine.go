@@ -8,16 +8,16 @@ import (
 // Engine runs deterministic structural rules against the local grimoire setup.
 // Findings are returned as compliance.Diagnostic with Source="grimoire-rules".
 type Engine struct {
-	SkillsRegistries []skills.SkillsRegistry
-	ProjectDir       string
+	SkillsPackages []skills.SkillsPackage
+	ProjectDir     string
 }
 
 // Run executes all rules and returns all findings.
 func (e *Engine) Run() []compliance.Diagnostic {
 	var all []compliance.Diagnostic
-	all = append(all, checkSkillHasSkillMd(e.SkillsRegistries)...)
-	all = append(all, checkSkillMdFrontmatter(e.SkillsRegistries)...)
+	all = append(all, checkSkillHasSkillMd(e.SkillsPackages)...)
+	all = append(all, checkSkillMdFrontmatter(e.SkillsPackages)...)
 	all = append(all, checkAgentBrokenSymlinks()...)
-	all = append(all, checkSettingsParseable(e.ProjectDir)...)
+	all = append(all, checkConfigParseable(e.ProjectDir)...)
 	return all
 }

@@ -2,6 +2,7 @@ package tui
 
 import (
 	"fmt"
+	"os"
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -15,6 +16,7 @@ type selectModel struct {
 	cursor int
 	chosen string
 	quit   bool
+	ctrlC  bool
 }
 
 func (m *selectModel) Init() tea.Cmd { return nil }
@@ -22,7 +24,11 @@ func (m *selectModel) Init() tea.Cmd { return nil }
 func (m *selectModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	if msg, ok := msg.(tea.KeyMsg); ok {
 		switch msg.String() {
-		case "ctrl+c", "q", "esc":
+		case "ctrl+c":
+			m.quit = true
+			m.ctrlC = true
+			return m, tea.Quit
+		case "q", "esc":
 			m.quit = true
 			return m, tea.Quit
 		case "up", "k":
@@ -63,14 +69,17 @@ func (m *selectModel) View() string {
 // RunSelect shows a single-select menu. Returns chosen item and ok=false if cancelled.
 func RunSelect(title string, items []string) (string, bool) {
 	m := selectModel{title: title, items: items}
-	p := tea.NewProgram(&m, tea.WithOutput(selectOutput()))
-	final, err := p.Run()
+	p := tea.NewProgram(&m, ttyOpts()...)
+	final, err := runProgram(p)
 	if err != nil {
 		return "", false
 	}
 	res, ok := final.(*selectModel)
 	if !ok {
 		return "", false
+	}
+	if res.ctrlC {
+		os.Exit(0) //nolint:revive // intentional: TUI exit on Ctrl+C
 	}
 	if res.quit || res.chosen == "" {
 		return "", false
@@ -110,6 +119,7 @@ type profileSelectModel struct {
 	offset      int
 	chosen      string
 	quit        bool
+	ctrlC       bool
 }
 
 func (m *profileSelectModel) Init() tea.Cmd { return nil }
@@ -133,7 +143,11 @@ func (m *profileSelectModel) moveCursor(delta int) {
 func (m *profileSelectModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	if msg, ok := msg.(tea.KeyMsg); ok {
 		switch msg.String() {
-		case "ctrl+c", "esc":
+		case "ctrl+c":
+			m.quit = true
+			m.ctrlC = true
+			return m, tea.Quit
+		case "esc":
 			m.quit = true
 			return m, tea.Quit
 		case "up", "k":
@@ -219,6 +233,132 @@ func (m *profileSelectModel) View() string {
 	return sb.String()
 }
 
+// ── Scrollable select (configurable viewport + section headers) ───────────────
+
+type scrollSelectModel struct {
+	title      string
+	items      []string
+	maxVisible int
+	cursor     int
+	offset     int
+	chosen     string
+	quit       bool
+	ctrlC      bool
+}
+
+func (m *scrollSelectModel) Init() tea.Cmd { return nil }
+
+func (m *scrollSelectModel) moveCursor(delta int) {
+	next := m.cursor + delta
+	for next >= 0 && next < len(m.items) && isSectionItem(m.items[next]) {
+		next += delta
+	}
+	if next < 0 || next >= len(m.items) {
+		return
+	}
+	m.cursor = next
+	if m.cursor < m.offset {
+		m.offset = m.cursor
+	} else if m.cursor >= m.offset+m.maxVisible {
+		m.offset = m.cursor - m.maxVisible + 1
+	}
+}
+
+func (m *scrollSelectModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	if msg, ok := msg.(tea.KeyMsg); ok {
+		switch msg.String() {
+		case "ctrl+c":
+			m.quit = true
+			m.ctrlC = true
+			return m, tea.Quit
+		case "q", "esc":
+			m.quit = true
+			return m, tea.Quit
+		case "up", "k":
+			m.moveCursor(-1)
+		case "down", "j":
+			m.moveCursor(1)
+		case "enter", " ":
+			if isSelectableItem(m.items[m.cursor]) {
+				m.chosen = m.items[m.cursor]
+				return m, tea.Quit
+			}
+		}
+	}
+	return m, nil
+}
+
+func (m *scrollSelectModel) View() string {
+	var sb strings.Builder
+	sb.WriteString("\n")
+	sb.WriteString(StyleTitle.Render(m.title))
+	sb.WriteString("\n")
+	sb.WriteString(StyleHint.Render("  ↑↓ navigate   ENTER confirm   q quit"))
+	sb.WriteString("\n\n")
+
+	if m.offset > 0 {
+		fmt.Fprintf(&sb, "    %s\n", StyleHint.Render(fmt.Sprintf("↑ %d more", m.offset)))
+	}
+
+	end := m.offset + m.maxVisible
+	if end > len(m.items) {
+		end = len(m.items)
+	}
+
+	for i := m.offset; i < end; i++ {
+		item := m.items[i]
+		if isSectionItem(item) {
+			title := strings.TrimPrefix(item, ProfileSectionPrefix)
+			fmt.Fprintf(&sb, "\n  %s\n", StyleHint.Render("── "+title+" ──"))
+			continue
+		}
+		if i == m.cursor {
+			fmt.Fprintf(&sb, "  %s %s\n", StyleCursor.Render("▶"), StyleSelected.Render(item))
+		} else {
+			fmt.Fprintf(&sb, "    %s\n", StyleDim.Render(item))
+		}
+	}
+
+	remaining := len(m.items) - end
+	if remaining > 0 {
+		fmt.Fprintf(&sb, "    %s\n", StyleHint.Render(fmt.Sprintf("↓ %d more", remaining)))
+	}
+
+	return sb.String()
+}
+
+// RunSelectScrollable shows a single-select menu with a configurable viewport.
+// items may include ProfileSectionPrefix ("\x00section:") headers — non-selectable,
+// rendered as "── title ──". maxVisible controls visible rows before scrolling.
+func RunSelectScrollable(title string, items []string, maxVisible int) (string, bool) {
+	cursor := 0
+	for cursor < len(items) && isSectionItem(items[cursor]) {
+		cursor++
+	}
+	m := &scrollSelectModel{
+		title:      title,
+		items:      items,
+		maxVisible: maxVisible,
+		cursor:     cursor,
+	}
+	p := tea.NewProgram(m, ttyOpts()...)
+	final, err := runProgram(p)
+	if err != nil {
+		return "", false
+	}
+	res, ok := final.(*scrollSelectModel)
+	if !ok {
+		return "", false
+	}
+	if res.ctrlC {
+		os.Exit(0) //nolint:revive // intentional: TUI exit on Ctrl+C
+	}
+	if res.quit || res.chosen == "" {
+		return "", false
+	}
+	return res.chosen, true
+}
+
 // RunProfileSelect shows a scrollable (10-item viewport) profile picker.
 // items may include ProfileSectionPrefix headers (non-selectable), ProfileSelectNone,
 // and ProfileSelectOther sentinels — caller controls the full list.
@@ -248,13 +388,19 @@ func RunProfileSelect(items []string, annotations map[string]string, defaultItem
 		cursor:      cursor,
 		offset:      offset,
 	}
-	p := tea.NewProgram(m, tea.WithOutput(selectOutput()))
-	final, err := p.Run()
+	p := tea.NewProgram(m, ttyOpts()...)
+	final, err := runProgram(p)
 	if err != nil {
 		return "", false
 	}
 	res, ok := final.(*profileSelectModel)
-	if !ok || res.quit || res.chosen == "" {
+	if !ok {
+		return "", false
+	}
+	if res.ctrlC {
+		os.Exit(0) //nolint:revive // intentional: TUI exit on Ctrl+C
+	}
+	if res.quit || res.chosen == "" {
 		return "", false
 	}
 	return res.chosen, true

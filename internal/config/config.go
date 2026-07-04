@@ -1,4 +1,4 @@
-package settings
+package config
 
 import (
 	"fmt"
@@ -8,14 +8,30 @@ import (
 	"strings"
 )
 
+// LLMProviderConfig configures the API provider used by `grimoire check --independent`.
+// Named providers (anthropic, openai, openrouter, grok, ollama, groq) have built-in
+// defaults; only override fields that differ. Use name = "custom" for arbitrary endpoints.
+type LLMProviderConfig struct {
+	Name      string `toml:"name"`        // built-in name ("anthropic","openai","openrouter","grok","ollama","groq") or "custom"
+	BaseURL   string `toml:"base-url"`    // empty = use built-in default for named provider
+	APIKeyEnv string `toml:"api-key-env"` // env var holding the API key; empty = built-in default or none
+	Model     string `toml:"model"`       // empty = use built-in default for named provider
+	Format    string `toml:"format"`      // "openai" or "anthropic"; empty = derived from Name
+	MaxTokens int    `toml:"max-tokens"`  // 0 = use default (8192)
+}
+
 // CoreSection holds machine-level and top-level runtime settings.
 // These live under the [core] TOML section.
 type CoreSection struct {
 	Home              string
-	Profiles          []string // from [standards] profiles — stored here for convenience
-	Agents            []string // [core] agents — pinned agent targets (empty = auto-detect)
-	InstallMode       string   // [core] install-mode — "symlink" (default) | "copy"
-	UpdateConcurrency *int     // [core] update-concurrency — nil=default(8), 0=unlimited, N=cap at N
+	Profiles          []string          // from [standards] profiles — stored here for convenience
+	Agents            []string          // [core] agents — pinned agent targets (empty = auto-detect)
+	InstallMode       string            // [core] install-mode — "symlink" (default) | "copy"
+	UpdateConcurrency *int              // [core] update-concurrency — nil=default(8), 0=unlimited, N=cap at N
+	SearchPackages    []string          `toml:"search-packages"` // additional packages for `grimoire search` (global only)
+	CheckAgents       []string          `toml:"check-agents"`    // local CLI resolution order for --independent; empty = default
+	CheckProvider     LLMProviderConfig `toml:"check-provider"`  // API provider for --independent; zero = auto-detect
+	CheckExclude      []string          `toml:"check-exclude"`   // glob patterns for files to exclude from grimoire check
 }
 
 // DomainSection holds skill practice settings for one domain or subdomain.
@@ -28,19 +44,29 @@ type DomainSection struct {
 	ComplianceThresholdError int      // -1 = unset; 0 = allow none; N = allow up to N
 }
 
-// InlineSkillRef is a skill entry inside an inline profile definition.
-type InlineSkillRef struct {
-	Name     string
-	Priority int
+// CriterionRef links a stable compliance ID to a body bullet by substring match.
+// ID is what appears in the compliance report (e.g. "srp").
+// Matches is a substring matched against the extracted ## Criteria or ## Anti-patterns bullet.
+type CriterionRef struct {
+	ID      string `toml:"id"`
+	Matches string `toml:"matches"`
 }
 
-// RegistryDef is one entry in the [[registry]] table array.
-// It represents a named, priority-ordered skill registry (git URL or local path).
-// Multiple registries are searched in priority order (highest first) for skill resolution.
-type RegistryDef struct {
+// InlineSkillRef is a skill entry inside an inline profile definition.
+type InlineSkillRef struct {
+	Name         string
+	Priority     int
+	Criteria     []CriterionRef // optional: stable IDs mapped to ## Criteria bullets
+	AntiPatterns []CriterionRef // optional: stable IDs mapped to ## Anti-patterns bullets
+}
+
+// PackageDef is one entry in the [[package]] table array.
+// It represents a named, priority-ordered skill package source (git URL or local path).
+// Multiple packages are searched in priority order (highest first) for skill resolution.
+type PackageDef struct {
 	Name     string // user-chosen identifier, e.g. "official", "my-team"
 	URL      string // git URL, owner/repo[@version] shorthand, or absolute path
-	Official bool   // exactly one entry should be official (STANDARD.md-compliant registry)
+	Official bool   // exactly one entry should be official (STANDARD.md-compliant package)
 	Priority int    // 0 = unset; normalized in Merge: 100 if Official, else 50
 	Enabled  bool   // false = skip in resolution without removing the entry
 }
@@ -58,54 +84,74 @@ type InlineProfileDef struct {
 	ComplianceThresholdError int // -1 = unset
 }
 
-// FileSettings is one parsed settings.toml file.
-type FileSettings struct {
+// DependenciesSection holds the project/global dependency declaration.
+// Each entry is a package URL: [host/][owner/repo][@version][:glob_path].
+// List order encodes priority: first entry = highest priority.
+// Commenting out a line disables it (TOML omits it from parsing).
+type DependenciesSection struct {
+	Skills []string // ordered package refs: first=highest priority
+}
+
+// FileConfig is one parsed grimoire.toml file.
+type FileConfig struct {
 	Core           CoreSection
-	Registries     []RegistryDef               // from [[registry]] table array
+	Packages       []PackageDef                // from [[package]] table array
+	Dependencies   DependenciesSection         // from [dependencies] (preferred)
 	ReportPath     string                      // from [standards] report-path
 	StalenessDays  int                         // from [standards] staleness-days (0 = unset)
 	Extends        []string                    // from [standards] extends
+	CheckExclude   []string                    // from [standards] exclude
 	Sections       map[string]DomainSection    // dotted keys: "engineering", "engineering.architecture"
 	InlineProfiles map[string]InlineProfileDef // from [profiles.*]
 }
 
-// Resolved holds the effective settings after merging all file layers.
-type Resolved struct {
+// Config holds the effective settings after merging all file layers.
+type Config struct {
 	Core           CoreSection
-	Registries     []RegistryDef // merged [[registry]] entries, deduped by name
-	ReportPath     string        // first non-empty across layers
-	StalenessDays  int           // first nonzero across layers (default 7 when 0)
+	Packages       []PackageDef // merged [[package]] entries, deduped by name
+	ReportPath     string       // first non-empty across layers
+	StalenessDays  int          // first nonzero across layers (default 7 when 0)
 	sections       map[string]DomainSection
 	InlineProfiles map[string]InlineProfileDef // merged, higher-priority layers win per name
 	// Sources maps dotted key paths to the file that provided them.
 	// E.g. "core.home" → "/path/to/settings.toml"
 	Sources map[string]string
 	// MissingExtends holds standards.extends refs that could not be resolved
-	// because the referenced registry is not installed.
+	// because the referenced package is not installed.
 	MissingExtends []string
+	// DepSkills is the union of all layers' [dependencies] skills, deduped,
+	// in declaration order (project layer first, then global, then system).
+	DepSkills []string
+	// CheckExclude is the union of all layers' [standards] exclude patterns.
+	CheckExclude []string
 }
 
-// GlobalPath returns the path to the user-global settings file, respecting XDG_CONFIG_HOME.
+// ProjectPath returns the path to the project-level config file.
+func ProjectPath(dir string) string {
+	return filepath.Join(dir, "grimoire.toml")
+}
+
+// GlobalPath returns the path to the user-global config file, respecting XDG_CONFIG_HOME.
 func GlobalPath() string {
 	if h := os.Getenv("XDG_CONFIG_HOME"); h != "" {
-		return filepath.Join(h, "grimoire", "settings.toml")
+		return filepath.Join(h, "grimoire", "grimoire.toml")
 	}
 	home, _ := os.UserHomeDir()
-	return filepath.Join(home, ".config", "grimoire", "settings.toml")
+	return filepath.Join(home, ".config", "grimoire", "grimoire.toml")
 }
 
-// SystemPath returns the system-wide settings file path.
-// Linux/macOS: /etc/grimoire/settings.toml
-// Windows: %PROGRAMDATA%\grimoire\settings.toml.
+// SystemPath returns the system-wide config file path.
+// Linux/macOS: /etc/grimoire/grimoire.toml
+// Windows: %PROGRAMDATA%\grimoire\grimoire.toml.
 func SystemPath() string {
 	if runtime.GOOS == "windows" {
 		pd := os.Getenv("PROGRAMDATA")
 		if pd == "" {
 			pd = `C:\ProgramData`
 		}
-		return filepath.Join(pd, "grimoire", "settings.toml")
+		return filepath.Join(pd, "grimoire", "grimoire.toml")
 	}
-	return "/etc/grimoire/settings.toml"
+	return "/etc/grimoire/grimoire.toml"
 }
 
 var validStandardsFields = map[string]bool{
@@ -148,8 +194,8 @@ func ParseStandardsKey(dotted string) (domain, field string, err error) {
 
 // Merge combines layers in priority order — layers[0] wins over layers[1], etc.
 // paths must be the same length as layers and contains the source file path for each.
-func Merge(layers []FileSettings, paths []string) Resolved {
-	r := Resolved{
+func Merge(layers []FileConfig, paths []string) Config {
+	r := Config{
 		sections:       make(map[string]DomainSection),
 		InlineProfiles: make(map[string]InlineProfileDef),
 		Sources:        make(map[string]string),
@@ -189,11 +235,11 @@ func Merge(layers []FileSettings, paths []string) Resolved {
 		}
 	}
 
-	// Registries: union by name; first occurrence (highest-priority layer) wins per name.
-	// Normalize unset priorities: 100 for official, 50 for user registries.
+	// Packages: union by name; first occurrence (highest-priority layer) wins per name.
+	// Normalize unset priorities: 100 for official, 50 for user packages.
 	seenReg := make(map[string]bool)
 	for i := range layers {
-		for _, rd := range layers[i].Registries {
+		for _, rd := range layers[i].Packages {
 			if rd.Name == "" || seenReg[rd.Name] {
 				continue
 			}
@@ -205,7 +251,7 @@ func Merge(layers []FileSettings, paths []string) Resolved {
 					rd.Priority = 50
 				}
 			}
-			r.Registries = append(r.Registries, rd)
+			r.Packages = append(r.Packages, rd)
 		}
 	}
 
@@ -256,11 +302,33 @@ func Merge(layers []FileSettings, paths []string) Resolved {
 		r.sections[key] = merged
 	}
 
+	// DepSkills: union across all layers in declaration order, deduped.
+	seenDep := make(map[string]bool)
+	for i := range layers {
+		for _, dep := range layers[i].Dependencies.Skills {
+			if !seenDep[dep] {
+				seenDep[dep] = true
+				r.DepSkills = append(r.DepSkills, dep)
+			}
+		}
+	}
+
+	// CheckExclude: union across all layers in declaration order, deduped.
+	seenExclude := make(map[string]bool)
+	for i := range layers {
+		for _, pat := range layers[i].CheckExclude {
+			if !seenExclude[pat] {
+				seenExclude[pat] = true
+				r.CheckExclude = append(r.CheckExclude, pat)
+			}
+		}
+	}
+
 	return r
 }
 
 // SectionKeys returns all domain/subdomain keys present in the resolved settings.
-func (r Resolved) SectionKeys() []string { //nolint:gocritic // value receiver is intentional for immutable Resolved
+func (r Config) SectionKeys() []string { //nolint:gocritic // value receiver is intentional for immutable Config
 	keys := make([]string, 0, len(r.sections))
 	for k := range r.sections {
 		keys = append(keys, k)
@@ -271,7 +339,7 @@ func (r Resolved) SectionKeys() []string { //nolint:gocritic // value receiver i
 // ResolveSection returns the effective DomainSection for scope (e.g. "engineering.testing").
 // Subdomain keys overlay domain keys; unset subdomain keys inherit from the domain.
 // Only one level of nesting is supported (domain.subdomain).
-func (r Resolved) ResolveSection(scope string) DomainSection { //nolint:gocritic // value receiver is intentional for immutable Resolved
+func (r Config) ResolveSection(scope string) DomainSection { //nolint:gocritic // value receiver is intentional for immutable Config
 	parts := strings.SplitN(scope, ".", 2)
 	domain := r.sections[parts[0]]
 	if len(parts) == 1 {

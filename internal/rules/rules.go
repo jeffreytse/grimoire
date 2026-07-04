@@ -8,7 +8,7 @@ import (
 
 	"github.com/jeffreytse/grimoire/internal/agent"
 	"github.com/jeffreytse/grimoire/internal/compliance"
-	"github.com/jeffreytse/grimoire/internal/settings"
+	"github.com/jeffreytse/grimoire/internal/config"
 	"github.com/jeffreytse/grimoire/internal/skills"
 )
 
@@ -26,7 +26,7 @@ func diag(uri, code, message string, severity int) compliance.Diagnostic {
 }
 
 // checkSkillHasSkillMd reports Error for any skill directory missing SKILL.md.
-func checkSkillHasSkillMd(sources []skills.SkillsRegistry) []compliance.Diagnostic {
+func checkSkillHasSkillMd(sources []skills.SkillsPackage) []compliance.Diagnostic {
 	var out []compliance.Diagnostic
 	for _, src := range sources {
 		domains, err := skills.ListDomains(src.Root)
@@ -51,14 +51,15 @@ func checkSkillHasSkillMd(sources []skills.SkillsRegistry) []compliance.Diagnost
 }
 
 // checkSkillMdFrontmatter reports Warning when a SKILL.md lacks name or tags in frontmatter.
-func checkSkillMdFrontmatter(sources []skills.SkillsRegistry) []compliance.Diagnostic {
+func checkSkillMdFrontmatter(sources []skills.SkillsPackage) []compliance.Diagnostic {
 	var out []compliance.Diagnostic
 	for _, src := range sources {
 		allSkills, err := skills.ListAllSkills(src.Root)
 		if err != nil {
 			continue
 		}
-		for _, sk := range allSkills {
+		for i := range allSkills {
+			sk := allSkills[i]
 			skillMd := filepath.Join(sk.Path, "SKILL.md")
 			data, err := os.ReadFile(skillMd)
 			if err != nil {
@@ -174,17 +175,17 @@ func isBrokenSymlink(path string) bool {
 	return err != nil
 }
 
-// checkSettingsParseable reports Error if .grimoire/settings.toml exists but fails to parse.
-func checkSettingsParseable(projectDir string) []compliance.Diagnostic {
-	path := filepath.Join(projectDir, ".grimoire", "settings.toml")
+// checkConfigParseable reports Error if grimoire.toml exists but fails to parse.
+func checkConfigParseable(projectDir string) []compliance.Diagnostic {
+	path := filepath.Join(projectDir, "grimoire.toml")
 	if _, err := os.Stat(path); err != nil {
 		return nil // absent is fine
 	}
-	if _, err := settings.ParseFile(path); err != nil {
+	if _, err := config.ParseFile(path); err != nil {
 		return []compliance.Diagnostic{diag(
 			"file://"+path,
-			"settings-toml-parseable",
-			fmt.Sprintf("settings.toml failed to parse: %v", err),
+			"grimoire-toml-parseable",
+			fmt.Sprintf("grimoire.toml failed to parse: %v", err),
 			1,
 		)}
 	}

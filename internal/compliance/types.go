@@ -1,24 +1,42 @@
 package compliance
 
+// ReportSummary aggregates diagnostic counts for quick CI consumption.
+type ReportSummary struct {
+	Errors     int `json:"errors"`
+	Warnings   int `json:"warnings"`
+	Info       int `json:"info"`
+	Pass       int `json:"pass"`
+	Suppressed int `json:"suppressed"`
+}
+
+// CriteriaMatrixEntry holds per-practice pass/fail criterion name lists.
+type CriteriaMatrixEntry struct {
+	Pass []string `json:"pass"`
+	Fail []string `json:"fail"`
+}
+
 // Report is the top-level structure of compliance-latest.json.
 type Report struct {
-	Version     string       `json:"version"`
-	Timestamp   string       `json:"timestamp"`
-	Mode        string       `json:"mode"`
-	Scope       string       `json:"scope"`
-	Result      string       `json:"result"`
-	Coverage    Coverage     `json:"coverage"`
-	Threshold   Threshold    `json:"threshold"`
-	Diagnostics []Diagnostic `json:"diagnostics"`
-	Git         GitMeta      `json:"git,omitempty"`
+	Version        string                         `json:"version"`
+	Timestamp      string                         `json:"timestamp"`
+	Mode           string                         `json:"mode"`
+	Scope          string                         `json:"scope"`
+	Result         string                         `json:"result"`
+	Coverage       Coverage                       `json:"coverage"`
+	Threshold      Threshold                      `json:"threshold"`
+	Summary        ReportSummary                  `json:"summary,omitempty"`
+	CriteriaMatrix map[string]CriteriaMatrixEntry `json:"criteria_matrix,omitempty"`
+	Diagnostics    []Diagnostic                   `json:"diagnostics"`
+	Git            GitMeta                        `json:"git,omitempty"`
 }
 
 // GitMeta records the git context at report generation time.
 // All fields are optional — omitted when git is unavailable or not applicable.
 type GitMeta struct {
-	Commit string `json:"commit,omitempty"`
-	Branch string `json:"branch,omitempty"`
-	Dirty  bool   `json:"dirty,omitempty"`
+	Commit  string `json:"commit,omitempty"`
+	Branch  string `json:"branch,omitempty"`
+	Dirty   bool   `json:"dirty,omitempty"`
+	BaseRef string `json:"base_ref,omitempty"` // set when mode=incremental
 }
 
 type Coverage struct {
@@ -28,14 +46,21 @@ type Coverage struct {
 	Details    []PracticeDetail `json:"details,omitempty"`
 }
 
+// CriterionDetail holds the pass/fail status of a single criterion within a practice.
+type CriterionDetail struct {
+	Name   string `json:"name"`
+	Status string `json:"status"` // "pass" | "fail"
+}
+
 // PracticeDetail holds per-skill coverage scores within a report.
 type PracticeDetail struct {
-	Name        string  `json:"name"`
-	Total       int     `json:"total"`
-	Passing     int     `json:"passing"`
-	Partial     int     `json:"partial"`
-	Failing     int     `json:"failing"`
-	CoveragePct float64 `json:"coverage_pct"`
+	Name        string            `json:"name"`
+	Total       int               `json:"total"`
+	Passing     int               `json:"passing"`
+	Partial     int               `json:"partial"`
+	Failing     int               `json:"failing"`
+	CoveragePct float64           `json:"coverage_pct"`
+	Criteria    []CriterionDetail `json:"criteria,omitempty"`
 }
 
 type PracticeSummary struct {

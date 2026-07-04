@@ -6,7 +6,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/jeffreytse/grimoire/internal/agent"
-	"github.com/jeffreytse/grimoire/internal/settings"
+	"github.com/jeffreytse/grimoire/internal/config"
 	"github.com/jeffreytse/grimoire/internal/skills"
 	"github.com/jeffreytse/grimoire/internal/tui"
 )
@@ -46,8 +46,8 @@ func runClean(cmd *cobra.Command, args []string) error {
 func resolveTargets(target string) []string {
 	switch target {
 	case "", "auto":
-		// Pinned agents in settings take priority over auto-detection
-		r, _ := settings.Load(getProjectDir())
+		// Pinned agents in config take priority over auto-detection
+		r, _ := config.Load(getProjectDir())
 		if len(r.Core.Agents) > 0 {
 			return r.Core.Agents
 		}

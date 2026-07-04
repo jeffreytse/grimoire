@@ -74,12 +74,12 @@ func PullWithForceFallback(dir string) error {
 	if !strings.Contains(err.Error(), "non-fast-forward") {
 		return err
 	}
-	fmt.Fprintf(os.Stderr, "warn: registry was force-pushed; resetting local clone to remote HEAD\n")
+	fmt.Fprintf(os.Stderr, "warn: package was force-pushed; resetting local clone to remote HEAD\n")
 	return FetchReset(dir)
 }
 
 // FetchReset fetches from origin (with force) and hard-resets to the remote HEAD.
-// Use for read-only registry clones: handles force-pushed remotes without error.
+// Use for read-only package clones: handles force-pushed remotes without error.
 func FetchReset(dir string) error {
 	r, err := gogit.PlainOpen(dir)
 	if err != nil {
@@ -239,60 +239,57 @@ func IsUpToDate(dir string) (upToDate bool, local, remote State, err error) {
 	return false, local, remote, nil
 }
 
-// RegistryChanges holds the categorized artifact changes in a registry since a given commit.
-type RegistryChanges struct {
+// PackageChanges holds the categorized artifact changes in a package since a given commit.
+type PackageChanges struct {
 	SkillsAdded     []string
 	SkillsUpdated   []string
 	ProfilesAdded   []string
 	ProfilesUpdated []string
-	PresetsAdded    []string
-	PresetsUpdated  []string
 }
 
 // HasChanges reports whether any artifact changed.
-func (c *RegistryChanges) HasChanges() bool {
+func (c *PackageChanges) HasChanges() bool {
 	return len(c.SkillsAdded)+len(c.SkillsUpdated)+
-		len(c.ProfilesAdded)+len(c.ProfilesUpdated)+
-		len(c.PresetsAdded)+len(c.PresetsUpdated) > 0
+		len(c.ProfilesAdded)+len(c.ProfilesUpdated) > 0
 }
 
 // HasSkillChanges reports whether any skill was added or updated.
-func (c *RegistryChanges) HasSkillChanges() bool {
+func (c *PackageChanges) HasSkillChanges() bool {
 	return len(c.SkillsAdded)+len(c.SkillsUpdated) > 0
 }
 
-// RegistryChangesSince returns categorized artifact changes since oldCommit.
-func RegistryChangesSince(dir, oldCommit string) (RegistryChanges, error) {
+// PackageChangesSince returns categorized artifact changes since oldCommit.
+func PackageChangesSince(dir, oldCommit string) (PackageChanges, error) {
 	r, err := gogit.PlainOpen(dir)
 	if err != nil {
-		return RegistryChanges{}, err
+		return PackageChanges{}, err
 	}
 	old, err := r.CommitObject(plumbing.NewHash(oldCommit))
 	if err != nil {
-		return RegistryChanges{}, err
+		return PackageChanges{}, err
 	}
 	head, err := r.Head()
 	if err != nil {
-		return RegistryChanges{}, err
+		return PackageChanges{}, err
 	}
 	headCommit, err := r.CommitObject(head.Hash())
 	if err != nil {
-		return RegistryChanges{}, err
+		return PackageChanges{}, err
 	}
 	oldTree, err := old.Tree()
 	if err != nil {
-		return RegistryChanges{}, err
+		return PackageChanges{}, err
 	}
 	headTree, err := headCommit.Tree()
 	if err != nil {
-		return RegistryChanges{}, err
+		return PackageChanges{}, err
 	}
 	diffs, err := object.DiffTree(oldTree, headTree)
 	if err != nil {
-		return RegistryChanges{}, err
+		return PackageChanges{}, err
 	}
 
-	var out RegistryChanges
+	var out PackageChanges
 	for _, c := range diffs {
 		from, to := c.From.Name, c.To.Name
 		activePath := to
@@ -319,26 +316,18 @@ func RegistryChangesSince(dir, oldCommit string) (RegistryChanges, error) {
 			} else {
 				out.ProfilesUpdated = append(out.ProfilesUpdated, name)
 			}
-		case "preset":
-			if isAdd {
-				out.PresetsAdded = append(out.PresetsAdded, name)
-			} else {
-				out.PresetsUpdated = append(out.PresetsUpdated, name)
-			}
 		}
 	}
 	return out, nil
 }
 
-// classifyPath returns the artifact kind and derived display name for a registry path.
+// classifyPath returns the artifact kind and derived display name for a package path.
 func classifyPath(p string) (kind, name string) {
 	switch {
 	case strings.HasSuffix(p, "SKILL.md"):
 		return "skill", skillPathToName(p)
 	case strings.HasPrefix(p, "profiles/") && strings.HasSuffix(p, ".toml"):
 		return "profile", strings.TrimSuffix(strings.TrimPrefix(p, "profiles/"), ".toml")
-	case strings.HasPrefix(p, "presets/") && strings.HasSuffix(p, "/settings.toml"):
-		return "preset", strings.TrimSuffix(strings.TrimPrefix(p, "presets/"), "/settings.toml")
 	}
 	return "", ""
 }

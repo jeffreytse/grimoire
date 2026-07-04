@@ -22,8 +22,8 @@ func makeSkillDir(t *testing.T, root, domain, skillName string, withSkillMd bool
 	}
 }
 
-func testSource(root string) []skills.SkillsRegistry {
-	return []skills.SkillsRegistry{{Name: "test", Root: root}}
+func testSource(root string) []skills.SkillsPackage {
+	return []skills.SkillsPackage{{Name: "test", Root: root}}
 }
 
 func TestCheckSkillHasSkillMd_Missing(t *testing.T) {
@@ -103,50 +103,42 @@ func TestCheckSkillMdFrontmatter_Complete(t *testing.T) {
 	}
 }
 
-func TestCheckSettingsParseable_Absent(t *testing.T) {
+func TestCheckConfigParseable_Absent(t *testing.T) {
 	dir := t.TempDir()
-	diags := checkSettingsParseable(dir)
+	diags := checkConfigParseable(dir)
 	if len(diags) != 0 {
-		t.Errorf("absent settings.toml should produce no diagnostics, got %d", len(diags))
+		t.Errorf("absent grimoire.toml should produce no diagnostics, got %d", len(diags))
 	}
 }
 
-func TestCheckSettingsParseable_Valid(t *testing.T) {
+func TestCheckConfigParseable_Valid(t *testing.T) {
 	dir := t.TempDir()
-	settingsDir := filepath.Join(dir, ".grimoire")
-	if err := os.MkdirAll(settingsDir, 0o755); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.WriteFile(filepath.Join(settingsDir, "settings.toml"), []byte(`
+	if err := os.WriteFile(filepath.Join(dir, "grimoire.toml"), []byte(`
 [standards.engineering]
 practices = ["apply-solid-principles"]
 `), 0o644); err != nil {
 		t.Fatal(err)
 	}
 
-	diags := checkSettingsParseable(dir)
+	diags := checkConfigParseable(dir)
 	if len(diags) != 0 {
-		t.Errorf("valid settings.toml should produce no diagnostics, got %d", len(diags))
+		t.Errorf("valid grimoire.toml should produce no diagnostics, got %d", len(diags))
 	}
 }
 
-func TestCheckSettingsParseable_Invalid(t *testing.T) {
+func TestCheckConfigParseable_Invalid(t *testing.T) {
 	dir := t.TempDir()
-	settingsDir := filepath.Join(dir, ".grimoire")
-	if err := os.MkdirAll(settingsDir, 0o755); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.WriteFile(filepath.Join(settingsDir, "settings.toml"), []byte(`
+	if err := os.WriteFile(filepath.Join(dir, "grimoire.toml"), []byte(`
 [[not valid toml
 `), 0o644); err != nil {
 		t.Fatal(err)
 	}
 
-	diags := checkSettingsParseable(dir)
+	diags := checkConfigParseable(dir)
 	if len(diags) != 1 {
-		t.Fatalf("invalid settings.toml should produce 1 diagnostic, got %d", len(diags))
+		t.Fatalf("invalid grimoire.toml should produce 1 diagnostic, got %d", len(diags))
 	}
-	if diags[0].Code != "settings-toml-parseable" {
+	if diags[0].Code != "grimoire-toml-parseable" {
 		t.Errorf("code = %q", diags[0].Code)
 	}
 	if diags[0].Severity != 1 {
@@ -156,8 +148,8 @@ func TestCheckSettingsParseable_Invalid(t *testing.T) {
 
 func TestEngine_Run_Empty(t *testing.T) {
 	eng := &Engine{
-		SkillsRegistries: []skills.SkillsRegistry{},
-		ProjectDir:       t.TempDir(),
+		SkillsPackages: []skills.SkillsPackage{},
+		ProjectDir:     t.TempDir(),
 	}
 	diags := eng.Run()
 	// no sources, no project files → no findings (agent symlink checks may find nothing)

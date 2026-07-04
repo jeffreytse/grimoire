@@ -142,8 +142,8 @@ func (m *multiselectModel) chosen() []string {
 // RunMultiselect shows a multiselect menu. Returns selected items and ok=false if cancelled.
 func RunMultiselect(title string, items []string, preSelected []bool) ([]string, bool) {
 	m := newMultiselectModel(title, items, preSelected)
-	p := tea.NewProgram(&m, tea.WithOutput(selectOutput()))
-	final, err := p.Run()
+	p := tea.NewProgram(&m, ttyOpts()...)
+	final, err := runProgram(p)
 	if err != nil {
 		return nil, false
 	}

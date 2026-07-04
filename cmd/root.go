@@ -1,10 +1,13 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 
 	"github.com/spf13/cobra"
+
+	"github.com/jeffreytse/grimoire/internal/skills"
 )
 
 var cliVersion = "dev"
@@ -35,22 +38,28 @@ var rootCmd = &cobra.Command{
 	SilenceUsage: true,
 	Use:          "grimoire",
 	Short:        "Grimoire — best practice enforcement for AI assistants",
-	Long: `Grimoire skills enforce best practices in AI-assisted development.
+	Long: `Grimoire — skills package manager for AI agents.
 
-  grimoire wizard        Open the interactive TUI wizard
-  grimoire install       Install skills to AI agent directories
-  grimoire uninstall     Remove skills from AI agent directories
-  grimoire update        Pull the latest grimoire skills and relink
+  grimoire init          Initialize grimoire.toml in the current project
+  grimoire install       Install skills — from grimoire.toml, or add+install a ref in one step
+  grimoire uninstall     Remove skills — all, or remove+unlink a ref in one step
+  grimoire update        Update all packages to latest
   grimoire list          List available domains, sub-domains, and skills
+  grimoire check         Run BPDD compliance check against declared practices
+  grimoire watch         Re-run compliance check whenever files change
+  grimoire status        Show project compliance health at a glance
+  grimoire wizard        Open the interactive TUI wizard
   grimoire doctor        Run a health check on the grimoire installation
   grimoire clean         Remove broken skill symlinks
-  grimoire init          Initialize .grimoire/ in the current project
-  grimoire check         Evaluate a compliance report
   grimoire config        Get or set grimoire configuration values
-  grimoire registry      Manage skill registries (add, remove, list, update)
+  grimoire package       Manage skill packages (add, remove, list, update)
   grimoire profile       Manage profiles (list, show, init)
   grimoire self-update   Update the grimoire CLI binary to the latest release`,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if _, err := os.Stat(skills.OfficialPackageHome()); err != nil {
+			fmt.Println("New to grimoire? Run: grimoire wizard")
+			fmt.Println()
+		}
 		return cmd.Help()
 	},
 }
@@ -66,6 +75,8 @@ func init() {
 	rootCmd.AddCommand(wizardCmd)
 	rootCmd.AddCommand(initCmd)
 	rootCmd.AddCommand(checkCmd)
+	rootCmd.AddCommand(watchCmd)
+	rootCmd.AddCommand(statusCmd)
 	rootCmd.AddCommand(installCmd)
 	rootCmd.AddCommand(uninstallCmd)
 	rootCmd.AddCommand(listCmd)
@@ -76,9 +87,8 @@ func init() {
 	rootCmd.AddCommand(selfUpdateCmd)
 	rootCmd.AddCommand(configCmd)
 	rootCmd.AddCommand(settingsCmd)
-	rootCmd.AddCommand(registryCmd)
+	rootCmd.AddCommand(packageCmd)
 	rootCmd.AddCommand(profileCmd)
-	rootCmd.AddCommand(presetCmd)
 	rootCmd.AddCommand(contextCmd)
 	rootCmd.AddCommand(mcpCmd)
 }

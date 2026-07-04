@@ -9,8 +9,8 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/jeffreytse/grimoire/internal/config"
 	"github.com/jeffreytse/grimoire/internal/profiles"
-	"github.com/jeffreytse/grimoire/internal/settings"
 	"github.com/jeffreytse/grimoire/internal/skills"
 	"github.com/jeffreytse/grimoire/internal/tui"
 )
@@ -86,7 +86,7 @@ func listProfileEntries(cwd, grimoireHome string) []profileListEntry {
 			})
 		}
 	}
-	if r, err := settings.Load(cwd); err == nil {
+	if r, err := config.Load(cwd); err == nil {
 		for _, name := range r.Core.Profiles {
 			entries = append(entries, profileListEntry{Name: name, Source: "active"})
 		}
@@ -96,9 +96,9 @@ func listProfileEntries(cwd, grimoireHome string) []profileListEntry {
 
 func runProfileList(_ *cobra.Command, _ []string) error {
 	cwd := getProjectDir()
-	grimoireHome := skills.OfficialRegistryHome()
+	grimoireHome := skills.OfficialPackageHome()
 	entries := listProfileEntries(cwd, grimoireHome)
-	r, settingsErr := settings.Load(cwd)
+	r, settingsErr := config.Load(cwd)
 
 	if flagProfileListJSON {
 		enc := json.NewEncoder(os.Stdout)
@@ -109,7 +109,7 @@ func runProfileList(_ *cobra.Command, _ []string) error {
 	if len(entries) == 0 {
 		if settingsErr != nil {
 			fmt.Printf("  %s no profiles found (settings load error: %v)\n", tui.IconWarn, settingsErr)
-			fmt.Printf("  check: %s\n", tui.StyleDim.Render(settings.GlobalPath()))
+			fmt.Printf("  check: %s\n", tui.StyleDim.Render(config.GlobalPath()))
 		} else {
 			fmt.Printf("  %s no profiles found\n", tui.IconWarn)
 			fmt.Printf("  run: grimoire profile init <name>\n")

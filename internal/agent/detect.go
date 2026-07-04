@@ -17,6 +17,22 @@ func Detected() []string {
 	return found
 }
 
+// DetectedCheckAgents returns check-capable agent names found on the system,
+// in CheckAgents order. "copilot" requires the "gh" binary (gh copilot extension).
+func DetectedCheckAgents() []string {
+	var found []string
+	for _, ag := range CheckAgents {
+		binary := ag
+		if ag == "copilot" {
+			binary = "gh"
+		}
+		if _, err := exec.LookPath(binary); err == nil {
+			found = append(found, ag)
+		}
+	}
+	return found
+}
+
 // Version returns the version string of an agent binary, or "".
 func Version(ag string) string {
 	out, err := exec.Command(ag, "--version").Output()

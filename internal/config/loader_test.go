@@ -1,4 +1,4 @@
-package settings
+package config
 
 import (
 	"os"
@@ -139,18 +139,18 @@ compliance-threshold = 85
 }
 
 func TestMerge_ProjectPersonalOverridesProjectShared(t *testing.T) {
-	personal := FileSettings{
+	personal := FileConfig{
 		Sections: map[string]DomainSection{
 			"engineering": {Fallback: "ask", ComplianceThresholdError: -1},
 		},
 	}
-	shared := FileSettings{
+	shared := FileConfig{
 		Sections: map[string]DomainSection{
 			"engineering": {Fallback: "skip", ComplianceThresholdError: -1},
 		},
 	}
 
-	r := Merge([]FileSettings{personal, shared}, []string{"local.toml", "shared.toml"})
+	r := Merge([]FileConfig{personal, shared}, []string{"local.toml", "shared.toml"})
 	ds := r.ResolveSection("engineering")
 	if ds.Fallback != "ask" {
 		t.Errorf("project-personal should win: Fallback = %q", ds.Fallback)
@@ -161,18 +161,18 @@ func TestMerge_ProjectPersonalOverridesProjectShared(t *testing.T) {
 }
 
 func TestMerge_ProjectSharedOverridesGlobal(t *testing.T) {
-	shared := FileSettings{
+	shared := FileConfig{
 		Sections: map[string]DomainSection{
 			"engineering": {ComplianceThreshold: 80, ComplianceThresholdError: -1},
 		},
 	}
-	global := FileSettings{
+	global := FileConfig{
 		Sections: map[string]DomainSection{
 			"engineering": {ComplianceThreshold: 60, ComplianceThresholdError: -1},
 		},
 	}
 
-	r := Merge([]FileSettings{shared, global}, []string{"shared.toml", "global.toml"})
+	r := Merge([]FileConfig{shared, global}, []string{"shared.toml", "global.toml"})
 	ds := r.ResolveSection("engineering")
 	if ds.ComplianceThreshold != 80 {
 		t.Errorf("project-shared should win: threshold = %v", ds.ComplianceThreshold)
@@ -180,12 +180,12 @@ func TestMerge_ProjectSharedOverridesGlobal(t *testing.T) {
 }
 
 func TestMerge_IndependentKeysMergeAcrossLayers(t *testing.T) {
-	shared := FileSettings{
+	shared := FileConfig{
 		Sections: map[string]DomainSection{
 			"engineering": {ComplianceThreshold: 80, ComplianceThresholdError: -1},
 		},
 	}
-	global := FileSettings{
+	global := FileConfig{
 		Sections: map[string]DomainSection{
 			"engineering": {
 				Practices:                []string{"Google"},
@@ -194,7 +194,7 @@ func TestMerge_IndependentKeysMergeAcrossLayers(t *testing.T) {
 		},
 	}
 
-	r := Merge([]FileSettings{shared, global}, []string{"shared.toml", "global.toml"})
+	r := Merge([]FileConfig{shared, global}, []string{"shared.toml", "global.toml"})
 	ds := r.ResolveSection("engineering")
 	// threshold from shared, practices from global
 	if ds.ComplianceThreshold != 80 {
@@ -206,7 +206,7 @@ func TestMerge_IndependentKeysMergeAcrossLayers(t *testing.T) {
 }
 
 func TestResolveSection_SubdomainOverridesDomain(t *testing.T) {
-	r := Resolved{
+	r := Config{
 		sections: map[string]DomainSection{
 			"engineering": {
 				ComplianceThreshold:      75,
@@ -232,7 +232,7 @@ func TestResolveSection_SubdomainOverridesDomain(t *testing.T) {
 }
 
 func TestResolveSection_SubdomainInheritsDomainKeys(t *testing.T) {
-	r := Resolved{
+	r := Config{
 		sections: map[string]DomainSection{
 			"engineering": {
 				Practices:                []string{"Google"},
@@ -299,17 +299,17 @@ disabled = ["apply-law-of-demeter", "apply-kiss-principle"]
 }
 
 func TestMerge_DisabledFirstWins(t *testing.T) {
-	personal := FileSettings{
+	personal := FileConfig{
 		Sections: map[string]DomainSection{
 			"engineering": {Disabled: []string{"apply-law-of-demeter"}, ComplianceThresholdError: -1},
 		},
 	}
-	shared := FileSettings{
+	shared := FileConfig{
 		Sections: map[string]DomainSection{
 			"engineering": {Disabled: []string{"apply-solid-principles"}, ComplianceThresholdError: -1},
 		},
 	}
-	r := Merge([]FileSettings{personal, shared}, []string{"local.toml", "shared.toml"})
+	r := Merge([]FileConfig{personal, shared}, []string{"local.toml", "shared.toml"})
 	ds := r.ResolveSection("engineering")
 	if len(ds.Disabled) != 1 || ds.Disabled[0] != "apply-law-of-demeter" {
 		t.Errorf("project-personal disabled should win: got %v", ds.Disabled)
@@ -322,7 +322,7 @@ func TestMerge_DisabledFirstWins(t *testing.T) {
 func TestLoad_EnvVarOverridesFileLayer(t *testing.T) {
 	tmpGlobal := t.TempDir()
 	t.Setenv("XDG_CONFIG_HOME", tmpGlobal)
-	writeSettingsFile(t, tmpGlobal, "grimoire/settings.toml", `
+	writeSettingsFile(t, tmpGlobal, "grimoire/grimoire.toml", `
 [core]
 home = "/file/home"
 `)
@@ -343,7 +343,7 @@ home = "/file/home"
 
 func TestLoad_CoreKeysIgnoredFromLocalLayer(t *testing.T) {
 	dir := t.TempDir()
-	writeSettingsFile(t, dir, ".grimoire/settings.toml", `
+	writeSettingsFile(t, dir, "grimoire.toml", `
 [core]
 home = "/local/home"
 `)
@@ -361,7 +361,7 @@ home = "/local/home"
 func TestLoad_EnvVarNotSet_UsesFileValue(t *testing.T) {
 	tmpGlobal := t.TempDir()
 	t.Setenv("XDG_CONFIG_HOME", tmpGlobal)
-	writeSettingsFile(t, tmpGlobal, "grimoire/settings.toml", `
+	writeSettingsFile(t, tmpGlobal, "grimoire/grimoire.toml", `
 [core]
 home = "/file/home"
 `)
@@ -377,7 +377,7 @@ home = "/file/home"
 }
 
 func TestWriteFile_RoundTrip(t *testing.T) {
-	original := FileSettings{
+	original := FileConfig{
 		Core: CoreSection{
 			Home:     "/opt/grimoire",
 			Profiles: []string{"oop"},
@@ -432,33 +432,31 @@ func TestWriteFile_RoundTrip(t *testing.T) {
 	}
 }
 
-func TestDeriveRegistryName(t *testing.T) {
+func TestDerivePackageName(t *testing.T) {
 	cases := []struct {
 		input string
 		want  string
 	}{
-		// GitHub shorthand — no host in result
-		{"acmecorp/standards", "acmecorp/standards"},
-		{"acmecorp/standards.git", "acmecorp/standards"},
-		// GitHub HTTPS — no host prefix
-		{"https://github.com/acmecorp/standards.git", "acmecorp/standards"},
-		{"https://github.com/acmecorp/standards", "acmecorp/standards"},
-		// GitHub SSH — no host prefix
-		{"git@github.com:acmecorp/standards.git", "acmecorp/standards"},
-		// GitLab HTTPS — host preserved
-		{"https://gitlab.com/acmecorp/standards.git", "gitlab.com/acmecorp/standards"},
-		// GitLab SSH — host preserved
-		{"git@gitlab.com:acmecorp/standards.git", "gitlab.com/acmecorp/standards"},
-		// self-hosted — host preserved
-		{"https://git.internal.corp/team/practices.git", "git.internal.corp/team/practices"},
-		// version suffix handled by ParseRef before DeriveRegistryName is called
-		{"https://github.com/acmecorp/standards", "acmecorp/standards"},
+		// GitHub shorthand — always includes github.com host + @latest
+		{"acmecorp/standards", "github.com/acmecorp/standards@latest"},
+		{"acmecorp/standards.git", "github.com/acmecorp/standards@latest"},
+		// GitHub HTTPS — always includes host + @latest
+		{"https://github.com/acmecorp/standards.git", "github.com/acmecorp/standards@latest"},
+		{"https://github.com/acmecorp/standards", "github.com/acmecorp/standards@latest"},
+		// GitHub SSH — always includes host + @latest
+		{"git@github.com:acmecorp/standards.git", "github.com/acmecorp/standards@latest"},
+		// GitLab HTTPS — host preserved + @latest
+		{"https://gitlab.com/acmecorp/standards.git", "gitlab.com/acmecorp/standards@latest"},
+		// GitLab SSH — host preserved + @latest
+		{"git@gitlab.com:acmecorp/standards.git", "gitlab.com/acmecorp/standards@latest"},
+		// self-hosted — host preserved + @latest
+		{"https://git.internal.corp/team/practices.git", "git.internal.corp/team/practices@latest"},
 	}
 
 	for _, c := range cases {
-		got := DeriveRegistryName(c.input)
+		got := DerivePackageName(c.input)
 		if got != c.want {
-			t.Errorf("DeriveRegistryName(%q) = %q, want %q", c.input, got, c.want)
+			t.Errorf("DerivePackageName(%q) = %q, want %q", c.input, got, c.want)
 		}
 	}
 }

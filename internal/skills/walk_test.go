@@ -442,12 +442,12 @@ tags: [oop, tdd, solid]
 ---
 # My Skill
 `)
-	name, tags := parseSkillMeta(skillDir)
-	if name != "my-skill" {
-		t.Errorf("name = %q, want my-skill", name)
+	meta, _ := parseSkillMeta(skillDir, true)
+	if meta.Name != "my-skill" {
+		t.Errorf("name = %q, want my-skill", meta.Name)
 	}
-	if len(tags) != 3 || tags[0] != "oop" || tags[1] != "tdd" || tags[2] != "solid" {
-		t.Errorf("tags = %v, want [oop tdd solid]", tags)
+	if len(meta.Tags) != 3 || meta.Tags[0] != "oop" || meta.Tags[1] != "tdd" || meta.Tags[2] != "solid" {
+		t.Errorf("tags = %v, want [oop tdd solid]", meta.Tags)
 	}
 }
 
@@ -460,9 +460,9 @@ tags:
   - fp
 ---
 `)
-	_, tags := parseSkillMeta(skillDir)
-	if len(tags) != 2 || tags[0] != "functional" || tags[1] != "fp" {
-		t.Errorf("tags = %v, want [functional fp]", tags)
+	meta, _ := parseSkillMeta(skillDir, true)
+	if len(meta.Tags) != 2 || meta.Tags[0] != "functional" || meta.Tags[1] != "fp" {
+		t.Errorf("tags = %v, want [functional fp]", meta.Tags)
 	}
 }
 
@@ -471,9 +471,9 @@ func TestParseSkillMeta_NoFrontmatter(t *testing.T) {
 	skillDir := writeSkillMD(t, filepath.Join(dir, "plain"), `# No frontmatter
 Just content.
 `)
-	name, tags := parseSkillMeta(skillDir)
-	if name != "" || len(tags) != 0 {
-		t.Errorf("expected empty for no frontmatter, got name=%q tags=%v", name, tags)
+	meta, _ := parseSkillMeta(skillDir, true)
+	if meta.Name != "" || len(meta.Tags) != 0 {
+		t.Errorf("expected empty for no frontmatter, got name=%q tags=%v", meta.Name, meta.Tags)
 	}
 }
 
@@ -484,19 +484,66 @@ name: no-tags-skill
 description: Skill without tags
 ---
 `)
-	name, tags := parseSkillMeta(skillDir)
-	if name != "no-tags-skill" {
-		t.Errorf("name = %q", name)
+	meta, _ := parseSkillMeta(skillDir, true)
+	if meta.Name != "no-tags-skill" {
+		t.Errorf("name = %q", meta.Name)
 	}
-	if len(tags) != 0 {
-		t.Errorf("expected no tags, got %v", tags)
+	if len(meta.Tags) != 0 {
+		t.Errorf("expected no tags, got %v", meta.Tags)
 	}
 }
 
 func TestParseSkillMeta_MissingFile(t *testing.T) {
-	name, tags := parseSkillMeta("/nonexistent/skill/dir")
-	if name != "" || len(tags) != 0 {
-		t.Errorf("missing SKILL.md should return empty, got name=%q tags=%v", name, tags)
+	meta, _ := parseSkillMeta("/nonexistent/skill/dir", true)
+	if meta.Name != "" || len(meta.Tags) != 0 {
+		t.Errorf("missing SKILL.md should return empty, got name=%q tags=%v", meta.Name, meta.Tags)
+	}
+}
+
+func TestParseSkillMeta_ExtendedFields(t *testing.T) {
+	dir := t.TempDir()
+	skillDir := writeSkillMD(t, filepath.Join(dir, "apply-solid"), `---
+name: apply-solid-principles
+version: 1.2.3
+description: Apply SOLID OOP design principles
+authors:
+  - Jeffrey Tse
+license: MIT
+compatibility:
+  - opencode
+  - claude
+metadata:
+  audience: senior-engineers
+dependencies:
+  apply-composition-over-inheritance: "*"
+  apply-polymorphism: "^1.0.0"
+---
+`)
+	meta, _ := parseSkillMeta(skillDir, true)
+
+	if meta.Version != "1.2.3" {
+		t.Errorf("version = %q", meta.Version)
+	}
+	if meta.Description != "Apply SOLID OOP design principles" {
+		t.Errorf("description = %q", meta.Description)
+	}
+	if len(meta.Authors) != 1 || meta.Authors[0] != "Jeffrey Tse" {
+		t.Errorf("authors = %v", meta.Authors)
+	}
+	if meta.License != "MIT" {
+		t.Errorf("license = %q", meta.License)
+	}
+	if len(meta.Compatibility) != 2 || meta.Compatibility[0] != "opencode" {
+		t.Errorf("compatibility = %v", meta.Compatibility)
+	}
+	if meta.Metadata["audience"] != "senior-engineers" {
+		t.Errorf("metadata[audience] = %q", meta.Metadata["audience"])
+	}
+	if meta.Dependencies["apply-composition-over-inheritance"] != "*" {
+		t.Errorf("dep[apply-composition] = %q", meta.Dependencies["apply-composition-over-inheritance"])
+	}
+	if meta.Dependencies["apply-polymorphism"] != "^1.0.0" {
+		t.Errorf("dep[apply-polymorphism] = %q", meta.Dependencies["apply-polymorphism"])
 	}
 }
 

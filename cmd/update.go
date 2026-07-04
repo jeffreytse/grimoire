@@ -11,6 +11,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/jeffreytse/grimoire/internal/agent"
+	"github.com/jeffreytse/grimoire/internal/config"
 	gitops "github.com/jeffreytse/grimoire/internal/git"
 	"github.com/jeffreytse/grimoire/internal/skills"
 	"github.com/jeffreytse/grimoire/internal/tui"
@@ -19,27 +20,29 @@ import (
 var (
 	flagUpdateStable bool
 	flagUpdateYes    bool
+	flagUpdateDryRun bool
 )
 
 var updateCmd = &cobra.Command{
 	Use:     "update",
 	Aliases: []string{"upgrade"},
-	Short:   "Pull the latest grimoire skills and relink",
+	Short:   "Update all packages to latest",
 	RunE:    runUpdate,
 }
 
 func init() {
 	updateCmd.Flags().BoolVar(&flagUpdateStable, "stable", false, "check out the latest tagged release instead of HEAD")
 	updateCmd.Flags().BoolVar(&flagUpdateYes, "yes", false, "skip confirmation prompts")
+	updateCmd.Flags().BoolVar(&flagUpdateDryRun, "dry-run", false, "show what would change without pulling")
 }
 
 func runUpdate(cmd *cobra.Command, args []string) error {
-	home := skills.OfficialRegistryHome()
+	home := skills.OfficialPackageHome()
 	url := skills.GrimoireRepoURL()
 
-	// Local path registry — nothing to pull
+	// Local path package — nothing to pull
 	if filepath.IsAbs(url) {
-		fmt.Printf("  %s  Official registry is a local path — no update needed.\n", tui.IconOK)
+		fmt.Printf("  %s  Official package is a local path — no update needed.\n", tui.IconOK)
 		return nil
 	}
 
@@ -64,10 +67,37 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		return nil
 	}
 
+	var coreErr error
 	if flagUpdateStable {
-		return updateStable(home)
+		coreErr = updateStable(home)
+	} else {
+		coreErr = updateUnstable(home)
 	}
-	return updateUnstable(home)
+	if coreErr != nil {
+		return coreErr
+	}
+
+	// Also update all non-official, non-pinned, non-local packages from [[package]].
+	cfg, err := config.LoadGlobal()
+	if err != nil {
+		return nil // best-effort
+	}
+	for _, rd := range cfg.Packages {
+		if rd.Official || !rd.Enabled {
+			continue
+		}
+		u, ver := config.ParseRef(rd.URL)
+		if u == "" {
+			u = rd.URL
+		}
+		if filepath.IsAbs(u) || ver != "" {
+			continue // local or pinned — skip
+		}
+		if err := updateNamedPackage(rd.Name, rd.URL, "", os.Stdout); err != nil {
+			fmt.Fprintf(os.Stderr, "  warn: %s: %v\n", rd.Name, err)
+		}
+	}
+	return nil
 }
 
 func updateStable(home string) error {
@@ -109,13 +139,22 @@ func updateStable(home string) error {
 		}
 	}
 
+	if flagUpdateDryRun {
+		fmt.Printf("  (dry run — not checking out)\n")
+		return nil
+	}
+
+	snapshot := snapshotSkillVersions(home)
+
 	fmt.Printf("Checking out %s...\n", latest)
 	if err := gitops.CheckoutTag(home, latest); err != nil {
 		return fmt.Errorf("checking out %s: %w", latest, err)
 	}
+	skills.InvalidateSkillCache(home)
 
 	printUpgradeResult(current, tagState)
 	relinkNewSkills(home, current.Commit)
+	printVersionDiff(home, snapshot)
 	return nil
 }
 
@@ -153,14 +192,24 @@ func updateUnstable(home string) error {
 		}
 	}
 
+	if flagUpdateDryRun {
+		fmt.Printf("  (dry run — not pulling)\n")
+		return nil
+	}
+
+	// Snapshot criteria before pull so we can diff after.
+	snapshot := snapshotSkillVersions(home)
+
 	fmt.Printf("Pulling latest grimoire at %s...\n", home)
 	if err := gitops.PullWithForceFallback(home); err != nil {
 		return fmt.Errorf("updating: %w", err)
 	}
+	skills.InvalidateSkillCache(home)
 
 	newState, _ := gitops.CurrentState(home)
 	printUpgradeResult(current, newState)
 	relinkNewSkills(home, current.Commit)
+	printVersionDiff(home, snapshot)
 	return nil
 }
 
@@ -173,9 +222,9 @@ func printUpgradeResult(old, updated gitops.State) {
 
 func relinkNewSkills(home, oldCommit string) {
 	root := skills.SkillsRoot()
-	changes, err := gitops.RegistryChangesSince(home, oldCommit)
+	changes, err := gitops.PackageChangesSince(home, oldCommit)
 	if err == nil {
-		printRegistryChanges(changes, home, oldCommit, os.Stdout)
+		printPackageChanges(changes, home, oldCommit, os.Stdout)
 		if !changes.HasSkillChanges() {
 			fmt.Printf("  %s  No skill changes — skipping relink.\n", tui.IconOK)
 			fmt.Println()
@@ -193,8 +242,8 @@ func relinkNewSkills(home, oldCommit string) {
 		if err != nil {
 			continue
 		}
-		for _, sk := range allSkills {
-			_, _ = skills.InstallSkill(sk.Path, dir, true)
+		for i := range allSkills {
+			_, _ = skills.InstallSkill(allSkills[i].Path, dir, true)
 		}
 		_, _ = skills.CleanBrokenSymlinks(dir)
 	}
@@ -202,7 +251,7 @@ func relinkNewSkills(home, oldCommit string) {
 	fmt.Println()
 }
 
-func printRegistryChanges(c gitops.RegistryChanges, dir, oldCommit string, w io.Writer) { //nolint:gocritic // callers in two files; value semantics avoids pointer threading
+func printPackageChanges(c gitops.PackageChanges, dir, oldCommit string, w io.Writer) { //nolint:gocritic // callers in two files; value semantics avoids pointer threading
 	if dir != "" && oldCommit != "" {
 		if commits, _ := gitops.CommitsSince(dir, oldCommit); len(commits) > 0 {
 			fmt.Fprintf(w, "    %s\n", tui.StyleBold.Render("commits:"))
@@ -218,7 +267,6 @@ func printRegistryChanges(c gitops.RegistryChanges, dir, oldCommit string, w io.
 	}
 	printChangeSection("skills", c.SkillsAdded, c.SkillsUpdated, w)
 	printChangeSection("profiles", c.ProfilesAdded, c.ProfilesUpdated, w)
-	printChangeSection("presets", c.PresetsAdded, c.PresetsUpdated, w)
 }
 
 func printChangeSection(label string, added, updated []string, w io.Writer) {
@@ -236,4 +284,63 @@ func printChangeSection(label string, added, updated []string, w io.Writer) {
 
 func errNotGit(dir string) error {
 	return fmt.Errorf("%s is not a git repository", dir)
+}
+
+// versionSnapshot records skill versions before an update so changes can be shown after.
+type versionSnapshot map[string]string // skill name → version (empty string if unversioned)
+
+// snapshotSkillVersions walks the package and captures skill versions.
+func snapshotSkillVersions(home string) versionSnapshot {
+	snap := make(versionSnapshot)
+	all, err := skills.ListAllSkills(home)
+	if err != nil {
+		return snap
+	}
+	for i := range all {
+		sk := all[i]
+		v := sk.Version
+		if v == "" {
+			v = "unversioned"
+		}
+		snap[sk.Name] = v
+	}
+	return snap
+}
+
+// printVersionDiff compares the current package skills against the pre-update snapshot
+// and prints any version changes.
+func printVersionDiff(home string, before versionSnapshot) {
+	if len(before) == 0 {
+		return
+	}
+	all, err := skills.ListAllSkills(home)
+	if err != nil {
+		return
+	}
+	var diffs []string
+	for i := range all {
+		sk := all[i]
+		oldVer, exists := before[sk.Name]
+		if !exists {
+			continue // new skill — already shown in package changes
+		}
+		newVer := sk.Version
+		if newVer == "" {
+			newVer = "unversioned"
+		}
+		if oldVer == newVer {
+			continue
+		}
+		diffs = append(diffs, fmt.Sprintf("    %s %s  %s → %s",
+			tui.StyleGold.Render("~"), sk.Name,
+			tui.StyleDim.Render(oldVer), newVer))
+	}
+	if len(diffs) == 0 {
+		return
+	}
+	fmt.Printf("  %s  Skills updated — re-run `grimoire check` to verify compliance:\n", tui.IconWarn)
+	for _, line := range diffs {
+		fmt.Println(line)
+	}
+	fmt.Println()
 }

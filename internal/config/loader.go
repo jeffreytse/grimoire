@@ -1,4 +1,4 @@
-package settings
+package config
 
 import (
 	"errors"
@@ -12,9 +12,9 @@ import (
 )
 
 // ParseFile reads one settings.toml file.
-// Returns a zero-value FileSettings when the file is absent — callers treat missing as defaults.
-func ParseFile(path string) (FileSettings, error) {
-	fs := FileSettings{Sections: make(map[string]DomainSection)}
+// Returns a zero-value FileConfig when the file is absent — callers treat missing as defaults.
+func ParseFile(path string) (FileConfig, error) {
+	fs := FileConfig{Sections: make(map[string]DomainSection)}
 	data, err := os.ReadFile(path)
 	if errors.Is(err, os.ErrNotExist) {
 		return fs, nil
@@ -30,15 +30,15 @@ func ParseFile(path string) (FileSettings, error) {
 }
 
 // Load reads all three file layers for projectDir in priority order and merges them.
-// Layers (highest → lowest): .grimoire/settings.toml → ~/.config/grimoire/settings.toml → /etc/grimoire/settings.toml.
-func Load(projectDir string) (Resolved, error) {
+// Layers (highest → lowest): grimoire.toml → ~/.config/grimoire/grimoire.toml → /etc/grimoire/grimoire.toml.
+func Load(projectDir string) (Config, error) {
 	layerPaths := []string{
-		filepath.Join(projectDir, ".grimoire", "settings.toml"),
+		ProjectPath(projectDir),
 		GlobalPath(),
 		SystemPath(),
 	}
 
-	layers := make([]FileSettings, 0, len(layerPaths))
+	layers := make([]FileConfig, 0, len(layerPaths))
 	paths := make([]string, 0, len(layerPaths))
 	var layerErrors []error
 
@@ -54,22 +54,58 @@ func Load(projectDir string) (Resolved, error) {
 
 	// Fail only if every layer failed (nothing at all could be loaded).
 	if len(layers) == 0 && len(layerErrors) > 0 {
-		return Resolved{}, layerErrors[0]
+		return Config{}, layerErrors[0]
 	}
 
-	// [core] and [[registry]] are user-level; strip from the local project layer.
+	// [core] and [[package]] are user-level; strip from the local project layer.
 	// Core.Profiles is NOT cleared — it comes from [standards], not [core].
 	if len(layers) > 0 {
 		layers[0].Core.Home = ""
-		layers[0].Registries = nil
+		layers[0].Packages = nil
 	}
 
-	// Load settings.toml from non-official [[registry]] entries as base layers.
-	// Each registry can ship a settings.toml with practices/profiles for automatic inheritance.
+	// Expand [dependencies] skills into a synthetic lowest-priority PackageDef layer.
+	// Each package ref is parsed into a PackageDef for the package it references.
+	// Official/local refs and duplicates are skipped.
+	// Using a synthetic appended layer ensures [dependencies] entries never override
+	// user's [[package]] entries (Merge dedupes by name, first-seen wins).
+	{
+		seen := make(map[string]bool)
+		var syntheticPkgs []PackageDef
+		for i := range layers {
+			for _, dep := range layers[i].Dependencies.Skills {
+				ref := ParsePackageRef(dep)
+				if ref.IsLocal() || ref.IsOfficialRepoPath() || ref.PackageName == "" {
+					continue
+				}
+				if seen[ref.PackageName] {
+					continue
+				}
+				seen[ref.PackageName] = true
+				syntheticPkgs = append(syntheticPkgs, PackageDef{
+					Name:     ref.PackageName,
+					URL:      ref.PackageURL,
+					Enabled:  true,
+					Priority: 50,
+				})
+			}
+		}
+		if len(syntheticPkgs) > 0 {
+			layers = append(layers, FileConfig{
+				Sections:       make(map[string]DomainSection),
+				InlineProfiles: make(map[string]InlineProfileDef),
+				Packages:       syntheticPkgs,
+			})
+			paths = append(paths, "<dependencies>")
+		}
+	}
+
+	// Load grimoire.toml from non-official [[package]] entries as base layers.
+	// Each package can ship a grimoire.toml with practices/profiles for automatic inheritance.
 	seenExt := make(map[string]bool)
 	for i := range layers {
 		layer := &layers[i]
-		for _, rd := range layer.Registries {
+		for _, rd := range layer.Packages {
 			if rd.Official || !rd.Enabled || rd.Name == "" {
 				continue
 			}
@@ -77,26 +113,26 @@ func Load(projectDir string) (Resolved, error) {
 				continue
 			}
 			seenExt[rd.Name] = true
-			regHome := registryDefHome(rd)
-			rf, err := ParseFile(filepath.Join(regHome, "settings.toml"))
+			regHome := packageDefHome(rd)
+			rf, err := ParseFile(filepath.Join(regHome, "grimoire.toml"))
 			if err != nil {
 				continue
 			}
 			rf.Core = CoreSection{}
-			rf.Registries = nil
+			rf.Packages = nil
 			rf.InlineProfiles = nil
 			layers = append(layers, rf)
-			paths = append(paths, filepath.Join(regHome, "settings.toml"))
+			paths = append(paths, filepath.Join(regHome, "grimoire.toml"))
 		}
 	}
 
-	// Build registry name → home dir map for extends resolution.
+	// Build package name → home dir map for extends resolution.
 	regHomes := make(map[string]string)
 	for i := range layers {
-		for _, rd := range layers[i].Registries {
+		for _, rd := range layers[i].Packages {
 			if rd.Name != "" {
 				if _, seen := regHomes[rd.Name]; !seen {
-					regHomes[rd.Name] = registryDefHome(rd)
+					regHomes[rd.Name] = packageDefHome(rd)
 				}
 			}
 		}
@@ -125,7 +161,7 @@ func Load(projectDir string) (Resolved, error) {
 				continue
 			}
 			ef.Core = CoreSection{}
-			ef.Registries = nil
+			ef.Packages = nil
 			ef.Extends = nil // no recursive extends in v1
 			ef.InlineProfiles = nil
 			layers = append(layers, ef)
@@ -145,25 +181,30 @@ func Load(projectDir string) (Resolved, error) {
 	return r, nil
 }
 
-// registryDefHome returns the local clone directory for a registry definition.
-func registryDefHome(rd RegistryDef) string {
-	u, _ := ParseRef(rd.URL)
+// packageDefHome returns the local clone directory for a package definition.
+// Path uses the versioned derived name: packages/<host>/<owner>/<repo>@<version>.
+func packageDefHome(rd PackageDef) string {
+	u, ver := ParseRef(rd.URL)
+	if u == "" {
+		u = rd.URL
+	}
 	if filepath.IsAbs(u) {
 		return u
 	}
+	versionedName := filepath.FromSlash(DeriveVersionedName(u, ver))
 	if h := os.Getenv("GRIMOIRE_HOME"); h != "" {
-		return filepath.Join(h, "registries", rd.Name)
+		return filepath.Join(h, "packages", versionedName)
 	}
 	home, _ := os.UserHomeDir()
-	return filepath.Join(home, ".grimoire", "registries", rd.Name)
+	return filepath.Join(home, ".grimoire", "packages", versionedName)
 }
 
-// resolveExtendsRef maps a standards.extends ref to a settings.toml path.
-// Format: "<registry-name>" → registry root settings.toml
+// resolveExtendsRef maps a standards.extends ref to a grimoire.toml path.
+// Format: "<package-name>" → package root grimoire.toml
 //
-//	"<registry-name>/<preset-name>" → preset settings.toml
+//	"<package-name>/<preset-name>" → preset grimoire.toml
 //
-// Longest installed registry name wins when names share a prefix.
+// Longest installed package name wins when names share a prefix.
 func resolveExtendsRef(ref string, regHomes map[string]string) (string, error) {
 	best := ""
 	for name := range regHomes {
@@ -172,33 +213,33 @@ func resolveExtendsRef(ref string, regHomes map[string]string) (string, error) {
 		}
 	}
 	if best == "" {
-		return "", fmt.Errorf("no installed registry matches extends ref %q", ref)
+		return "", fmt.Errorf("no installed package matches extends ref %q", ref)
 	}
 	remainder := strings.TrimPrefix(strings.TrimPrefix(ref, best), "/")
 	if remainder == "" {
-		return filepath.Join(regHomes[best], "settings.toml"), nil
+		return filepath.Join(regHomes[best], "grimoire.toml"), nil
 	}
-	return filepath.Join(regHomes[best], "presets", remainder, "settings.toml"), nil
+	return filepath.Join(regHomes[best], "presets", remainder, "grimoire.toml"), nil
 }
 
 // LoadGlobal reads only the global settings file (no project layers).
-func LoadGlobal() (FileSettings, error) {
+func LoadGlobal() (FileConfig, error) {
 	return ParseFile(GlobalPath())
 }
 
 // LoadFile reads a single settings file by path.
 // Used by grimoire config get/set/unset to target a specific level.
-func LoadFile(path string) (FileSettings, error) {
+func LoadFile(path string) (FileConfig, error) {
 	return ParseFile(path)
 }
 
 // SaveGlobal writes fs to the global settings file, creating parent dirs as needed.
-func SaveGlobal(fs FileSettings) error { //nolint:gocritic // value semantics intentional for config snapshot
+func SaveGlobal(fs FileConfig) error { //nolint:gocritic // value semantics intentional for config snapshot
 	return WriteFile(GlobalPath(), fs)
 }
 
 // WriteFile serializes fs to a settings.toml file, creating parent dirs as needed.
-func WriteFile(path string, fs FileSettings) error { //nolint:gocritic // value semantics intentional for config snapshot
+func WriteFile(path string, fs FileConfig) error { //nolint:gocritic // value semantics intentional for config snapshot
 	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
 		return err
 	}
@@ -210,9 +251,9 @@ func WriteFile(path string, fs FileSettings) error { //nolint:gocritic // value 
 	return os.WriteFile(path, data, 0o644)
 }
 
-// parseRaw converts a map[string]any (from toml.Unmarshal) into FileSettings.
-func parseRaw(raw map[string]any) FileSettings {
-	fs := FileSettings{
+// parseRaw converts a map[string]any (from toml.Unmarshal) into FileConfig.
+func parseRaw(raw map[string]any) FileConfig {
+	fs := FileConfig{
 		Sections:       make(map[string]DomainSection),
 		InlineProfiles: make(map[string]InlineProfileDef),
 	}
@@ -222,27 +263,37 @@ func parseRaw(raw map[string]any) FileSettings {
 			if m, ok := val.(map[string]any); ok {
 				fs.Core = parseCoreSection(m)
 			}
-		case "registry":
-			// [[registry]] is a TOML table array → []any of map[string]any
+		case "package":
+			// [[package]] is a TOML table array → []any of map[string]any
 			if arr, ok := val.([]any); ok {
-				fs.Registries = parseRegistryDefs(arr)
+				fs.Packages = parsePackageDefs(arr)
+			}
+		case "registry":
+			// [[package]] — backward-compat alias for [[package]]
+			if arr, ok := val.([]any); ok && len(fs.Packages) == 0 {
+				fs.Packages = parsePackageDefs(arr)
 			}
 		case "standards":
 			if m, ok := val.(map[string]any); ok {
 				fs.Extends = parseStringSlice(m["extends"])
+				fs.CheckExclude = parseStringSlice(m["exclude"])
 				fs.Core.Profiles = append(fs.Core.Profiles, parseProfilesFromMap(m)...)
 				fs.ReportPath, _ = m["report-path"].(string) //nolint:revive // wrong type silently skipped
 				if v, ok := anyToInt(m["staleness-days"]); ok && v > 0 {
 					fs.StalenessDays = v
 				}
 				for domainName, val := range m {
-					if domainName == "profiles" || domainName == "extends" {
+					if domainName == "profiles" || domainName == "extends" || domainName == "exclude" {
 						continue
 					}
 					if sub, ok := val.(map[string]any); ok {
 						parseDomainInto(domainName, sub, &fs)
 					}
 				}
+			}
+		case "dependencies":
+			if m, ok := val.(map[string]any); ok {
+				fs.Dependencies.Skills = parseStringSlice(m["skills"])
 			}
 		case "profiles":
 			if m, ok := val.(map[string]any); ok {
@@ -253,15 +304,15 @@ func parseRaw(raw map[string]any) FileSettings {
 	return fs
 }
 
-// parseRegistryDefs parses a [[registry]] TOML table array into RegistryDef entries.
-func parseRegistryDefs(arr []any) []RegistryDef {
-	var result []RegistryDef
+// parsePackageDefs parses a [[package]] TOML table array into PackageDef entries.
+func parsePackageDefs(arr []any) []PackageDef {
+	var result []PackageDef
 	for _, item := range arr {
 		m, ok := item.(map[string]any)
 		if !ok {
 			continue
 		}
-		rd := RegistryDef{Enabled: true}
+		rd := PackageDef{Enabled: true}
 		rd.Name, _ = m["name"].(string)       //nolint:revive // wrong type silently skipped
 		rd.URL, _ = m["url"].(string)         //nolint:revive // wrong type silently skipped
 		rd.Official, _ = m["official"].(bool) //nolint:revive // wrong type silently skipped
@@ -339,6 +390,7 @@ func parseCoreSection(m map[string]any) CoreSection {
 	cs.Home, _ = m["home"].(string)                //nolint:revive // wrong type silently skipped
 	cs.InstallMode, _ = m["install-mode"].(string) //nolint:revive // wrong type silently skipped
 	cs.Agents = parseStringSlice(m["agents"])
+	cs.CheckExclude = parseStringSlice(m["check-exclude"])
 	if v, ok := anyToInt(m["update-concurrency"]); ok && v >= 0 {
 		cs.UpdateConcurrency = &v
 	}
@@ -360,7 +412,7 @@ func parseProfilesFromMap(m map[string]any) []string {
 }
 
 // parseDomainInto extracts a DomainSection from m (at prefix) and recurses into sub-maps.
-func parseDomainInto(prefix string, m map[string]any, fs *FileSettings) {
+func parseDomainInto(prefix string, m map[string]any, fs *FileConfig) {
 	ds := DomainSection{ComplianceThresholdError: -1}
 
 	for k, v := range m {
@@ -400,14 +452,21 @@ func parseDomainInto(prefix string, m map[string]any, fs *FileSettings) {
 	fs.Sections[prefix] = ds
 }
 
-// toMap converts FileSettings to a nested map[string]any for TOML marshaling.
-func toMap(fs *FileSettings) map[string]any {
+// toMap converts FileConfig to a nested map[string]any for TOML marshaling.
+func toMap(fs *FileConfig) map[string]any {
 	m := map[string]any{}
 
-	// [[registry]] table array
-	if len(fs.Registries) > 0 {
+	// [dependencies] — written before [[package]] for clarity
+	if len(fs.Dependencies.Skills) > 0 {
+		m["dependencies"] = map[string]any{
+			"skills": fs.Dependencies.Skills,
+		}
+	}
+
+	// [[package]] table array
+	if len(fs.Packages) > 0 {
 		var regArr []any
-		for _, rd := range fs.Registries {
+		for _, rd := range fs.Packages {
 			rm := map[string]any{
 				"name": rd.Name,
 				"url":  rd.URL,
@@ -423,7 +482,7 @@ func toMap(fs *FileSettings) map[string]any {
 			}
 			regArr = append(regArr, rm)
 		}
-		m["registry"] = regArr
+		m["package"] = regArr
 	}
 
 	core := map[string]any{}

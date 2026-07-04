@@ -9,27 +9,25 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+	"time"
 
 	"github.com/mark3labs/mcp-go/mcp"
 
 	"github.com/jeffreytse/grimoire/internal/compliance"
+	"github.com/jeffreytse/grimoire/internal/config"
+	grimctx "github.com/jeffreytse/grimoire/internal/context"
 	"github.com/jeffreytse/grimoire/internal/detect"
 	gitops "github.com/jeffreytse/grimoire/internal/git"
+	"github.com/jeffreytse/grimoire/internal/manifest"
 	"github.com/jeffreytse/grimoire/internal/profiles"
-	"github.com/jeffreytse/grimoire/internal/settings"
 	"github.com/jeffreytse/grimoire/internal/skills"
 )
 
 // ── MCP-only output types ─────────────────────────────────────────────────────
 
-type mcpRegistrySetOutput struct {
-	Registry string `json:"registry"`
-	IsLocal  bool   `json:"is_local"`
-}
-
-type mcpPresetListEntry struct {
-	Name     string `json:"name"`
-	Registry string `json:"registry"`
+type mcpPackageSetOutput struct {
+	Package string `json:"package"`
+	IsLocal bool   `json:"is_local"`
 }
 
 // ── Output types ──────────────────────────────────────────────────────────────
@@ -59,13 +57,13 @@ type mcpSelfUpdateOutput struct {
 	Updated         bool   `json:"updated"`
 }
 
-type mcpRegistryRemoveOutput struct {
+type mcpPackageRemoveOutput struct {
 	Name         string `json:"name"`
 	Removed      bool   `json:"removed"`
 	CloneDeleted bool   `json:"clone_deleted"`
 }
 
-type mcpRegistryUpdateResult struct {
+type mcpPackageUpdateResult struct {
 	Name   string `json:"name"`
 	Status string `json:"status"` // "ok" | "cloned" | "error"
 	Error  string `json:"error,omitempty"`
@@ -106,15 +104,15 @@ func toolGrimoireInit(_ context.Context, request mcp.CallToolRequest) (*mcp.Call
 	if v := request.GetFloat("max_errors", -1); v >= 0 {
 		cfg.MaxErrors = int(v)
 	}
-	if err := writeSettings(dir, cfg); err != nil {
+	if _, err := scaffoldManifest(manifest.ProjectPath(cwd), filepath.Base(cwd), cfg.Profile, cfg.Threshold, cfg.MaxErrors); err != nil {
 		return mcp.NewToolResultError(err.Error()), nil
 	}
 	out := mcpInitOutput{Dir: dir, Profile: cfg.Profile}
 	if cfg.Profile != "" {
-		if p, err := profiles.ResolveWithOptions(cfg.Profile, cwd, resolveOpts(cwd)); err == nil {
-			out.SkillCount = len(p.Skills)
-			names := make([]string, len(p.Skills))
-			for i, sk := range p.Skills {
+		if refs, err := profiles.ResolveEffectiveSkills([]string{cfg.Profile}, cwd, nil, nil); err == nil {
+			out.SkillCount = len(refs)
+			names := make([]string, len(refs))
+			for i, sk := range refs {
 				names[i] = sk.Name
 			}
 			out.Skills = names
@@ -137,17 +135,17 @@ func toolGrimoireSelfUpdate(_ context.Context, request mcp.CallToolRequest) (*mc
 	return jsonResult(out)
 }
 
-func toolGrimoireRegistryList(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
-	entries, err := collectRegistryList()
+func toolGrimoirePackageList(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
+	entries, err := collectPackageList()
 	if err != nil {
 		return mcp.NewToolResultError(err.Error()), nil
 	}
 	return jsonResult(entries)
 }
 
-func toolGrimoireRegistryUpdate(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
+func toolGrimoirePackageUpdate(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
 	name := request.GetString("name", "")
-	results, err := performRegistryUpdate(name)
+	results, err := performPackageUpdate(name)
 	if err != nil {
 		return mcp.NewToolResultError(err.Error()), nil
 	}
@@ -244,21 +242,21 @@ func performSelfUpdateBinaryPlatform(exePath string, rel *ghRelease) error {
 	return nil
 }
 
-// ── Registry ──────────────────────────────────────────────────────────────────
+// ── Package ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-func collectRegistryList() ([]registryListEntry, error) {
-	cfg, err := settings.LoadGlobal()
+func collectPackageList() ([]packageListEntry, error) {
+	cfg, err := config.LoadGlobal()
 	if err != nil {
 		return nil, fmt.Errorf("loading settings: %w", err)
 	}
 
-	regs := skills.AllRegistries()
-	entries := make([]registryListEntry, 0, len(regs))
+	regs := skills.AllPackages()
+	entries := make([]packageListEntry, 0, len(regs))
 	for _, reg := range regs {
 		var url, ver string
-		for _, rd := range cfg.Registries {
+		for _, rd := range cfg.Packages {
 			if rd.Name == reg.Name {
-				url, ver = settings.ParseRef(rd.URL)
+				url, ver = config.ParseRef(rd.URL)
 				if url == "" {
 					url = rd.URL
 				}
@@ -278,7 +276,7 @@ func collectRegistryList() ([]registryListEntry, error) {
 		if ver == "" && reg.Official {
 			ver = skills.GrimoireVersion()
 		}
-		entries = append(entries, registryListEntry{
+		entries = append(entries, packageListEntry{
 			Name:        reg.Name,
 			URL:         url,
 			Version:     ver,
@@ -290,31 +288,31 @@ func collectRegistryList() ([]registryListEntry, error) {
 	return entries, nil
 }
 
-// performRegistryAdd adds a named registry to [[registry]] and clones it.
-// Mirrors CLI `grimoire registry add` behaviour.
+// performPackageAdd adds a named package to [[package]] and clones it.
+// Mirrors CLI `grimoire package add` behaviour.
 // Name is derived from the URL when not explicitly provided.
-func performRegistryAdd(ref string) (registryListEntry, error) {
-	u, _ := settings.ParseRef(ref)
+func performPackageAdd(ref string) (packageListEntry, error) {
+	u, _ := config.ParseRef(ref)
 	if u == "" {
 		u = ref
 	}
 	if !skills.IsGitURL(u) && !filepath.IsAbs(u) {
-		return registryListEntry{}, fmt.Errorf("invalid ref %q — expected owner/repo, git URL, or absolute path", ref)
+		return packageListEntry{}, fmt.Errorf("invalid grimoire-ref %q — expected owner/repo[@version], git URL, or absolute path", ref)
 	}
 
-	name := settings.DeriveRegistryName(u)
+	name := config.DerivePackageName(u)
 
-	gfs, err := settings.LoadGlobal()
+	gfs, err := config.LoadGlobal()
 	if err != nil {
-		return registryListEntry{}, fmt.Errorf("loading settings: %w", err)
+		return packageListEntry{}, fmt.Errorf("loading config: %w", err)
 	}
 
 	// Idempotent: if name already exists, just ensure cloned.
-	for _, rd := range gfs.Registries {
+	for _, rd := range gfs.Packages {
 		if rd.Name != name {
 			continue
 		}
-		home := filepath.Join(skills.RegistriesRoot(), name)
+		home := skills.PackageHome(name)
 		if filepath.IsAbs(u) {
 			home = u
 		}
@@ -326,7 +324,7 @@ func performRegistryAdd(ref string) (registryListEntry, error) {
 		if filepath.IsAbs(u) {
 			kind = "local"
 		}
-		return registryListEntry{
+		return packageListEntry{
 			Name:        name,
 			URL:         u,
 			SkillsCount: countSkills(filepath.Join(home, "skills")),
@@ -335,17 +333,17 @@ func performRegistryAdd(ref string) (registryListEntry, error) {
 		}, nil
 	}
 
-	rd := settings.RegistryDef{Name: name, URL: ref, Enabled: true}
-	gfs.Registries = append(gfs.Registries, rd)
-	if err := settings.SaveGlobal(gfs); err != nil {
-		return registryListEntry{}, fmt.Errorf("saving settings: %w", err)
+	rd := config.PackageDef{Name: name, URL: ref, Enabled: true}
+	gfs.Packages = append(gfs.Packages, rd)
+	if err := config.SaveGlobal(gfs); err != nil {
+		return packageListEntry{}, fmt.Errorf("saving settings: %w", err)
 	}
 
-	home := filepath.Join(skills.RegistriesRoot(), name)
+	home := skills.PackageHome(name)
 	if filepath.IsAbs(u) {
 		home = u
 		kind := "local"
-		return registryListEntry{
+		return packageListEntry{
 			Name:        name,
 			URL:         u,
 			SkillsCount: countSkills(filepath.Join(home, "skills")),
@@ -355,13 +353,13 @@ func performRegistryAdd(ref string) (registryListEntry, error) {
 	}
 
 	if err := os.MkdirAll(filepath.Dir(home), 0o755); err != nil {
-		return registryListEntry{}, fmt.Errorf("creating dir: %w", err)
+		return packageListEntry{}, fmt.Errorf("creating dir: %w", err)
 	}
 	if err := gitops.Clone(u, home); err != nil {
-		return registryListEntry{}, fmt.Errorf("cloning registry: %w", err)
+		return packageListEntry{}, fmt.Errorf("cloning package: %w", err)
 	}
 
-	return registryListEntry{
+	return packageListEntry{
 		Name:        name,
 		URL:         u,
 		SkillsCount: countSkills(filepath.Join(home, "skills")),
@@ -370,17 +368,17 @@ func performRegistryAdd(ref string) (registryListEntry, error) {
 	}, nil
 }
 
-// performRegistryRemove removes a registry from [[registry]] by name.
-// Mirrors CLI `grimoire registry remove` behaviour.
-func performRegistryRemove(name string) (mcpRegistryRemoveOutput, error) {
-	gfs, err := settings.LoadGlobal()
+// performPackageRemove removes a package from [[package]] by name.
+// Mirrors CLI `grimoire package remove` behaviour.
+func performPackageRemove(name string) (mcpPackageRemoveOutput, error) {
+	gfs, err := config.LoadGlobal()
 	if err != nil {
-		return mcpRegistryRemoveOutput{}, fmt.Errorf("loading settings: %w", err)
+		return mcpPackageRemoveOutput{}, fmt.Errorf("loading settings: %w", err)
 	}
 
-	var kept []settings.RegistryDef
+	var kept []config.PackageDef
 	removed := false
-	for _, rd := range gfs.Registries {
+	for _, rd := range gfs.Packages {
 		if rd.Name == name {
 			removed = true
 			continue
@@ -388,62 +386,62 @@ func performRegistryRemove(name string) (mcpRegistryRemoveOutput, error) {
 		kept = append(kept, rd)
 	}
 	if !removed {
-		return mcpRegistryRemoveOutput{}, fmt.Errorf("registry %q not found in [[registry]]", name)
+		return mcpPackageRemoveOutput{}, fmt.Errorf("package %q not found in [[package]]", name)
 	}
 
-	gfs.Registries = kept
-	if err := settings.SaveGlobal(gfs); err != nil {
-		return mcpRegistryRemoveOutput{}, fmt.Errorf("saving settings: %w", err)
+	gfs.Packages = kept
+	if err := config.SaveGlobal(gfs); err != nil {
+		return mcpPackageRemoveOutput{}, fmt.Errorf("saving settings: %w", err)
 	}
-	return mcpRegistryRemoveOutput{Name: name, Removed: true}, nil
+	return mcpPackageRemoveOutput{Name: name, Removed: true}, nil
 }
 
-// performRegistrySet sets the official registry URL via the [[registry]] model.
-func performRegistrySet(ref string) (mcpRegistrySetOutput, error) {
-	u, _ := settings.ParseRef(ref)
+// performPackageSet sets the official package URL via the [[package]] model.
+func performPackageSet(ref string) (mcpPackageSetOutput, error) {
+	u, _ := config.ParseRef(ref)
 	if !skills.IsGitURL(u) && !filepath.IsAbs(u) {
-		return mcpRegistrySetOutput{}, fmt.Errorf("invalid ref %q — expected owner/repo[@version], git URL, or absolute path", ref)
+		return mcpPackageSetOutput{}, fmt.Errorf("invalid grimoire-ref %q — expected owner/repo[@version], git URL, or absolute path", ref)
 	}
 	if filepath.IsAbs(u) {
 		if _, err := os.Stat(u); err != nil {
-			return mcpRegistrySetOutput{}, fmt.Errorf("local path %q not found", u)
+			return mcpPackageSetOutput{}, fmt.Errorf("local path %q not found", u)
 		}
 	}
-	gfs, err := settings.LoadGlobal()
+	gfs, err := config.LoadGlobal()
 	if err != nil {
-		return mcpRegistrySetOutput{}, fmt.Errorf("loading settings: %w", err)
+		return mcpPackageSetOutput{}, fmt.Errorf("loading settings: %w", err)
 	}
-	for i, rd := range gfs.Registries {
+	for i, rd := range gfs.Packages {
 		if rd.Official {
-			gfs.Registries[i].URL = ref
-			if err := settings.SaveGlobal(gfs); err != nil {
-				return mcpRegistrySetOutput{}, fmt.Errorf("saving settings: %w", err)
+			gfs.Packages[i].URL = ref
+			if err := config.SaveGlobal(gfs); err != nil {
+				return mcpPackageSetOutput{}, fmt.Errorf("saving settings: %w", err)
 			}
-			return mcpRegistrySetOutput{Registry: ref, IsLocal: filepath.IsAbs(u)}, nil
+			return mcpPackageSetOutput{Package: ref, IsLocal: filepath.IsAbs(u)}, nil
 		}
 	}
-	gfs.Registries = append(gfs.Registries, settings.RegistryDef{
+	gfs.Packages = append(gfs.Packages, config.PackageDef{
 		Name:     "official",
 		URL:      ref,
 		Official: true,
 		Priority: 100,
 		Enabled:  true,
 	})
-	if err := settings.SaveGlobal(gfs); err != nil {
-		return mcpRegistrySetOutput{}, fmt.Errorf("saving settings: %w", err)
+	if err := config.SaveGlobal(gfs); err != nil {
+		return mcpPackageSetOutput{}, fmt.Errorf("saving settings: %w", err)
 	}
-	return mcpRegistrySetOutput{Registry: ref, IsLocal: filepath.IsAbs(u)}, nil
+	return mcpPackageSetOutput{Package: ref, IsLocal: filepath.IsAbs(u)}, nil
 }
 
-func performRegistryUpdate(name string) ([]mcpRegistryUpdateResult, error) {
-	cfg, err := settings.LoadGlobal()
+func performPackageUpdate(name string) ([]mcpPackageUpdateResult, error) {
+	cfg, err := config.LoadGlobal()
 	if err != nil {
 		return nil, fmt.Errorf("loading settings: %w", err)
 	}
 
-	updateOne := func(n string) mcpRegistryUpdateResult {
-		status, err := updateOneRegistrySilent(n, &cfg)
-		res := mcpRegistryUpdateResult{Name: n, Status: status}
+	updateOne := func(n string) mcpPackageUpdateResult {
+		status, err := updateOnePackageSilent(n, &cfg)
+		res := mcpPackageUpdateResult{Name: n, Status: status}
 		if err != nil {
 			res.Status = "error"
 			res.Error = err.Error()
@@ -452,15 +450,15 @@ func performRegistryUpdate(name string) ([]mcpRegistryUpdateResult, error) {
 	}
 
 	if name != "" {
-		return []mcpRegistryUpdateResult{updateOne(name)}, nil
+		return []mcpPackageUpdateResult{updateOne(name)}, nil
 	}
 
-	if len(cfg.Registries) == 0 {
-		return []mcpRegistryUpdateResult{updateOne("official")}, nil
+	if len(cfg.Packages) == 0 {
+		return []mcpPackageUpdateResult{updateOne("official")}, nil
 	}
 
-	var results []mcpRegistryUpdateResult
-	for _, rd := range cfg.Registries {
+	var results []mcpPackageUpdateResult
+	for _, rd := range cfg.Packages {
 		if rd.Enabled {
 			results = append(results, updateOne(rd.Name))
 		}
@@ -468,15 +466,15 @@ func performRegistryUpdate(name string) ([]mcpRegistryUpdateResult, error) {
 	return results, nil
 }
 
-func updateOneRegistrySilent(name string, cfg *settings.FileSettings) (string, error) {
+func updateOnePackageSilent(name string, cfg *config.FileConfig) (string, error) {
 	var refURL, ver string
 	var dest string
 
-	for _, rd := range cfg.Registries {
+	for _, rd := range cfg.Packages {
 		if rd.Name != name {
 			continue
 		}
-		u, v := settings.ParseRef(rd.URL)
+		u, v := config.ParseRef(rd.URL)
 		if u == "" {
 			u = rd.URL
 		}
@@ -484,22 +482,22 @@ func updateOneRegistrySilent(name string, cfg *settings.FileSettings) (string, e
 		if filepath.IsAbs(u) {
 			dest = u
 		} else {
-			dest = skills.RegistryHome(name)
+			dest = skills.PackageHome(config.DeriveVersionedName(u, v))
 		}
 		break
 	}
 
 	if refURL == "" {
-		if name != skills.OfficialRegistryName && name != skills.OfficialRegistryDerivedName() {
+		if name != skills.OfficialPackageName && name != skills.OfficialPackageDerivedName() {
 			return "error", fmt.Errorf("target %q not configured", name)
 		}
 		refURL = skills.GrimoireRepoURL()
-		dest = skills.OfficialRegistryHome()
+		dest = skills.OfficialPackageHome()
 	}
 	// Local path: verify it exists, skip git ops
 	if filepath.IsAbs(refURL) {
 		if _, err := os.Stat(refURL); err != nil {
-			return "error", fmt.Errorf("local registry %q not found", refURL)
+			return "error", fmt.Errorf("local package %q not found", refURL)
 		}
 		return "ok", nil
 	}
@@ -535,52 +533,68 @@ func updateOneRegistrySilent(name string, cfg *settings.FileSettings) (string, e
 
 // ── New MCP tool handlers ─────────────────────────────────────────────────────
 
-func toolGrimoireRegistryAdd(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
+func toolGrimoirePackageAdd(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
 	ref := request.GetString("ref", "")
-	entry, err := performRegistryAdd(ref)
+	entry, err := performPackageAdd(ref)
 	if err != nil {
 		return mcp.NewToolResultError(err.Error()), nil
 	}
 	return jsonResult(entry)
 }
 
-func toolGrimoireRegistryRemove(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
+func toolGrimoirePackageRemove(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
 	name := request.GetString("name", "")
-	out, err := performRegistryRemove(name)
+	out, err := performPackageRemove(name)
 	if err != nil {
 		return mcp.NewToolResultError(err.Error()), nil
 	}
 	return jsonResult(out)
 }
 
-func toolGrimoireRegistrySet(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
+func toolGrimoirePackageEnable(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
+	name := request.GetString("name", "")
+	if err := setPackageEnabled(name, true); err != nil {
+		return mcp.NewToolResultError(err.Error()), nil
+	}
+	return jsonResult(map[string]any{"name": name, "enabled": true})
+}
+
+func toolGrimoirePackageDisable(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
+	name := request.GetString("name", "")
+	if err := setPackageEnabled(name, false); err != nil {
+		return mcp.NewToolResultError(err.Error()), nil
+	}
+	return jsonResult(map[string]any{"name": name, "enabled": false})
+}
+
+func toolGrimoirePackageSet(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
 	ref := request.GetString("ref", "")
-	out, err := performRegistrySet(ref)
+	out, err := performPackageSet(ref)
 	if err != nil {
 		return mcp.NewToolResultError(err.Error()), nil
 	}
 	return jsonResult(out)
 }
 
-func toolGrimoireRegistryReset(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
-	gfs, err := settings.LoadGlobal()
+func toolGrimoirePackageReset(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
+	gfs, err := config.LoadGlobal()
 	if err != nil {
 		return mcp.NewToolResultError(err.Error()), nil
 	}
-	var kept []settings.RegistryDef
-	for _, rd := range gfs.Registries {
+	var kept []config.PackageDef
+	for _, rd := range gfs.Packages {
 		if !rd.Official {
 			kept = append(kept, rd)
 		}
 	}
-	gfs.Registries = kept
-	if err := settings.SaveGlobal(gfs); err != nil {
+	gfs.Packages = kept
+	if err := config.SaveGlobal(gfs); err != nil {
 		return mcp.NewToolResultError(err.Error()), nil
 	}
-	return jsonResult(map[string]any{"registry": skills.GrimoireRepo, "reset": true})
+	return jsonResult(map[string]any{"package": skills.GrimoireRepo, "reset": true})
 }
 
-func toolGrimoireRegistryValidate(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
+func toolGrimoirePackageValidate(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
 	target := request.GetString("target", "")
 
 	var resolvedTarget string
@@ -594,11 +608,11 @@ func toolGrimoireRegistryValidate(_ context.Context, request mcp.CallToolRequest
 	case filepath.IsAbs(target):
 		resolvedTarget = target
 	default:
-		u, _ := settings.ParseRef(target)
-		name := settings.DeriveRegistryName(u)
-		home := skills.RegistryHome(name)
+		u, ver := config.ParseRef(target)
+		name := config.DeriveVersionedName(u, ver)
+		home := skills.PackageHome(name)
 		if !dirExists(home) {
-			return mcp.NewToolResultError(fmt.Sprintf("registry %q not installed", target)), nil
+			return mcp.NewToolResultError(fmt.Sprintf("package %q not installed", target)), nil
 		}
 		resolvedTarget = home
 	}
@@ -619,16 +633,16 @@ func toolGrimoireRegistryValidate(_ context.Context, request mcp.CallToolRequest
 	}
 
 	hasMarker := false
-	for _, marker := range []string{"skills", "profiles", "presets", "settings.toml"} {
+	for _, marker := range []string{"skills", "profiles", "grimoire.toml"} {
 		if _, err := os.Stat(filepath.Join(resolvedTarget, marker)); err == nil {
 			hasMarker = true
 			break
 		}
 	}
 	if !hasMarker {
-		check("registry-markers", "error", "no registry markers found")
+		check("package-markers", "error", "no package markers found")
 	} else {
-		check("registry-markers", "ok", "registry structure detected")
+		check("package-markers", "ok", "package structure detected")
 	}
 
 	skillsDir := filepath.Join(resolvedTarget, "skills")
@@ -638,7 +652,8 @@ func toolGrimoireRegistryValidate(_ context.Context, request mcp.CallToolRequest
 			check("skills-structure", "warn", "skills/ found but no skills detected")
 		} else {
 			missing := 0
-			for _, sk := range allSkills {
+			for i := range allSkills {
+				sk := allSkills[i]
 				if sk.Path == "" {
 					missing++
 				}
@@ -662,7 +677,7 @@ func toolGrimoireRegistryValidate(_ context.Context, request mcp.CallToolRequest
 				continue
 			}
 			total++
-			if _, err := settings.ParseFile(filepath.Join(profilesDir, e.Name())); err != nil {
+			if _, err := config.ParseFile(filepath.Join(profilesDir, e.Name())); err != nil {
 				invalid++
 			}
 		}
@@ -678,37 +693,15 @@ func toolGrimoireRegistryValidate(_ context.Context, request mcp.CallToolRequest
 		check("profiles-structure", "skip", "no profiles/ directory")
 	}
 
-	presetsDir := filepath.Join(resolvedTarget, "presets")
-	if _, err := os.Stat(presetsDir); err == nil {
-		presets := skills.ListPresets(resolvedTarget)
-		if len(presets) == 0 {
-			check("presets-structure", "warn", "presets/ found but no presets detected")
+	rootConfig := filepath.Join(resolvedTarget, "grimoire.toml")
+	if _, err := os.Stat(rootConfig); err == nil {
+		if _, err := config.ParseFile(rootConfig); err != nil {
+			check("grimoire-toml", "error", fmt.Sprintf("grimoire.toml parse error: %v", err))
 		} else {
-			invalid := 0
-			for _, p := range presets {
-				if _, err := settings.ParseFile(filepath.Join(presetsDir, p, "settings.toml")); err != nil {
-					invalid++
-				}
-			}
-			if invalid > 0 {
-				check("presets-structure", "error", fmt.Sprintf("%d/%d preset settings.toml file(s) failed to parse", invalid, len(presets)))
-			} else {
-				check("presets-structure", "ok", fmt.Sprintf("%d preset(s), all have valid settings.toml", len(presets)))
-			}
+			check("grimoire-toml", "ok", "grimoire.toml is valid TOML")
 		}
 	} else {
-		check("presets-structure", "skip", "no presets/ directory")
-	}
-
-	rootSettings := filepath.Join(resolvedTarget, "settings.toml")
-	if _, err := os.Stat(rootSettings); err == nil {
-		if _, err := settings.ParseFile(rootSettings); err != nil {
-			check("settings-toml", "error", fmt.Sprintf("settings.toml parse error: %v", err))
-		} else {
-			check("settings-toml", "ok", "settings.toml is valid TOML")
-		}
-	} else {
-		check("settings-toml", "skip", "no settings.toml")
+		check("grimoire-toml", "skip", "no grimoire.toml")
 	}
 
 	return jsonResult(map[string]any{
@@ -718,12 +711,160 @@ func toolGrimoireRegistryValidate(_ context.Context, request mcp.CallToolRequest
 	})
 }
 
-func toolGrimoirePresetList(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
-	var entries []mcpPresetListEntry
-	for _, reg := range skills.AllRegistries() {
-		for _, name := range skills.ListPresets(reg.Home) {
-			entries = append(entries, mcpPresetListEntry{Name: name, Registry: reg.Name})
+// ── Status / Search / Info ────────────────────────────────────────────────────
+
+type mcpStatusOutput struct {
+	ProjectDir      string  `json:"project_dir"`
+	Profile         string  `json:"profile"`
+	SkillCount      int     `json:"skill_count"`
+	PackageCount    int     `json:"package_count"`
+	HasReport       bool    `json:"has_report"`
+	LastCheckAge    string  `json:"last_check_age,omitempty"`
+	LastCheckResult string  `json:"last_check_result,omitempty"`
+	LastCheckPct    float64 `json:"last_check_pct,omitempty"`
+	Stale           bool    `json:"stale"`
+	StalenessDays   int     `json:"staleness_days"`
+	ErrorCount      int     `json:"error_count"`
+	WarningCount    int     `json:"warning_count"`
+}
+
+type mcpSkillMatch struct {
+	Name        string   `json:"name"`
+	Description string   `json:"description,omitempty"`
+	Domain      string   `json:"domain,omitempty"`
+	Subdomain   string   `json:"subdomain,omitempty"`
+	Tags        []string `json:"tags,omitempty"`
+	Package     string   `json:"package,omitempty"`
+}
+
+type mcpSkillInfo struct {
+	Name          string            `json:"name"`
+	Description   string            `json:"description,omitempty"`
+	Domain        string            `json:"domain,omitempty"`
+	Subdomain     string            `json:"subdomain,omitempty"`
+	Package       string            `json:"package,omitempty"`
+	Version       string            `json:"version,omitempty"`
+	Authors       []string          `json:"authors,omitempty"`
+	License       string            `json:"license,omitempty"`
+	Tags          []string          `json:"tags,omitempty"`
+	Compatibility []string          `json:"compatibility,omitempty"`
+	Dependencies  map[string]string `json:"dependencies,omitempty"`
+	Path          string            `json:"path,omitempty"`
+}
+
+func toolGrimoireStatus(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
+	cwd := getProjectDir()
+
+	ctx := grimctx.Detect(cwd)
+
+	regs := skills.AllSkillsPackages()
+	totalSkills := 0
+	for _, reg := range regs {
+		if all, err := skills.WalkSkills(reg.Root); err == nil {
+			totalSkills += len(all)
 		}
 	}
-	return jsonResult(entries)
+
+	cfg, _ := config.Load(cwd)
+	stalenessDays := cfg.StalenessDays
+	if stalenessDays == 0 {
+		stalenessDays = 7
+	}
+
+	out := mcpStatusOutput{
+		ProjectDir:    cwd,
+		Profile:       ctx.Profile,
+		SkillCount:    totalSkills,
+		PackageCount:  len(regs),
+		StalenessDays: stalenessDays,
+	}
+
+	reportPath := resolvedReportPath(cwd)
+	if fi, err := os.Stat(reportPath); err == nil {
+		out.HasReport = true
+		age := time.Since(fi.ModTime())
+		out.LastCheckAge = formatAge(age)
+		out.Stale = age.Hours()/24 > float64(stalenessDays)
+
+		if report, loadErr := compliance.Load(reportPath); loadErr == nil {
+			out.LastCheckResult = report.Threshold.Status
+			out.LastCheckPct = report.Coverage.OverallPct
+			out.ErrorCount = len(filterBySeverity(report.Diagnostics, 1))
+			out.WarningCount = len(filterBySeverity(report.Diagnostics, 2))
+		}
+	}
+
+	return jsonResult(out)
+}
+
+func toolGrimoireSearch(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
+	query := strings.ToLower(strings.TrimSpace(request.GetString("query", "")))
+
+	regs := skills.AllSkillsPackages()
+	if len(regs) == 0 {
+		return mcp.NewToolResultError("no packages installed — run grimoire_update first"), nil
+	}
+
+	all, _, err := skills.ListAllSkillsFromPackages(regs)
+	if err != nil {
+		return mcp.NewToolResultError(err.Error()), nil
+	}
+
+	matches := make([]mcpSkillMatch, 0)
+	for i := range all {
+		if query == "" || matchesQuery(&all[i], query) {
+			matches = append(matches, mcpSkillMatch{
+				Name:        all[i].Name,
+				Description: all[i].Description,
+				Domain:      all[i].Domain,
+				Subdomain:   all[i].Subdomain,
+				Tags:        all[i].Tags,
+				Package:     all[i].Package,
+			})
+		}
+	}
+	return jsonResult(matches)
+}
+
+func toolGrimoireInfo(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
+	name := strings.TrimSpace(request.GetString("skill", ""))
+	if name == "" {
+		return mcp.NewToolResultError("skill name is required"), nil
+	}
+
+	regs := skills.AllSkillsPackages()
+	if len(regs) == 0 {
+		return mcp.NewToolResultError("no packages installed — run grimoire_update first"), nil
+	}
+
+	_, src, err := resolveSkillFromPackages(regs, name)
+	if err != nil {
+		return mcp.NewToolResultError(err.Error()), nil
+	}
+
+	all, err := skills.WalkSkills(src.Root)
+	if err != nil {
+		return mcp.NewToolResultError(err.Error()), nil
+	}
+
+	for i := range all {
+		sk := all[i]
+		if sk.Name == name {
+			return jsonResult(mcpSkillInfo{
+				Name:          sk.Name,
+				Description:   sk.Description,
+				Domain:        sk.Domain,
+				Subdomain:     sk.Subdomain,
+				Package:       sk.Package,
+				Version:       sk.Version,
+				Authors:       sk.Authors,
+				License:       sk.License,
+				Tags:          sk.Tags,
+				Compatibility: sk.Compatibility,
+				Dependencies:  sk.Dependencies,
+				Path:          sk.Path,
+			})
+		}
+	}
+	return mcp.NewToolResultError(fmt.Sprintf("skill %q not found", name)), nil
 }

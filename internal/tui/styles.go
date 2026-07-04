@@ -17,10 +17,10 @@ var (
 	StyleYellow   = lipgloss.NewStyle().Foreground(lipgloss.Color("214"))
 	StyleBold     = lipgloss.NewStyle().Bold(true)
 
-	IconOK    = StyleGreen.Render("✅")
-	IconWarn  = StyleYellow.Render("⚠️ ")
-	IconFail  = StyleRed.Render("❌")
-	IconSkip  = "⬜"
+	IconOK    = StyleGreen.Render("✓")
+	IconWarn  = StyleYellow.Render("!")
+	IconFail  = StyleRed.Render("✗")
+	IconSkip  = StyleDim.Render("-")
 	IconDone  = StyleGreen.Render("✓")
 	IconError = StyleRed.Render("✗")
 )
