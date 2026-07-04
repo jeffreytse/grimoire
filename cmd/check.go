@@ -54,6 +54,7 @@ var (
 	flagPreferAPI      bool     // skip local CLIs, use API directly (temperature=0)
 	flagLive           bool     // start live HTTP server with SSE auto-refresh
 	flagPort           int      // port for --live server
+	flagHost           string   // bind address for --live server
 )
 
 // skillRubric holds a skill name, its SKILL.md body, and explicit criteria for prompting.
@@ -91,6 +92,7 @@ func init() {
 	checkCmd.Flags().BoolVar(&flagPreferAPI, "prefer-api", false, "skip local AI CLI and route through API directly (sets temperature=0 for deterministic results)")
 	checkCmd.Flags().BoolVar(&flagLive, "live", false, "start live server — serve HTML report and auto-refresh browser on file change")
 	checkCmd.Flags().IntVar(&flagPort, "port", 7890, "port for --live server")
+	checkCmd.Flags().StringVar(&flagHost, "host", "", "bind address for --live server — defaults to all interfaces (e.g. 127.0.0.1 for localhost-only)")
 	checkCmd.Flags().BoolVar(&flagNoGitignore, "no-gitignore", false, "disable .gitignore-based file filtering")
 }
 

@@ -83,7 +83,16 @@ func runWizard() error {
 			continue
 		}
 
-		// Install / Uninstall — pick agents
+		// Install / Uninstall — pick scope then agents
+		scopeChoice, ok := tui.RunSelect(
+			"🌐 Installation scope?",
+			[]string{"Global (all projects)", "Project (this directory only)"},
+		)
+		if !ok {
+			continue
+		}
+		isGlobal := scopeChoice == "Global (all projects)"
+
 		detected := agent.Detected()
 		var agentOptions []string
 		if len(detected) == 0 {
@@ -161,6 +170,7 @@ func runWizard() error {
 			regName    string
 			skillsRoot string
 			pkgName    string // "" for official package, reg.Name for third-party
+			depPrefix  string // "owner/repo" form for writing to global manifest
 		}
 		var domainItems []domainItem
 		for _, reg := range selectedRegs {
@@ -176,8 +186,13 @@ func runWizard() error {
 			if reg.Official {
 				pkgName = ""
 			}
+			// Derive dep key prefix: strip "github.com/" to get "owner/repo" short form.
+			depPrefix := strings.TrimPrefix(reg.Name, "github.com/")
+			if reg.Official {
+				depPrefix = strings.TrimPrefix(skills.OfficialPackageDerivedName(), "github.com/")
+			}
 			for _, d := range domains {
-				domainItems = append(domainItems, domainItem{domain: d, regName: reg.Name, skillsRoot: sr, pkgName: pkgName})
+				domainItems = append(domainItems, domainItem{domain: d, regName: reg.Name, skillsRoot: sr, pkgName: pkgName, depPrefix: depPrefix})
 			}
 		}
 
@@ -212,11 +227,12 @@ func runWizard() error {
 
 		// For nested domains, pick subdomains
 		type domainSelection struct {
-			name    string
-			root    string   // skillsRoot for this domain's package
-			regName string   // for summary display
-			pkgName string   // "" for official, reg.Name for third-party
-			subs    []string // empty = all
+			name      string
+			root      string   // skillsRoot for this domain's package
+			regName   string   // for summary display
+			pkgName   string   // "" for official, reg.Name for third-party
+			depPrefix string   // "owner/repo" form for writing to global manifest
+			subs      []string // empty = all
 		}
 		var domainSelections []domainSelection
 
@@ -224,7 +240,7 @@ func runWizard() error {
 			if di.domain.Nested {
 				subs, err := skills.ListSubdomains(di.domain.Path)
 				if err != nil || len(subs) == 0 {
-					domainSelections = append(domainSelections, domainSelection{name: di.domain.Name, root: di.skillsRoot, regName: di.regName, pkgName: di.pkgName})
+					domainSelections = append(domainSelections, domainSelection{name: di.domain.Name, root: di.skillsRoot, regName: di.regName, pkgName: di.pkgName, depPrefix: di.depPrefix})
 					continue
 				}
 				subNames := make([]string, len(subs))
@@ -245,9 +261,9 @@ func runWizard() error {
 				if !ok {
 					continue
 				}
-				domainSelections = append(domainSelections, domainSelection{name: di.domain.Name, root: di.skillsRoot, regName: di.regName, pkgName: di.pkgName, subs: chosen})
+				domainSelections = append(domainSelections, domainSelection{name: di.domain.Name, root: di.skillsRoot, regName: di.regName, pkgName: di.pkgName, depPrefix: di.depPrefix, subs: chosen})
 			} else {
-				domainSelections = append(domainSelections, domainSelection{name: di.domain.Name, root: di.skillsRoot, regName: di.regName, pkgName: di.pkgName})
+				domainSelections = append(domainSelections, domainSelection{name: di.domain.Name, root: di.skillsRoot, regName: di.regName, pkgName: di.pkgName, depPrefix: di.depPrefix})
 			}
 		}
 
@@ -286,7 +302,7 @@ func runWizard() error {
 		}
 
 		// Execute
-		flagInstallGlobal = true
+		flagInstallGlobal = isGlobal
 		symlink := true
 		totalCount := 0
 
@@ -325,50 +341,71 @@ func runWizard() error {
 				tui.IconOK, totalCount/max(len(selectedAgents), 1), joinAgentNames(selectedAgents))
 			tui.RunSelect("", []string{"← Back"})
 			continue
-		} else {
-			for _, ds := range domainSelections {
-				for _, ag := range selectedAgents {
-					if len(ds.subs) > 0 {
-						for _, s := range ds.subs {
-							n, err := installDomainToAgent(ds.root, ds.name, s, ag, symlink, ds.pkgName)
-							if err != nil {
-								fmt.Fprintf(os.Stderr, "  error: %v\n", err)
-							}
-							totalCount += n
-						}
-					} else {
-						n, err := installDomainToAgent(ds.root, ds.name, "", ag, symlink, ds.pkgName)
+		}
+		for _, ds := range domainSelections {
+			for _, ag := range selectedAgents {
+				if len(ds.subs) > 0 {
+					for _, s := range ds.subs {
+						n, err := installDomainToAgent(ds.root, ds.name, s, ag, symlink, ds.pkgName)
 						if err != nil {
 							fmt.Fprintf(os.Stderr, "  error: %v\n", err)
 						}
 						totalCount += n
 					}
+				} else {
+					n, err := installDomainToAgent(ds.root, ds.name, "", ag, symlink, ds.pkgName)
+					if err != nil {
+						fmt.Fprintf(os.Stderr, "  error: %v\n", err)
+					}
+					totalCount += n
 				}
 			}
-			for _, ag := range selectedAgents {
-				_, _ = skills.CleanBrokenSymlinks(agent.SkillsDir(ag))
-				_ = agent.ConfigureAgentMD(ag)
-			}
-
-			fmt.Printf("\n%s  %d skills installed → %s\n",
-				tui.IconOK, totalCount/max(len(selectedAgents), 1), joinAgentNames(selectedAgents))
-
-			fmt.Println("\n  to get started:")
-			fmt.Println("    start any AI session — skills activate automatically")
-			fmt.Println("    or run /start-best-practice in Claude Code to trigger manually")
-			fmt.Printf("\n  project setup: %s\n", tui.StyleCyan.Render("grimoire init"))
-			fmt.Printf("    %s\n", tui.StyleDim.Render("creates grimoire.toml — tracks skill deps, enables compliance checks"))
-
-			// marketplace tip (install only)
-			fmt.Println()
-			fmt.Printf("%s Also available via marketplace:\n", tui.StyleBold.Render("💡"))
-			fmt.Printf("   %s  %s\n",
-				tui.StyleGold.Render("🐙 Copilot"),
-				tui.StyleCyan.Render("copilot plugin marketplace add jeffreytse/grimoire"))
-			fmt.Printf("              %s\n",
-				tui.StyleCyan.Render("copilot plugin install grimoire@grimoire"))
-			fmt.Println()
 		}
+		for _, ag := range selectedAgents {
+			_, _ = skills.CleanBrokenSymlinks(agent.SkillsDir(ag))
+			_ = agent.ConfigureAgentMD(ag)
+		}
+
+		// Record installed domains in the global manifest for reproducibility.
+		// After this, `grimoire install --global` produces the same result.
+		for _, ds := range domainSelections {
+			if ds.depPrefix == "" {
+				continue
+			}
+			if len(ds.subs) > 0 {
+				for _, sub := range ds.subs {
+					saveDepToManifest("", fmt.Sprintf("%s:%s/%s/**", ds.depPrefix, ds.name, sub), "*")
+				}
+			} else {
+				saveDepToManifest("", fmt.Sprintf("%s:%s/**", ds.depPrefix, ds.name), "*")
+			}
+		}
+
+		fmt.Printf("\n%s  %d skills installed → %s\n",
+			tui.IconOK, totalCount/max(len(selectedAgents), 1), joinAgentNames(selectedAgents))
+
+		fmt.Println("\n  to get started:")
+		fmt.Println("    start any AI session — skills activate automatically")
+		fmt.Println("    or run /start-best-practice in Claude Code to trigger manually")
+		if isGlobal {
+			fmt.Printf("\n  reproduce later: %s\n", tui.StyleCyan.Render("grimoire install --global"))
+			fmt.Printf("    %s\n", tui.StyleDim.Render("selections saved to global manifest"))
+		} else {
+			fmt.Printf("\n  reproduce later: %s\n", tui.StyleCyan.Render("grimoire install"))
+			fmt.Printf("    %s\n", tui.StyleDim.Render("selections saved to grimoire.toml"))
+		}
+		fmt.Printf("\n  project setup: %s\n", tui.StyleCyan.Render("grimoire init"))
+		fmt.Printf("    %s\n", tui.StyleDim.Render("creates grimoire.toml — tracks skill deps, enables compliance checks"))
+
+		// marketplace tip (install only)
+		fmt.Println()
+		fmt.Printf("%s Also available via marketplace:\n", tui.StyleBold.Render("💡"))
+		fmt.Printf("   %s  %s\n",
+			tui.StyleGold.Render("🐙 Copilot"),
+			tui.StyleCyan.Render("copilot plugin marketplace add jeffreytse/grimoire"))
+		fmt.Printf("              %s\n",
+			tui.StyleCyan.Render("copilot plugin install grimoire@grimoire"))
+		fmt.Println()
 		flagInstallGlobal = false
 		tui.RunSelect("", []string{"← Back"})
 	}
@@ -397,8 +434,7 @@ func runPackageWizard() error {
 				displayToEntry[name] = reg
 			}
 		}
-		items = append(items, tui.ProfileSectionPrefix+" ")
-		items = append(items, "Add package", "Done")
+		items = append(items, tui.ProfileSectionPrefix+" ", "Add package", "Done")
 
 		action, ok := tui.RunSelectScrollable("📦 Manage packages", items, 8)
 		if !ok || action == "Done" {

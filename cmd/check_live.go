@@ -118,14 +118,18 @@ func runLiveCheck(projectDir string) error {
 		}
 	})
 
-	addr := fmt.Sprintf(":%d", flagPort)
+	host := flagHost
+	if host == "" {
+		host = "0.0.0.0"
+	}
+	addr := fmt.Sprintf("%s:%d", host, flagPort)
 	srv := &http.Server{Addr: addr, Handler: mux}
 	srvErr := make(chan error, 1)
 	go func() { srvErr <- srv.ListenAndServe() }()
 	select {
 	case err := <-srvErr:
 		if err != nil && err != http.ErrServerClosed {
-			return fmt.Errorf("live server: %w (try --port to use a different port)", err)
+			return fmt.Errorf("live server: %w (try --port or --host to change address)", err)
 		}
 	case <-time.After(150 * time.Millisecond):
 		// server started successfully
@@ -147,7 +151,11 @@ func runLiveCheck(projectDir string) error {
 		time.Sleep(300 * time.Millisecond)
 	}
 
-	url := fmt.Sprintf("http://localhost:%d", flagPort)
+	displayHost := flagHost
+	if displayHost == "" || displayHost == "0.0.0.0" {
+		displayHost = "localhost"
+	}
+	url := fmt.Sprintf("http://%s:%d", displayHost, flagPort)
 
 	// clearLive clears the screen and reprints the sticky header so each check
 	// cycle replaces the previous output rather than accumulating as logs.
