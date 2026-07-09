@@ -237,10 +237,8 @@ curl -fsSL https://raw.githubusercontent.com/jeffreytse/grimoire/main/scripts/in
 **Windows (PowerShell):**
 
 ```powershell
-Invoke-WebRequest -Uri "https://github.com/jeffreytse/grimoire/releases/latest/download/grimoire-windows-amd64.exe" -OutFile "$env:USERPROFILE\bin\grimoire.exe"
+irm https://raw.githubusercontent.com/jeffreytse/grimoire/main/scripts/install.ps1 | iex
 ```
-
-Add `%USERPROFILE%\bin` to PATH if not already set. Run as Administrator for symlink support.
 
 **Go:**
 
@@ -248,11 +246,17 @@ Add `%USERPROFILE%\bin` to PATH if not already set. Run as Administrator for sym
 go install github.com/jeffreytse/grimoire@latest
 ```
 
-**Then set up your project (all platforms):**
+**Then run the interactive wizard (all platforms):**
 
 ```bash
-grimoire init                                # creates grimoire.toml, auto-detects AI agents
-grimoire install jeffreytse/grimoire-core    # add + install the official best-practices package
+grimoire wizard    # guided setup: registry, domains, agents — no config editing required
+```
+
+Or set up manually:
+
+```bash
+grimoire update                              # fetch the official skill library
+grimoire install                             # install to all detected AI agents
 ```
 
 Auto-detects Claude Code, Codex, Gemini CLI, OpenClaw, and OpenCode.
@@ -389,6 +393,16 @@ language-servers = ["gopls", "grimoire"]
 ```
 
 ## 🚀 Quick Start
+
+**New to grimoire? Run the interactive wizard:**
+
+```bash
+grimoire wizard
+```
+
+The wizard walks you through registry selection, domain choice, and agent linking — no manual config editing. It detects your installed AI agents and installs the right skills automatically.
+
+---
 
 **After install, describe any problem in plain language:**
 
