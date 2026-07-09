@@ -91,4 +91,5 @@ func init() {
 	rootCmd.AddCommand(profileCmd)
 	rootCmd.AddCommand(contextCmd)
 	rootCmd.AddCommand(mcpCmd)
+	rootCmd.AddCommand(lspCmd)
 }
