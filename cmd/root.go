@@ -65,6 +65,7 @@ var rootCmd = &cobra.Command{
 }
 
 func Execute() {
+	rootCmd.Version = cliVersion
 	if err := rootCmd.Execute(); err != nil {
 		os.Exit(1) //nolint:revive // intentional: propagate cobra error as exit code 1
 	}
