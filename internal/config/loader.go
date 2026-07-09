@@ -11,7 +11,7 @@ import (
 	"github.com/pelletier/go-toml/v2"
 )
 
-// ParseFile reads one settings.toml file.
+// ParseFile reads one grimoire.toml (or legacy settings.toml) file.
 // Returns a zero-value FileConfig when the file is absent — callers treat missing as defaults.
 func ParseFile(path string) (FileConfig, error) {
 	fs := FileConfig{Sections: make(map[string]DomainSection)}
@@ -222,23 +222,23 @@ func resolveExtendsRef(ref string, regHomes map[string]string) (string, error) {
 	return filepath.Join(regHomes[best], "presets", remainder, "grimoire.toml"), nil
 }
 
-// LoadGlobal reads only the global settings file (no project layers).
+// LoadGlobal reads only the global config file (no project layers).
 func LoadGlobal() (FileConfig, error) {
 	return ParseFile(GlobalPath())
 }
 
-// LoadFile reads a single settings file by path.
+// LoadFile reads a single config file by path.
 // Used by grimoire config get/set/unset to target a specific level.
 func LoadFile(path string) (FileConfig, error) {
 	return ParseFile(path)
 }
 
-// SaveGlobal writes fs to the global settings file, creating parent dirs as needed.
+// SaveGlobal writes fs to the global config file, creating parent dirs as needed.
 func SaveGlobal(fs FileConfig) error { //nolint:gocritic // value semantics intentional for config snapshot
 	return WriteFile(GlobalPath(), fs)
 }
 
-// WriteFile serializes fs to a settings.toml file, creating parent dirs as needed.
+// WriteFile serializes fs to a grimoire.toml file, creating parent dirs as needed.
 func WriteFile(path string, fs FileConfig) error { //nolint:gocritic // value semantics intentional for config snapshot
 	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
 		return err

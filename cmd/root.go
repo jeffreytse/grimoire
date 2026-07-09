@@ -87,7 +87,7 @@ func init() {
 	rootCmd.AddCommand(versionCmd)
 	rootCmd.AddCommand(selfUpdateCmd)
 	rootCmd.AddCommand(configCmd)
-	rootCmd.AddCommand(settingsCmd)
+
 	rootCmd.AddCommand(packageCmd)
 	rootCmd.AddCommand(profileCmd)
 	rootCmd.AddCommand(contextCmd)

@@ -76,9 +76,9 @@ type contextOutput struct {
 	ResolvedProfiles map[string][]string     `json:"resolved_profiles,omitempty"`
 	ProfileSources   map[string]string       `json:"profile_sources,omitempty"`
 	DomainSections   []contextDomainSection  `json:"domain_sections,omitempty"`
-	SettingsSources  map[string]string       `json:"settings_sources,omitempty"`
+	ConfigSources    map[string]string       `json:"config_sources,omitempty"`
 	Agents           []contextAgentInfo      `json:"agents"`
-	Settings         map[string]any          `json:"settings,omitempty"`
+	Config           map[string]any          `json:"config,omitempty"`
 	Compliance       *compliance.Report      `json:"compliance,omitempty"`
 	Packages         []contextPackageInfo    `json:"packages"`
 	RuleFindings     []compliance.Diagnostic `json:"rule_findings,omitempty"`
@@ -98,8 +98,8 @@ func runContext(cmd *cobra.Command, args []string) error {
 	// agents
 	agentInfos := buildAgentInfos()
 
-	// settings — reuse the same JSON shape as `grimoire settings --json`
-	settingsMap := buildSettingsMap()
+	// config — reuse the same JSON shape as `grimoire config show --json`
+	configMap := buildConfigMap()
 
 	// compliance — nil if no report
 	var complianceReport *compliance.Report
@@ -126,9 +126,9 @@ func runContext(cmd *cobra.Command, args []string) error {
 		ResolvedProfiles: buildResolvedProfiles(),
 		ProfileSources:   buildProfileSources(),
 		DomainSections:   buildDomainSections(),
-		SettingsSources:  buildSettingsSources(),
+		ConfigSources:    buildConfigSources(),
 		Agents:           agentInfos,
-		Settings:         settingsMap,
+		Config:           configMap,
 		Compliance:       complianceReport,
 		Packages:         packages,
 		RuleFindings:     ruleFindings,
@@ -168,7 +168,7 @@ func buildAgentInfos() []contextAgentInfo {
 	return infos
 }
 
-func buildSettingsMap() map[string]any {
+func buildConfigMap() map[string]any {
 	r, err := config.Load(getProjectDir())
 	if err != nil {
 		return nil
@@ -240,7 +240,7 @@ func buildResolvedProfiles() map[string][]string {
 	return out
 }
 
-func buildSettingsSources() map[string]string {
+func buildConfigSources() map[string]string {
 	r, err := config.Load(getProjectDir())
 	if err != nil || len(r.Sources) == 0 {
 		return nil

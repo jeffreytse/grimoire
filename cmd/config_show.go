@@ -15,13 +15,13 @@ import (
 )
 
 var (
-	flagSettingsDomain string
-	flagSettingsJSON   bool
+	flagConfigShowDomain string
+	flagConfigShowJSON   bool
 )
 
-var settingsCmd = &cobra.Command{
-	Use:   "settings",
-	Short: "Show resolved grimoire settings for the current project",
+var configShowCmd = &cobra.Command{
+	Use:   "show",
+	Short: "Show resolved grimoire config for the current project",
 	Long: `Show the effective config after merging all layers (highest priority first):
 
   1. grimoire.toml                       (project — committed, --local)
@@ -29,29 +29,29 @@ var settingsCmd = &cobra.Command{
   3. /etc/grimoire/grimoire.toml         (system-wide, --system)
 
 Each key shows the source file that provided it.
-Use grimoire config get/set/unset to manage all keys.`,
-	RunE: runSettings,
+Use grimoire config get/set/unset to manage individual keys.`,
+	RunE: runConfigShow,
 }
 
 func init() {
-	settingsCmd.Flags().StringVar(&flagSettingsDomain, "domain", "", "show only sections matching this domain prefix")
-	settingsCmd.Flags().BoolVar(&flagSettingsJSON, "json", false, "output resolved settings as JSON")
+	configShowCmd.Flags().StringVar(&flagConfigShowDomain, "domain", "", "show only sections matching this domain prefix")
+	configShowCmd.Flags().BoolVar(&flagConfigShowJSON, "json", false, "output resolved config as JSON")
 }
 
-func runSettings(cmd *cobra.Command, args []string) error {
+func runConfigShow(cmd *cobra.Command, args []string) error {
 	resolved, err := config.Load(getProjectDir())
 	if err != nil {
-		return fmt.Errorf("loading settings: %w", err)
+		return fmt.Errorf("loading config: %w", err)
 	}
 
-	if flagSettingsJSON {
-		return printSettingsJSON(resolved)
+	if flagConfigShowJSON {
+		return printConfigJSON(resolved)
 	}
-	printSettingsHuman(resolved)
+	printConfigHuman(resolved)
 	return nil
 }
 
-func printSettingsHuman(r config.Config) { //nolint:gocritic // value semantics intentional; callers pass local Resolved vars
+func printConfigHuman(r config.Config) { //nolint:gocritic // value semantics intentional; callers pass local Resolved vars
 	printed := false
 
 	// [core] section — machine-only keys
@@ -69,7 +69,7 @@ func printSettingsHuman(r config.Config) { //nolint:gocritic // value semantics 
 	sort.Strings(keys)
 	filteredKeys := keys[:0]
 	for _, k := range keys {
-		if flagSettingsDomain == "" || strings.HasPrefix(k, flagSettingsDomain) {
+		if flagConfigShowDomain == "" || strings.HasPrefix(k, flagConfigShowDomain) {
 			filteredKeys = append(filteredKeys, k)
 		}
 	}
@@ -98,7 +98,7 @@ func printSettingsHuman(r config.Config) { //nolint:gocritic // value semantics 
 	}
 
 	if !printed {
-		fmt.Printf("  %s  no settings configured\n", tui.IconWarn)
+		fmt.Printf("  %s  nothing configured\n", tui.IconWarn)
 		fmt.Printf("  run: grimoire init\n")
 		fmt.Printf("  or edit: %s\n", config.GlobalPath())
 	} else {
@@ -167,7 +167,7 @@ func sourceTag(path string) string {
 	return tui.StyleDim.Render("   (" + path + ")")
 }
 
-func settingsToMap(r config.Config) map[string]any { //nolint:gocritic // value semantics intentional
+func configToMap(r config.Config) map[string]any { //nolint:gocritic // value semantics intentional
 	out := map[string]any{}
 	core := map[string]any{}
 	if r.Core.Home != "" {
@@ -199,11 +199,11 @@ func settingsToMap(r config.Config) map[string]any { //nolint:gocritic // value 
 	return out
 }
 
-func printSettingsJSON(r config.Config) error { //nolint:gocritic // value semantics intentional
-	m := settingsToMap(r)
-	if flagSettingsDomain != "" {
+func printConfigJSON(r config.Config) error { //nolint:gocritic // value semantics intentional
+	m := configToMap(r)
+	if flagConfigShowDomain != "" {
 		for k := range m {
-			if k != "core" && !strings.HasPrefix(k, flagSettingsDomain) {
+			if k != "core" && !strings.HasPrefix(k, flagConfigShowDomain) {
 				delete(m, k)
 			}
 		}

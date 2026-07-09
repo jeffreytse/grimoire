@@ -97,6 +97,7 @@ func init() {
 		cmd.Flags().BoolVarP(&flagConfigGlobal, "global", "g", false, "use user config (~/.config/grimoire/grimoire.toml)")
 		cmd.Flags().BoolVar(&flagConfigSystem, "system", false, "use system config (/etc/grimoire/grimoire.toml)")
 	}
+	configCmd.AddCommand(configShowCmd)
 	configCmd.AddCommand(configGetCmd)
 	configCmd.AddCommand(configSetCmd)
 	configCmd.AddCommand(configUnsetCmd)
@@ -108,7 +109,7 @@ func runConfigGet(_ *cobra.Command, args []string) error {
 	key := args[0]
 	r, err := config.Load(getProjectDir())
 	if err != nil {
-		return fmt.Errorf("loading settings: %w", err)
+		return fmt.Errorf("loading config: %w", err)
 	}
 	val, src, err := getKeyResolved(&r, key)
 	if err != nil {

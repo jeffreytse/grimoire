@@ -235,7 +235,7 @@ func runUninstallPackage(ref string) error {
 	fs.Dependencies.Skills = removeMatchingRefs(fs.Dependencies.Skills, &pkgRef)
 	if len(fs.Dependencies.Skills) < before {
 		if err := config.WriteFile(settingsPath, fs); err != nil {
-			fmt.Fprintf(os.Stderr, "  %s  updating settings: %v\n", tui.IconWarn, err)
+			fmt.Fprintf(os.Stderr, "  %s  updating config: %v\n", tui.IconWarn, err)
 		}
 	}
 

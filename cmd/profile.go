@@ -108,7 +108,7 @@ func runProfileList(_ *cobra.Command, _ []string) error {
 
 	if len(entries) == 0 {
 		if settingsErr != nil {
-			fmt.Printf("  %s no profiles found (settings load error: %v)\n", tui.IconWarn, settingsErr)
+			fmt.Printf("  %s no profiles found (config load error: %v)\n", tui.IconWarn, settingsErr)
 			fmt.Printf("  check: %s\n", tui.StyleDim.Render(config.GlobalPath()))
 		} else {
 			fmt.Printf("  %s no profiles found\n", tui.IconWarn)

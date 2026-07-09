@@ -247,7 +247,7 @@ func performSelfUpdateBinaryPlatform(exePath string, rel *ghRelease) error {
 func collectPackageList() ([]packageListEntry, error) {
 	cfg, err := config.LoadGlobal()
 	if err != nil {
-		return nil, fmt.Errorf("loading settings: %w", err)
+		return nil, fmt.Errorf("loading config: %w", err)
 	}
 
 	regs := skills.AllPackages()
@@ -336,7 +336,7 @@ func performPackageAdd(ref string) (packageListEntry, error) {
 	rd := config.PackageDef{Name: name, URL: ref, Enabled: true}
 	gfs.Packages = append(gfs.Packages, rd)
 	if err := config.SaveGlobal(gfs); err != nil {
-		return packageListEntry{}, fmt.Errorf("saving settings: %w", err)
+		return packageListEntry{}, fmt.Errorf("saving config: %w", err)
 	}
 
 	home := skills.PackageHome(name)
@@ -373,7 +373,7 @@ func performPackageAdd(ref string) (packageListEntry, error) {
 func performPackageRemove(name string) (mcpPackageRemoveOutput, error) {
 	gfs, err := config.LoadGlobal()
 	if err != nil {
-		return mcpPackageRemoveOutput{}, fmt.Errorf("loading settings: %w", err)
+		return mcpPackageRemoveOutput{}, fmt.Errorf("loading config: %w", err)
 	}
 
 	var kept []config.PackageDef
@@ -391,7 +391,7 @@ func performPackageRemove(name string) (mcpPackageRemoveOutput, error) {
 
 	gfs.Packages = kept
 	if err := config.SaveGlobal(gfs); err != nil {
-		return mcpPackageRemoveOutput{}, fmt.Errorf("saving settings: %w", err)
+		return mcpPackageRemoveOutput{}, fmt.Errorf("saving config: %w", err)
 	}
 	return mcpPackageRemoveOutput{Name: name, Removed: true}, nil
 }
@@ -409,13 +409,13 @@ func performPackageSet(ref string) (mcpPackageSetOutput, error) {
 	}
 	gfs, err := config.LoadGlobal()
 	if err != nil {
-		return mcpPackageSetOutput{}, fmt.Errorf("loading settings: %w", err)
+		return mcpPackageSetOutput{}, fmt.Errorf("loading config: %w", err)
 	}
 	for i, rd := range gfs.Packages {
 		if rd.Official {
 			gfs.Packages[i].URL = ref
 			if err := config.SaveGlobal(gfs); err != nil {
-				return mcpPackageSetOutput{}, fmt.Errorf("saving settings: %w", err)
+				return mcpPackageSetOutput{}, fmt.Errorf("saving config: %w", err)
 			}
 			return mcpPackageSetOutput{Package: ref, IsLocal: filepath.IsAbs(u)}, nil
 		}
@@ -428,7 +428,7 @@ func performPackageSet(ref string) (mcpPackageSetOutput, error) {
 		Enabled:  true,
 	})
 	if err := config.SaveGlobal(gfs); err != nil {
-		return mcpPackageSetOutput{}, fmt.Errorf("saving settings: %w", err)
+		return mcpPackageSetOutput{}, fmt.Errorf("saving config: %w", err)
 	}
 	return mcpPackageSetOutput{Package: ref, IsLocal: filepath.IsAbs(u)}, nil
 }
@@ -436,7 +436,7 @@ func performPackageSet(ref string) (mcpPackageSetOutput, error) {
 func performPackageUpdate(name string) ([]mcpPackageUpdateResult, error) {
 	cfg, err := config.LoadGlobal()
 	if err != nil {
-		return nil, fmt.Errorf("loading settings: %w", err)
+		return nil, fmt.Errorf("loading config: %w", err)
 	}
 
 	updateOne := func(n string) mcpPackageUpdateResult {

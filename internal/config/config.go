@@ -71,7 +71,7 @@ type PackageDef struct {
 	Enabled  bool   // false = skip in resolution without removing the entry
 }
 
-// InlineProfileDef is a profile definition embedded inside settings.toml under [profiles.*].
+// InlineProfileDef is a profile definition embedded inside grimoire.toml under [profiles.*].
 // It mirrors the profile TOML file format and may also carry compliance settings.
 type InlineProfileDef struct {
 	Name                     string // optional — overrides map key; defaults to map key
@@ -114,7 +114,7 @@ type Config struct {
 	sections       map[string]DomainSection
 	InlineProfiles map[string]InlineProfileDef // merged, higher-priority layers win per name
 	// Sources maps dotted key paths to the file that provided them.
-	// E.g. "core.home" → "/path/to/settings.toml"
+	// E.g. "core.home" → "/path/to/grimoire.toml"
 	Sources map[string]string
 	// MissingExtends holds standards.extends refs that could not be resolved
 	// because the referenced package is not installed.

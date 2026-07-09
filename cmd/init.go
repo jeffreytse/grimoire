@@ -76,7 +76,7 @@ func runInit(cmd *cobra.Command, args []string) error {
 	if !hasExplicit && tui.IsTTY() && !flagInitYes {
 		resolved, _ := config.Load(cwd)
 		if !reinit && len(resolved.Core.Profiles) > 0 {
-			fmt.Printf("  Using profiles from your settings: %s\n", strings.Join(resolved.Core.Profiles, ", "))
+			fmt.Printf("  Using profiles from config: %s\n", strings.Join(resolved.Core.Profiles, ", "))
 			// fall through to wizard below — loadExistingInitConfig will pick these up
 		}
 	}

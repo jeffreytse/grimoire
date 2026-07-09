@@ -155,7 +155,7 @@ type packageListEntry struct {
 func runPackageList(cmd *cobra.Command, args []string) error {
 	cfg, err := config.LoadGlobal()
 	if err != nil {
-		return fmt.Errorf("loading settings: %w", err)
+		return fmt.Errorf("loading config: %w", err)
 	}
 
 	regs := skills.AllPackages()
@@ -252,7 +252,7 @@ func runPackageSet(cmd *cobra.Command, args []string) error {
 
 	cfg, err := config.LoadGlobal()
 	if err != nil {
-		return fmt.Errorf("loading settings: %w", err)
+		return fmt.Errorf("loading config: %w", err)
 	}
 	// Update or add the official=true [[package]] entry.
 	for i, rd := range cfg.Packages {
@@ -261,7 +261,7 @@ func runPackageSet(cmd *cobra.Command, args []string) error {
 		}
 		cfg.Packages[i].URL = ref
 		if err := config.SaveGlobal(cfg); err != nil {
-			return fmt.Errorf("saving settings: %w", err)
+			return fmt.Errorf("saving config: %w", err)
 		}
 		fmt.Printf("%s  official package = %s\n", tui.IconOK, ref)
 		if filepath.IsAbs(u) {
@@ -279,7 +279,7 @@ func runPackageSet(cmd *cobra.Command, args []string) error {
 		Enabled:  true,
 	})
 	if err := config.SaveGlobal(cfg); err != nil {
-		return fmt.Errorf("saving settings: %w", err)
+		return fmt.Errorf("saving config: %w", err)
 	}
 	fmt.Printf("%s  official package = %s\n", tui.IconOK, ref)
 	if filepath.IsAbs(u) {
@@ -293,7 +293,7 @@ func runPackageSet(cmd *cobra.Command, args []string) error {
 func runPackageReset(cmd *cobra.Command, args []string) error {
 	cfg, err := config.LoadGlobal()
 	if err != nil {
-		return fmt.Errorf("loading settings: %w", err)
+		return fmt.Errorf("loading config: %w", err)
 	}
 	// Remove the official=true [[package]] entry so GrimoireRepo constant takes effect.
 	var kept []config.PackageDef
@@ -304,7 +304,7 @@ func runPackageReset(cmd *cobra.Command, args []string) error {
 	}
 	cfg.Packages = kept
 	if err := config.SaveGlobal(cfg); err != nil {
-		return fmt.Errorf("saving settings: %w", err)
+		return fmt.Errorf("saving config: %w", err)
 	}
 	fmt.Printf("%s  official package reset — using built-in default (%s)\n", tui.IconOK, skills.GrimoireRepo)
 	return nil
@@ -321,7 +321,7 @@ func runPackageDisable(cmd *cobra.Command, args []string) error {
 func setPackageEnabled(name string, enabled bool) error {
 	cfg, err := config.LoadGlobal()
 	if err != nil {
-		return fmt.Errorf("loading settings: %w", err)
+		return fmt.Errorf("loading config: %w", err)
 	}
 	for i, rd := range cfg.Packages {
 		if rd.Name != name {
@@ -329,7 +329,7 @@ func setPackageEnabled(name string, enabled bool) error {
 		}
 		cfg.Packages[i].Enabled = enabled
 		if err := config.SaveGlobal(cfg); err != nil {
-			return fmt.Errorf("saving settings: %w", err)
+			return fmt.Errorf("saving config: %w", err)
 		}
 		verb := "enabled"
 		if !enabled {
@@ -404,7 +404,7 @@ func updateNamedPackage(name, ref, forceVer string, w io.Writer) error {
 func runPackageUpdate(cmd *cobra.Command, args []string) error {
 	cfg, err := config.LoadGlobal()
 	if err != nil {
-		return fmt.Errorf("loading settings: %w", err)
+		return fmt.Errorf("loading config: %w", err)
 	}
 	r, _ := config.Load(getProjectDir())
 
@@ -651,7 +651,7 @@ func runPackageAdd(cmd *cobra.Command, args []string) error {
 
 	cfg, err := config.LoadGlobal()
 	if err != nil {
-		return fmt.Errorf("loading settings: %w", err)
+		return fmt.Errorf("loading config: %w", err)
 	}
 
 	// Idempotent: if name already exists, update URL/priority.
@@ -664,7 +664,7 @@ func runPackageAdd(cmd *cobra.Command, args []string) error {
 			cfg.Packages[i].Priority = flagPackageAddPriority
 		}
 		if err := config.SaveGlobal(cfg); err != nil {
-			return fmt.Errorf("saving settings: %w", err)
+			return fmt.Errorf("saving config: %w", err)
 		}
 		fmt.Printf("%s  updated package %s → %s\n", tui.IconOK, name, u)
 		if filepath.IsAbs(u) {
@@ -683,7 +683,7 @@ func runPackageAdd(cmd *cobra.Command, args []string) error {
 	}
 	cfg.Packages = append(cfg.Packages, rd)
 	if err := config.SaveGlobal(cfg); err != nil {
-		return fmt.Errorf("saving settings: %w", err)
+		return fmt.Errorf("saving config: %w", err)
 	}
 	fmt.Printf("%s  added package %s\n", tui.IconOK, name)
 
@@ -717,7 +717,7 @@ func runPackageRemove(cmd *cobra.Command, args []string) error {
 
 	cfg, err := config.LoadGlobal()
 	if err != nil {
-		return fmt.Errorf("loading settings: %w", err)
+		return fmt.Errorf("loading config: %w", err)
 	}
 
 	var kept []config.PackageDef
@@ -734,7 +734,7 @@ func runPackageRemove(cmd *cobra.Command, args []string) error {
 	}
 	cfg.Packages = kept
 	if err := config.SaveGlobal(cfg); err != nil {
-		return fmt.Errorf("saving settings: %w", err)
+		return fmt.Errorf("saving config: %w", err)
 	}
 	home := skills.PackageHome(target)
 	fmt.Printf("%s  removed %s from [[package]]\n", tui.IconOK, target)

@@ -795,7 +795,7 @@ func runInstallFromPackageURL(ref string) error {
 	if !alreadyDep {
 		fs.Dependencies.Skills = append(fs.Dependencies.Skills, ref)
 		if err := config.WriteFile(settingsPath, fs); err != nil {
-			return fmt.Errorf("saving settings: %w", err)
+			return fmt.Errorf("saving config: %w", err)
 		}
 		fmt.Printf("  %s  added dependency: %s\n", tui.IconOK, name)
 	}

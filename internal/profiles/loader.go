@@ -36,7 +36,7 @@ type Profile struct {
 	Tags        []string   // skill tags to bulk-activate
 	Skills      []SkillRef // after Resolve: explicit [[skills]]; after ResolveWithOptions: fully resolved
 	Exclude     []string   // skill names to remove after all inclusions
-	Source      string     // absolute path of the file; "" if not found; "(tag query)" if tag-only; "(settings.toml)" if inline
+	Source      string     // absolute path of the file; "" if not found; "(tag query)" if tag-only; "(grimoire.toml)" if inline
 	// Compliance recommendations carried by the profile (0/-1 = not set).
 	ComplianceThreshold      float64
 	ComplianceThresholdError int // -1 = not set
@@ -394,7 +394,7 @@ func ResolveWithOptions(name, projectDir string, opts ResolveOptions) (Profile, 
 
 	visited := map[string]bool{name: true}
 
-	// If no profile file, check inline settings.toml definition first.
+	// If no profile file, check inline grimoire.toml definition first.
 	if p.Source == "" {
 		if inline, ok := opts.InlineProfiles[name]; ok {
 			p = inline

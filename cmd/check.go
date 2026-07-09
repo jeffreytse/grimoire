@@ -247,7 +247,7 @@ func runReportCheck(projectDir string) error {
 
 	if section.ComplianceThreshold > 0 {
 		if report.Coverage.OverallPct < section.ComplianceThreshold {
-			fmt.Fprintf(os.Stderr, "\n  threshold (settings): %.0f%% required, got %.1f%%\n",
+			fmt.Fprintf(os.Stderr, "\n  threshold (config): %.0f%% required, got %.1f%%\n",
 				section.ComplianceThreshold, report.Coverage.OverallPct)
 			failed = true
 		}
@@ -258,7 +258,7 @@ func runReportCheck(projectDir string) error {
 	errorCount := len(filterBySeverity(report.Diagnostics, 1))
 
 	if section.ComplianceThresholdError >= 0 && errorCount > section.ComplianceThresholdError {
-		fmt.Fprintf(os.Stderr, "\n  error limit (settings): %d allowed, found %d\n",
+		fmt.Fprintf(os.Stderr, "\n  error limit (config): %d allowed, found %d\n",
 			section.ComplianceThresholdError, errorCount)
 		failed = true
 	}
@@ -2035,7 +2035,7 @@ func handleCheckResult(result, projectDir, mode string, cache *compliance.CheckC
 		failed := false
 		if section.ComplianceThreshold > 0 {
 			if report.Coverage.OverallPct < section.ComplianceThreshold {
-				fmt.Fprintf(os.Stderr, "\n  threshold (settings): %.0f%% required, got %.1f%%\n",
+				fmt.Fprintf(os.Stderr, "\n  threshold (config): %.0f%% required, got %.1f%%\n",
 					section.ComplianceThreshold, report.Coverage.OverallPct)
 				failed = true
 			}
@@ -2044,7 +2044,7 @@ func handleCheckResult(result, projectDir, mode string, cache *compliance.CheckC
 		}
 		errorCount := len(filterBySeverity(report.Diagnostics, 1))
 		if section.ComplianceThresholdError >= 0 && errorCount > section.ComplianceThresholdError {
-			fmt.Fprintf(os.Stderr, "\n  error limit (settings): %d allowed, found %d\n",
+			fmt.Fprintf(os.Stderr, "\n  error limit (config): %d allowed, found %d\n",
 				section.ComplianceThresholdError, errorCount)
 			failed = true
 		}

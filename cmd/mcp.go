@@ -109,10 +109,10 @@ func registerMCPTools(s *server.MCPServer) {
 	)
 
 	s.AddTool(
-		mcp.NewTool("grimoire_get_settings",
-			mcp.WithDescription("Return resolved grimoire settings for the current project after merging all layers (project > global > system). Equivalent to grimoire settings --json."),
+		mcp.NewTool("grimoire_get_config",
+			mcp.WithDescription("Return resolved grimoire config for the current project after merging all layers (project > global > system). Equivalent to grimoire config show --json."),
 		),
-		toolGrimoireGetSettings,
+		toolGrimoireGetConfig,
 	)
 
 	s.AddTool(
@@ -158,7 +158,7 @@ func registerMCPTools(s *server.MCPServer) {
 
 	s.AddTool(
 		mcp.NewTool("grimoire_config_unset",
-			mcp.WithDescription("Clear a grimoire config key from a settings file."),
+			mcp.WithDescription("Clear a grimoire config key from a config file."),
 			mcp.WithString("key", mcp.Required(), mcp.Description("Dotted config key")),
 			mcp.WithString("level", mcp.Description("Target layer: local | global | system (default: auto)")),
 		),
@@ -369,9 +369,9 @@ func toolGrimoireContext(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToo
 		ResolvedProfiles: buildResolvedProfiles(),
 		ProfileSources:   buildProfileSources(),
 		DomainSections:   buildDomainSections(),
-		SettingsSources:  buildSettingsSources(),
+		ConfigSources:    buildConfigSources(),
 		Agents:           buildAgentInfos(),
-		Settings:         buildSettingsMap(),
+		Config:           buildConfigMap(),
 		Compliance:       complianceReport,
 		Packages:         buildPackageInfos(),
 		RuleFindings:     eng.Run(),
@@ -414,12 +414,12 @@ func toolGrimoireRunRules(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallTo
 	return jsonResult(eng.Run())
 }
 
-func toolGrimoireGetSettings(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
+func toolGrimoireGetConfig(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
 	r, err := config.Load(getProjectDir())
 	if err != nil {
 		return mcp.NewToolResultError(err.Error()), nil
 	}
-	return jsonResult(settingsToMap(r))
+	return jsonResult(configToMap(r))
 }
 
 func toolGrimoireProfileList(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
