@@ -332,6 +332,62 @@ Or via plugin in `opencode.json`:
 | Codex CLI          | `AGENTS.md` auto-loaded; browse `/plugins` in CLI                                                              | `grimoire install --target codex`    |
 | Cursor             | `AGENTS.md` context injection                                                                                  | `grimoire install --target cursor`   |
 
+## 🖥️ Editor Integration (LSP)
+
+`grimoire lsp` implements the [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) over stdio. Any LSP-capable editor gets compliance diagnostics in the gutter in real time — no plugin required beyond a one-time language-client config.
+
+**How it works:** on every file save the server runs `grimoire check` in the background and pushes findings as LSP diagnostics to your editor. Pass/hint items are suppressed; only errors, warnings, and info appear.
+
+| Editor | Setup |
+|--------|-------|
+| Neovim | `lspconfig` custom server (see below) |
+| VSCode | grimoire extension, or `tasks.json` with a custom server entry |
+| Helix  | `languages.toml` custom language server entry |
+| Any LSP client | Point `cmd` at `grimoire lsp` |
+
+**Neovim (nvim-lspconfig):**
+
+```lua
+local lspconfig = require('lspconfig')
+local configs = require('lspconfig.configs')
+
+if not configs.grimoire then
+  configs.grimoire = {
+    default_config = {
+      cmd = { 'grimoire', 'lsp' },
+      filetypes = { 'go', 'python', 'javascript', 'typescript', 'rust', 'ruby' },
+      root_dir = lspconfig.util.root_pattern('grimoire.toml', '.git'),
+      single_file_support = true,
+    },
+  }
+end
+
+lspconfig.grimoire.setup {}
+```
+
+**Helix (`languages.toml`):**
+
+```toml
+[[language-server]]
+name = "grimoire"
+command = "grimoire"
+args = ["lsp"]
+
+[[language]]
+name = "go"
+language-servers = ["gopls", "grimoire"]
+```
+
+**VSCode (`settings.json` — requires grimoire extension or a custom extension):**
+
+```json
+{
+  "grimoire.lsp.enable": true,
+  "grimoire.lsp.command": "grimoire",
+  "grimoire.lsp.args": ["lsp"]
+}
+```
+
 ## 🚀 Quick Start
 
 **After install, describe any problem in plain language:**
