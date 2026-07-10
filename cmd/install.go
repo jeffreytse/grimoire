@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -178,6 +179,9 @@ func runInstall(cmd *cobra.Command, args []string) error {
 	symlink := !flagInstallCopy
 	if !flagInstallCopy && r.Core.InstallMode == "copy" {
 		symlink = false
+	}
+	if err := checkWindowsSymlinkSupport(symlink); err != nil {
+		return err
 	}
 	target := flagInstallTarget
 	if flagInstallYes && target == "" {
@@ -389,6 +393,9 @@ func runInstallSkillRef(rawKey string, pkgRef *config.PackageRef) error {
 		if r.Core.InstallMode == "copy" {
 			symlink = false
 		}
+	}
+	if err := checkWindowsSymlinkSupport(symlink); err != nil {
+		return err
 	}
 	targets := resolveTargets(flagInstallTarget)
 
@@ -608,6 +615,9 @@ func runInstallFromManifest(projectDir string) error {
 	fmt.Println("  Installing from grimoire.toml…")
 
 	symlink := r.Core.InstallMode != "copy"
+	if err := checkWindowsSymlinkSupport(symlink); err != nil {
+		return err
+	}
 	targets := resolveTargets(flagInstallTarget)
 
 	// Ensure non-official packages are cloned
@@ -819,6 +829,9 @@ func runInstallFromPackageURL(ref string) error {
 	if r.Core.InstallMode == "copy" {
 		symlink = false
 	}
+	if err := checkWindowsSymlinkSupport(symlink); err != nil {
+		return err
+	}
 	target := flagInstallTarget
 	if flagInstallYes && target == "" {
 		target = "auto"
@@ -886,6 +899,9 @@ func runInstallFromRoot(root string) error {
 		if r.Core.InstallMode == "copy" {
 			symlink = false
 		}
+	}
+	if err := checkWindowsSymlinkSupport(symlink); err != nil {
+		return err
 	}
 	target := flagInstallTarget
 	if flagInstallYes && target == "" {
@@ -1164,4 +1180,29 @@ func joinAgentNames(agents []string) string {
 		result += n
 	}
 	return result
+}
+
+// checkWindowsSymlinkSupport tests symlink capability on Windows before install.
+// Returns nil on non-Windows or when copy mode is active.
+func checkWindowsSymlinkSupport(symlink bool) error {
+	if runtime.GOOS != "windows" || !symlink {
+		return nil
+	}
+	tmp, err := os.MkdirTemp("", "grimoire-symlink-test-*")
+	if err != nil {
+		return nil // can't test; let the real install surface errors
+	}
+	defer os.RemoveAll(tmp)
+	src := filepath.Join(tmp, "src")
+	_ = os.WriteFile(src, nil, 0o600)
+	if err := os.Symlink(src, filepath.Join(tmp, "link")); err != nil {
+		return fmt.Errorf("symlinks are not available on this system\n\n" +
+			"Windows requires one of:\n" +
+			"  • Enable Developer Mode: Settings → System → Developer Mode → On\n" +
+			"  • Run grimoire as Administrator\n\n" +
+			"Or use copy mode instead:\n" +
+			"  grimoire config set core.install-mode copy --global\n" +
+			"  grimoire install")
+	}
+	return nil
 }
