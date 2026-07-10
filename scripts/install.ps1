@@ -7,7 +7,15 @@ function Write-Warn    { Write-Host "  " -NoNewline; Write-Host "!" -ForegroundC
 function Write-Fail    { Write-Host "  " -NoNewline; Write-Host "✗" -ForegroundColor Red     -NoNewline; Write-Host "  $args"; exit 1 }
 
 # OSC 8 hyperlink (clickable in Windows Terminal / modern consoles)
-function OSC8($url, $text) { return "`e]8;;$url`a$text`e]8;;`a" }
+function OSC8($url, $text) {
+    $esc = [char]27; $bel = [char]7
+    # `e (ESC) requires PS 6+; use [char]27 for PS 5.1 compat.
+    # WT_SESSION is set by Windows Terminal; PS 7+ supports OSC 8 on all platforms.
+    if ($env:WT_SESSION -or $PSVersionTable.PSVersion.Major -ge 7) {
+        return "${esc}]8;;${url}${bel}${text}${esc}]8;;${bel}"
+    }
+    return "$text ($url)"
+}
 
 # ── Banner ────────────────────────────────────────────────────────────────────
 Write-Host ""
