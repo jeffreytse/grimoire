@@ -6,11 +6,25 @@ import (
 	"path/filepath"
 )
 
+// Binary returns the CLI binary name for an agent key (may differ from the key itself).
+func Binary(ag string) string { return agentBinary(ag) }
+
+// agentBinary returns the CLI binary name for an agent key.
+// Most agents share their binary name with their key; exceptions are listed here.
+func agentBinary(ag string) string {
+	switch ag {
+	case "antigravity":
+		return "agy"
+	default:
+		return ag
+	}
+}
+
 // Detected returns the names of agents found in PATH.
 func Detected() []string {
 	var found []string
 	for _, ag := range All {
-		if _, err := exec.LookPath(ag); err == nil {
+		if _, err := exec.LookPath(agentBinary(ag)); err == nil {
 			found = append(found, ag)
 		}
 	}
@@ -22,7 +36,7 @@ func Detected() []string {
 func DetectedCheckAgents() []string {
 	var found []string
 	for _, ag := range CheckAgents {
-		binary := ag
+		binary := agentBinary(ag)
 		if ag == "copilot" {
 			binary = "gh"
 		}
@@ -35,7 +49,7 @@ func DetectedCheckAgents() []string {
 
 // Version returns the version string of an agent binary, or "".
 func Version(ag string) string {
-	out, err := exec.Command(ag, "--version").Output()
+	out, err := exec.Command(agentBinary(ag), "--version").Output()
 	if err != nil {
 		return ""
 	}

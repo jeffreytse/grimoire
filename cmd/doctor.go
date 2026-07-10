@@ -87,7 +87,7 @@ func collectDoctorChecks() doctorOutput {
 	// ── AI agents ────────────────────────────────────────────────────────────────
 	for _, ag := range agent.All {
 		label := agent.DisplayName(ag)
-		if _, err := exec.LookPath(ag); err != nil {
+		if _, err := exec.LookPath(agent.Binary(ag)); err != nil {
 			checks = append(checks, doctorCheck{
 				Name:   "agent-" + ag,
 				Status: "skip",

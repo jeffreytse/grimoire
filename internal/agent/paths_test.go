@@ -17,6 +17,7 @@ func TestDisplayName_KnownAgents(t *testing.T) {
 		{"claude", "Claude Code"},
 		{"codex", "Codex"},
 		{"gemini", "Gemini CLI"},
+		{"antigravity", "Antigravity"},
 		{"openclaw", "OpenClaw"},
 		{"opencode", "OpenCode"},
 	}
@@ -47,6 +48,7 @@ func TestFromDisplayName_KnownDisplayNames(t *testing.T) {
 		{"Claude Code", "claude"},
 		{"Codex", "codex"},
 		{"Gemini CLI", "gemini"},
+		{"Antigravity", "antigravity"},
 		{"OpenClaw", "openclaw"},
 		{"OpenCode", "opencode"},
 	}
@@ -132,6 +134,15 @@ func TestSkillsDir_OpenCodeUnderDotConfig(t *testing.T) {
 	}
 }
 
+func TestSkillsDir_AntigravityUnderGeminiConfig(t *testing.T) {
+	got := SkillsDir("antigravity")
+	home, _ := os.UserHomeDir()
+	want := filepath.Join(home, ".gemini", "config", "skills")
+	if got != want {
+		t.Errorf("SkillsDir(antigravity) = %q; want %q", got, want)
+	}
+}
+
 // ── ConfigFile ──────────────────────────────────────────────────────────────
 
 func TestConfigFile_KnownAgents_ReturnsNonEmpty(t *testing.T) {
@@ -154,6 +165,13 @@ func TestConfigFile_CodexIsAGENTSmd(t *testing.T) {
 	got := ConfigFile("codex")
 	if filepath.Base(got) != "AGENTS.md" {
 		t.Errorf("ConfigFile(codex) base = %q; want AGENTS.md", filepath.Base(got))
+	}
+}
+
+func TestConfigFile_AntigravityIsAGENTSmd(t *testing.T) {
+	got := ConfigFile("antigravity")
+	if filepath.Base(got) != "AGENTS.md" {
+		t.Errorf("ConfigFile(antigravity) base = %q; want AGENTS.md", filepath.Base(got))
 	}
 }
 
@@ -186,7 +204,7 @@ func TestConfigDir_SharesRootWithSkillsDir(t *testing.T) {
 // ── All list ─────────────────────────────────────────────────────────────────
 
 func TestAll_ContainsExpectedAgents(t *testing.T) {
-	expected := []string{"claude", "codex", "gemini", "openclaw", "opencode"}
+	expected := []string{"claude", "codex", "gemini", "antigravity", "openclaw", "opencode"}
 	if len(All) != len(expected) {
 		t.Errorf("All has %d agents; want %d", len(All), len(expected))
 	}

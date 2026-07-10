@@ -7,12 +7,12 @@ import (
 )
 
 // All lists agents that receive installed skills (have a managed skills directory).
-var All = []string{"claude", "codex", "gemini", "openclaw", "opencode"}
+var All = []string{"claude", "codex", "gemini", "antigravity", "openclaw", "opencode"}
 
 // CheckAgents is the default resolution order for `grimoire check --independent`.
 // Separate from All — includes "copilot" (maps to "gh copilot"), which cannot receive
 // skills but can perform compliance checks.
-var CheckAgents = []string{"claude", "gemini", "codex", "copilot", "opencode", "openclaw"}
+var CheckAgents = []string{"claude", "gemini", "codex", "antigravity", "copilot", "opencode", "openclaw"}
 
 func mustHome() string {
 	home, err := os.UserHomeDir()
@@ -31,6 +31,8 @@ func SkillsDir(ag string) string {
 		return filepath.Join(home, ".agents", "skills")
 	case "gemini":
 		return filepath.Join(home, ".gemini", "skills")
+	case "antigravity":
+		return filepath.Join(home, ".gemini", "config", "skills")
 	case "openclaw":
 		return filepath.Join(home, ".openclaw", "skills")
 	case "opencode":
@@ -49,6 +51,8 @@ func ProjectSkillsDir(ag, projectDir string) string {
 		return filepath.Join(projectDir, ".agents", "skills")
 	case "gemini":
 		return filepath.Join(projectDir, ".gemini", "skills")
+	case "antigravity":
+		return filepath.Join(projectDir, ".agent", "skills")
 	case "openclaw":
 		return filepath.Join(projectDir, ".openclaw", "skills")
 	case "opencode":
@@ -66,6 +70,8 @@ func ConfigFile(ag string) string {
 		return filepath.Join(home, ".agents", "AGENTS.md")
 	case "gemini":
 		return filepath.Join(home, ".gemini", "GEMINI.md")
+	case "antigravity":
+		return filepath.Join(home, ".gemini", "AGENTS.md")
 	case "openclaw":
 		return filepath.Join(home, ".openclaw", "workspace", "AGENTS.md")
 	case "opencode":
@@ -83,6 +89,8 @@ func ConfigDir(ag string) string {
 		return filepath.Join(home, ".agents")
 	case "gemini":
 		return filepath.Join(home, ".gemini")
+	case "antigravity":
+		return filepath.Join(home, ".gemini")
 	case "openclaw":
 		return filepath.Join(home, ".openclaw", "workspace")
 	case "opencode":
@@ -99,6 +107,8 @@ func DisplayName(ag string) string {
 		return "Codex"
 	case "gemini":
 		return "Gemini CLI"
+	case "antigravity":
+		return "Antigravity"
 	case "openclaw":
 		return "OpenClaw"
 	case "opencode":
@@ -115,6 +125,8 @@ func FromDisplayName(display string) string {
 		return "codex"
 	case "Gemini CLI":
 		return "gemini"
+	case "Antigravity":
+		return "antigravity"
 	case "OpenClaw":
 		return "openclaw"
 	case "OpenCode":
