@@ -10,6 +10,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/jeffreytse/grimoire/internal/agent"
+	"github.com/jeffreytse/grimoire/internal/manifest"
 	"github.com/jeffreytse/grimoire/internal/skills"
 	"github.com/jeffreytse/grimoire/internal/tui"
 )
@@ -227,12 +228,13 @@ func runWizard() error {
 
 		// For nested domains, pick subdomains
 		type domainSelection struct {
-			name      string
-			root      string   // skillsRoot for this domain's package
-			regName   string   // for summary display
-			pkgName   string   // "" for official, reg.Name for third-party
-			depPrefix string   // "owner/repo" form for writing to global manifest
-			subs      []string // empty = all
+			name        string
+			root        string   // skillsRoot for this domain's package
+			regName     string   // for summary display
+			pkgName     string   // "" for official, reg.Name for third-party
+			depPrefix   string   // "owner/repo" form for writing to global manifest
+			subs        []string // selected subdomains; empty = non-nested domain
+			allSubCount int      // total available subdomains (0 for non-nested)
 		}
 		var domainSelections []domainSelection
 
@@ -261,7 +263,7 @@ func runWizard() error {
 				if !ok {
 					continue
 				}
-				domainSelections = append(domainSelections, domainSelection{name: di.domain.Name, root: di.skillsRoot, regName: di.regName, pkgName: di.pkgName, depPrefix: di.depPrefix, subs: chosen})
+				domainSelections = append(domainSelections, domainSelection{name: di.domain.Name, root: di.skillsRoot, regName: di.regName, pkgName: di.pkgName, depPrefix: di.depPrefix, subs: chosen, allSubCount: len(subNames)})
 			} else {
 				domainSelections = append(domainSelections, domainSelection{name: di.domain.Name, root: di.skillsRoot, regName: di.regName, pkgName: di.pkgName, depPrefix: di.depPrefix})
 			}
@@ -368,16 +370,68 @@ func runWizard() error {
 
 		// Record installed domains in the global manifest for reproducibility.
 		// After this, `grimoire install --global` produces the same result.
+		// Remove stale package entries first so re-runs don't accumulate old keys.
+		{
+			var mPath string
+			if isGlobal {
+				mPath = manifest.GlobalPath()
+			} else {
+				mPath = manifest.ProjectPath(getProjectDir())
+			}
+			seen := map[string]bool{}
+			for _, ds := range domainSelections {
+				if ds.depPrefix == "" || seen[ds.depPrefix] {
+					continue
+				}
+				seen[ds.depPrefix] = true
+				_ = manifest.RemovePkgDeps(mPath, ds.depPrefix)
+			}
+			// Remove bare skill entries now covered by coalesced wildcards.
+			for _, ds := range domainSelections {
+				if ds.allSubCount == 0 {
+					removeBareDomainSkills(mPath, filepath.Join(ds.root, ds.name, "skills"))
+				} else {
+					for _, sub := range ds.subs {
+						removeBareDomainSkills(mPath, filepath.Join(ds.root, ds.name, sub, "skills"))
+					}
+				}
+			}
+		}
+		// Coalesce: all subs selected → domain/**, all domains selected → pkg:**.
+		totalDomainsPerPkg := map[string]int{}
+		for _, di := range domainItems {
+			totalDomainsPerPkg[di.depPrefix]++
+		}
+		fullSelPerPkg := map[string]int{}
+		selPerPkg := map[string]int{}
 		for _, ds := range domainSelections {
 			if ds.depPrefix == "" {
 				continue
 			}
-			if len(ds.subs) > 0 {
-				for _, sub := range ds.subs {
-					saveDepToManifest("", fmt.Sprintf("%s:%s/%s/**", ds.depPrefix, ds.name, sub), "*")
+			selPerPkg[ds.depPrefix]++
+			if ds.allSubCount == 0 || len(ds.subs) == ds.allSubCount {
+				fullSelPerPkg[ds.depPrefix]++
+			}
+		}
+		pkgWritten := map[string]bool{}
+		for _, ds := range domainSelections {
+			if ds.depPrefix == "" {
+				continue
+			}
+			if selPerPkg[ds.depPrefix] == totalDomainsPerPkg[ds.depPrefix] &&
+				fullSelPerPkg[ds.depPrefix] == totalDomainsPerPkg[ds.depPrefix] {
+				if !pkgWritten[ds.depPrefix] {
+					saveDepToManifest("", fmt.Sprintf("%s:**", ds.depPrefix), "*")
+					pkgWritten[ds.depPrefix] = true
 				}
-			} else {
+				continue
+			}
+			if ds.allSubCount == 0 || len(ds.subs) == ds.allSubCount {
 				saveDepToManifest("", fmt.Sprintf("%s:%s/**", ds.depPrefix, ds.name), "*")
+				continue
+			}
+			for _, sub := range ds.subs {
+				saveDepToManifest("", fmt.Sprintf("%s:%s/%s/**", ds.depPrefix, ds.name, sub), "*")
 			}
 		}
 
@@ -524,6 +578,20 @@ func showPackageDetail(reg skills.PackageEntry) {
 			if err := runPackageRemove(nil, []string{reg.Name}); err != nil {
 				fmt.Fprintf(os.Stderr, "error: %v\n", err)
 			}
+		}
+	}
+}
+
+// removeBareDomainSkills removes bare [dependencies] entries for every skill found
+// in skillsDir (e.g. <pkgRoot>/domain/skills/ or <pkgRoot>/domain/sub/skills/).
+func removeBareDomainSkills(mPath, skillsDir string) {
+	entries, _ := os.ReadDir(skillsDir)
+	for _, e := range entries {
+		if !e.IsDir() || strings.HasPrefix(e.Name(), ".") {
+			continue
+		}
+		if _, err := os.Stat(filepath.Join(skillsDir, e.Name(), "SKILL.md")); err == nil {
+			_ = manifest.RemoveDep(mPath, e.Name())
 		}
 	}
 }

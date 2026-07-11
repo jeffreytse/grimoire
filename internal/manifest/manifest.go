@@ -251,6 +251,39 @@ func RemoveDep(path, key string) error {
 	return os.WriteFile(path, []byte(strings.Join(out, "\n")), 0o644)
 }
 
+// RemovePkgDeps removes all [dependencies] entries whose key starts with depPrefix.
+// Handles double-quoted keys (the normal form for package refs containing /,@,:).
+// Idempotent; returns nil when the file does not exist.
+func RemovePkgDeps(path, depPrefix string) error {
+	data, err := os.ReadFile(path)
+	if os.IsNotExist(err) {
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+	quotedPrefix := `"` + depPrefix
+	inDeps := false
+	lines := strings.Split(string(data), "\n")
+	out := lines[:0]
+	for _, l := range lines {
+		trimmed := strings.TrimSpace(l)
+		if trimmed == "[dependencies]" {
+			inDeps = true
+			out = append(out, l)
+			continue
+		}
+		if inDeps && strings.HasPrefix(trimmed, "[") && !strings.HasPrefix(trimmed, "[[") {
+			inDeps = false
+		}
+		if inDeps && (strings.HasPrefix(trimmed, quotedPrefix) || strings.HasPrefix(trimmed, depPrefix+" ") || strings.HasPrefix(trimmed, depPrefix+"=")) {
+			continue
+		}
+		out = append(out, l)
+	}
+	return os.WriteFile(path, []byte(strings.Join(out, "\n")), 0o644)
+}
+
 // depLine formats one TOML dependency line. Keys with non-barekey characters are quoted.
 func depLine(key, version string) string {
 	k := key
