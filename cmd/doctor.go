@@ -126,6 +126,18 @@ func collectDoctorChecks() doctorOutput {
 				Detail: fmt.Sprintf("%s %s — %d grimoire skills", label, vs, count),
 			})
 		}
+		if cap := agent.SkillLoadCap(ag); cap > 0 && count > cap {
+			checks = append(checks, doctorCheck{
+				Name:   "agent-" + ag + "-skill-cap",
+				Status: "warn",
+				Detail: fmt.Sprintf(
+					"%s: %d skills installed but agent only loads %d by default — "+
+						"create or edit ~/.openclaw/openclaw.json:\n"+
+						`      { "skills": { "limits": { "maxSkillsLoadedPerSource": %d, "maxSkillsInPrompt": %d } } }`,
+					label, count, cap, count, count),
+			})
+			ok = false
+		}
 		if agent.IsConfigured(ag) {
 			checks = append(checks, doctorCheck{
 				Name:   "agent-" + ag + "-configured",
