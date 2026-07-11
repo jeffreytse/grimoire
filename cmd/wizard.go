@@ -421,7 +421,7 @@ func runWizard() error {
 			if selPerPkg[ds.depPrefix] == totalDomainsPerPkg[ds.depPrefix] &&
 				fullSelPerPkg[ds.depPrefix] == totalDomainsPerPkg[ds.depPrefix] {
 				if !pkgWritten[ds.depPrefix] {
-					saveDepToManifest("", fmt.Sprintf("%s:**", ds.depPrefix), "*")
+					saveDepToManifest("", ds.depPrefix, "*")
 					pkgWritten[ds.depPrefix] = true
 				}
 				continue
