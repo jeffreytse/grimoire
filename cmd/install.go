@@ -1192,7 +1192,7 @@ func checkWindowsSymlinkSupport(symlink bool) error {
 	if err != nil {
 		return nil // can't test; let the real install surface errors
 	}
-	defer os.RemoveAll(tmp)
+	defer func() { _ = os.RemoveAll(tmp) }()
 	src := filepath.Join(tmp, "src")
 	_ = os.WriteFile(src, nil, 0o600)
 	if err := os.Symlink(src, filepath.Join(tmp, "link")); err != nil {
