@@ -31,6 +31,34 @@ func Detected() []string {
 	return found
 }
 
+// DetectedOrInstalled returns agents that are either detectable via PATH or have a
+// non-empty skills directory. Used by uninstall so cleanup covers agents whose binary
+// is no longer in PATH but whose skills were installed in a prior run.
+func DetectedOrInstalled() []string {
+	seen := map[string]bool{}
+	var found []string
+	for _, ag := range All {
+		if _, err := exec.LookPath(agentBinary(ag)); err == nil {
+			found = append(found, ag)
+			seen[ag] = true
+		}
+	}
+	for _, ag := range All {
+		if seen[ag] {
+			continue
+		}
+		dir := SkillsDir(ag)
+		if dir == "" {
+			continue
+		}
+		if entries, err := os.ReadDir(dir); err == nil && len(entries) > 0 {
+			found = append(found, ag)
+			seen[ag] = true
+		}
+	}
+	return found
+}
+
 // DetectedCheckAgents returns check-capable agent names found on the system,
 // in CheckAgents order. "copilot" requires the "gh" binary (gh copilot extension).
 func DetectedCheckAgents() []string {

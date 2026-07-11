@@ -191,7 +191,7 @@ func registerMCPTools(s *server.MCPServer) {
 			mcp.WithString("domain", mcp.Description("Domain to install (e.g. engineering)")),
 			mcp.WithString("subdomain", mcp.Description("Subdomain filter (requires domain)")),
 			mcp.WithString("skill", mcp.Description("Single skill ref: domain/subdomain/name")),
-			mcp.WithString("target", mcp.Description("Agent: claude, codex, gemini, all, auto (default: auto)")),
+			mcp.WithString("target", mcp.Description("Agent: claude, codex, gemini, antigravity, openclaw, opencode, all, auto (default: auto)")),
 		),
 		toolGrimoireInstall,
 	)
@@ -202,7 +202,7 @@ func registerMCPTools(s *server.MCPServer) {
 			mcp.WithString("domain", mcp.Description("Domain to uninstall")),
 			mcp.WithString("subdomain", mcp.Description("Subdomain filter (requires domain)")),
 			mcp.WithString("skill", mcp.Description("Single skill ref: domain/subdomain/name")),
-			mcp.WithString("target", mcp.Description("Agent: claude, codex, gemini, all, auto (default: auto)")),
+			mcp.WithString("target", mcp.Description("Agent: claude, codex, gemini, antigravity, openclaw, opencode, all, auto (default: auto)")),
 		),
 		toolGrimoireUninstall,
 	)
@@ -218,7 +218,7 @@ func registerMCPTools(s *server.MCPServer) {
 	s.AddTool(
 		mcp.NewTool("grimoire_clean",
 			mcp.WithDescription("Remove stale grimoire-managed skills from agent directories (broken symlinks and stale copy-mode installs)."),
-			mcp.WithString("target", mcp.Description("Agent to clean: claude, codex, gemini, all, auto (default: auto)")),
+			mcp.WithString("target", mcp.Description("Agent to clean: claude, codex, gemini, antigravity, openclaw, opencode, all, auto (default: auto)")),
 		),
 		toolGrimoireClean,
 	)

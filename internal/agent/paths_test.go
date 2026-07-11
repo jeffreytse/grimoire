@@ -134,10 +134,10 @@ func TestSkillsDir_OpenCodeUnderDotConfig(t *testing.T) {
 	}
 }
 
-func TestSkillsDir_AntigravityUnderGeminiConfig(t *testing.T) {
+func TestSkillsDir_AntigravityUnderAntigravityCLI(t *testing.T) {
 	got := SkillsDir("antigravity")
 	home, _ := os.UserHomeDir()
-	want := filepath.Join(home, ".gemini", "config", "skills")
+	want := filepath.Join(home, ".gemini", "antigravity-cli", "skills")
 	if got != want {
 		t.Errorf("SkillsDir(antigravity) = %q; want %q", got, want)
 	}

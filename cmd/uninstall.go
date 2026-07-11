@@ -64,7 +64,7 @@ func runUninstall(cmd *cobra.Command, args []string) error {
 	}
 
 	root := skills.SkillsRoot()
-	targets := resolveTargets(flagUninstallTarget)
+	targets := resolveUninstallTargets(flagUninstallTarget)
 	count := 0
 
 	switch {
@@ -202,7 +202,7 @@ func uninstallDomainFromAgent(root, domain, subdomain, ag string) (int, error) {
 // and removes the ref from [dependencies] skills in settings.
 func runUninstallPackage(ref string) error {
 	pkgRef := config.ParsePackageRef(ref)
-	targets := resolveTargets(flagUninstallTarget)
+	targets := resolveUninstallTargets(flagUninstallTarget)
 	count := 0
 
 	for _, ag := range targets {
@@ -350,6 +350,26 @@ func refsMatch(a, b *config.PackageRef) bool {
 		return a.LocalPath == b.LocalPath
 	}
 	return a.PackageName == b.PackageName && (b.Path == "" || a.Path == b.Path)
+}
+
+// resolveUninstallTargets is like resolveTargets but uses DetectedOrInstalled for the
+// auto case, so uninstall covers agents whose binary is no longer in PATH but whose
+// skills directory is non-empty (e.g. agy removed from PATH after install).
+func resolveUninstallTargets(target string) []string {
+	switch target {
+	case "", "auto":
+		r, _ := config.Load(getProjectDir())
+		if len(r.Core.Agents) > 0 {
+			return r.Core.Agents
+		}
+		found := agent.DetectedOrInstalled()
+		if len(found) == 0 {
+			return []string{"claude"}
+		}
+		return found
+	default:
+		return resolveTargets(target)
+	}
 }
 
 func skillNameFromPath(skillPath, ref string) string {

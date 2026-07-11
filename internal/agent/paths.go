@@ -32,7 +32,7 @@ func SkillsDir(ag string) string {
 	case "gemini":
 		return filepath.Join(home, ".gemini", "skills")
 	case "antigravity":
-		return filepath.Join(home, ".gemini", "config", "skills")
+		return filepath.Join(home, ".gemini", "antigravity-cli", "skills")
 	case "openclaw":
 		return filepath.Join(home, ".openclaw", "skills")
 	case "opencode":
@@ -52,7 +52,7 @@ func ProjectSkillsDir(ag, projectDir string) string {
 	case "gemini":
 		return filepath.Join(projectDir, ".gemini", "skills")
 	case "antigravity":
-		return filepath.Join(projectDir, ".agent", "skills")
+		return filepath.Join(projectDir, ".agents", "skills")
 	case "openclaw":
 		return filepath.Join(projectDir, ".openclaw", "skills")
 	case "opencode":
