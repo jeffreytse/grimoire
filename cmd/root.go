@@ -48,6 +48,7 @@ var rootCmd = &cobra.Command{
   grimoire check         Run BPDD compliance check against declared practices
   grimoire watch         Re-run compliance check whenever files change
   grimoire status        Show project compliance health at a glance
+  grimoire validate      Validate SKILL.md files against the grimoire STANDARD
   grimoire wizard        Open the interactive TUI wizard
   grimoire doctor        Run a health check on the grimoire installation
   grimoire clean         Remove broken skill symlinks
@@ -78,6 +79,7 @@ func init() {
 	rootCmd.AddCommand(checkCmd)
 	rootCmd.AddCommand(watchCmd)
 	rootCmd.AddCommand(statusCmd)
+	rootCmd.AddCommand(validateCmd)
 	rootCmd.AddCommand(installCmd)
 	rootCmd.AddCommand(uninstallCmd)
 	rootCmd.AddCommand(listCmd)

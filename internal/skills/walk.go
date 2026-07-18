@@ -25,6 +25,16 @@ type skillFrontmatter struct {
 	Metadata      map[string]string `yaml:"metadata"`
 	Dependencies  map[string]string `yaml:"dependencies"`
 	Criteria      []string          `yaml:"criteria"`
+	// Lifecycle and citation fields (STANDARD.md)
+	Source       string   `yaml:"source"`
+	Emerging     bool     `yaml:"emerging"`
+	Stable       bool     `yaml:"stable"`
+	Deprecated   bool     `yaml:"deprecated"`
+	DeprecatedBy string   `yaml:"deprecated_by"`
+	Practitioner bool     `yaml:"practitioner"`
+	Verified           bool     `yaml:"verified"`
+	Related            []string `yaml:"related"`
+	DuplicateReviewed  bool     `yaml:"duplicate-reviewed"`
 }
 
 // parseSkillMeta reads SKILL.md and returns its frontmatter and raw body.
@@ -51,24 +61,39 @@ func parseSkillMeta(skillPath string, withBody bool) (meta skillFrontmatter, bod
 		_ = f.Close()
 		data = buf[:n]
 	}
-	content := string(data)
+	if !withBody {
+		// Frontmatter-only fast path: parse without constructing body string.
+		content := string(data)
+		if strings.HasPrefix(content, "---") {
+			rest := content[3:]
+			end := strings.Index(rest, "\n---")
+			if end != -1 {
+				var m skillFrontmatter
+				_ = yaml.Unmarshal([]byte(rest[:end]), &m)
+				return m, ""
+			}
+		}
+		return skillFrontmatter{}, ""
+	}
+	meta, body, _ = parseSkillMetaFromContent(string(data))
+	return meta, body
+}
+
+// parseSkillMetaFromContent parses frontmatter and body from already-read
+// SKILL.md content. Used by parseSkillMeta (withBody=true) and
+// ParseSkillFromContent to avoid duplicate file reads.
+// Returns the YAML unmarshal error so callers can distinguish missing-field
+// errors from invalid-YAML errors without a second parse.
+func parseSkillMetaFromContent(content string) (meta skillFrontmatter, body string, yamlErr error) {
 	if strings.HasPrefix(content, "---") {
 		rest := content[3:]
 		end := strings.Index(rest, "\n---")
 		if end != -1 {
-			var meta skillFrontmatter
-			_ = yaml.Unmarshal([]byte(rest[:end]), &meta)
-			if !withBody {
-				return meta, ""
-			}
-			body := rest[end+4:] // skip past the closing ---\n
-			return meta, body
+			yamlErr = yaml.Unmarshal([]byte(rest[:end]), &meta)
+			return meta, rest[end+4:], yamlErr // skip past the closing ---\n
 		}
 	}
-	if !withBody {
-		return skillFrontmatter{}, ""
-	}
-	return skillFrontmatter{}, content
+	return skillFrontmatter{}, content, nil
 }
 
 type Domain struct {
@@ -110,6 +135,17 @@ type Skill struct {
 	// Body is the raw SKILL.md content after the frontmatter block.
 	// Used as the compliance rubric — the AI infers criteria from the full text.
 	Body string `json:"body,omitempty"`
+
+	// Lifecycle and citation fields (STANDARD.md).
+	Source       string   `json:"source,omitempty"`
+	Emerging     bool     `json:"emerging,omitempty"`
+	Stable       bool     `json:"stable,omitempty"`
+	Deprecated   bool     `json:"deprecated,omitempty"`
+	DeprecatedBy string   `json:"deprecated_by,omitempty"`
+	Practitioner bool     `json:"practitioner,omitempty"`
+	Verified          bool     `json:"verified,omitempty"`
+	Related           []string `json:"related,omitempty"`
+	DuplicateReviewed bool     `json:"duplicate_reviewed,omitempty"`
 }
 
 // IsNested returns true when the domain uses subdomain directories
@@ -264,6 +300,15 @@ func listSkillsInDir(dir, domainName, subdomainName string, withBody bool) ([]Sk
 			Dependencies:  meta.Dependencies,
 			Criteria:      meta.Criteria,
 			Body:          body,
+			Source:        meta.Source,
+			Emerging:      meta.Emerging,
+			Stable:        meta.Stable,
+			Deprecated:    meta.Deprecated,
+			DeprecatedBy:  meta.DeprecatedBy,
+			Practitioner:      meta.Practitioner,
+			Verified:          meta.Verified,
+			Related:           meta.Related,
+			DuplicateReviewed: meta.DuplicateReviewed,
 		})
 	}
 	return skills, nil
@@ -357,6 +402,15 @@ func listAllSkills(skillsRoot string, withBody bool) ([]Skill, error) {
 				Dependencies:  meta.Dependencies,
 				Criteria:      meta.Criteria,
 				Body:          body,
+				Source:        meta.Source,
+				Emerging:      meta.Emerging,
+				Stable:        meta.Stable,
+				Deprecated:    meta.Deprecated,
+				DeprecatedBy:  meta.DeprecatedBy,
+				Practitioner:      meta.Practitioner,
+				Verified:          meta.Verified,
+				Related:           meta.Related,
+				DuplicateReviewed: meta.DuplicateReviewed,
 			}
 		}(i, e)
 	}
@@ -403,3 +457,103 @@ func (e *ErrInvalidSkillRef) Error() string {
 	return "invalid skill reference: " + e.Ref + " (use domain/subdomain/skill or domain/skill)"
 }
 func (e *ErrSkillNotFound) Error() string { return "skill not found: " + e.Path }
+
+// ParseSkillFile reads and parses a single SKILL.md file. path may be the
+// SKILL.md file itself or the directory containing it.
+func ParseSkillFile(path string) (Skill, error) {
+	skillMD := path
+	if filepath.Base(path) != "SKILL.md" {
+		skillMD = filepath.Join(path, "SKILL.md")
+	}
+	if _, err := os.Stat(skillMD); err != nil {
+		return Skill{}, err
+	}
+	dir := filepath.Dir(skillMD)
+	meta, body := parseSkillMeta(dir, true)
+	name := filepath.Base(dir)
+	if meta.Name != "" {
+		name = meta.Name
+	}
+	return Skill{
+		Name:          name,
+		Path:          dir,
+		Tags:          meta.Tags,
+		Version:       meta.Version,
+		Description:   meta.Description,
+		Authors:       meta.Authors,
+		License:       meta.License,
+		Compatibility: meta.Compatibility,
+		Metadata:      meta.Metadata,
+		Dependencies:  meta.Dependencies,
+		Criteria:      meta.Criteria,
+		Body:          body,
+		Source:        meta.Source,
+		Emerging:      meta.Emerging,
+		Stable:        meta.Stable,
+		Deprecated:    meta.Deprecated,
+		DeprecatedBy:  meta.DeprecatedBy,
+		Practitioner:      meta.Practitioner,
+		Verified:          meta.Verified,
+		Related:           meta.Related,
+		DuplicateReviewed: meta.DuplicateReviewed,
+	}, nil
+}
+
+// ParseSkillFromContent builds a Skill from already-read SKILL.md content.
+// dir must be the directory that contains the SKILL.md file.
+// The returned error is the YAML unmarshal error (if any); the Skill is still
+// populated with whatever could be parsed. Use instead of ParseSkillFile when
+// the content is already in memory to avoid a redundant file read.
+func ParseSkillFromContent(content, dir string) (Skill, error) {
+	meta, body, yamlErr := parseSkillMetaFromContent(content)
+	name := filepath.Base(dir)
+	if meta.Name != "" {
+		name = meta.Name
+	}
+	return Skill{
+		Name:          name,
+		Path:          dir,
+		Tags:          meta.Tags,
+		Version:       meta.Version,
+		Description:   meta.Description,
+		Authors:       meta.Authors,
+		License:       meta.License,
+		Compatibility: meta.Compatibility,
+		Metadata:      meta.Metadata,
+		Dependencies:  meta.Dependencies,
+		Criteria:      meta.Criteria,
+		Body:          body,
+		Source:        meta.Source,
+		Emerging:      meta.Emerging,
+		Stable:        meta.Stable,
+		Deprecated:    meta.Deprecated,
+		DeprecatedBy:  meta.DeprecatedBy,
+		Practitioner:      meta.Practitioner,
+		Verified:          meta.Verified,
+		Related:           meta.Related,
+		DuplicateReviewed: meta.DuplicateReviewed,
+	}, yamlErr
+}
+
+// WalkSkillFiles returns the absolute paths of all SKILL.md files found
+// recursively under root, skipping hidden and vendor directories.
+func WalkSkillFiles(root string) ([]string, error) {
+	var paths []string
+	err := filepath.WalkDir(root, func(p string, d os.DirEntry, walkErr error) error {
+		if walkErr != nil {
+			return nil
+		}
+		if d.IsDir() {
+			name := d.Name()
+			if (len(name) > 1 && name[0] == '.') || name == "node_modules" || name == "vendor" {
+				return filepath.SkipDir
+			}
+			return nil
+		}
+		if d.Name() == "SKILL.md" {
+			paths = append(paths, p)
+		}
+		return nil
+	})
+	return paths, err
+}

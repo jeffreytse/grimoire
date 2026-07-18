@@ -109,7 +109,17 @@ func walkSkills(root string, withBody bool) ([]Skill, error) {
 				Compatibility: meta.Compatibility,
 				Metadata:      meta.Metadata,
 				Dependencies:  meta.Dependencies,
+				Criteria:      meta.Criteria,
 				Body:          body,
+				Source:        meta.Source,
+				Emerging:      meta.Emerging,
+				Stable:        meta.Stable,
+				Deprecated:    meta.Deprecated,
+				DeprecatedBy:  meta.DeprecatedBy,
+				Practitioner:      meta.Practitioner,
+				Verified:          meta.Verified,
+				Related:           meta.Related,
+				DuplicateReviewed: meta.DuplicateReviewed,
 				// Domain carries the root-relative path for glob matching.
 				Domain: rel,
 			}

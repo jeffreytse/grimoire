@@ -603,8 +603,9 @@ type executorSpec struct {
 	Provider resolvedProvider // for execAPI
 }
 
-// resolveExecutor picks the best executor given the --via flag and project config.
-func resolveExecutor(projectDir, via string) executorSpec {
+// resolveExecutorFor picks the best executor given explicit via/preferAPI values.
+// Shared by check and validate --fix.
+func resolveExecutorFor(projectDir, via string, preferAPI bool) executorSpec {
 	// 1. --via flag: force a specific local CLI.
 	if via != "" {
 		return executorSpec{Kind: execLocalCLI, Agent: via}
@@ -613,8 +614,8 @@ func resolveExecutor(projectDir, via string) executorSpec {
 	cfg, _ := config.Load(projectDir)
 
 	// 2. Local CLIs: intersect configured order with detected agents.
-	// Skipped when --prefer-api is set — routes directly to API for temperature=0.
-	if !flagPreferAPI {
+	// Skipped when preferAPI is set — routes directly to API for temperature=0.
+	if !preferAPI {
 		order := cfg.Core.CheckAgents
 		if len(order) == 0 {
 			order = agent.CheckAgents
@@ -650,6 +651,11 @@ func resolveExecutor(projectDir, via string) executorSpec {
 	}
 
 	return executorSpec{Kind: execPrint}
+}
+
+// resolveExecutor picks the best executor for `grimoire check` using its own flags.
+func resolveExecutor(projectDir, via string) executorSpec {
+	return resolveExecutorFor(projectDir, via, flagPreferAPI)
 }
 
 // ── runIndependentCheck ──────────────────────────────────────────────────────
@@ -1598,13 +1604,13 @@ func batchFilesBySize(files []string, infos map[string]os.FileInfo, dir string, 
 // callBatch invokes the configured AI executor with the pre-built rubric + file contents.
 func callBatch(goCtx context.Context, ex *executorSpec, dir, profile, fullRubric, fileContents string, threshold float64) (string, error) {
 	prompt := buildLocalPrompt(profile, fullRubric, fileContents, threshold)
+	const system = "You are grimoire, an independent compliance checker. Output ONLY a single JSON object matching the compliance report schema in the user message. No prose, no markdown, no explanation — JSON only."
 	switch ex.Kind {
 	case execLocalCLI:
 		return callViaLocalAgent(goCtx, ex.Agent, dir, prompt)
 	case execAPI:
-		const system = "You are grimoire, an independent compliance checker. Output ONLY a single JSON object matching the compliance report schema in the user message. No prose, no markdown, no explanation — JSON only."
 		if ex.Provider.Format == "anthropic" {
-			return callAnthropicAPI(ex.Provider.APIKey, ex.Provider.Model, ex.Provider.MaxTokens, prompt, "")
+			return callAnthropicAPI(ex.Provider.APIKey, ex.Provider.Model, ex.Provider.MaxTokens, system, prompt)
 		}
 		return callOpenAICompatible(ex.Provider, system, prompt)
 	default:
@@ -1659,16 +1665,12 @@ func dedupDiagnostics(diags []compliance.Diagnostic) []compliance.Diagnostic {
 }
 
 // callAnthropicAPI calls the Anthropic /v1/messages endpoint.
-func callAnthropicAPI(apiKey, model string, maxTokens int, rubric, fileContents string) (string, error) {
-	userMsg := rubric
-	if fileContents != "" {
-		userMsg += "\n\nFile contents to evaluate:\n" + fileContents
-	}
+func callAnthropicAPI(apiKey, model string, maxTokens int, system, userMsg string) (string, error) {
 	body := map[string]any{
 		"model":       model,
 		"max_tokens":  maxTokens,
 		"temperature": 0,
-		"system":      "You are grimoire, an independent compliance checker. Output ONLY a single JSON object matching the compliance report schema in the user message. No prose, no markdown, no explanation — JSON only.",
+		"system":      system,
 		"messages":    []map[string]any{{"role": "user", "content": userMsg}},
 	}
 	payload, err := json.Marshal(body)
