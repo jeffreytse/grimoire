@@ -20,12 +20,12 @@ import (
 )
 
 var (
-	flagValidateJSON       bool
-	flagValidateStrict     bool
-	flagValidateTestSchema string
-	flagValidateFix        bool
-	flagValidateVia        string
-	flagValidatePreferAPI  bool
+	flagValidateJSON         bool
+	flagValidateStrict       bool
+	flagValidateTestSchema   string
+	flagValidateFix          bool
+	flagValidateVia          string
+	flagValidatePreferAPI    bool
 	flagValidateNoDuplicates bool
 )
 
@@ -404,7 +404,7 @@ func runValidate(cmd *cobra.Command, args []string) error {
 					}
 					rToFix := r
 					rToFix.Findings = aiFindings
-					if err := fixSkillWithAI(goCtx, rToFix, projectDir, &ex); err != nil {
+					if err := fixSkillWithAI(goCtx, &rToFix, projectDir, &ex); err != nil {
 						fmt.Fprintf(&w.buf, "    %s %s\n\n", tui.IconFail, tui.StyleRed.Render("skipped: "+err.Error()))
 						w.updated = r
 						w.skipped = true
@@ -977,47 +977,6 @@ func dupTokenize(s string) []string {
 	return out
 }
 
-// dupJaccard computes intersection/union for two string slices (case-insensitive, set-based).
-func dupJaccard(a, b []string) float64 {
-	if len(a) == 0 || len(b) == 0 {
-		return 0
-	}
-	setA := make(map[string]bool, len(a))
-	for _, v := range a {
-		setA[strings.ToLower(v)] = true
-	}
-	setB := make(map[string]bool, len(b))
-	for _, v := range b {
-		setB[strings.ToLower(v)] = true
-	}
-	union := make(map[string]bool, len(setA)+len(setB))
-	for k := range setA {
-		union[k] = true
-	}
-	for k := range setB {
-		union[k] = true
-	}
-	intersection := 0
-	for k := range setA {
-		if setB[k] {
-			intersection++
-		}
-	}
-	return float64(intersection) / float64(len(union))
-}
-
-// dupScore computes the weighted similarity between two skills.
-// Formula (matches check-duplicates.sh): (tagJaccard×2 + descTokenJaccard×3 + sameDomain×0.5) / 5.5
-func dupScore(a, b skills.Skill) float64 {
-	t := dupJaccard(a.Tags, b.Tags)
-	d := dupJaccard(dupTokenize(a.Description), dupTokenize(b.Description))
-	dom := 0.0
-	if skillDomain(a.Path) == skillDomain(b.Path) {
-		dom = 0.5
-	}
-	return (t*2 + d*3 + dom) / 5.5
-}
-
 // jaccardSets computes intersection/union on precomputed bool sets — no allocation.
 func jaccardSets(a, b map[string]bool) float64 {
 	if len(a) == 0 || len(b) == 0 {
@@ -1191,7 +1150,7 @@ func deterministicFixTags(frontmatter string) (string, bool) {
 // It reads the file, builds a targeted prompt from the findings, dispatches to the AI,
 // extracts the corrected SKILL.md from the response, and writes it back.
 // Callers must resolve the executor before calling and must not pass execPrint.
-func fixSkillWithAI(goCtx context.Context, result validateResult, projectDir string, ex *executorSpec) error {
+func fixSkillWithAI(goCtx context.Context, result *validateResult, projectDir string, ex *executorSpec) error {
 	content, err := os.ReadFile(result.Path)
 	if err != nil {
 		return fmt.Errorf("read file: %w", err)

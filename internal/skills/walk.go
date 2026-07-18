@@ -26,15 +26,15 @@ type skillFrontmatter struct {
 	Dependencies  map[string]string `yaml:"dependencies"`
 	Criteria      []string          `yaml:"criteria"`
 	// Lifecycle and citation fields (STANDARD.md)
-	Source       string   `yaml:"source"`
-	Emerging     bool     `yaml:"emerging"`
-	Stable       bool     `yaml:"stable"`
-	Deprecated   bool     `yaml:"deprecated"`
-	DeprecatedBy string   `yaml:"deprecated_by"`
-	Practitioner bool     `yaml:"practitioner"`
-	Verified           bool     `yaml:"verified"`
-	Related            []string `yaml:"related"`
-	DuplicateReviewed  bool     `yaml:"duplicate-reviewed"`
+	Source            string   `yaml:"source"`
+	Emerging          bool     `yaml:"emerging"`
+	Stable            bool     `yaml:"stable"`
+	Deprecated        bool     `yaml:"deprecated"`
+	DeprecatedBy      string   `yaml:"deprecated_by"`
+	Practitioner      bool     `yaml:"practitioner"`
+	Verified          bool     `yaml:"verified"`
+	Related           []string `yaml:"related"`
+	DuplicateReviewed bool     `yaml:"duplicate-reviewed"`
 }
 
 // parseSkillMeta reads SKILL.md and returns its frontmatter and raw body.
@@ -137,12 +137,12 @@ type Skill struct {
 	Body string `json:"body,omitempty"`
 
 	// Lifecycle and citation fields (STANDARD.md).
-	Source       string   `json:"source,omitempty"`
-	Emerging     bool     `json:"emerging,omitempty"`
-	Stable       bool     `json:"stable,omitempty"`
-	Deprecated   bool     `json:"deprecated,omitempty"`
-	DeprecatedBy string   `json:"deprecated_by,omitempty"`
-	Practitioner bool     `json:"practitioner,omitempty"`
+	Source            string   `json:"source,omitempty"`
+	Emerging          bool     `json:"emerging,omitempty"`
+	Stable            bool     `json:"stable,omitempty"`
+	Deprecated        bool     `json:"deprecated,omitempty"`
+	DeprecatedBy      string   `json:"deprecated_by,omitempty"`
+	Practitioner      bool     `json:"practitioner,omitempty"`
 	Verified          bool     `json:"verified,omitempty"`
 	Related           []string `json:"related,omitempty"`
 	DuplicateReviewed bool     `json:"duplicate_reviewed,omitempty"`
@@ -286,25 +286,25 @@ func listSkillsInDir(dir, domainName, subdomainName string, withBody bool) ([]Sk
 			name = meta.Name
 		}
 		skills = append(skills, Skill{
-			Domain:        domainName,
-			Subdomain:     subdomainName,
-			Name:          name,
-			Path:          skillPath,
-			Tags:          meta.Tags,
-			Version:       meta.Version,
-			Description:   meta.Description,
-			Authors:       meta.Authors,
-			License:       meta.License,
-			Compatibility: meta.Compatibility,
-			Metadata:      meta.Metadata,
-			Dependencies:  meta.Dependencies,
-			Criteria:      meta.Criteria,
-			Body:          body,
-			Source:        meta.Source,
-			Emerging:      meta.Emerging,
-			Stable:        meta.Stable,
-			Deprecated:    meta.Deprecated,
-			DeprecatedBy:  meta.DeprecatedBy,
+			Domain:            domainName,
+			Subdomain:         subdomainName,
+			Name:              name,
+			Path:              skillPath,
+			Tags:              meta.Tags,
+			Version:           meta.Version,
+			Description:       meta.Description,
+			Authors:           meta.Authors,
+			License:           meta.License,
+			Compatibility:     meta.Compatibility,
+			Metadata:          meta.Metadata,
+			Dependencies:      meta.Dependencies,
+			Criteria:          meta.Criteria,
+			Body:              body,
+			Source:            meta.Source,
+			Emerging:          meta.Emerging,
+			Stable:            meta.Stable,
+			Deprecated:        meta.Deprecated,
+			DeprecatedBy:      meta.DeprecatedBy,
 			Practitioner:      meta.Practitioner,
 			Verified:          meta.Verified,
 			Related:           meta.Related,
@@ -388,25 +388,25 @@ func listAllSkills(skillsRoot string, withBody bool) ([]Skill, error) {
 				name = meta.Name
 			}
 			result[i] = Skill{
-				Domain:        e.domain,
-				Subdomain:     e.subdomain,
-				Name:          name,
-				Path:          e.path,
-				Tags:          meta.Tags,
-				Version:       meta.Version,
-				Description:   meta.Description,
-				Authors:       meta.Authors,
-				License:       meta.License,
-				Compatibility: meta.Compatibility,
-				Metadata:      meta.Metadata,
-				Dependencies:  meta.Dependencies,
-				Criteria:      meta.Criteria,
-				Body:          body,
-				Source:        meta.Source,
-				Emerging:      meta.Emerging,
-				Stable:        meta.Stable,
-				Deprecated:    meta.Deprecated,
-				DeprecatedBy:  meta.DeprecatedBy,
+				Domain:            e.domain,
+				Subdomain:         e.subdomain,
+				Name:              name,
+				Path:              e.path,
+				Tags:              meta.Tags,
+				Version:           meta.Version,
+				Description:       meta.Description,
+				Authors:           meta.Authors,
+				License:           meta.License,
+				Compatibility:     meta.Compatibility,
+				Metadata:          meta.Metadata,
+				Dependencies:      meta.Dependencies,
+				Criteria:          meta.Criteria,
+				Body:              body,
+				Source:            meta.Source,
+				Emerging:          meta.Emerging,
+				Stable:            meta.Stable,
+				Deprecated:        meta.Deprecated,
+				DeprecatedBy:      meta.DeprecatedBy,
 				Practitioner:      meta.Practitioner,
 				Verified:          meta.Verified,
 				Related:           meta.Related,
@@ -475,23 +475,23 @@ func ParseSkillFile(path string) (Skill, error) {
 		name = meta.Name
 	}
 	return Skill{
-		Name:          name,
-		Path:          dir,
-		Tags:          meta.Tags,
-		Version:       meta.Version,
-		Description:   meta.Description,
-		Authors:       meta.Authors,
-		License:       meta.License,
-		Compatibility: meta.Compatibility,
-		Metadata:      meta.Metadata,
-		Dependencies:  meta.Dependencies,
-		Criteria:      meta.Criteria,
-		Body:          body,
-		Source:        meta.Source,
-		Emerging:      meta.Emerging,
-		Stable:        meta.Stable,
-		Deprecated:    meta.Deprecated,
-		DeprecatedBy:  meta.DeprecatedBy,
+		Name:              name,
+		Path:              dir,
+		Tags:              meta.Tags,
+		Version:           meta.Version,
+		Description:       meta.Description,
+		Authors:           meta.Authors,
+		License:           meta.License,
+		Compatibility:     meta.Compatibility,
+		Metadata:          meta.Metadata,
+		Dependencies:      meta.Dependencies,
+		Criteria:          meta.Criteria,
+		Body:              body,
+		Source:            meta.Source,
+		Emerging:          meta.Emerging,
+		Stable:            meta.Stable,
+		Deprecated:        meta.Deprecated,
+		DeprecatedBy:      meta.DeprecatedBy,
 		Practitioner:      meta.Practitioner,
 		Verified:          meta.Verified,
 		Related:           meta.Related,
@@ -511,23 +511,23 @@ func ParseSkillFromContent(content, dir string) (Skill, error) {
 		name = meta.Name
 	}
 	return Skill{
-		Name:          name,
-		Path:          dir,
-		Tags:          meta.Tags,
-		Version:       meta.Version,
-		Description:   meta.Description,
-		Authors:       meta.Authors,
-		License:       meta.License,
-		Compatibility: meta.Compatibility,
-		Metadata:      meta.Metadata,
-		Dependencies:  meta.Dependencies,
-		Criteria:      meta.Criteria,
-		Body:          body,
-		Source:        meta.Source,
-		Emerging:      meta.Emerging,
-		Stable:        meta.Stable,
-		Deprecated:    meta.Deprecated,
-		DeprecatedBy:  meta.DeprecatedBy,
+		Name:              name,
+		Path:              dir,
+		Tags:              meta.Tags,
+		Version:           meta.Version,
+		Description:       meta.Description,
+		Authors:           meta.Authors,
+		License:           meta.License,
+		Compatibility:     meta.Compatibility,
+		Metadata:          meta.Metadata,
+		Dependencies:      meta.Dependencies,
+		Criteria:          meta.Criteria,
+		Body:              body,
+		Source:            meta.Source,
+		Emerging:          meta.Emerging,
+		Stable:            meta.Stable,
+		Deprecated:        meta.Deprecated,
+		DeprecatedBy:      meta.DeprecatedBy,
 		Practitioner:      meta.Practitioner,
 		Verified:          meta.Verified,
 		Related:           meta.Related,
