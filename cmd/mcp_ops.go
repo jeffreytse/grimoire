@@ -127,7 +127,7 @@ func toolGrimoireInit(_ context.Context, request mcp.CallToolRequest) (*mcp.Call
 }
 
 func toolGrimoireSelfUpdate(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
-	apply := request.GetString("yes", "") == "true"
+	apply := request.GetBool("yes", false)
 	out, err := performSelfUpdate(apply)
 	if err != nil {
 		return mcp.NewToolResultError(err.Error()), nil
@@ -145,7 +145,7 @@ func toolGrimoirePackageList(_ context.Context, _ mcp.CallToolRequest) (*mcp.Cal
 
 func toolGrimoirePackageUpdate(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
 	name := request.GetString("name", "")
-	force := request.GetString("force", "") == "true"
+	force := request.GetBool("force", false)
 	results, err := performPackageUpdate(name, force)
 	if err != nil {
 		return mcp.NewToolResultError(err.Error()), nil
@@ -601,11 +601,7 @@ func toolGrimoirePackageValidate(_ context.Context, request mcp.CallToolRequest)
 	var resolvedTarget string
 	switch {
 	case target == "":
-		cwd, err := os.Getwd()
-		if err != nil {
-			return mcp.NewToolResultError(err.Error()), nil
-		}
-		resolvedTarget = cwd
+		resolvedTarget = getProjectDir()
 	case filepath.IsAbs(target):
 		resolvedTarget = target
 	default:

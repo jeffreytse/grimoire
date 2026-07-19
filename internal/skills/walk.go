@@ -44,22 +44,9 @@ type skillFrontmatter struct {
 // Returns zero values when the file is absent or unparseable.
 func parseSkillMeta(skillPath string, withBody bool) (meta skillFrontmatter, body string) {
 	fullPath := filepath.Join(skillPath, "SKILL.md")
-	var data []byte
-	if withBody {
-		var err error
-		data, err = os.ReadFile(fullPath)
-		if err != nil {
-			return skillFrontmatter{}, ""
-		}
-	} else {
-		f, err := os.Open(fullPath)
-		if err != nil {
-			return skillFrontmatter{}, ""
-		}
-		buf := make([]byte, 4096)
-		n, _ := f.Read(buf)
-		_ = f.Close()
-		data = buf[:n]
+	data, err := os.ReadFile(fullPath)
+	if err != nil {
+		return skillFrontmatter{}, ""
 	}
 	if !withBody {
 		// Frontmatter-only fast path: parse without constructing body string.

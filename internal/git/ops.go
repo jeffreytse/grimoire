@@ -14,6 +14,9 @@ import (
 	"github.com/go-git/go-git/v5/plumbing/object"
 )
 
+// ErrNotGitRepo is returned (or wrapped) when a directory is not a git repository.
+var ErrNotGitRepo = gogit.ErrRepositoryNotExists
+
 // State holds the current repo state.
 type State struct {
 	Commit  string

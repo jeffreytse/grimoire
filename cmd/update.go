@@ -82,7 +82,8 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	// Also update all non-official, non-pinned, non-local packages from [[package]].
 	cfg, err := config.LoadGlobal()
 	if err != nil {
-		return nil // best-effort
+		fmt.Fprintf(os.Stderr, "  warn: loading config: %v — skipping named packages\n", err)
+		return nil
 	}
 	for _, rd := range cfg.Packages {
 		if rd.Official || !rd.Enabled {
@@ -109,7 +110,7 @@ func updateStable(home string) error {
 	}
 
 	fmt.Println("Fetching release tags...")
-	if err := gitops.FetchTags(home); err != nil && !errors.Is(err, errNotGit(home)) {
+	if err := gitops.FetchTags(home); err != nil && !errors.Is(err, gitops.ErrNotGitRepo) {
 		fmt.Fprintf(os.Stderr, "  warn: fetch tags: %v\n", err)
 	}
 
@@ -133,17 +134,17 @@ func updateStable(home string) error {
 	fmt.Printf("    New:      %s  (commit %s, %s)\n", latest, tagState.Commit, tagState.Date)
 	fmt.Println()
 
+	if flagUpdateDryRun {
+		fmt.Printf("  (dry run — not checking out)\n")
+		return nil
+	}
+
 	if !flagUpdateYes {
 		chosen, ok := tui.RunSelect("Upgrade now?", []string{"Yes", "No"})
 		if !ok || chosen == "No" {
 			fmt.Println("Upgrade cancelled.")
 			return nil
 		}
-	}
-
-	if flagUpdateDryRun {
-		fmt.Printf("  (dry run — not checking out)\n")
-		return nil
 	}
 
 	snapshot := snapshotSkillVersions(home)
@@ -282,10 +283,6 @@ func printChangeSection(label string, added, updated []string, w io.Writer) {
 	for _, name := range updated {
 		fmt.Fprintf(w, "      %s %s\n", tui.StyleGold.Render("~"), name)
 	}
-}
-
-func errNotGit(dir string) error {
-	return fmt.Errorf("%s is not a git repository", dir)
 }
 
 // versionSnapshot records skill versions before an update so changes can be shown after.

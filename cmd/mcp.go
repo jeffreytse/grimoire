@@ -82,7 +82,7 @@ func registerMCPTools(s *server.MCPServer) {
 
 	s.AddTool(
 		mcp.NewTool("grimoire_check",
-			mcp.WithDescription("Run the compliance check against the latest compliance report (.grimoire/reports/compliance-latest.json). Returns coverage score, per-practice breakdown, diagnostics, and rule engine findings. Use this to assess BPDD compliance state."),
+			mcp.WithDescription("Read the cached compliance report (.grimoire/reports/compliance-latest.json). Returns coverage score, per-practice breakdown, diagnostics, and rule engine findings. Does not re-run the check — run `grimoire check` first for a fresh analysis. Use this to assess BPDD compliance state."),
 		),
 		toolGrimoireCheck,
 	)
@@ -210,8 +210,8 @@ func registerMCPTools(s *server.MCPServer) {
 	s.AddTool(
 		mcp.NewTool("grimoire_update",
 			mcp.WithDescription("Pull the latest grimoire skills and relink. Clones if not yet installed."),
-			mcp.WithString("stable", mcp.Description("Set 'true' to check out latest tagged release instead of HEAD")),
-			mcp.WithString("force", mcp.Description("Set 'true' to discard local package modifications and update")),
+			mcp.WithBoolean("stable", mcp.Description("Check out latest tagged release instead of HEAD")),
+			mcp.WithBoolean("force", mcp.Description("Discard local package modifications and update")),
 		),
 		toolGrimoireUpdate,
 	)
@@ -244,7 +244,7 @@ func registerMCPTools(s *server.MCPServer) {
 	s.AddTool(
 		mcp.NewTool("grimoire_self_update",
 			mcp.WithDescription("Check for or apply updates to the grimoire CLI binary. Default is check-only."),
-			mcp.WithString("yes", mcp.Description("Set 'true' to apply the update (default: check only, returns available version)")),
+			mcp.WithBoolean("yes", mcp.Description("Apply the update (default: check only, returns available version)")),
 		),
 		toolGrimoireSelfUpdate,
 	)
@@ -292,7 +292,7 @@ func registerMCPTools(s *server.MCPServer) {
 		mcp.NewTool("grimoire_package_update",
 			mcp.WithDescription("Pull the latest skills from all packages or a specific one."),
 			mcp.WithString("name", mcp.Description("Package name (omit to update all)")),
-			mcp.WithString("force", mcp.Description("Set 'true' to discard local package modifications and update")),
+			mcp.WithBoolean("force", mcp.Description("Discard local package modifications and update")),
 		),
 		toolGrimoirePackageUpdate,
 	)
@@ -440,6 +440,9 @@ func toolGrimoireProfileShow(_ context.Context, request mcp.CallToolRequest) (*m
 
 func toolGrimoireProfileInit(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
 	name := request.GetString("name", "")
+	if strings.TrimSpace(name) == "" {
+		return mcp.NewToolResultError("name is required"), nil
+	}
 	dir := filepath.Join(getProjectDir(), ".grimoire", "profiles")
 	path := filepath.Join(dir, name+".toml")
 	if _, err := os.Stat(path); err == nil {

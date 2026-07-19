@@ -70,8 +70,8 @@ func toolGrimoireUninstall(_ context.Context, request mcp.CallToolRequest) (*mcp
 }
 
 func toolGrimoireUpdate(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
-	stable := request.GetString("stable", "") == "true"
-	force := request.GetString("force", "") == "true"
+	stable := request.GetBool("stable", false)
+	force := request.GetBool("force", false)
 	out, err := performUpdate(stable, force)
 	if err != nil {
 		return mcp.NewToolResultError(err.Error()), nil
