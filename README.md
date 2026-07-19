@@ -102,7 +102,7 @@ The model knows SOLID, DDD, Google SRE, and the ABA Model Rules. Without explici
 - 🔍 **You don't know what you don't know.** Grimoire surfaces the governing standard you didn't know applied.
 - 🤖 **Knowing is not enough. Grimoire enforces.** Specific steps, verifiable criteria, repeatable results. Not summaries — verdicts.
 - 🌍 **The world's best practices belong to everyone.** McKinsey charges $1M. Senior lawyers bill $800/hr. The practices they follow are not proprietary. Grimoire makes them free — as executable steps, cited and verified.
-- 🧱 **Every profession. Every AI.** 1000+ skills across 27 domains. Works with Claude, Codex, Cursor, Gemini, OpenCode, and OpenClaw.
+- 🧱 **Every profession. Every AI.** 1000+ skills across 27 domains. Works with Claude, Copilot, Codex, Cursor, Gemini, OpenCode, OpenClaw, and Antigravity.
 - 📦 **Package-managed.** Declare skills in `grimoire.toml`, lock versions in `grimoire.lock`. Reproducible skill sets across machines and teams — like Cargo or npm for best practices.
 - 🌐 **Open ecosystem.** Any git repo is a grimoire package. We encourage community packages to follow the [grimoire skill standard](https://github.com/jeffreytse/grimoire-core/blob/main/STANDARD.md) — but it's not required. Pair `grimoire-core` with company-internal skills, community packages, or your own library; all declared in one `grimoire.toml`.
 - 🔬 **Semantic compliance, not syntax checking.** Other tools lint whether your `CLAUDE.md` is valid TOML. Grimoire checks whether your project actually follows the practices it declared — criteria by criteria, domain by domain. `grimoire check` is ESLint for practices. Gate CI with exit codes. Watch for changes with `--live`.
@@ -281,6 +281,7 @@ grimoire install jeffreytse/grimoire-core   # add + install official package
 grimoire install myorg/my-skills            # add + install any git repo as a package
 grimoire uninstall myorg/my-skills          # remove + unlink a package
 grimoire update                             # update all packages to latest
+grimoire update --force                     # update, discarding any local package modifications
 grimoire list                               # list installed packages and skill counts
 ```
 
@@ -324,6 +325,14 @@ Or via plugin in `opencode.json`:
 
 **OpenClaw:** see [`.openclaw/INSTALL.md`](./.openclaw/INSTALL.md) or run `grimoire install --target openclaw`.
 
+**Antigravity CLI (agy):**
+
+```bash
+grimoire install --target antigravity
+```
+
+Or natively via `agy plugin install https://github.com/jeffreytse/grimoire-core`. Skills land in `~/.gemini/config/skills` (global) or `.agent/skills` (project-scoped); the trigger line is written to `~/.gemini/AGENTS.md`.
+
 ## 🤖 Agent Support
 
 | Agent              | Plugin install                                                                                                 | Script install                       |
@@ -335,6 +344,7 @@ Or via plugin in `opencode.json`:
 | OpenClaw           | See [`.openclaw/INSTALL.md`](./.openclaw/INSTALL.md)                                                           | `grimoire install --target openclaw` |
 | Codex CLI          | `AGENTS.md` auto-loaded; browse `/plugins` in CLI                                                              | `grimoire install --target codex`    |
 | Cursor             | `AGENTS.md` context injection                                                                                  | `grimoire install --target cursor`   |
+| Antigravity CLI (agy) | `agy plugin install https://github.com/jeffreytse/grimoire-core`                                            | `grimoire install --target antigravity` |
 
 ## 🖥️ Editor Integration (LSP)
 
@@ -452,6 +462,11 @@ grimoire check   # exits 0 (pass) or 1 (fail)
 | Two practices exist — want side-by-side comparison                                                            | `/compare-best-practices`                 |
 | Two practices conflict — want to reason through which fits                                                    | `/resolve-best-practice-conflict`         |
 | Resolved a conflict — want to save the decision for future sessions                                           | `/pin-best-practice-preference`           |
+| Get oriented on grimoire itself — what it is, why, how to use it                                             | `/learn-grimoire`                         |
+| Actually internalize a practice — active recall, spaced review, so you can use it without AI                 | `/learn-best-practice`                    |
+| Understand what a skill does and why it exists                                                               | `/explain-best-practice`                  |
+| Adapt a skill to a different context or constraint                                                           | `/adapt-best-practice`                    |
+| Teach a practice to someone else (structured walkthrough)                                                    | `/teach-best-practice`                    |
 
 → [BPDD guide](./docs/bpdd.md) — cycle, compliance linter, LSP output, suppression, CI integration
 
@@ -485,13 +500,49 @@ Claude: Situation spans 4 domains. Solution plan:
         Apply in order? I'll pause for confirmation after each step.
 ```
 
-### Learning workflows
+**Catching gaps before you start → `start-best-practice`**
 
-| Want to...                                                | Start here               |
-| --------------------------------------------------------- | ------------------------ |
-| Understand what a skill does and why it exists            | `/explain-best-practice` |
-| Adapt a skill to a different context or constraint        | `/adapt-best-practice`   |
-| Teach a practice to someone else (structured walkthrough) | `/teach-best-practice`   |
+Before any task begins, `start-best-practice` intercepts, surfaces the relevant practices you should apply, and applies them — so you enter the work already aligned instead of discovering gaps mid-execution.
+
+```
+User: I'm about to write performance reviews for my team.
+
+Claude: Applying start-best-practice...
+        Relevant practices: conduct-performance-review + write-developmental-feedback
+        → Running /conduct-performance-review to establish evaluation structure
+        → Running /write-developmental-feedback for written output format
+        Ready to proceed.
+```
+
+**Opaque complex problem → `apply-best-practice-tree`**
+
+When sub-problems are unknown until you start solving — `apply-best-practice-tree` builds a dynamic execution tree, discovering and applying practices as the structure emerges.
+
+```
+User: My product is losing users and I don't know why.
+
+Claude: Applying apply-best-practice-tree...
+        Root: diagnose-user-churn
+        ├─ run-exit-survey-analysis     → reveals: onboarding drop-off
+        │   └─ audit-activation-funnel  → reveals: Day 3 aha-moment missing
+        │       └─ redesign-onboarding-sequence
+        └─ analyze-retention-cohorts    → reveals: power users staying; casual dropping
+            └─ segment-engagement-model
+```
+
+**Internalizing a practice → `learn-best-practice`**
+
+When you want to actually own a practice — not just apply it once — `learn-best-practice` runs active recall, spaced-repetition review, and scenario drilling so you can use it without AI in the future.
+
+```
+User: I want to actually learn MECE decomposition, not just use it.
+
+Claude: Starting learn-best-practice: mece-decomposition
+        Round 1 — concept + example
+        Round 2 — you decompose this problem (I'll score it)
+        Round 3 — harder variant, novel domain
+        Review scheduled: +3 days, +10 days, +30 days
+```
 
 
 ## ⚙️ Configuration
@@ -717,6 +768,21 @@ Every skill must pass `review-best-practice-skill` before merge:
 | **Steps**      | Immediately executable                | Abstract theory or advice        |
 | **Scope**      | One concept per skill                 | "Nutrition and training program" |
 | **Source**     | External institution or standard body | Internal opinion                 |
+
+**`grimoire validate`** is the reference implementation of the standard — a static linter for SKILL.md files:
+
+```bash
+grimoire validate                        # validate all skills in current directory
+grimoire validate skills/                # validate a specific skills tree
+grimoire validate skills/engineering/    # validate one domain
+grimoire validate path/to/SKILL.md       # validate a single skill
+grimoire validate skills/ --fix          # fix errors via AI (requires local agent or API key)
+grimoire validate skills/ --strict       # treat warnings as errors (CI gate)
+grimoire validate skills/ --no-duplicates  # skip semantic near-duplicate detection
+grimoire validate --test-schema schema/tests  # run conformance test suite
+```
+
+Checks run on every skill: required frontmatter fields, tag format, description quality, name uniqueness, and semantic near-duplicate detection across the library.
 
 → [Read the full standard](https://github.com/jeffreytse/grimoire-core/blob/main/STANDARD.md) · [Adopt this standard](https://github.com/jeffreytse/grimoire-core/blob/main/STANDARD.md#adopting-this-standard)
 
