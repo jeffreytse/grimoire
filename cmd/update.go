@@ -21,6 +21,7 @@ var (
 	flagUpdateStable bool
 	flagUpdateYes    bool
 	flagUpdateDryRun bool
+	flagUpdateForce  bool
 )
 
 var updateCmd = &cobra.Command{
@@ -34,6 +35,7 @@ func init() {
 	updateCmd.Flags().BoolVar(&flagUpdateStable, "stable", false, "check out the latest tagged release instead of HEAD")
 	updateCmd.Flags().BoolVar(&flagUpdateYes, "yes", false, "skip confirmation prompts")
 	updateCmd.Flags().BoolVar(&flagUpdateDryRun, "dry-run", false, "show what would change without pulling")
+	updateCmd.Flags().BoolVar(&flagUpdateForce, "force", false, "discard local package modifications and update")
 }
 
 func runUpdate(cmd *cobra.Command, args []string) error {
@@ -201,7 +203,7 @@ func updateUnstable(home string) error {
 	snapshot := snapshotSkillVersions(home)
 
 	fmt.Printf("Pulling latest grimoire at %s...\n", home)
-	if err := gitops.PullWithForceFallback(home); err != nil {
+	if err := gitops.PullWithForceFallback(home, flagUpdateForce); err != nil {
 		return fmt.Errorf("updating: %w", err)
 	}
 	skills.InvalidateSkillCache(home)

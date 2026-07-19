@@ -71,7 +71,8 @@ func toolGrimoireUninstall(_ context.Context, request mcp.CallToolRequest) (*mcp
 
 func toolGrimoireUpdate(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
 	stable := request.GetString("stable", "") == "true"
-	out, err := performUpdate(stable)
+	force := request.GetString("force", "") == "true"
+	out, err := performUpdate(stable, force)
 	if err != nil {
 		return mcp.NewToolResultError(err.Error()), nil
 	}
@@ -309,7 +310,7 @@ func uninstallDomainSilent(root, domain, subdomain, ag string) (count int, errs 
 
 // ── Update ────────────────────────────────────────────────────────────────────
 
-func performUpdate(stable bool) (mcpUpdateOutput, error) {
+func performUpdate(stable, force bool) (mcpUpdateOutput, error) {
 	home := skills.OfficialPackageHome()
 	url := skills.GrimoireRepoURL()
 
@@ -378,7 +379,7 @@ func performUpdate(stable bool) (mcpUpdateOutput, error) {
 			OldCommit:       current.Commit,
 		}, nil
 	}
-	if err := gitops.PullWithForceFallback(home); err != nil {
+	if err := gitops.PullWithForceFallback(home, force); err != nil {
 		return mcpUpdateOutput{}, fmt.Errorf("updating: %w", err)
 	}
 	newState, _ := gitops.CurrentState(home)

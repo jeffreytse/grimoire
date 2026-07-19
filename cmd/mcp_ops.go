@@ -145,7 +145,8 @@ func toolGrimoirePackageList(_ context.Context, _ mcp.CallToolRequest) (*mcp.Cal
 
 func toolGrimoirePackageUpdate(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
 	name := request.GetString("name", "")
-	results, err := performPackageUpdate(name)
+	force := request.GetString("force", "") == "true"
+	results, err := performPackageUpdate(name, force)
 	if err != nil {
 		return mcp.NewToolResultError(err.Error()), nil
 	}
@@ -433,14 +434,14 @@ func performPackageSet(ref string) (mcpPackageSetOutput, error) {
 	return mcpPackageSetOutput{Package: ref, IsLocal: filepath.IsAbs(u)}, nil
 }
 
-func performPackageUpdate(name string) ([]mcpPackageUpdateResult, error) {
+func performPackageUpdate(name string, force bool) ([]mcpPackageUpdateResult, error) {
 	cfg, err := config.LoadGlobal()
 	if err != nil {
 		return nil, fmt.Errorf("loading config: %w", err)
 	}
 
 	updateOne := func(n string) mcpPackageUpdateResult {
-		status, err := updateOnePackageSilent(n, &cfg)
+		status, err := updateOnePackageSilent(n, force, &cfg)
 		res := mcpPackageUpdateResult{Name: n, Status: status}
 		if err != nil {
 			res.Status = "error"
@@ -466,7 +467,7 @@ func performPackageUpdate(name string) ([]mcpPackageUpdateResult, error) {
 	return results, nil
 }
 
-func updateOnePackageSilent(name string, cfg *config.FileConfig) (string, error) {
+func updateOnePackageSilent(name string, force bool, cfg *config.FileConfig) (string, error) {
 	var refURL, ver string
 	var dest string
 
@@ -525,7 +526,7 @@ func updateOnePackageSilent(name string, cfg *config.FileConfig) (string, error)
 		return "ok", nil
 	}
 
-	if err := gitops.Pull(dest); err != nil {
+	if err := gitops.PullWithForceFallback(dest, force); err != nil {
 		return "error", fmt.Errorf("pulling: %w", err)
 	}
 	return "ok", nil

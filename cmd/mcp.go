@@ -211,6 +211,7 @@ func registerMCPTools(s *server.MCPServer) {
 		mcp.NewTool("grimoire_update",
 			mcp.WithDescription("Pull the latest grimoire skills and relink. Clones if not yet installed."),
 			mcp.WithString("stable", mcp.Description("Set 'true' to check out latest tagged release instead of HEAD")),
+			mcp.WithString("force", mcp.Description("Set 'true' to discard local package modifications and update")),
 		),
 		toolGrimoireUpdate,
 	)
@@ -291,6 +292,7 @@ func registerMCPTools(s *server.MCPServer) {
 		mcp.NewTool("grimoire_package_update",
 			mcp.WithDescription("Pull the latest skills from all packages or a specific one."),
 			mcp.WithString("name", mcp.Description("Package name (omit to update all)")),
+			mcp.WithString("force", mcp.Description("Set 'true' to discard local package modifications and update")),
 		),
 		toolGrimoirePackageUpdate,
 	)

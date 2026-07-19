@@ -66,33 +66,53 @@ func Pull(dir string) error {
 
 // PullWithForceFallback attempts a normal pull. If the remote was force-pushed
 // (non-fast-forward), it warns to stderr and recovers with FetchReset.
-func PullWithForceFallback(dir string) error {
+// Pass force=true to discard local modifications instead of returning an error.
+func PullWithForceFallback(dir string, force bool) error {
 	err := Pull(dir)
 	if err == nil {
 		return nil
 	}
-	if !strings.Contains(err.Error(), "non-fast-forward") {
+	switch {
+	case errors.Is(err, gogit.ErrUnstagedChanges):
+		if !force {
+			return fmt.Errorf("package has local modifications; use --force to discard them and update")
+		}
+		fmt.Fprintf(os.Stderr, "warn: package has local modifications; discarding to update\n")
+		return FetchReset(dir, force)
+	case strings.Contains(err.Error(), "non-fast-forward"):
+		fmt.Fprintf(os.Stderr, "warn: package was force-pushed; resetting local clone to remote HEAD\n")
+		return FetchReset(dir, force)
+	default:
 		return err
 	}
-	fmt.Fprintf(os.Stderr, "warn: package was force-pushed; resetting local clone to remote HEAD\n")
-	return FetchReset(dir)
 }
 
 // FetchReset fetches from origin (with force) and hard-resets to the remote HEAD.
 // Use for read-only package clones: handles force-pushed remotes without error.
-func FetchReset(dir string) error {
+// Pass force=true to discard local modifications; otherwise returns an error when dirty.
+func FetchReset(dir string, force bool) error {
 	r, err := gogit.PlainOpen(dir)
 	if err != nil {
 		return fmt.Errorf("opening repo: %w", err)
+	}
+	w, err := r.Worktree()
+	if err != nil {
+		return err
+	}
+	st, err := w.Status()
+	if err != nil {
+		return fmt.Errorf("checking worktree status: %w", err)
+	}
+	if !st.IsClean() {
+		if !force {
+			return fmt.Errorf("package has local modifications; use --force to discard them and update")
+		}
+		fmt.Fprintf(os.Stderr, "warn: discarding local package modifications\n")
 	}
 	if err := r.Fetch(&gogit.FetchOptions{Force: true}); err != nil && !errors.Is(err, gogit.NoErrAlreadyUpToDate) {
 		return fmt.Errorf("fetching: %w", err)
 	}
 	remoteRef, err := resolveRemoteHead(r)
-	if err != nil {
-		return err
-	}
-	w, err := r.Worktree()
 	if err != nil {
 		return err
 	}
@@ -201,7 +221,7 @@ func IsUpToDate(dir string) (upToDate bool, local, remote State, err error) {
 	if err != nil {
 		return false, State{}, State{}, err
 	}
-	if err := r.Fetch(&gogit.FetchOptions{}); err != nil && !errors.Is(err, gogit.NoErrAlreadyUpToDate) {
+	if err := r.Fetch(&gogit.FetchOptions{Force: true}); err != nil && !errors.Is(err, gogit.NoErrAlreadyUpToDate) {
 		return false, State{}, State{}, err
 	}
 	head, err := r.Head()

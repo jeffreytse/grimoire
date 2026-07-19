@@ -389,7 +389,7 @@ func updateNamedPackage(name, ref, forceVer string, w io.Writer) error {
 		}
 		skills.InvalidateSkillCache(dest)
 	} else {
-		if err := gitops.PullWithForceFallback(dest); err != nil {
+		if err := gitops.PullWithForceFallback(dest, false); err != nil {
 			return fmt.Errorf("updating %s: %w", name, err)
 		}
 		skills.InvalidateSkillCache(dest)
@@ -612,7 +612,7 @@ func updateCorePackage(w io.Writer) error {
 		}
 		skills.InvalidateSkillCache(dest)
 	} else {
-		if err := gitops.PullWithForceFallback(dest); err != nil {
+		if err := gitops.PullWithForceFallback(dest, false); err != nil {
 			return fmt.Errorf("updating: %w", err)
 		}
 		skills.InvalidateSkillCache(dest)
