@@ -36,6 +36,9 @@ const (
 	ansiYellow = "\033[33m"
 	ansiGreen  = "\033[32m"
 	ansiGray   = "\033[90m"
+	ansiCyan   = "\033[36m"
+	ansiBold   = "\033[1m"
+	ansiDim    = "\033[2m"
 	ansiReset  = "\033[0m"
 )
 
@@ -349,26 +352,110 @@ func printSummary(r *compliance.Report, mode string, filesToCheck []string) {
 		fmt.Printf("  %s All criteria pass.\n", colorize(ansiGreen, "✓"))
 	}
 
-	if len(r.Coverage.Details) > 0 {
-		fmt.Println()
-		fmt.Println("  Practices:")
-		for _, d := range r.Coverage.Details {
-			bar := colorize(ansiGreen, "✓")
-			if d.Failing > 0 {
-				bar = colorize(ansiRed, "✗")
-			} else if d.Partial > 0 {
-				bar = colorize(ansiYellow, "~")
-			}
-			fmt.Printf("    %s  %-40s %d/%d  %.0f%%\n",
-				bar, d.Name, d.Passing, d.Total, d.CoveragePct)
-		}
+	exitCode := 0
+	if !pass {
+		exitCode = 1
 	}
 
-	fmt.Printf("\nThreshold: %.0f%% required, %.1f%% actual — %s\n",
-		r.Threshold.Required,
-		r.Threshold.Actual,
-		statusLabel,
-	)
+	if len(r.Coverage.Details) > 0 {
+		// Index diagnostics by practice name for context blocks below.
+		diagByPractice := make(map[string][]compliance.Diagnostic)
+		for i := range r.Diagnostics {
+			d := r.Diagnostics[i]
+			if d.Severity <= 2 && d.Code != "" {
+				diagByPractice[d.Code] = append(diagByPractice[d.Code], d)
+			}
+		}
+
+		fmt.Println()
+		fmt.Println("  Practices:")
+		nPassed, nFailed := 0, 0
+		for _, d := range r.Coverage.Details {
+			bar := colorize(ansiGreen, "✓")
+			var trailer string
+			switch {
+			case d.Failing > 0:
+				bar = colorize(ansiRed, "✗")
+				nFailed++
+				trailer = colorize(ansiRed, fmt.Sprintf("below threshold (%.0f%%)", r.Threshold.Required))
+			case d.Partial > 0:
+				bar = colorize(ansiYellow, "~")
+				nPassed++
+				trailer = colorize(ansiGray, fmt.Sprintf("%d/%d criteria passing", d.Passing, d.Total))
+			default:
+				nPassed++
+				if d.Total > 0 {
+					trailer = colorize(ansiGray, fmt.Sprintf("all %d criteria passing", d.Total))
+				} else {
+					trailer = colorize(ansiGray, "passing")
+				}
+			}
+			fmt.Printf("    %s  %-40s %d/%d  %.0f%%  %s\n",
+				bar, d.Name, d.Passing, d.Total, d.CoveragePct, trailer)
+
+			// Missing criteria list — shown for any practice with failing criteria.
+			var missing []string
+			for _, c := range d.Criteria {
+				if c.Status == "fail" {
+					missing = append(missing, c.Name)
+				}
+			}
+			if len(missing) > 0 {
+				fmt.Printf("       %s\n", colorize(ansiDim, "└─ missing: "+strings.Join(missing, ", ")))
+			}
+
+			// Per-diagnostic code context blocks.
+			for i := range diagByPractice[d.Name] {
+				printDiagContext(&diagByPractice[d.Name][i])
+			}
+		}
+		fmt.Printf("\n%s\n", colorize(ansiBold, fmt.Sprintf("%d passed · %d failed · exit %d", nPassed, nFailed, exitCode)))
+	} else {
+		fmt.Printf("\nThreshold: %.0f%% required, %.1f%% actual — %s\n",
+			r.Threshold.Required,
+			r.Threshold.Actual,
+			statusLabel,
+		)
+	}
+}
+
+func printDiagContext(diag *compliance.Diagnostic) {
+	const ctxLines = 3
+
+	severityIcon := colorize(ansiRed, "✗")
+	msgColor := ansiRed
+	if diag.Severity == 2 {
+		severityIcon = colorize(ansiYellow, "⚠")
+		msgColor = ansiYellow
+	}
+
+	targetLine := diag.Range.Start.Line // 0-indexed
+
+	filePath := colorize(ansiCyan+ansiBold, fmt.Sprintf("%s:%d", diag.URI, targetLine+1))
+	fmt.Printf("\n       %s\n", filePath)
+
+	data, err := os.ReadFile(diag.URI)
+	if err != nil {
+		fmt.Printf("       %s %s\n", severityIcon, colorize(msgColor, diag.Message))
+		return
+	}
+
+	lines := strings.Split(string(data), "\n")
+	start := max(0, targetLine-ctxLines)
+	end := min(len(lines)-1, targetLine+ctxLines)
+
+	for i := start; i <= end; i++ {
+		lineNum := i + 1
+		if i == targetLine {
+			arrow := colorize(ansiRed+ansiBold, "→")
+			num := colorize(ansiRed, fmt.Sprintf("%3d", lineNum))
+			fmt.Printf("       %s %s  %s\n", arrow, num, colorize(ansiBold, lines[i]))
+		} else {
+			num := colorize(ansiGray, fmt.Sprintf("%3d", lineNum))
+			fmt.Printf("           %s  %s\n", num, lines[i])
+		}
+	}
+	fmt.Printf("       %s %s\n", severityIcon, colorize(msgColor, diag.Message))
 }
 
 func computeSummary(r *compliance.Report) compliance.ReportSummary {
