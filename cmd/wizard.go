@@ -96,13 +96,10 @@ func runWizard() error {
 
 		detected := agent.Detected()
 		var agentOptions []string
-		if len(detected) == 0 {
-			agentOptions = []string{"Claude Code"}
-		} else {
-			for _, ag := range detected {
-				agentOptions = append(agentOptions, agent.DisplayName(ag))
-			}
+		for _, ag := range detected {
+			agentOptions = append(agentOptions, agent.DisplayName(ag))
 		}
+		agentOptions = append(agentOptions, agent.DisplayName("agent"))
 
 		promptVerb := "install to"
 		if mode == "🗑  Uninstall" {

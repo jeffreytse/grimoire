@@ -53,7 +53,7 @@ func resolveTargets(target string) []string {
 		}
 		detected := agent.Detected()
 		if len(detected) == 0 {
-			return []string{"claude"}
+			return []string{"agent"}
 		}
 		return detected
 	case "all":

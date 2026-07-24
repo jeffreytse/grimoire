@@ -7,7 +7,7 @@ import (
 )
 
 // All lists agents that receive installed skills (have a managed skills directory).
-var All = []string{"claude", "codex", "gemini", "antigravity", "openclaw", "opencode"}
+var All = []string{"claude", "codex", "gemini", "antigravity", "openclaw", "opencode", "agent"}
 
 // CheckAgents is the default resolution order for `grimoire check --independent`.
 // Separate from All — includes "copilot" (maps to "gh copilot"), which cannot receive
@@ -37,6 +37,8 @@ func SkillsDir(ag string) string {
 		return filepath.Join(home, ".openclaw", "skills")
 	case "opencode":
 		return filepath.Join(home, ".config", "opencode", "skills")
+	case "agent":
+		return filepath.Join(home, ".agents", "skills")
 	}
 	return ""
 }
@@ -57,6 +59,8 @@ func ProjectSkillsDir(ag, projectDir string) string {
 		return filepath.Join(projectDir, ".openclaw", "skills")
 	case "opencode":
 		return filepath.Join(projectDir, ".opencode", "skills")
+	case "agent":
+		return filepath.Join(projectDir, ".agents", "skills")
 	}
 	return ""
 }
@@ -76,6 +80,8 @@ func ConfigFile(ag string) string {
 		return filepath.Join(home, ".openclaw", "workspace", "AGENTS.md")
 	case "opencode":
 		return filepath.Join(home, ".config", "opencode", "AGENTS.md")
+	case "agent":
+		return filepath.Join(home, ".agents", "AGENTS.md")
 	}
 	return ""
 }
@@ -95,6 +101,8 @@ func ConfigDir(ag string) string {
 		return filepath.Join(home, ".openclaw", "workspace")
 	case "opencode":
 		return filepath.Join(home, ".config", "opencode")
+	case "agent":
+		return filepath.Join(home, ".agents")
 	}
 	return ""
 }
@@ -113,6 +121,8 @@ func DisplayName(ag string) string {
 		return "OpenClaw"
 	case "opencode":
 		return "OpenCode"
+	case "agent":
+		return "Generic Agent"
 	}
 	return ag
 }
@@ -131,6 +141,8 @@ func FromDisplayName(display string) string {
 		return "openclaw"
 	case "OpenCode":
 		return "opencode"
+	case "Generic Agent":
+		return "agent"
 	}
 	return display
 }
