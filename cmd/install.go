@@ -35,6 +35,7 @@ var (
 	flagInstallPackage   string
 	flagInstallScope     string // "project" (default) | "global"
 	flagInstallGlobal    bool   // shorthand for --scope global
+	flagInstallNoCap     bool   // disable agent load-performance optimization (install all skills)
 )
 
 var installCmd = &cobra.Command{
@@ -68,6 +69,7 @@ func init() {
 	installCmd.Flags().StringVar(&flagInstallPackage, "package", "", "install skills from a specific package only")
 	installCmd.Flags().StringVar(&flagInstallScope, "scope", "project", `install scope: "project" (./.claude/skills/) or "global" (~/.claude/skills/)`)
 	installCmd.Flags().BoolVar(&flagInstallGlobal, "global", false, `global-scoped install — shorthand for --scope global`)
+	installCmd.Flags().BoolVar(&flagInstallNoCap, "no-load-optimize", false, "install all skills; disables agent load-performance limit (may slow down AI assistant startup)")
 }
 
 // installSkillsDir returns the target skills directory for an agent based on the current scope flags.
@@ -293,11 +295,17 @@ func runInstall(cmd *cobra.Command, args []string) error {
 		} else {
 			fmt.Printf(" %d found\n\n", len(all))
 		}
+		// Warn and enforce per-agent skill caps.
+		agentCaps := buildAgentCaps(targets, len(all))
+
 		var skipped int
 		for i := range all {
 			sk := all[i]
 			var linkedTo []string
 			for _, ag := range targets {
+				if agCap := agentCaps[ag]; agCap > 0 && perAgent[ag] >= agCap {
+					continue
+				}
 				n, installErr := installSkillToAgent(sk.Path, ag, symlink)
 				if installErr != nil {
 					fmt.Fprintf(os.Stderr, "  %s  %s — %s: %v\n", tui.IconWarn, sk.Name, agent.DisplayName(ag), installErr)
@@ -324,6 +332,9 @@ func runInstall(cmd *cobra.Command, args []string) error {
 		_, _ = skills.CleanBrokenSymlinks(installSkillsDir(ag))
 	}
 
+	// write skill index files for discovery
+	writeSkillsIndex(targets, skills.AllSkillsPackages())
+
 	// configure agent MD files
 	if !flagInstallNoCfg {
 		for _, ag := range targets {
@@ -335,6 +346,46 @@ func runInstall(cmd *cobra.Command, args []string) error {
 
 	printInstallSummary(perAgent, targets)
 	return nil
+}
+
+// buildAgentCaps returns a map of agent → skill cap for agents that have a known limit
+// and whose total skill count would exceed it. Returns empty map when --no-cap is set.
+func buildAgentCaps(targets []string, total int) map[string]int {
+	caps := make(map[string]int)
+	if flagInstallNoCap {
+		return caps
+	}
+	for _, ag := range targets {
+		loadCap := agent.SkillLoadCap(ag)
+		if loadCap > 0 && total > loadCap {
+			fmt.Fprintf(os.Stderr, "\n  %s  %s: load-performance limit %d — installing top %d skills for faster AI startup\n",
+				tui.IconWarn, agent.DisplayName(ag), loadCap, loadCap)
+			fmt.Fprintf(os.Stderr, "   run: grimoire install --no-load-optimize to install all\n")
+			caps[ag] = loadCap
+		}
+	}
+	return caps
+}
+
+// writeSkillsIndex generates _GRIMOIRE_INDEX.md and writes it to each installed
+// skills directory. Errors are silently ignored — the index is advisory.
+func writeSkillsIndex(targets []string, regs []skills.SkillsPackage) {
+	content, err := skills.GenerateIndex(regs)
+	if err != nil {
+		return
+	}
+	written := make(map[string]bool)
+	for _, ag := range targets {
+		dir := installSkillsDir(ag)
+		if dir == "" || written[dir] {
+			continue
+		}
+		written[dir] = true
+		if _, statErr := os.Stat(dir); statErr != nil {
+			continue
+		}
+		_ = os.WriteFile(filepath.Join(dir, "_GRIMOIRE_INDEX.md"), []byte(content), 0o644)
+	}
 }
 
 func printInstallSummary(perAgent map[string]int, targets []string) {

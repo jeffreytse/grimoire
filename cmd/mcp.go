@@ -95,6 +95,23 @@ func registerMCPTools(s *server.MCPServer) {
 	)
 
 	s.AddTool(
+		mcp.NewTool("grimoire_get_skill",
+			mcp.WithDescription("Fetch the full SKILL.md content for a specific skill by name. Use this to load a skill on demand without needing it pre-installed in the agent context directory. Returns name, full content, and source path."),
+			mcp.WithString("name", mcp.Required(), mcp.Description("Skill name (e.g. propose-conventional-commit)")),
+		),
+		toolGrimoireGetSkill,
+	)
+
+	s.AddTool(
+		mcp.NewTool("grimoire_search_skills",
+			mcp.WithDescription("Search skills using BM25 relevance ranking. Handles semantic queries like 'write better commit messages' matching propose-conventional-commit — better than exact substring matching. Returns top matches with scores."),
+			mcp.WithString("query", mcp.Required(), mcp.Description("Natural language or keyword search query")),
+			mcp.WithNumber("top_n", mcp.Description("Maximum results to return (default: 10, max: 100)")),
+		),
+		toolGrimoireSearchSkills,
+	)
+
+	s.AddTool(
 		mcp.NewTool("grimoire_doctor",
 			mcp.WithDescription("Run a health check on the grimoire installation. Returns status of grimoire source, AI agent installations, and config files. Use this to diagnose setup issues."),
 		),

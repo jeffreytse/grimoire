@@ -20,6 +20,7 @@ import (
 	gitops "github.com/jeffreytse/grimoire/internal/git"
 	"github.com/jeffreytse/grimoire/internal/manifest"
 	"github.com/jeffreytse/grimoire/internal/profiles"
+	"github.com/jeffreytse/grimoire/internal/search"
 	"github.com/jeffreytse/grimoire/internal/skills"
 )
 
@@ -864,4 +865,90 @@ func toolGrimoireInfo(_ context.Context, request mcp.CallToolRequest) (*mcp.Call
 		}
 	}
 	return mcp.NewToolResultError(fmt.Sprintf("skill %q not found", name)), nil
+}
+
+// ── grimoire_get_skill ────────────────────────────────────────────────────────
+
+type mcpGetSkillOutput struct {
+	Name    string `json:"name"`
+	Content string `json:"content"`
+	Path    string `json:"path"`
+}
+
+func toolGrimoireGetSkill(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
+	name := strings.TrimSpace(request.GetString("name", ""))
+	if name == "" {
+		return mcp.NewToolResultError("skill name is required"), nil
+	}
+
+	regs := skills.AllSkillsPackages()
+	if len(regs) == 0 {
+		return mcp.NewToolResultError("no packages installed — run grimoire_update first"), nil
+	}
+
+	skillPath, _, err := resolveSkillFromPackages(regs, name)
+	if err != nil {
+		return mcp.NewToolResultError(err.Error()), nil
+	}
+
+	content, err := os.ReadFile(filepath.Join(skillPath, "SKILL.md"))
+	if err != nil {
+		return mcp.NewToolResultError(fmt.Sprintf("reading SKILL.md for %q: %v", name, err)), nil
+	}
+
+	return jsonResult(mcpGetSkillOutput{
+		Name:    name,
+		Content: string(content),
+		Path:    skillPath,
+	})
+}
+
+// ── grimoire_search_skills ────────────────────────────────────────────────────
+
+type mcpSearchSkillsResult struct {
+	Name        string   `json:"name"`
+	Description string   `json:"description"`
+	Domain      string   `json:"domain"`
+	Subdomain   string   `json:"subdomain,omitempty"`
+	Tags        []string `json:"tags,omitempty"`
+	Package     string   `json:"package,omitempty"`
+	Score       float64  `json:"score"`
+}
+
+func toolGrimoireSearchSkills(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
+	query := strings.TrimSpace(request.GetString("query", ""))
+	if query == "" {
+		return mcp.NewToolResultError("query is required"), nil
+	}
+
+	topN := int(request.GetFloat("top_n", 10))
+	if topN <= 0 || topN > 100 {
+		topN = 10
+	}
+
+	regs := skills.AllSkillsPackages()
+	if len(regs) == 0 {
+		return mcp.NewToolResultError("no packages installed — run grimoire_update first"), nil
+	}
+
+	all, _, err := skills.ListAllSkillsFromPackages(regs)
+	if err != nil {
+		return mcp.NewToolResultError(err.Error()), nil
+	}
+
+	hits := search.BM25Search(query, all, topN)
+	out := make([]mcpSearchSkillsResult, len(hits))
+	for i := range hits {
+		h := &hits[i]
+		out[i] = mcpSearchSkillsResult{
+			Name:        h.Skill.Name,
+			Description: h.Skill.Description,
+			Domain:      h.Skill.Domain,
+			Subdomain:   h.Skill.Subdomain,
+			Tags:        h.Skill.Tags,
+			Package:     h.Skill.Package,
+			Score:       h.Score,
+		}
+	}
+	return jsonResult(out)
 }
