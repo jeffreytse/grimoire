@@ -453,7 +453,7 @@ func runWizard() error {
 		fmt.Printf("%s Also available via marketplace:\n", tui.StyleBold.Render("💡"))
 		fmt.Printf("   %s  %s\n",
 			tui.StyleGold.Render("🐙 Copilot"),
-			tui.StyleCyan.Render("copilot plugin marketplace add jeffreytse/grimoire"))
+			tui.StyleCyan.Render("copilot plugin marketplace add jeffreytse/grimoire-core"))
 		fmt.Printf("              %s\n",
 			tui.StyleCyan.Render("copilot plugin install grimoire@grimoire"))
 		fmt.Println()
