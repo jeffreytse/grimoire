@@ -153,12 +153,12 @@ grimoire-core is the official package — curated, cited, and reviewed against S
 
 **Community packages** install identically to grimoire-core. We encourage following the [grimoire skill standard](https://github.com/jeffreytse/grimoire-core/blob/main/STANDARD.md) for quality and interoperability — but any git repo works. Publish as `grimoire-<name>` for discoverability:
 
-| Package example | Focus |
-|---|---|
-| `yourorg/grimoire-fintech` | fintech-specific practices |
-| `yourorg/grimoire-medical` | clinical protocols, FDA workflows |
-| `yourorg/grimoire-legal-us` | US jurisdiction guides |
-| `yourorg/internal-skills`  | your team's private practices |
+| Package example             | Focus                             |
+| --------------------------- | --------------------------------- |
+| `yourorg/grimoire-fintech`  | fintech-specific practices        |
+| `yourorg/grimoire-medical`  | clinical protocols, FDA workflows |
+| `yourorg/grimoire-legal-us` | US jurisdiction guides            |
+| `yourorg/internal-skills`   | your team's private practices     |
 
 The practices in your installed packages define what `grimoire check` validates against — declare the package, get the linter rules for free.
 
@@ -268,8 +268,8 @@ Auto-detects Claude Code, Codex, Gemini CLI, OpenClaw, and OpenCode.
 /plugin marketplace add jeffreytse/grimoire-core
 
 # Step 2: install (skills are namespaced, e.g. /grimoire-engineering:propose-conventional-commit)
-/plugin install grimoire@grimoire-core                   # all domains (latest)
-/plugin install grimoire-engineering@grimoire-core       # one domain
+/plugin install grimoire@grimoire                        # all domains (latest)
+/plugin install grimoire-engineering@grimoire            # one domain
 
 # For subdomain-level installs, use grimoire
 ```
@@ -335,16 +335,16 @@ Or natively via `agy plugin install https://github.com/jeffreytse/grimoire-core`
 
 ## 🤖 Agent Support
 
-| Agent              | Plugin install                                                                                                 | Script install                       |
-| ------------------ | -------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
-| Claude Code        | `/plugin marketplace add jeffreytse/grimoire-core` then `/plugin install grimoire@grimoire-core`               | `grimoire install --target claude`   |
-| GitHub Copilot CLI | `copilot plugin marketplace add jeffreytse/grimoire-core` then `copilot plugin install grimoire@grimoire-core` | `grimoire install --target all`      |
-| Gemini CLI         | `gemini extensions install https://github.com/jeffreytse/grimoire-core`                                        | `grimoire install --target gemini`   |
-| OpenCode           | See [`.opencode/INSTALL.md`](./.opencode/INSTALL.md)                                                           | `grimoire install --target opencode` |
-| OpenClaw           | See [`.openclaw/INSTALL.md`](./.openclaw/INSTALL.md)                                                           | `grimoire install --target openclaw` |
-| Codex CLI          | `AGENTS.md` auto-loaded; browse `/plugins` in CLI                                                              | `grimoire install --target codex`    |
-| Cursor             | `AGENTS.md` context injection                                                                                  | `grimoire install --target cursor`   |
-| Antigravity CLI (agy) | `agy plugin install https://github.com/jeffreytse/grimoire-core`                                            | `grimoire install --target antigravity` |
+| Agent                 | Plugin install                                                                                                 | Script install                          |
+| --------------------- | -------------------------------------------------------------------------------------------------------------- | --------------------------------------- |
+| Claude Code           | `/plugin marketplace add jeffreytse/grimoire-core` then `/plugin install grimoire@grimoire`                    | `grimoire install --target claude`      |
+| GitHub Copilot CLI    | `copilot plugin marketplace add jeffreytse/grimoire-core` then `copilot plugin install grimoire@grimoire`      | `grimoire install --target all`         |
+| Gemini CLI            | `gemini extensions install https://github.com/jeffreytse/grimoire-core`                                        | `grimoire install --target gemini`      |
+| OpenCode              | See [`.opencode/INSTALL.md`](./.opencode/INSTALL.md)                                                           | `grimoire install --target opencode`    |
+| OpenClaw              | See [`.openclaw/INSTALL.md`](./.openclaw/INSTALL.md)                                                           | `grimoire install --target openclaw`    |
+| Codex CLI             | `AGENTS.md` auto-loaded; browse `/plugins` in CLI                                                              | `grimoire install --target codex`       |
+| Cursor                | `AGENTS.md` context injection                                                                                  | `grimoire install --target cursor`      |
+| Antigravity CLI (agy) | `agy plugin install https://github.com/jeffreytse/grimoire-core`                                               | `grimoire install --target antigravity` |
 
 ## 🖥️ Editor Integration (LSP)
 
@@ -352,12 +352,12 @@ Or natively via `agy plugin install https://github.com/jeffreytse/grimoire-core`
 
 **How it works:** on every file save the server runs `grimoire check` in the background and pushes findings as LSP diagnostics to your editor. Pass/hint items are suppressed; only errors, warnings, and info appear.
 
-| Editor | Setup |
-|--------|-------|
-| Neovim | `lspconfig` custom server (see below) |
-| VSCode | grimoire extension, or `tasks.json` with a custom server entry |
-| Helix  | `languages.toml` custom language server entry |
-| Any LSP client | Point `cmd` at `grimoire lsp` |
+| Editor         | Setup                                                          |
+| -------------- | -------------------------------------------------------------- |
+| Neovim         | `lspconfig` custom server (see below)                          |
+| VSCode         | grimoire extension, or `tasks.json` with a custom server entry |
+| Helix          | `languages.toml` custom language server entry                  |
+| Any LSP client | Point `cmd` at `grimoire lsp`                                  |
 
 **Neovim (nvim-lspconfig):**
 
@@ -462,11 +462,22 @@ grimoire check   # exits 0 (pass) or 1 (fail)
 | Two practices exist — want side-by-side comparison                                                            | `/compare-best-practices`                 |
 | Two practices conflict — want to reason through which fits                                                    | `/resolve-best-practice-conflict`         |
 | Resolved a conflict — want to save the decision for future sessions                                           | `/pin-best-practice-preference`           |
-| Get oriented on grimoire itself — what it is, why, how to use it                                             | `/learn-grimoire`                         |
-| Actually internalize a practice — active recall, spaced review, so you can use it without AI                 | `/learn-best-practice`                    |
-| Understand what a skill does and why it exists                                                               | `/explain-best-practice`                  |
-| Adapt a skill to a different context or constraint                                                           | `/adapt-best-practice`                    |
-| Teach a practice to someone else (structured walkthrough)                                                    | `/teach-best-practice`                    |
+| Get oriented on grimoire itself — what it is, why, how to use it                                              | `/learn-grimoire`                         |
+| Actually internalize a practice — active recall, spaced review, so you can use it without AI                  | `/learn-best-practice`                    |
+| Understand what a skill does and why it exists                                                                | `/explain-best-practice`                  |
+| Adapt a skill to a different context or constraint                                                            | `/adapt-best-practice`                    |
+| Teach a practice to someone else (structured walkthrough)                                                     | `/teach-best-practice`                    |
+| Installing/uninstalling skills, upgrading grimoire, checking install health                                   | `/install-grimoire`                       |
+| Want an inventory of which best practices your existing work already follows                                  | `/audit-applied-best-practices`           |
+| Want to validate a practice profile before using or sharing it                                                | `/review-best-practice-profile`           |
+| Want to publish or share a practice profile                                                                   | `/share-best-practice-profile`            |
+| Want to create a new practice profile                                                                         | `/write-best-practice-profile`            |
+| Authoring a new SKILL.md for grimoire-core or a STANDARD.md-following package                                 | `/write-best-practice-skill`              |
+| Reviewing whether a SKILL.md meets STANDARD.md criteria                                                       | `/review-best-practice-skill`             |
+| A SKILL.md has review findings, a stale citation, or an outdated referenced tool                              | `/revise-best-practice-skill`             |
+| Assessing quality of all skills in a domain/sub-domain (pre-release, post-bulk-contribution)                  | `/audit-best-practice-domain`             |
+| A skill's source is outdated or has been superseded — check if it should be deprecated                        | `/deprecate-best-practice-skill`          |
+| Adding a new domain or sub-domain to grimoire                                                                 | `/design-best-practice-domain`            |
 
 → [BPDD guide](./docs/bpdd.md) — cycle, compliance linter, LSP output, suppression, CI integration
 
@@ -544,7 +555,6 @@ Claude: Starting learn-best-practice: mece-decomposition
         Review scheduled: +3 days, +10 days, +30 days
 ```
 
-
 ## ⚙️ Configuration
 
 When top-tier orgs disagree (Google vs IBM, startup vs enterprise), pin which approach you prefer once — grimoire applies it automatically from then on.
@@ -563,12 +573,12 @@ Claude: Saved to ~/.config/grimoire/grimoire.toml.
 
 **Override priority** — grimoire checks preferences in this order, first match wins:
 
-| Priority | Level   | Stored in                                  | Scope                                           |
-| -------- | ------- | ------------------------------------------ | ----------------------------------------------- |
-| 1st      | Session | In-memory                                  | Current session only — resets when session ends |
-| 2nd      | Project | `grimoire.toml`                            | Current project, committed to repo              |
-| 3rd      | Global  | `~/.config/grimoire/grimoire.toml`         | All projects on this machine                    |
-| 4th      | System  | `/etc/grimoire/grimoire.toml`              | All users on this machine                       |
+| Priority | Level   | Stored in                          | Scope                                           |
+| -------- | ------- | ---------------------------------- | ----------------------------------------------- |
+| 1st      | Session | In-memory                          | Current session only — resets when session ends |
+| 2nd      | Project | `grimoire.toml`                    | Current project, committed to repo              |
+| 3rd      | Global  | `~/.config/grimoire/grimoire.toml` | All projects on this machine                    |
+| 4th      | System  | `/etc/grimoire/grimoire.toml`      | All users on this machine                       |
 
 **Configure manually** — edit the settings files directly without going through the AI:
 
@@ -748,7 +758,7 @@ Use `/fix-best-practice-finding` to fix one specific compliance finding — targ
 | [`design-sleep-protocol`](https://github.com/jeffreytse/grimoire-core/tree/main/skills/health/sleep/skills/design-sleep-protocol/)                                     | health/sleep             | Matthew Walker "Why We Sleep" / AASM     | ✓        |
 | [`apply-mise-en-place`](https://github.com/jeffreytse/grimoire-core/tree/main/skills/cooking/techniques/skills/apply-mise-en-place/)                                   | cooking/techniques       | Culinary Institute of America            | ✓        |
 | [`apply-five-whys`](https://github.com/jeffreytse/grimoire-core/tree/main/skills/engineering/reliability/skills/apply-five-whys/)                                      | engineering/reliability  | Toyota Production System / Google SRE    | ✓        |
-| [`design-training-program`](https://github.com/jeffreytse/grimoire-core/tree/main/skills/sports/training/skills/design-training-program/)                               | sports/training          | NSCA CSCS curriculum                     | ✓        |
+| [`design-training-program`](https://github.com/jeffreytse/grimoire-core/tree/main/skills/sports/training/skills/design-training-program/)                              | sports/training          | NSCA CSCS curriculum                     | ✓        |
 | [`apply-acceptance-commitment-therapy`](https://github.com/jeffreytse/grimoire-core/tree/main/skills/psychology/cognitive/skills/apply-acceptance-commitment-therapy/) | psychology/cognitive     | Hayes / ACBS meta-analyses               | ✓        |
 | [`write-value-proposition`](https://github.com/jeffreytse/grimoire-core/tree/main/skills/writing/copywriting/skills/write-value-proposition/)                          | writing/copywriting      | Osterwalder "Value Proposition Design"   | ✓        |
 | [`design-training-periodization-plan`](https://github.com/jeffreytse/grimoire-core/tree/main/skills/sports/training/skills/design-training-periodization-plan/)        | sports/training          | Bompa "Periodization" / NSCA             | ✓        |
