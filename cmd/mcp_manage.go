@@ -144,6 +144,11 @@ func performInstall(domain, subdomain, skill, target string) (mcpInstallOutput, 
 	for _, ag := range targets {
 		_, _ = skills.CleanBrokenSymlinks(agent.SkillsDir(ag))
 		_ = agent.ConfigureAgentMD(ag)
+		// Plugin-only agents (Grok, Muse, MiniMax): write the bundle manifest
+		// and register it, as the CLI install does.
+		if err := agent.FinalizePlugin(ag, nil); err != nil {
+			errs = append(errs, fmt.Sprintf("%s: %v", ag, err))
+		}
 	}
 
 	installed := make(map[string]int)

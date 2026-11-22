@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 
 	"github.com/mark3labs/mcp-go/mcp"
@@ -37,8 +38,9 @@ var mcpServeCmd = &cobra.Command{
 AI assistants that support MCP (Claude Code, Cursor, Windsurf, Cline, etc.)
 can connect to grimoire tools natively once configured.
 
-To configure Claude Code, add to ~/.claude/mcp.json:
-  grimoire mcp config --target claude
+To configure Claude Code:
+  claude mcp add -s user grimoire -- grimoire mcp serve
+  (or run: grimoire mcp config --target claude)
 
 To pin a specific project directory (recommended for MCP):
   grimoire --project-dir /path/to/project mcp serve
@@ -89,7 +91,9 @@ func registerMCPTools(s *server.MCPServer) {
 
 	s.AddTool(
 		mcp.NewTool("grimoire_list_skills",
-			mcp.WithDescription("List all available skills across all packages. Returns skill name, domain, subdomain, tags, and package. Use this to discover what practices are available before applying BPDD."),
+			mcp.WithDescription("Browse available skills. Without arguments, returns a compact index of domains and subdomains with skill counts. Pass a domain (and optionally a subdomain) to list those skills with name, description, tags, and package. For keyword lookup use grimoire_search_skills; to read a skill use grimoire_get_skill."),
+			mcp.WithString("domain", mcp.Description("Domain to list (e.g. engineering). Omit for the domain index.")),
+			mcp.WithString("subdomain", mcp.Description("Subdomain filter within the domain (e.g. testing)")),
 		),
 		toolGrimoireListSkills,
 	)
@@ -413,12 +417,103 @@ func toolGrimoireCheck(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolR
 	return jsonResult(report)
 }
 
-func toolGrimoireListSkills(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
+// mcpSkillSummary is the per-skill shape grimoire_list_skills returns: metadata
+// only. Full SKILL.md bodies for every skill run to megabytes, far beyond what
+// an MCP client will pass to a model; grimoire_get_skill loads one on demand.
+type mcpSkillSummary struct {
+	Name        string   `json:"name"`
+	Subdomain   string   `json:"subdomain,omitempty"`
+	Description string   `json:"description,omitempty"`
+	Tags        []string `json:"tags,omitempty"`
+	Package     string   `json:"package,omitempty"`
+}
+
+type mcpDomainIndex struct {
+	Domain     string         `json:"domain"`
+	Total      int            `json:"total"`
+	Subdomains map[string]int `json:"subdomains,omitempty"`
+}
+
+const domainListDescMax = 100
+
+func truncateRunes(s string, n int) string {
+	r := []rune(s)
+	if len(r) <= n {
+		return s
+	}
+	return strings.TrimSpace(string(r[:n])) + "…"
+}
+
+func toolGrimoireListSkills(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
+	domain := request.GetString("domain", "")
+	subdomain := request.GetString("subdomain", "")
+	if subdomain != "" && domain == "" {
+		return mcp.NewToolResultError("subdomain requires domain"), nil
+	}
+	// The Meta variant skips frontmatter (no description/tags), so parse fully;
+	// only the summary fields below are sent to the client.
 	all, _, err := skills.ListAllSkillsFromPackages(skills.AllSkillsPackages())
 	if err != nil {
 		return mcp.NewToolResultError(err.Error()), nil
 	}
-	return jsonResult(all)
+
+	if domain == "" {
+		byDomain := map[string]*mcpDomainIndex{}
+		var order []string
+		for i := range all {
+			sk := &all[i]
+			d := byDomain[sk.Domain]
+			if d == nil {
+				d = &mcpDomainIndex{Domain: sk.Domain, Subdomains: map[string]int{}}
+				byDomain[sk.Domain] = d
+				order = append(order, sk.Domain)
+			}
+			d.Total++
+			if sk.Subdomain != "" {
+				d.Subdomains[sk.Subdomain]++
+			}
+		}
+		sort.Strings(order)
+		index := make([]mcpDomainIndex, 0, len(order))
+		for _, name := range order {
+			index = append(index, *byDomain[name])
+		}
+		return jsonResult(map[string]any{
+			"total":   len(all),
+			"domains": index,
+			"hint":    "Pass domain (and optional subdomain) to list skills; grimoire_get_skill loads one.",
+		})
+	}
+
+	var out []mcpSkillSummary
+	for i := range all {
+		sk := &all[i]
+		if sk.Domain != domain || (subdomain != "" && sk.Subdomain != subdomain) {
+			continue
+		}
+		sum := mcpSkillSummary{
+			Name:        sk.Name,
+			Subdomain:   sk.Subdomain,
+			Description: sk.Description,
+			Tags:        sk.Tags,
+			Package:     sk.Package,
+		}
+		if subdomain == "" {
+			// A whole domain can hold ~300 skills; keep it within typical MCP
+			// output limits (~25k tokens). Narrow by subdomain for full detail.
+			sum.Description = truncateRunes(sum.Description, domainListDescMax)
+			sum.Tags, sum.Package = nil, ""
+		}
+		out = append(out, sum)
+	}
+	if len(out) == 0 {
+		scope := domain
+		if subdomain != "" {
+			scope += "/" + subdomain
+		}
+		return mcp.NewToolResultError(fmt.Sprintf("no skills in %q — call grimoire_list_skills without arguments for the index", scope)), nil
+	}
+	return jsonResult(out)
 }
 
 func toolGrimoireDoctor(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
@@ -582,7 +677,12 @@ func jsonResult(v any) (*mcp.CallToolResult, error) {
 func runMCPConfig(_ *cobra.Command, _ []string) error {
 	switch flagMCPConfigTarget {
 	case "claude":
-		fmt.Print(`Add to ~/.claude/mcp.json (global) or .claude/mcp.json (project):
+		fmt.Print(`Register with the Claude Code CLI:
+
+  claude mcp add -s user grimoire -- grimoire mcp serve      # all projects (~/.claude.json)
+  claude mcp add -s project grimoire -- grimoire mcp serve   # this repo (.mcp.json, commit to share)
+
+Or write .mcp.json at the project root yourself:
 
 {
   "mcpServers": {
