@@ -121,3 +121,16 @@ func TestHookPrompt_EchoesEventName(t *testing.T) {
 		}
 	}
 }
+
+// Long prompts get the start-best-practice routing hint, matches or not;
+// short ones never do.
+func TestHookPrompt_RouteHintOnLongPrompts(t *testing.T) {
+	setupListSkillsHome(t)
+	long := strings.Repeat("we need to migrate our billing service and rework how the team ships releases ", 3)
+	if ctx := runHook(t, long); !strings.Contains(ctx, "start-best-practice") {
+		t.Errorf("long prompt: want route hint, got %q", ctx)
+	}
+	if ctx := runHook(t, "migrate the billing service"); strings.Contains(ctx, "start-best-practice") {
+		t.Errorf("short prompt: want no route hint, got %q", ctx)
+	}
+}

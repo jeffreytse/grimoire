@@ -179,3 +179,58 @@ func TestMCPServer_InitializeAdvertisesSkillAccess(t *testing.T) {
 		t.Errorf("prompts/list = %+v; want exactly the skill prompt", list.Result.Prompts)
 	}
 }
+
+func TestGetSkillTool_NamesBatch(t *testing.T) {
+	setupListSkillsHome(t)
+	call := func(names []any) (string, bool) {
+		req := mcp.CallToolRequest{}
+		req.Params.Arguments = map[string]any{"names": names}
+		res, err := toolGrimoireGetSkill(context.Background(), req)
+		if err != nil {
+			t.Fatal(err)
+		}
+		tc, ok := res.Content[0].(mcp.TextContent)
+		if !ok {
+			t.Fatalf("content is %T", res.Content[0])
+		}
+		return tc.Text, res.IsError
+	}
+
+	out, isErr := call([]any{"write-readme", "grimoire:write-unit-test", "write-readme", "write-readmee"})
+	if isErr {
+		t.Fatalf("batch errored: %s", out)
+	}
+	var got mcpGetSkillsOutput
+	if err := json.Unmarshal([]byte(out), &got); err != nil {
+		t.Fatal(err)
+	}
+	if got.Note != mcpChainRule {
+		t.Errorf("note = %q", got.Note)
+	}
+	// Duplicate loaded once; the typo is reported in place with a suggestion.
+	if len(got.Skills) != 3 {
+		t.Fatalf("want 3 entries, got %+v", got.Skills)
+	}
+	if got.Skills[0].Name != "write-readme" || got.Skills[1].Name != "write-unit-test" || got.Skills[0].Content == "" {
+		t.Errorf("loaded skills = %+v", got.Skills[:2])
+	}
+	if e := got.Skills[2]; e.Content != "" || !strings.Contains(e.Error, "write-readme") {
+		t.Errorf("typo entry = %+v", e)
+	}
+
+	many := make([]any, mcpGetSkillsMax+1)
+	for i := range many {
+		many[i] = "write-readme"
+	}
+	if _, isErr := call(many); !isErr {
+		t.Error("want error over the batch cap")
+	}
+}
+
+func TestServerInstructions_RouteWorkflows(t *testing.T) {
+	for _, s := range []string{"start-best-practice", "plan-best-practice-solution", "apply-best-practice-tree", "names"} {
+		if !strings.Contains(mcpServerInstructions, s) {
+			t.Errorf("server instructions do not mention %s", s)
+		}
+	}
+}

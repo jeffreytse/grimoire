@@ -103,8 +103,9 @@ func registerMCPTools(s *server.MCPServer) {
 
 	s.AddTool(
 		mcp.NewTool("grimoire_get_skill",
-			mcp.WithDescription("Fetch the full SKILL.md content for a specific skill by exact name. When the user writes `grimoire:<skill-name>`, call this with that name directly (no search). A leading `grimoire:` is accepted; an unknown name returns close matches. Returns name, full content, and source path."),
-			mcp.WithString("name", mcp.Required(), mcp.Description("Skill name (e.g. propose-conventional-commit)")),
+			mcp.WithDescription("Fetch the full SKILL.md content for a skill by exact name. When the user writes `grimoire:<skill-name>`, call this with that name directly (no search). A leading `grimoire:` is accepted; an unknown name returns close matches. Returns name, full content, and source path. To load several skills at once (e.g. the steps of a plan), pass `names` instead of `name`."),
+			mcp.WithString("name", mcp.Description("Skill name (e.g. propose-conventional-commit)")),
+			mcp.WithArray("names", mcp.WithStringItems(), mcp.Description("Several skill names to load in one call (max 10); used instead of name")),
 		),
 		toolGrimoireGetSkill,
 	)

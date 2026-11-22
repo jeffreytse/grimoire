@@ -105,3 +105,27 @@ func TestMCPInstruction_UpgradesAndRemovesLegacyLine(t *testing.T) {
 		t.Errorf("after remove = %q", got)
 	}
 }
+
+// Every earlier trigger line must differ from the current one and be
+// replaced on reinstall, so users upgrading get the routing clause.
+func TestMCPTriggerLine_RoutesAndUpgradesLegacy(t *testing.T) {
+	if !strings.Contains(MCPTriggerLine, "start-best-practice") {
+		t.Error("trigger line does not route through start-best-practice")
+	}
+	for _, old := range legacyMCPTriggerLines {
+		if old == MCPTriggerLine {
+			t.Fatal("legacy list contains the current trigger line")
+		}
+		p := filepath.Join(t.TempDir(), "AGENTS.md")
+		if err := os.WriteFile(p, []byte(sectionHeader+"\n"+old+"\n"), 0o644); err != nil {
+			t.Fatal(err)
+		}
+		if changed, err := ConfigureMCPInstruction(p); err != nil || !changed {
+			t.Fatalf("configure: changed=%v err=%v", changed, err)
+		}
+		b, _ := os.ReadFile(p)
+		if string(b) != sectionHeader+"\n"+MCPTriggerLine+"\n" {
+			t.Errorf("legacy line not replaced: %q", b)
+		}
+	}
+}

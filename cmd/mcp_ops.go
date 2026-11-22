@@ -879,7 +879,27 @@ type mcpGetSkillOutput struct {
 	Path    string `json:"path"`
 }
 
+// mcpGetSkillsMax caps a names batch; workflows chain a handful of skills.
+const mcpGetSkillsMax = 10
+
+// mcpGetSkillsOutput is the batch form of grimoire_get_skill: one chain note,
+// then each skill (or the error for a name that did not resolve).
+type mcpGetSkillsOutput struct {
+	Note   string              `json:"note"`
+	Skills []mcpGetSkillsEntry `json:"skills"`
+}
+
+type mcpGetSkillsEntry struct {
+	Name    string `json:"name"`
+	Content string `json:"content,omitempty"`
+	Path    string `json:"path,omitempty"`
+	Error   string `json:"error,omitempty"`
+}
+
 func toolGrimoireGetSkill(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
+	if names := request.GetStringSlice("names", nil); len(names) > 0 {
+		return getSkillsBatch(names), nil
+	}
 	name, skillPath, err := resolveSkillOrSuggest(request.GetString("name", ""))
 	if err != nil {
 		return mcp.NewToolResultError(err.Error()), nil
@@ -896,6 +916,39 @@ func toolGrimoireGetSkill(_ context.Context, request mcp.CallToolRequest) (*mcp.
 		Path:    skillPath,
 		Note:    mcpChainRule,
 	})
+}
+
+// getSkillsBatch loads several skills in one call, so a workflow that chains
+// skills (plan-best-practice-solution, apply-best-practice-tree) does not pay
+// one round trip per skill. Duplicate names are loaded once.
+func getSkillsBatch(names []string) *mcp.CallToolResult {
+	if len(names) > mcpGetSkillsMax {
+		return mcp.NewToolResultError(fmt.Sprintf("at most %d names per call (got %d)", mcpGetSkillsMax, len(names)))
+	}
+	out := mcpGetSkillsOutput{Note: mcpChainRule}
+	seen := map[string]bool{}
+	for _, ref := range names {
+		name, skillPath, err := resolveSkillOrSuggest(ref)
+		if err != nil {
+			out.Skills = append(out.Skills, mcpGetSkillsEntry{Name: strings.TrimSpace(ref), Error: err.Error()})
+			continue
+		}
+		if seen[name] {
+			continue
+		}
+		seen[name] = true
+		content, err := os.ReadFile(filepath.Join(skillPath, "SKILL.md"))
+		if err != nil {
+			out.Skills = append(out.Skills, mcpGetSkillsEntry{Name: name, Error: fmt.Sprintf("reading SKILL.md: %v", err)})
+			continue
+		}
+		out.Skills = append(out.Skills, mcpGetSkillsEntry{Name: name, Content: string(content), Path: skillPath})
+	}
+	res, err := jsonResult(out)
+	if err != nil {
+		return mcp.NewToolResultError(err.Error())
+	}
+	return res
 }
 
 // ── grimoire_search_skills ────────────────────────────────────────────────────

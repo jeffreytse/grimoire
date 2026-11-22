@@ -44,6 +44,15 @@ var hookInlineBudget = 9000
 // hook stays silent so small talk ("ok", "thanks") costs no tokens.
 var hookMinScore = 8.0
 
+// hookRouteMinWords is the prompt length (words) from which a task is treated
+// as possibly multi-step and the hook adds hookRouteHint. In skills mode the
+// instruction runs start-best-practice on every task; a top-3 BM25 list
+// alone would never lead to the plan or tree workflows.
+var hookRouteMinWords = 25
+
+// hookRouteHint points long prompts at grimoire's workflow router.
+const hookRouteHint = "If this is a multi-step or unclear problem, load start-best-practice with grimoire_get_skill first: it routes to the right workflow (one skill, a sequenced plan, or a decomposition)."
+
 // hookMinMatched is how many distinct prompt terms a skill must contain.
 var hookMinMatched = 2
 
@@ -135,7 +144,14 @@ func hookContext(prompt string) string {
 	if refs := explicitSkillRefs(prompt); len(refs) > 0 {
 		return explicitSkillContext(refs)
 	}
-	return suggestedSkillContext(prompt)
+	ctx := suggestedSkillContext(prompt)
+	if len(strings.Fields(prompt)) < hookRouteMinWords {
+		return ctx
+	}
+	if ctx == "" {
+		return hookRouteHint
+	}
+	return ctx + "\n" + hookRouteHint
 }
 
 // explicitSkillRefs returns the distinct skill names written as grimoire:<name>.
