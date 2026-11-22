@@ -422,9 +422,12 @@ type jsonServerFile struct {
 
 func loadJSONConfig(path string, seed map[string]any, pasteHint string) (map[string]any, error) {
 	raw, err := os.ReadFile(path)
-	if os.IsNotExist(err) {
+	// An agent may create its config as an empty file (Antigravity does);
+	// treat that like a missing one.
+	empty := err == nil && strings.TrimSpace(string(raw)) == ""
+	if os.IsNotExist(err) || empty {
 		jsonc := strings.TrimSuffix(path, ".json") + ".jsonc"
-		if _, statErr := os.Stat(jsonc); statErr == nil {
+		if _, statErr := os.Stat(jsonc); statErr == nil && !empty {
 			return nil, fmt.Errorf("found %s — add this yourself (grimoire won't rewrite JSONC comments): %s", jsonc, pasteHint)
 		}
 		cfg := map[string]any{}

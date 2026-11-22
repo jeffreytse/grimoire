@@ -418,3 +418,30 @@ func TestMCPInstall_AddsPromptHookForCodexAndGemini(t *testing.T) {
 		})
 	}
 }
+
+// Antigravity creates mcp_config.json as an empty file; registering must
+// treat it as {} instead of failing to parse it.
+func TestMCPInstall_EmptyMCPServersFile(t *testing.T) {
+	_, home := setupMCPSetupEnv(t, true)
+	path := filepath.Join(home, ".gemini", "config", "mcp_config.json")
+	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(path, nil, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	flagMCPSetupTarget = "antigravity"
+	if err := runMCPInstall(nil, nil); err != nil {
+		t.Fatal(err)
+	}
+	b, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var cfg struct {
+		MCPServers map[string]any `json:"mcpServers"`
+	}
+	if err := json.Unmarshal(b, &cfg); err != nil || cfg.MCPServers["grimoire"] == nil {
+		t.Fatalf("grimoire not registered in %s: %s (err %v)", path, b, err)
+	}
+}
