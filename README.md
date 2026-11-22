@@ -276,16 +276,16 @@ grimoire mcp uninstall --target all       # undo
 | Claude Code | user, project | `claude mcp add` | `~/.claude/CLAUDE.md` / `./CLAUDE.md` | `UserPromptSubmit` in `.claude/settings.json` |
 | Codex | user | `codex mcp add` | `~/.codex/AGENTS.md` | `UserPromptSubmit` in `~/.codex/hooks.json` (trust it in `/hooks`) |
 | Gemini CLI | user, project | `gemini mcp add` | `~/.gemini/GEMINI.md` / `./GEMINI.md` | `BeforeAgent` in `.gemini/settings.json` |
-| GitHub Copilot CLI | user | `copilot mcp add` | `~/.copilot/copilot-instructions.md` | — |
-| OpenCode | user, project | `opencode.json` (`mcp.grimoire`) | `~/.config/opencode/AGENTS.md` / `./AGENTS.md` | — |
+| GitHub Copilot CLI | user | `copilot mcp add` | `~/.copilot/copilot-instructions.md` | — (Copilot drops command-hook output for `userPromptSubmitted`) |
+| OpenCode | user, project | `opencode.json` (`mcp.grimoire`) | `~/.config/opencode/AGENTS.md` / `./AGENTS.md` | plugin `plugins/grimoire.js` (`chat.message` + system transform) |
 | Pi | user, project | `~/.pi/agent/mcp.json` / `.pi/mcp.json` | `~/.pi/agent/AGENTS.md` / `./AGENTS.md` | — |
 | Kimi Code | user, project | `~/.kimi-code/mcp.json` / `.kimi-code/mcp.json` | `~/.kimi-code/AGENTS.md` / `./AGENTS.md` | — |
 | OMP | user, project | `~/.omp/agent/mcp.json` / `.omp/mcp.json` | `~/.omp/agent/AGENTS.md` / `.omp/AGENTS.md` | — |
-| Antigravity | user | `~/.gemini/config/mcp_config.json` | — (agy has no user-level instruction file; add the line to a project `AGENTS.md`) | — |
+| Antigravity | user | `~/.gemini/config/mcp_config.json` | injected by the `SessionStart` hook (agy has no user-level instruction file) | `PreInvocation` in `~/.gemini/config/hooks.json`, once per new prompt |
 
 **Run a specific skill:** type `/grimoire:skill <skill-name>` (Claude Code slash command), or write `grimoire:<skill-name> [task]` in any agent, e.g. `grimoire:propose-conventional-commit`. A mistyped name comes back with "did you mean" suggestions.
 
-**Prompt hook (Claude Code, Codex, Gemini CLI):** the instruction line is advisory — the model decides whether a task "needs" a skill and often skips the lookup. `grimoire mcp install` therefore also adds a prompt hook (`grimoire hook prompt`) where the agent supports one — see the table. The hook runs on every prompt (~0.1 s): `grimoire:<name>` inlines that skill; otherwise the best-matching skills are listed for the model to load, and small talk gets nothing. Codex runs new hooks only after you trust them in `/hooks`; agents without a hook rely on the instruction line alone. Other hooks (e.g. caveman) are kept; `--no-hook` skips it, `grimoire mcp uninstall` removes it. Matching is lexical (BM25) — measure it against your packages with `GRIMOIRE_HOOK_EVAL=1 go test ./cmd -run TestHookEval -v`.
+**Prompt hook (all agents except Copilot CLI):** the instruction line is advisory — the model decides whether a task "needs" a skill and often skips the lookup. `grimoire mcp install` therefore also adds a prompt hook (`grimoire hook prompt`) where the agent supports one — see the table. The hook runs on every prompt (~0.1 s): `grimoire:<name>` inlines that skill; otherwise the best-matching skills are listed for the model to load, and small talk gets nothing. Longer prompts (25+ words) also get a pointer to `start-best-practice`, so multi-step problems reach the plan and tree workflows instead of a single skill. Codex runs new hooks only after you trust them in `/hooks`; agents without a hook rely on the instruction line alone. Other hooks (e.g. caveman) are kept; `--no-hook` skips it, `grimoire mcp uninstall` removes it. Matching is lexical (BM25) — measure it against your packages with `GRIMOIRE_HOOK_EVAL=1 go test ./cmd -run TestHookEval -v`.
 
 Re-running is safe: existing registrations and instructions are detected, nothing is duplicated, and an older `start-best-practice` trigger is replaced. Start a new agent session afterwards (in Claude Code, `/mcp` lists grimoire as connected). Gemini keeps MCP servers disabled in folders you haven't trusted. The agent then finds and loads skills through `grimoire_search_skills` and `grimoire_get_skill` instead of preloading every skill into context. Run `grimoire update` to refresh skills. For other MCP clients, `grimoire mcp config --target cursor|windsurf|cline` prints the config snippet.
 
@@ -442,7 +442,7 @@ grimoire check   # exits 0 (pass) or 1 (fail)
 
 ## 🎯 Workflows
 
-> **MCP mode:** skills are not installed as agent slash commands, so run any workflow below as `/grimoire:skill <name>` or `grimoire:<name> [task]` (e.g. `grimoire:suggest-best-practice my team is losing confidence`). When a workflow invokes another skill or scores installed skills, grimoire tells the agent to use `grimoire_get_skill` / `grimoire_search_skills` for that.
+> **MCP mode:** skills are not installed as agent slash commands, so run any workflow below as `/grimoire:skill <name>` or `grimoire:<name> [task]` (e.g. `grimoire:suggest-best-practice my team is losing confidence`). When a workflow invokes another skill or scores installed skills, grimoire tells the agent to use `grimoire_get_skill` / `grimoire_search_skills` for that. The instruction line and server instructions route multi-step or unclear problems through `start-best-practice`, and `grimoire_get_skill` takes a `names` list so a plan can load all its skills in one call.
 
 | Your situation                                                                                                | Start here                                |
 | ------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
