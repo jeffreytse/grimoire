@@ -71,3 +71,37 @@ func TestRemoveMCPInstruction(t *testing.T) {
 		t.Errorf("got %q; want %q", got, "@RTK.md\n")
 	}
 }
+
+// A file written by an older grimoire (previous MCPTriggerLine) is upgraded in
+// place on configure, and still cleaned up on uninstall.
+func TestMCPInstruction_UpgradesAndRemovesLegacyLine(t *testing.T) {
+	legacy := legacyMCPTriggerLines[0]
+	if strings.Contains(legacy, "grimoire:<skill-name>") || !strings.Contains(MCPTriggerLine, "grimoire:<skill-name>") {
+		t.Fatal("current line must add the grimoire:<skill-name> convention")
+	}
+	p := filepath.Join(t.TempDir(), "AGENTS.md")
+	orig := "# Notes\n\n" + sectionHeader + "\n" + legacy + "\n"
+	if err := os.WriteFile(p, []byte(orig), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if changed, err := ConfigureMCPInstruction(p); err != nil || !changed {
+		t.Fatalf("upgrade: changed=%v err=%v", changed, err)
+	}
+	got := readFile(t, p)
+	if want := "# Notes\n\n" + sectionHeader + "\n" + MCPTriggerLine + "\n"; got != want {
+		t.Errorf("upgraded file = %q; want %q", got, want)
+	}
+	if changed, err := ConfigureMCPInstruction(p); err != nil || changed {
+		t.Errorf("re-run after upgrade: changed=%v err=%v", changed, err)
+	}
+
+	if err := os.WriteFile(p, []byte(orig), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if changed, err := RemoveMCPInstruction(p); err != nil || !changed {
+		t.Fatalf("remove legacy: changed=%v err=%v", changed, err)
+	}
+	if got := readFile(t, p); got != "# Notes\n" {
+		t.Errorf("after remove = %q", got)
+	}
+}

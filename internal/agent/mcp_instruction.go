@@ -14,7 +14,40 @@ import (
 // It must live in the agent's instruction file (e.g. CLAUDE.md): in testing,
 // Claude Code followed it from CLAUDE.md but ignored the same text passed via
 // --append-system-prompt.
-const MCPTriggerLine = "For any task, first use the grimoire MCP tools: `grimoire_search_skills` to find a relevant best-practice skill, then `grimoire_get_skill` to load and follow it."
+//
+// It also carries the `grimoire:<name>` convention: the MCP server sends that
+// rule in its initialize instructions, but not every client shows server
+// instructions to the model, so the instruction file must say it too.
+const MCPTriggerLine = "For any task, first use the grimoire MCP tools: `grimoire_search_skills` to find a relevant best-practice skill, then `grimoire_get_skill` to load and follow it. If the user writes `grimoire:<skill-name>`, call `grimoire_get_skill` with that exact name first, without searching, and follow it."
+
+// legacyMCPTriggerLines are earlier MCPTriggerLine texts. They count as
+// grimoire's own lines: configure replaces them and uninstall removes them.
+var legacyMCPTriggerLines = []string{
+	"For any task, first use the grimoire MCP tools: `grimoire_search_skills` to find a relevant best-practice skill, then `grimoire_get_skill` to load and follow it.",
+}
+
+// hasStaleTrigger reports whether content holds a skills-mode or older MCP
+// trigger that ConfigureMCPInstruction should replace.
+func hasStaleTrigger(content string) bool {
+	for _, l := range strings.Split(content, "\n") {
+		if isStaleTrigger(strings.TrimSpace(l)) {
+			return true
+		}
+	}
+	return false
+}
+
+func isStaleTrigger(line string) bool {
+	if line == triggerLine {
+		return true
+	}
+	for _, old := range legacyMCPTriggerLines {
+		if line == old {
+			return true
+		}
+	}
+	return false
+}
 
 // ConfigureMCPInstruction makes path contain the grimoire section with the MCP
 // trigger, replacing a skills-mode trigger if present. It creates the file
@@ -25,7 +58,7 @@ func ConfigureMCPInstruction(path string) (bool, error) {
 		return false, err
 	}
 	content := string(raw)
-	if strings.Contains(content, MCPTriggerLine) && !strings.Contains(content, triggerLine) {
+	if strings.Contains(content, MCPTriggerLine) && !hasStaleTrigger(content) {
 		return false, nil
 	}
 
@@ -53,7 +86,7 @@ func RemoveMCPInstruction(path string) (bool, error) {
 		return false, err
 	}
 	content := string(raw)
-	if !strings.Contains(content, MCPTriggerLine) && !strings.Contains(content, triggerLine) {
+	if !strings.Contains(content, MCPTriggerLine) && !hasStaleTrigger(content) {
 		return false, nil
 	}
 	body := strings.TrimRight(strings.Join(stripGrimoireLines(content), "\n"), "\n")
@@ -68,8 +101,8 @@ func RemoveMCPInstruction(path string) (bool, error) {
 func stripGrimoireLines(content string) []string {
 	var out []string
 	for _, l := range strings.Split(content, "\n") {
-		switch strings.TrimSpace(l) {
-		case sectionHeader, triggerLine, MCPTriggerLine:
+		t := strings.TrimSpace(l)
+		if t == sectionHeader || t == MCPTriggerLine || isStaleTrigger(t) {
 			continue
 		}
 		out = append(out, l)
