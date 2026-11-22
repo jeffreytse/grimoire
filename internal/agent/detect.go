@@ -15,6 +15,8 @@ func agentBinary(ag string) string {
 	switch ag {
 	case "antigravity":
 		return "agy"
+	case "minimax":
+		return "mcode"
 	default:
 		return ag
 	}

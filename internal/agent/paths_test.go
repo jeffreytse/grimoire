@@ -20,6 +20,11 @@ func TestDisplayName_KnownAgents(t *testing.T) {
 		{"antigravity", "Antigravity"},
 		{"openclaw", "OpenClaw"},
 		{"opencode", "OpenCode"},
+		{"copilot", "GitHub Copilot CLI"},
+		{"pi", "Pi"},
+		{"dsh", "DeepSeek Harness"},
+		{"kimi", "Kimi Code"},
+		{"omp", "OMP"},
 	}
 	for _, tc := range cases {
 		t.Run(tc.ag, func(t *testing.T) {
@@ -51,6 +56,11 @@ func TestFromDisplayName_KnownDisplayNames(t *testing.T) {
 		{"Antigravity", "antigravity"},
 		{"OpenClaw", "openclaw"},
 		{"OpenCode", "opencode"},
+		{"GitHub Copilot CLI", "copilot"},
+		{"Pi", "pi"},
+		{"DeepSeek Harness", "dsh"},
+		{"Kimi Code", "kimi"},
+		{"OMP", "omp"},
 	}
 	for _, tc := range cases {
 		t.Run(tc.display, func(t *testing.T) {
@@ -147,6 +157,9 @@ func TestSkillsDir_AntigravityUnderAntigravityCLI(t *testing.T) {
 
 func TestConfigFile_KnownAgents_ReturnsNonEmpty(t *testing.T) {
 	for _, ag := range All {
+		if IsPluginAgent(ag) {
+			continue // plugin bundles have no instructions file
+		}
 		got := ConfigFile(ag)
 		if got == "" {
 			t.Errorf("ConfigFile(%q) returned empty string", ag)
@@ -179,6 +192,9 @@ func TestConfigFile_AntigravityIsAGENTSmd(t *testing.T) {
 
 func TestConfigDir_KnownAgents_ReturnsNonEmpty(t *testing.T) {
 	for _, ag := range All {
+		if IsPluginAgent(ag) {
+			continue // plugin bundles have no instructions file
+		}
 		got := ConfigDir(ag)
 		if got == "" {
 			t.Errorf("ConfigDir(%q) returned empty string", ag)
@@ -204,7 +220,7 @@ func TestConfigDir_SharesRootWithSkillsDir(t *testing.T) {
 // ── All list ─────────────────────────────────────────────────────────────────
 
 func TestAll_ContainsExpectedAgents(t *testing.T) {
-	expected := []string{"claude", "codex", "gemini", "antigravity", "openclaw", "opencode"}
+	expected := []string{"claude", "codex", "gemini", "antigravity", "openclaw", "opencode", "copilot", "pi", "dsh", "kimi", "omp", "grok", "muse", "minimax", "agent"}
 	if len(All) != len(expected) {
 		t.Errorf("All has %d agents; want %d", len(All), len(expected))
 	}
@@ -299,5 +315,174 @@ func TestBrokenSymlinkCount_NoBroken_ReturnsZero(t *testing.T) {
 	count := BrokenSymlinkCount("claude")
 	if count != 0 {
 		t.Errorf("BrokenSymlinkCount = %d; want 0", count)
+	}
+}
+
+// ── Copilot / Pi / DSH paths ────────────────────────────────────────────────
+
+func TestNewAgentPaths_Defaults(t *testing.T) {
+	home := t.TempDir()
+	t.Setenv("HOME", home)
+	t.Setenv("COPILOT_HOME", "")
+	t.Setenv("PI_CODING_AGENT_DIR", "")
+	t.Setenv("KIMI_CODE_HOME", "")
+	t.Setenv("OMP_PROFILE", "")
+	cases := []struct {
+		ag, skills, cfgFile, project string
+	}{
+		{"copilot", filepath.Join(home, ".copilot", "skills"), filepath.Join(home, ".copilot", "copilot-instructions.md"), filepath.Join("p", ".github", "skills")},
+		{"pi", filepath.Join(home, ".pi", "agent", "skills"), filepath.Join(home, ".pi", "agent", "AGENTS.md"), filepath.Join("p", ".pi", "skills")},
+		{"dsh", filepath.Join(home, ".agents", "skills"), filepath.Join(home, ".agents", "AGENTS.md"), filepath.Join("p", ".agents", "skills")},
+		{"kimi", filepath.Join(home, ".kimi-code", "skills"), filepath.Join(home, ".kimi-code", "AGENTS.md"), filepath.Join("p", ".kimi-code", "skills")},
+		{"omp", filepath.Join(home, ".omp", "agent", "skills"), filepath.Join(home, ".omp", "agent", "AGENTS.md"), filepath.Join("p", ".omp", "skills")},
+	}
+	for _, tc := range cases {
+		t.Run(tc.ag, func(t *testing.T) {
+			if got := SkillsDir(tc.ag); got != tc.skills {
+				t.Errorf("SkillsDir = %q; want %q", got, tc.skills)
+			}
+			if got := ConfigFile(tc.ag); got != tc.cfgFile {
+				t.Errorf("ConfigFile = %q; want %q", got, tc.cfgFile)
+			}
+			if got := ProjectSkillsDir(tc.ag, "p"); got != tc.project {
+				t.Errorf("ProjectSkillsDir = %q; want %q", got, tc.project)
+			}
+			if !strings.HasPrefix(SkillsDir(tc.ag), ConfigDir(tc.ag)) {
+				t.Errorf("SkillsDir %q not under ConfigDir %q", SkillsDir(tc.ag), ConfigDir(tc.ag))
+			}
+		})
+	}
+}
+
+func TestNewAgentPaths_EnvOverrides(t *testing.T) {
+	cp, piDir := t.TempDir(), t.TempDir()
+	t.Setenv("COPILOT_HOME", cp)
+	t.Setenv("PI_CODING_AGENT_DIR", piDir)
+	if got, want := SkillsDir("copilot"), filepath.Join(cp, "skills"); got != want {
+		t.Errorf("copilot SkillsDir = %q; want %q", got, want)
+	}
+	if got, want := ConfigFile("pi"), filepath.Join(piDir, "AGENTS.md"); got != want {
+		t.Errorf("pi ConfigFile = %q; want %q", got, want)
+	}
+}
+
+func TestOMPAgentDir_Profiles(t *testing.T) {
+	home := t.TempDir()
+	t.Setenv("HOME", home)
+	t.Setenv("PI_CODING_AGENT_DIR", "")
+	t.Setenv("PI_PROFILE", "legacy")
+	t.Setenv("OMP_PROFILE", "work")
+	if got, want := SkillsDir("omp"), filepath.Join(home, ".omp", "profiles", "work", "agent", "skills"); got != want {
+		t.Errorf("OMP_PROFILE: got %q; want %q", got, want)
+	}
+	// Explicitly-empty OMP_PROFILE selects the default profile, not PI_PROFILE.
+	t.Setenv("OMP_PROFILE", "")
+	if got, want := SkillsDir("omp"), filepath.Join(home, ".omp", "agent", "skills"); got != want {
+		t.Errorf("empty OMP_PROFILE: got %q; want %q", got, want)
+	}
+	shared := t.TempDir()
+	t.Setenv("PI_CODING_AGENT_DIR", shared)
+	if got, want := SkillsDir("omp"), filepath.Join(shared, "skills"); got != want {
+		t.Errorf("PI_CODING_AGENT_DIR: got %q; want %q", got, want)
+	}
+	kimi := t.TempDir()
+	t.Setenv("KIMI_CODE_HOME", kimi)
+	if got, want := ConfigFile("kimi"), filepath.Join(kimi, "AGENTS.md"); got != want {
+		t.Errorf("KIMI_CODE_HOME: got %q; want %q", got, want)
+	}
+}
+
+// ── Plugin agents ───────────────────────────────────────────────────────────
+
+func TestPluginAgents_GlobalOnlyBundlePaths(t *testing.T) {
+	home := t.TempDir()
+	t.Setenv("HOME", home)
+	t.Setenv("MINIMAX_DATA_DIR", "")
+	cases := map[string]string{
+		"minimax": filepath.Join(home, ".minimax", "plugins", "grimoire", "skills"),
+		"grok":    filepath.Join(home, ".grimoire", "agent-plugins", "grok", "grimoire", "skills"),
+		"muse":    filepath.Join(home, ".grimoire", "agent-plugins", "muse", "grimoire", "skills"),
+	}
+	for ag, want := range cases {
+		if !IsPluginAgent(ag) {
+			t.Errorf("IsPluginAgent(%q) = false", ag)
+		}
+		if got := SkillsDir(ag); got != want {
+			t.Errorf("SkillsDir(%q) = %q; want %q", ag, got, want)
+		}
+		if got := ProjectSkillsDir(ag, "p"); got != "" {
+			t.Errorf("ProjectSkillsDir(%q) = %q; want empty (global-only)", ag, got)
+		}
+	}
+	if IsPluginAgent("claude") {
+		t.Error("IsPluginAgent(claude) = true")
+	}
+}
+
+func TestFinalizePlugin_WritesManifestsAndRegisters(t *testing.T) {
+	home := t.TempDir()
+	t.Setenv("HOME", home)
+	t.Setenv("MINIMAX_DATA_DIR", "")
+	bin := t.TempDir()
+	for _, b := range []string{"grok", "muse"} {
+		if err := os.WriteFile(filepath.Join(bin, b), []byte("#!/bin/sh\n"), 0o755); err != nil {
+			t.Fatal(err)
+		}
+	}
+	t.Setenv("PATH", bin)
+
+	for _, ag := range []string{"minimax", "grok", "muse"} {
+		for _, n := range []string{"write-readme", "apply-dry-principle"} {
+			d := filepath.Join(SkillsDir(ag), n)
+			if err := os.MkdirAll(d, 0o755); err != nil {
+				t.Fatal(err)
+			}
+			if err := os.WriteFile(filepath.Join(d, "SKILL.md"), []byte("---\nname: "+n+"\n---\n"), 0o644); err != nil {
+				t.Fatal(err)
+			}
+		}
+		var calls []string
+		run := func(name string, args ...string) error {
+			calls = append(calls, name+" "+strings.Join(args, " "))
+			return nil
+		}
+		if err := FinalizePlugin(ag, run); err != nil {
+			t.Fatalf("FinalizePlugin(%s): %v", ag, err)
+		}
+		bundle := PluginBundleDir(ag)
+		manifest := map[string]string{
+			"minimax": ".claude-plugin/plugin.json",
+			"grok":    ".grok-plugin/plugin.json",
+			"muse":    ".muse-plugin/plugin.json",
+		}[ag]
+		b, err := os.ReadFile(filepath.Join(bundle, manifest))
+		if err != nil {
+			t.Fatalf("%s manifest: %v", ag, err)
+		}
+		if !strings.Contains(string(b), `"name": "grimoire"`) {
+			t.Errorf("%s manifest missing name: %s", ag, b)
+		}
+		switch ag {
+		case "minimax":
+			if len(calls) != 0 {
+				t.Errorf("minimax should not run commands; got %v", calls)
+			}
+		case "grok":
+			want := []string{
+				"grok plugin uninstall grimoire --keep-data",
+				"grok plugin install " + bundle + " --trust",
+				"grok plugin enable grimoire",
+			}
+			if strings.Join(calls, "|") != strings.Join(want, "|") {
+				t.Errorf("grok calls = %v; want %v", calls, want)
+			}
+		case "muse":
+			if !strings.Contains(string(b), `"path": "skills/apply-dry-principle/SKILL.md"`) {
+				t.Errorf("muse manifest missing skill list: %s", b)
+			}
+			if len(calls) != 1 || calls[0] != "muse plugins install "+bundle {
+				t.Errorf("muse calls = %v", calls)
+			}
+		}
 	}
 }

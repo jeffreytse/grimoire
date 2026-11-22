@@ -61,7 +61,7 @@ func init() {
 	installCmd.Flags().StringVar(&flagInstallDomain, "domain", "", "install all skills for a domain")
 	installCmd.Flags().StringVar(&flagInstallSubdomain, "subdomain", "", "restrict to one sub-domain")
 	installCmd.Flags().StringVar(&flagInstallSkill, "skill", "", "install one skill (domain/subdomain/name or domain/name)")
-	installCmd.Flags().StringVar(&flagInstallTarget, "target", "", "target agent: claude, codex, gemini, antigravity, openclaw, opencode, agent, all, auto")
+	installCmd.Flags().StringVar(&flagInstallTarget, "target", "", "target agent: claude, codex, gemini, antigravity, openclaw, opencode, copilot, pi, dsh, kimi, omp, grok, muse, minimax, agent, all, auto")
 	installCmd.Flags().BoolVar(&flagInstallCopy, "copy", false, "copy files instead of symlinking")
 	installCmd.Flags().BoolVar(&flagInstallYes, "yes", false, "non-interactive: install all skills to all detected agents")
 	installCmd.Flags().BoolVar(&flagInstallNoCfg, "no-configure", false, "skip writing start-best-practice trigger")
@@ -189,7 +189,10 @@ func runInstall(cmd *cobra.Command, args []string) error {
 	if flagInstallYes && target == "" {
 		target = "auto"
 	}
-	targets := resolveTargets(target)
+	targets, err := installTargets(target)
+	if err != nil {
+		return err
+	}
 
 	perAgent := make(map[string]int)
 
@@ -344,6 +347,7 @@ func runInstall(cmd *cobra.Command, args []string) error {
 		}
 	}
 
+	finalizePluginAgents(targets)
 	printInstallSummary(perAgent, targets)
 	return nil
 }
@@ -448,7 +452,10 @@ func runInstallSkillRef(rawKey string, pkgRef *config.PackageRef) error {
 	if err := checkWindowsSymlinkSupport(symlink); err != nil {
 		return err
 	}
-	targets := resolveTargets(flagInstallTarget)
+	targets, err := installTargets(flagInstallTarget)
+	if err != nil {
+		return err
+	}
 
 	// Ensure non-official package is cloned
 	if !pkgRef.IsOfficialRepoPath() && pkgRef.PackageURL != "" {
@@ -593,6 +600,7 @@ func runInstallSkillRef(rawKey string, pkgRef *config.PackageRef) error {
 		}
 	}
 
+	finalizePluginAgents(targets)
 	printInstallSummary(perAgent, targets)
 	return nil
 }
@@ -669,7 +677,10 @@ func runInstallFromManifest(projectDir string) error {
 	if err := checkWindowsSymlinkSupport(symlink); err != nil {
 		return err
 	}
-	targets := resolveTargets(flagInstallTarget)
+	targets, err := installTargets(flagInstallTarget)
+	if err != nil {
+		return err
+	}
 
 	// Ensure non-official packages are cloned
 	allKeys := make([]string, 0, len(allDeps)+len(devDeps))
@@ -759,6 +770,7 @@ func runInstallFromManifest(projectDir string) error {
 		fmt.Fprintf(os.Stderr, "%s  updating grimoire.lock: %v\n", tui.IconWarn, writeErr)
 	}
 
+	finalizePluginAgents(targets)
 	printInstallSummary(perAgent, targets)
 	return nil
 }
@@ -887,7 +899,10 @@ func runInstallFromPackageURL(ref string) error {
 	if flagInstallYes && target == "" {
 		target = "auto"
 	}
-	targets := resolveTargets(target)
+	targets, err := installTargets(target)
+	if err != nil {
+		return err
+	}
 	perAgent := make(map[string]int)
 
 	fmt.Print("  Loading skills…")
@@ -935,6 +950,7 @@ func runInstallFromPackageURL(ref string) error {
 			}
 		}
 	}
+	finalizePluginAgents(targets)
 	printInstallSummary(perAgent, targets)
 	return nil
 }
@@ -958,7 +974,10 @@ func runInstallFromRoot(root string) error {
 	if flagInstallYes && target == "" {
 		target = "auto"
 	}
-	targets := resolveTargets(target)
+	targets, err := installTargets(target)
+	if err != nil {
+		return err
+	}
 	perAgent := make(map[string]int)
 
 	domains, err := skills.ListDomains(root)
@@ -985,6 +1004,7 @@ func runInstallFromRoot(root string) error {
 			}
 		}
 	}
+	finalizePluginAgents(targets)
 	printInstallSummary(perAgent, targets)
 	return nil
 }
@@ -1140,6 +1160,9 @@ func installDomainToAgent(root, domain, subdomain, ag string, symlink bool, pkgN
 
 func installSkillToAgent(skillPath, ag string, symlink bool) (int, error) {
 	destDir := installSkillsDir(ag)
+	if destDir == "" {
+		return 0, fmt.Errorf("%s supports global install only (use --global)", agent.DisplayName(ag))
+	}
 	ok, err := skills.InstallSkill(skillPath, destDir, symlink)
 	if err != nil {
 		return 0, err
@@ -1148,6 +1171,40 @@ func installSkillToAgent(skillPath, ag string, symlink bool) (int, error) {
 		return 1, nil
 	}
 	return 0, nil
+}
+
+// installTargets resolves --target and drops plugin agents (Grok, Muse,
+// MiniMax) from project-scoped installs: they load skills only from a global
+// plugin bundle. Naming one explicitly without --global is an error.
+func installTargets(target string) ([]string, error) {
+	resolved := resolveTargets(target)
+	if flagInstallGlobal || flagInstallScope == "global" {
+		return resolved, nil
+	}
+	var out []string
+	for _, ag := range resolved {
+		if !agent.IsPluginAgent(ag) {
+			out = append(out, ag)
+			continue
+		}
+		if target == ag {
+			return nil, fmt.Errorf("%s supports global install only — rerun with --global", agent.DisplayName(ag))
+		}
+	}
+	return out, nil
+}
+
+// finalizePluginAgents writes manifests and registers the grimoire bundle for
+// agents that load skills only through plugins (Grok, Muse, MiniMax).
+func finalizePluginAgents(targets []string) {
+	for _, ag := range targets {
+		if !agent.IsPluginAgent(ag) {
+			continue
+		}
+		if err := agent.FinalizePlugin(ag, nil); err != nil {
+			fmt.Fprintf(os.Stderr, "  %s  %s: %v\n", tui.IconWarn, agent.DisplayName(ag), err)
+		}
+	}
 }
 
 // printSkillInstalled prints one ✓ line per skill, listing agent display names when >1.
