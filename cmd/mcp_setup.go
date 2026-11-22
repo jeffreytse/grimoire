@@ -139,13 +139,16 @@ var mcpInstallCmd = &cobra.Command{
   3. Writes the grimoire instruction to the agent's instruction file,
      replacing a skills-mode start-best-practice trigger. Re-running is safe:
      nothing is duplicated.
-  4. Claude Code, Codex and Gemini CLI: adds a prompt hook
-     ("grimoire hook prompt") — UserPromptSubmit in .claude/settings.json or
-     .codex/hooks.json, BeforeAgent in .gemini/settings.json. It runs on
-     every prompt and puts the best-matching skills (or the skill named as
-     grimoire:<name>) in front of the model, so the lookup happens even when
-     the model would skip it. Codex runs it only after you trust it in
-     /hooks. --no-hook skips it.
+  4. Adds a prompt hook that runs on every prompt and puts the best-matching
+     skills (or the skill named as grimoire:<name>) in front of the model, so
+     the lookup happens even when the model would skip it:
+       claude, codex  UserPromptSubmit in .claude/settings.json, .codex/hooks.json
+       gemini         BeforeAgent in .gemini/settings.json
+       opencode       plugin plugins/grimoire.js
+       antigravity    SessionStart (injects the instruction) + PreInvocation
+                      in ~/.gemini/config/hooks.json
+     Copilot CLI drops command-hook output, so it gets none. Codex runs the
+     hook only after you trust it in /hooks. --no-hook skips it.
 
 Agents and scopes:
   claude    user, project   (instructions: CLAUDE.md)
@@ -156,8 +159,8 @@ Agents and scopes:
   pi        user, project   (mcp.json + AGENTS.md)
   kimi      user, project   (mcp.json + AGENTS.md)
   omp       user, project   (mcp.json + AGENTS.md)
-  antigravity user          (~/.gemini/config/mcp_config.json; agy has no
-                            user-level instruction file)
+  antigravity user          (~/.gemini/config/mcp_config.json; no instruction
+                            file — the SessionStart hook injects it)
 
 No skills are linked into the agent's skills directory. Start a new agent
 session afterwards.`,
@@ -323,19 +326,53 @@ func installMCPAgent(a *mcpAgent, serve string) error {
 		return nil
 	}
 	path := agent.MCPInstructionFile(a.key, scope, getProjectDir())
-	if path == "" {
+	switch {
+	case path != "":
+		changed, err := agent.ConfigureMCPInstruction(path)
+		if err != nil {
+			return fmt.Errorf("writing %s: %w", path, err)
+		}
+		reportChange(changed, "added grimoire instruction to "+path, "grimoire instruction already in "+path)
+	case a.key == "antigravity" && !flagMCPSetupNoHook:
+		// No instruction file: the SessionStart hook injects the line.
+	default:
 		fmt.Printf("  %s  %s has no %s-level instruction file — add this line to a project AGENTS.md yourself:\n       %s\n",
 			tui.IconSkip, a.display, scope, agent.MCPTriggerLine)
+	}
+
+	if flagMCPSetupNoHook {
 		return nil
 	}
-	changed, err := agent.ConfigureMCPInstruction(path)
-	if err != nil {
-		return fmt.Errorf("writing %s: %w", path, err)
-	}
-	reportChange(changed, "added grimoire instruction to "+path, "grimoire instruction already in "+path)
+	return installPromptHook(a.key, scope, serve)
+}
 
-	if h, ok := agent.PromptHookFor(a.key); ok && !flagMCPSetupNoHook {
-		settings := agent.PromptHookFile(a.key, scope, getProjectDir())
+// installPromptHook adds the hook that puts matching skills in front of the
+// model on every prompt, in whatever form the agent supports. Agents without
+// a usable prompt hook (Copilot CLI drops command-hook output) are skipped.
+func installPromptHook(ag, scope, serve string) error {
+	dir := getProjectDir()
+	switch ag {
+	case "opencode":
+		p := agent.OpenCodePluginFile(scope, dir)
+		changed, err := agent.ConfigureOpenCodePlugin(p, serve)
+		if err != nil {
+			return fmt.Errorf("adding prompt hook plugin: %w", err)
+		}
+		reportChange(changed, "added prompt hook plugin "+p, "prompt hook plugin already at "+p)
+	case "antigravity":
+		p := agent.AntigravityHooksFile(scope, dir)
+		changed, err := agent.ConfigureAntigravityHooks(p, serve)
+		if err != nil {
+			return fmt.Errorf("adding hooks to %s: %w", p, err)
+		}
+		reportChange(changed, "added session + prompt hooks to "+p+" (they inject the grimoire instruction)",
+			"session + prompt hooks already in "+p)
+	default:
+		h, ok := agent.PromptHookFor(ag)
+		if !ok {
+			return nil
+		}
+		settings := agent.PromptHookFile(ag, scope, dir)
 		changed, err := agent.ConfigurePromptHook(settings, h, agent.PromptHookCommand(serve))
 		if err != nil {
 			return fmt.Errorf("adding prompt hook to %s: %w", settings, err)
@@ -346,6 +383,37 @@ func installMCPAgent(a *mcpAgent, serve string) error {
 		}
 	}
 	return nil
+}
+
+// removePromptHook undoes installPromptHook. Errors are reported, not fatal.
+func removePromptHook(ag, scope string) {
+	dir := getProjectDir()
+	var (
+		changed bool
+		err     error
+		where   string
+	)
+	switch ag {
+	case "opencode":
+		where = agent.OpenCodePluginFile(scope, dir)
+		changed, err = agent.RemoveOpenCodePlugin(where)
+	case "antigravity":
+		where = agent.AntigravityHooksFile(scope, dir)
+		changed, err = agent.RemoveAntigravityHooks(where)
+	default:
+		h, ok := agent.PromptHookFor(ag)
+		if !ok {
+			return
+		}
+		where = agent.PromptHookFile(ag, scope, dir)
+		changed, err = agent.RemovePromptHook(where, h)
+	}
+	switch {
+	case err != nil:
+		fmt.Fprintf(os.Stderr, "  %s  %v\n", tui.IconWarn, err)
+	case changed:
+		fmt.Printf("  %s  removed prompt hook from %s\n", tui.IconOK, where)
+	}
 }
 
 func reportChange(changed bool, did, already string) {
@@ -383,14 +451,7 @@ func runMCPUninstall(_ *cobra.Command, _ []string) error {
 				fmt.Printf("  %s  unregistered MCP server (%s scope)\n", tui.IconOK, scope)
 			}
 		}
-		if h, ok := agent.PromptHookFor(a.key); ok {
-			settings := agent.PromptHookFile(a.key, scope, getProjectDir())
-			if changed, err := agent.RemovePromptHook(settings, h); err != nil {
-				fmt.Fprintf(os.Stderr, "  %s  %v\n", tui.IconWarn, err)
-			} else if changed {
-				fmt.Printf("  %s  removed prompt hook from %s\n", tui.IconOK, settings)
-			}
-		}
+		removePromptHook(a.key, scope)
 		path := agent.MCPInstructionFile(a.key, scope, getProjectDir())
 		if path == "" {
 			continue

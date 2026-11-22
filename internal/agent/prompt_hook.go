@@ -83,10 +83,15 @@ const promptHookArgs = "hook prompt"
 
 // PromptHookCommand is the hook command line for the grimoire binary bin.
 func PromptHookCommand(bin string) string {
+	return shellQuote(bin) + " " + promptHookArgs
+}
+
+// shellQuote single-quotes bin for a POSIX shell when it needs it.
+func shellQuote(bin string) string {
 	if strings.ContainsAny(bin, " \t'\"") {
-		bin = "'" + strings.ReplaceAll(bin, "'", `'\''`) + "'"
+		return "'" + strings.ReplaceAll(bin, "'", `'\''`) + "'"
 	}
-	return bin + " " + promptHookArgs
+	return bin
 }
 
 // isGrimoireHook reports whether command is a grimoire prompt hook, whatever

@@ -445,3 +445,28 @@ func TestMCPInstall_EmptyMCPServersFile(t *testing.T) {
 		t.Fatalf("grimoire not registered in %s: %s (err %v)", path, b, err)
 	}
 }
+
+func TestMCPInstall_OpenCodePluginAndAntigravityHooks(t *testing.T) {
+	for _, tc := range []struct{ target, file, marker string }{
+		{"opencode", filepath.Join(".config", "opencode", "plugins", "grimoire.js"), "chat.message"},
+		{"antigravity", filepath.Join(".gemini", "config", "hooks.json"), "hook antigravity-session"},
+	} {
+		t.Run(tc.target, func(t *testing.T) {
+			_, home := setupMCPSetupEnv(t, true)
+			flagMCPSetupTarget = tc.target
+			if err := runMCPInstall(nil, nil); err != nil {
+				t.Fatal(err)
+			}
+			path := filepath.Join(home, tc.file)
+			if b, err := os.ReadFile(path); err != nil || !strings.Contains(string(b), tc.marker) {
+				t.Fatalf("%s: err=%v content=%s", path, err, b)
+			}
+			if err := runMCPUninstall(nil, nil); err != nil {
+				t.Fatal(err)
+			}
+			if b, _ := os.ReadFile(path); strings.Contains(string(b), tc.marker) {
+				t.Errorf("hook not removed: %s", b)
+			}
+		})
+	}
+}
