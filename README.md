@@ -261,6 +261,32 @@ grimoire install                             # install to all detected AI agents
 
 Auto-detects every supported agent on your `PATH` (see [Agent Support](#-agent-support)).
 
+**MCP mode — skills on demand, nothing copied into your agent:**
+
+```bash
+grimoire mcp install                      # Claude Code: register the server + add the instruction to ~/.claude/CLAUDE.md
+grimoire mcp install --target all         # every supported agent on your PATH
+grimoire mcp install --target codex,gemini
+grimoire mcp install --scope project      # this repo only (commit the files to share)
+grimoire mcp uninstall --target all       # undo
+```
+
+| Agent | Scopes | Server registered via | Instruction written to |
+| --- | --- | --- | --- |
+| Claude Code | user, project | `claude mcp add` | `~/.claude/CLAUDE.md` / `./CLAUDE.md` |
+| Codex | user | `codex mcp add` | `~/.codex/AGENTS.md` |
+| Gemini CLI | user, project | `gemini mcp add` | `~/.gemini/GEMINI.md` / `./GEMINI.md` |
+| GitHub Copilot CLI | user | `copilot mcp add` | `~/.copilot/copilot-instructions.md` |
+| OpenCode | user, project | `opencode.json` (`mcp.grimoire`) | `~/.config/opencode/AGENTS.md` / `./AGENTS.md` |
+| Pi | user, project | `~/.pi/agent/mcp.json` / `.pi/mcp.json` | `~/.pi/agent/AGENTS.md` / `./AGENTS.md` |
+| Kimi Code | user, project | `~/.kimi-code/mcp.json` / `.kimi-code/mcp.json` | `~/.kimi-code/AGENTS.md` / `./AGENTS.md` |
+| OMP | user, project | `~/.omp/agent/mcp.json` / `.omp/mcp.json` | `~/.omp/agent/AGENTS.md` / `.omp/AGENTS.md` |
+| Antigravity | user | `~/.gemini/config/mcp_config.json` | — (agy has no user-level instruction file; add the line to a project `AGENTS.md`) |
+
+**Run a specific skill:** type `/grimoire:skill <skill-name>` (Claude Code slash command), or write `grimoire:<skill-name> [task]` in any agent, e.g. `grimoire:propose-conventional-commit`. A mistyped name comes back with "did you mean" suggestions.
+
+Re-running is safe: existing registrations and instructions are detected, nothing is duplicated, and an older `start-best-practice` trigger is replaced. Start a new agent session afterwards (in Claude Code, `/mcp` lists grimoire as connected). Gemini keeps MCP servers disabled in folders you haven't trusted. The agent then finds and loads skills through `grimoire_search_skills` and `grimoire_get_skill` instead of preloading every skill into context. Run `grimoire update` to refresh skills. For other MCP clients, `grimoire mcp config --target cursor|windsurf|cline` prints the config snippet.
+
 **Package management:**
 
 ```bash
