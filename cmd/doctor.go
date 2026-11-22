@@ -100,6 +100,15 @@ func collectDoctorChecks() doctorOutput {
 		if ver != "" {
 			vs = ver
 		}
+		if mcpChecks, found := doctorMCPChecks(ag, label, vs, home); found {
+			for _, c := range mcpChecks {
+				if c.Status != "ok" {
+					ok = false
+				}
+			}
+			checks = append(checks, mcpChecks...)
+			continue
+		}
 		dir := agent.SkillsDir(ag)
 		if _, err := os.Stat(dir); err != nil {
 			checks = append(checks, doctorCheck{
@@ -241,6 +250,51 @@ func collectDoctorChecks() doctorOutput {
 
 // scanUnversionedPackageDirs walks PackagesRoot and finds repo-level dirs that
 // lack a "@version" suffix — these are from the pre-versioned-path layout.
+// doctorMCPChecks reports an agent set up in MCP mode (`grimoire mcp
+// install`), in user or project scope. found is false when the agent is not
+// in MCP mode, so the skills-mode checks apply instead — those would wrongly
+// tell an MCP user to run `grimoire install`.
+func doctorMCPChecks(ag, label, vs, pkgHome string) (checks []doctorCheck, found bool) {
+	scope := "user"
+	s := agent.DetectMCPSetup(ag, scope, getProjectDir())
+	if !s.Active() {
+		scope = "project"
+		s = agent.DetectMCPSetup(ag, scope, getProjectDir())
+	}
+	if !s.Active() {
+		return nil, false
+	}
+	name := "agent-" + ag
+	checks = append(checks, doctorCheck{Name: name, Status: "ok",
+		Detail: fmt.Sprintf("%s %s — MCP mode (%s scope)", label, vs, scope)})
+
+	if s.Instruction {
+		checks = append(checks, doctorCheck{Name: name + "-instruction", Status: "ok",
+			Detail: label + " grimoire instruction present"})
+	} else {
+		checks = append(checks, doctorCheck{Name: name + "-instruction", Status: "warn",
+			Detail: fmt.Sprintf("%s grimoire instruction missing — run: grimoire mcp install --target %s --scope %s", label, ag, scope)})
+	}
+
+	switch {
+	case !s.HookSupported:
+		checks = append(checks, doctorCheck{Name: name + "-hook", Status: "skip",
+			Detail: label + " has no usable prompt hook — relies on the instruction line"})
+	case s.Hook:
+		checks = append(checks, doctorCheck{Name: name + "-hook", Status: "ok",
+			Detail: label + " prompt hook present"})
+	default:
+		checks = append(checks, doctorCheck{Name: name + "-hook", Status: "warn",
+			Detail: fmt.Sprintf("%s prompt hook missing — run: grimoire mcp install --target %s --scope %s", label, ag, scope)})
+	}
+
+	if n := agent.LinkedSkillCount(ag, pkgHome); n > 0 {
+		checks = append(checks, doctorCheck{Name: name + "-duplicate", Status: "warn",
+			Detail: fmt.Sprintf("%s also has %d grimoire skills linked (skills mode) — duplicates MCP; run: grimoire uninstall --target %s", label, n, ag)})
+	}
+	return checks, true
+}
+
 func scanUnversionedPackageDirs(root string) []string {
 	var found []string
 	// Structure: <root>/<host>/<owner>/<repo>[@version]
