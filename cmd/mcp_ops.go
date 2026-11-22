@@ -876,17 +876,7 @@ type mcpGetSkillOutput struct {
 }
 
 func toolGrimoireGetSkill(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
-	name := strings.TrimSpace(request.GetString("name", ""))
-	if name == "" {
-		return mcp.NewToolResultError("skill name is required"), nil
-	}
-
-	regs := skills.AllSkillsPackages()
-	if len(regs) == 0 {
-		return mcp.NewToolResultError("no packages installed — run grimoire_update first"), nil
-	}
-
-	skillPath, _, err := resolveSkillFromPackages(regs, name)
+	name, skillPath, err := resolveSkillOrSuggest(request.GetString("name", ""))
 	if err != nil {
 		return mcp.NewToolResultError(err.Error()), nil
 	}

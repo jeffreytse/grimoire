@@ -26,6 +26,8 @@ var mcpCmd = &cobra.Command{
 	Short: "MCP server integration",
 	Long: `Model Context Protocol (MCP) integration for AI assistants.
 
+  grimoire mcp install         Set up MCP mode: register the server + add the agent instruction
+  grimoire mcp uninstall       Undo mcp install
   grimoire mcp serve           Start the MCP server (stdio transport)
   grimoire mcp config          Print MCP server configuration for your AI assistant`,
 }
@@ -38,9 +40,8 @@ var mcpServeCmd = &cobra.Command{
 AI assistants that support MCP (Claude Code, Cursor, Windsurf, Cline, etc.)
 can connect to grimoire tools natively once configured.
 
-To configure Claude Code:
-  claude mcp add -s user grimoire -- grimoire mcp serve
-  (or run: grimoire mcp config --target claude)
+To set up Claude Code (server + CLAUDE.md instruction):
+  grimoire mcp install
 
 To pin a specific project directory (recommended for MCP):
   grimoire --project-dir /path/to/project mcp serve
@@ -66,9 +67,11 @@ func runMCPServe(_ *cobra.Command, _ []string) error {
 	s := server.NewMCPServer(
 		"grimoire",
 		strings.TrimPrefix(cliVersion, "v"),
+		mcpServerOptions()...,
 	)
 
 	registerMCPTools(s)
+	registerMCPPrompts(s)
 
 	stdio := server.NewStdioServer(s)
 	return stdio.Listen(context.Background(), os.Stdin, os.Stdout)
@@ -100,7 +103,7 @@ func registerMCPTools(s *server.MCPServer) {
 
 	s.AddTool(
 		mcp.NewTool("grimoire_get_skill",
-			mcp.WithDescription("Fetch the full SKILL.md content for a specific skill by name. Use this to load a skill on demand without needing it pre-installed in the agent context directory. Returns name, full content, and source path."),
+			mcp.WithDescription("Fetch the full SKILL.md content for a specific skill by exact name. When the user writes `grimoire:<skill-name>`, call this with that name directly (no search). A leading `grimoire:` is accepted; an unknown name returns close matches. Returns name, full content, and source path."),
 			mcp.WithString("name", mcp.Required(), mcp.Description("Skill name (e.g. propose-conventional-commit)")),
 		),
 		toolGrimoireGetSkill,
@@ -677,7 +680,9 @@ func jsonResult(v any) (*mcp.CallToolResult, error) {
 func runMCPConfig(_ *cobra.Command, _ []string) error {
 	switch flagMCPConfigTarget {
 	case "claude":
-		fmt.Print(`Register with the Claude Code CLI:
+		fmt.Print(`Easiest: grimoire mcp install   (registers the server and adds the CLAUDE.md instruction)
+
+Or register with the Claude Code CLI:
 
   claude mcp add -s user grimoire -- grimoire mcp serve      # all projects (~/.claude.json)
   claude mcp add -s project grimoire -- grimoire mcp serve   # this repo (.mcp.json, commit to share)
