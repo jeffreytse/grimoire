@@ -15,11 +15,12 @@ import (
 	"github.com/jeffreytse/grimoire/internal/skills"
 )
 
-// `grimoire hook prompt` is a Claude Code UserPromptSubmit hook. Claude Code
-// pipes the hook input JSON to stdin; whatever this prints as
+// `grimoire hook prompt` is a prompt hook for Claude Code and Codex
+// (UserPromptSubmit) and Gemini CLI (BeforeAgent). The agent pipes the hook
+// input JSON to stdin; whatever this prints as
 // hookSpecificOutput.additionalContext is added to the model's context for
-// that prompt. Unlike the CLAUDE.md instruction, the hook runs on every
-// prompt, so the skill lookup cannot be skipped by the model.
+// that prompt. Unlike the instruction file, the hook runs on every prompt, so
+// the skill lookup cannot be skipped by the model.
 //
 // The hook must never block or break a prompt: every failure exits 0 with no
 // output.
@@ -34,8 +35,9 @@ const (
 	hookMaxDesc = 200
 )
 
-// hookInlineBudget caps inlined skill context below Claude Code's hook
-// context limit (10,000 chars), past which the text is moved to a file.
+// hookInlineBudget caps inlined skill context below the agents' hook context
+// limits (Claude Code: 10,000 chars; Codex: 2,500 tokens by default), past
+// which the text is moved to a file.
 var hookInlineBudget = 9000
 
 // hookMinScore is the BM25 score a skill needs to be suggested. Below it the
@@ -56,8 +58,9 @@ var hookCmd = &cobra.Command{
 
 var hookPromptCmd = &cobra.Command{
 	Use:   "prompt",
-	Short: "Claude Code UserPromptSubmit hook: suggest skills matching the prompt",
-	Long: `Reads Claude Code's UserPromptSubmit hook input on stdin and prints
+	Short: "Agent prompt hook: suggest skills matching the prompt",
+	Long: `Reads a prompt hook's input on stdin (Claude Code and Codex
+UserPromptSubmit, Gemini CLI BeforeAgent) and prints
 additional context for the model:
 
   - grimoire:<name> in the prompt  the named skill's SKILL.md, to follow
@@ -82,6 +85,9 @@ func init() {
 
 type hookInput struct {
 	Prompt string `json:"prompt"`
+	// HookEventName is echoed back: Claude Code and Codex send
+	// "UserPromptSubmit", Gemini CLI sends "BeforeAgent".
+	HookEventName string `json:"hook_event_name"`
 }
 
 type hookOutput struct {
@@ -105,7 +111,10 @@ func runHookPrompt(in io.Reader, out io.Writer) {
 		return
 	}
 	var o hookOutput
-	o.HookSpecificOutput.HookEventName = "UserPromptSubmit"
+	o.HookSpecificOutput.HookEventName = input.HookEventName
+	if o.HookSpecificOutput.HookEventName == "" {
+		o.HookSpecificOutput.HookEventName = "UserPromptSubmit"
+	}
 	o.HookSpecificOutput.AdditionalContext = ctx
 	b, err := json.Marshal(o)
 	if err != nil {
@@ -119,7 +128,7 @@ var skillRefPattern = regexp.MustCompile(`(?:^|[\s(\[` + "`" + `])grimoire:([A-Z
 // hookContext returns the context to add for prompt, or "" for none.
 func hookContext(prompt string) string {
 	prompt = strings.TrimSpace(prompt)
-	// Slash commands are handled by Claude Code (including /grimoire:skill).
+	// Slash commands are handled by the agent (including /grimoire:skill).
 	if prompt == "" || strings.HasPrefix(prompt, "/") {
 		return ""
 	}

@@ -103,3 +103,21 @@ func TestExplicitSkillRefs(t *testing.T) {
 		t.Errorf("refs = %v", got)
 	}
 }
+
+// Gemini CLI sends BeforeAgent; the reply must carry the same event name or
+// Gemini drops the context. A missing event name falls back to Claude's.
+func TestHookPrompt_EchoesEventName(t *testing.T) {
+	setupListSkillsHome(t)
+	for event, want := range map[string]string{"BeforeAgent": "BeforeAgent", "": "UserPromptSubmit"} {
+		in, _ := json.Marshal(map[string]string{"prompt": "use grimoire:write-unit-test", "hook_event_name": event})
+		var out bytes.Buffer
+		runHookPrompt(bytes.NewReader(in), &out)
+		var o hookOutput
+		if err := json.Unmarshal(out.Bytes(), &o); err != nil {
+			t.Fatalf("%q: output is not JSON: %v: %s", event, err, out.String())
+		}
+		if o.HookSpecificOutput.HookEventName != want {
+			t.Errorf("event %q: hookEventName = %q; want %q", event, o.HookSpecificOutput.HookEventName, want)
+		}
+	}
+}

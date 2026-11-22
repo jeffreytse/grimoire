@@ -379,3 +379,42 @@ func TestMCPInstall_MCPServersFileAgents(t *testing.T) {
 		})
 	}
 }
+
+func TestMCPInstall_AddsPromptHookForCodexAndGemini(t *testing.T) {
+	for _, tc := range []struct{ target, file, event string }{
+		{"codex", filepath.Join(".codex", "hooks.json"), "UserPromptSubmit"},
+		{"gemini", filepath.Join(".gemini", "settings.json"), "BeforeAgent"},
+	} {
+		t.Run(tc.target, func(t *testing.T) {
+			_, home := setupMCPSetupEnv(t, true)
+			t.Setenv("CODEX_HOME", "")
+			flagMCPSetupTarget = tc.target
+			if err := runMCPInstall(nil, nil); err != nil {
+				t.Fatal(err)
+			}
+			path := filepath.Join(home, tc.file)
+			b, err := os.ReadFile(path)
+			if err != nil {
+				t.Fatal(err)
+			}
+			var cfg struct {
+				Hooks map[string][]struct {
+					Hooks []struct{ Command string } `json:"hooks"`
+				} `json:"hooks"`
+			}
+			if err := json.Unmarshal(b, &cfg); err != nil {
+				t.Fatal(err)
+			}
+			groups := cfg.Hooks[tc.event]
+			if len(groups) != 1 || len(groups[0].Hooks) != 1 || !strings.HasSuffix(groups[0].Hooks[0].Command, "grimoire hook prompt") {
+				t.Fatalf("%s hooks = %s", tc.event, b)
+			}
+			if err := runMCPUninstall(nil, nil); err != nil {
+				t.Fatal(err)
+			}
+			if b, _ := os.ReadFile(path); strings.Contains(string(b), "hook prompt") {
+				t.Errorf("hook not removed: %s", b)
+			}
+		})
+	}
+}

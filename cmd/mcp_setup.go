@@ -139,10 +139,13 @@ var mcpInstallCmd = &cobra.Command{
   3. Writes the grimoire instruction to the agent's instruction file,
      replacing a skills-mode start-best-practice trigger. Re-running is safe:
      nothing is duplicated.
-  4. Claude Code only: adds a UserPromptSubmit hook ("grimoire hook prompt")
-     to settings.json. It runs on every prompt and puts the best-matching
-     skills (or the skill named as grimoire:<name>) in front of the model, so
-     the lookup happens even when the model would skip it. --no-hook skips it.
+  4. Claude Code, Codex and Gemini CLI: adds a prompt hook
+     ("grimoire hook prompt") — UserPromptSubmit in .claude/settings.json or
+     .codex/hooks.json, BeforeAgent in .gemini/settings.json. It runs on
+     every prompt and puts the best-matching skills (or the skill named as
+     grimoire:<name>) in front of the model, so the lookup happens even when
+     the model would skip it. Codex runs it only after you trust it in
+     /hooks. --no-hook skips it.
 
 Agents and scopes:
   claude    user, project   (instructions: CLAUDE.md)
@@ -181,7 +184,7 @@ func init() {
 		mcpCmd.AddCommand(c)
 	}
 	mcpInstallCmd.Flags().BoolVar(&flagMCPSetupNoConfigure, "no-configure", false, "do not write the grimoire instruction or hook")
-	mcpInstallCmd.Flags().BoolVar(&flagMCPSetupNoHook, "no-hook", false, "do not add the Claude Code prompt hook")
+	mcpInstallCmd.Flags().BoolVar(&flagMCPSetupNoHook, "no-hook", false, "do not add the prompt hook (Claude Code, Codex, Gemini CLI)")
 }
 
 // mcpRunCmd runs an external command in dir and returns combined output.
@@ -331,13 +334,16 @@ func installMCPAgent(a *mcpAgent, serve string) error {
 	}
 	reportChange(changed, "added grimoire instruction to "+path, "grimoire instruction already in "+path)
 
-	if a.key == "claude" && !flagMCPSetupNoHook {
-		settings := agent.ClaudeSettingsFile(scope, getProjectDir())
-		changed, err := agent.ConfigureClaudeHook(settings, agent.ClaudeHookCommand(serve))
+	if h, ok := agent.PromptHookFor(a.key); ok && !flagMCPSetupNoHook {
+		settings := agent.PromptHookFile(a.key, scope, getProjectDir())
+		changed, err := agent.ConfigurePromptHook(settings, h, agent.PromptHookCommand(serve))
 		if err != nil {
 			return fmt.Errorf("adding prompt hook to %s: %w", settings, err)
 		}
 		reportChange(changed, "added prompt hook to "+settings, "prompt hook already in "+settings)
+		if changed && h.Trust != "" {
+			fmt.Printf("  %s  %s\n", tui.IconWarn, h.Trust)
+		}
 	}
 	return nil
 }
@@ -377,9 +383,9 @@ func runMCPUninstall(_ *cobra.Command, _ []string) error {
 				fmt.Printf("  %s  unregistered MCP server (%s scope)\n", tui.IconOK, scope)
 			}
 		}
-		if a.key == "claude" {
-			settings := agent.ClaudeSettingsFile(scope, getProjectDir())
-			if changed, err := agent.RemoveClaudeHook(settings); err != nil {
+		if h, ok := agent.PromptHookFor(a.key); ok {
+			settings := agent.PromptHookFile(a.key, scope, getProjectDir())
+			if changed, err := agent.RemovePromptHook(settings, h); err != nil {
 				fmt.Fprintf(os.Stderr, "  %s  %v\n", tui.IconWarn, err)
 			} else if changed {
 				fmt.Printf("  %s  removed prompt hook from %s\n", tui.IconOK, settings)
