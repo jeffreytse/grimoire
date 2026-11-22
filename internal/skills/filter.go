@@ -36,8 +36,17 @@ func GlobMatch(pattern, path string) bool {
 // SKILL.md files concurrently (8-slot semaphore) to parallelise I/O.
 func walkSkills(root string, withBody bool) ([]Skill, error) {
 	// Phase 1: collect skill dirs — no file reads, skip hidden noise.
+	// A package with a top-level skills/ dir keeps its skills there; walking
+	// only that subtree keeps SKILL.md files elsewhere in the repo (schema test
+	// fixtures, templates, docs) out of the install pool. Paths stay relative to
+	// root, so globs and conflict keys are unchanged. Packages without skills/
+	// keep the whole-root walk.
+	walkRoot := root
+	if fi, statErr := os.Stat(filepath.Join(root, "skills")); statErr == nil && fi.IsDir() {
+		walkRoot = filepath.Join(root, "skills")
+	}
 	var paths []string
-	walkErr := filepath.WalkDir(root, func(p string, d os.DirEntry, err error) error {
+	walkErr := filepath.WalkDir(walkRoot, func(p string, d os.DirEntry, err error) error {
 		if err != nil {
 			return nil
 		}

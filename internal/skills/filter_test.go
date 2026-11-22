@@ -90,6 +90,42 @@ func TestWalkSkills(t *testing.T) {
 	}
 }
 
+func TestWalkSkills_SkillsDirExcludesFixtures(t *testing.T) {
+	// A package with a top-level skills/ dir: SKILL.md files elsewhere
+	// (schema test fixtures, templates) must not count as skills.
+	root := t.TempDir()
+	mk := func(relDir string) {
+		t.Helper()
+		dir := filepath.Join(root, filepath.FromSlash(relDir))
+		if err := os.MkdirAll(dir, 0o755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(filepath.Join(dir, "SKILL.md"), []byte("---\nname: "+filepath.Base(dir)+"\n---\n"), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	mk("skills/engineering/dev/skills/apply-tdd")
+	mk("skills/meta/skills/write-skill")
+	mk("schema/tests/valid/minimal")
+	mk("schema/tests/invalid/tags-too-few")
+
+	got, err := WalkSkills(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	names := map[string]string{}
+	for _, sk := range got {
+		names[sk.Name] = sk.Domain
+	}
+	if len(got) != 2 || names["minimal"] != "" || names["tags-too-few"] != "" {
+		t.Fatalf("got %v; want only apply-tdd and write-skill", names)
+	}
+	// Domain stays relative to the package root, not to skills/.
+	if want := "skills/engineering/dev/skills/apply-tdd"; names["apply-tdd"] != want {
+		t.Errorf("Domain = %q; want %q", names["apply-tdd"], want)
+	}
+}
+
 func TestSkillsMatchingGlob(t *testing.T) {
 	root := t.TempDir()
 	must := func(err error) {
