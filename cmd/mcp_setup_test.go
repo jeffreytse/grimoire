@@ -53,7 +53,44 @@ func setupMCPSetupEnv(t *testing.T, claudeOnPath bool) (f *fakeClaude, home stri
 	}
 	t.Cleanup(func() { mcpRunCmd, mcpLookPath = origRun, origLook })
 	flagMCPSetupTarget, flagMCPSetupScope, flagMCPSetupNoConfigure = "claude", "user", false
+	flagMCPSetupNoHook = false
 	return f, home
+}
+
+func TestMCPInstall_AddsAndRemovesClaudePromptHook(t *testing.T) {
+	_, home := setupMCPSetupEnv(t, true)
+	settings := filepath.Join(home, ".claude", "settings.json")
+	if err := runMCPInstall(nil, nil); err != nil {
+		t.Fatal(err)
+	}
+	if err := runMCPInstall(nil, nil); err != nil {
+		t.Fatal(err)
+	}
+	b, err := os.ReadFile(settings)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if n := strings.Count(string(b), "grimoire hook prompt"); n != 1 {
+		t.Fatalf("want hook once after two installs, got %d: %s", n, b)
+	}
+	if err := runMCPUninstall(nil, nil); err != nil {
+		t.Fatal(err)
+	}
+	b, _ = os.ReadFile(settings)
+	if strings.Contains(string(b), "hook prompt") {
+		t.Errorf("hook not removed: %s", b)
+	}
+}
+
+func TestMCPInstall_NoHookFlag(t *testing.T) {
+	_, home := setupMCPSetupEnv(t, true)
+	flagMCPSetupNoHook = true
+	if err := runMCPInstall(nil, nil); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := os.Stat(filepath.Join(home, ".claude", "settings.json")); !os.IsNotExist(err) {
+		t.Errorf("settings.json written despite --no-hook: %v", err)
+	}
 }
 
 func TestMCPInstall_RegistersAndWritesInstruction(t *testing.T) {

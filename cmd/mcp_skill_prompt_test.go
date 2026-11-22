@@ -105,6 +105,9 @@ func TestChainRuleDelivered(t *testing.T) {
 	if !strings.Contains(promptText(t, res), mcpChainRule) {
 		t.Error("skill prompt lacks the chain rule")
 	}
+	if ctx := hookContext("grimoire:write-unit-test"); !strings.Contains(ctx, mcpChainRule) {
+		t.Error("hook explicit-skill context lacks the chain rule")
+	}
 }
 
 func TestSkillNameCompleter(t *testing.T) {
