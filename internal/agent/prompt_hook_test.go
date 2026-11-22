@@ -153,7 +153,10 @@ func TestConfigurePromptHook_GeminiUsesBeforeAgentAndMillis(t *testing.T) {
 	if err != nil || len(groups) != 2 {
 		t.Fatalf("BeforeAgent groups = %v, err %v", groups, err)
 	}
-	entry := groupHooks(groups[1])[0].(map[string]any)
+	entry, ok := groupHooks(groups[1])[0].(map[string]any)
+	if !ok {
+		t.Fatalf("gemini hook entry is not an object: %v", groups[1])
+	}
 	if entry["command"] != "grimoire hook prompt" || entry["name"] != "grimoire" || entry["timeout"] != float64(10000) {
 		t.Errorf("gemini hook entry = %v", entry)
 	}
