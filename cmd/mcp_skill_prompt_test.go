@@ -81,6 +81,30 @@ func TestGetSkillTool_AcceptsPrefixAndSuggests(t *testing.T) {
 	if out, isErr := call("write-readmee"); !isErr || !strings.Contains(out, "write-readme") {
 		t.Errorf("typo: isErr=%v out=%s", isErr, out)
 	}
+	out, _ := call("write-readme")
+	var got mcpGetSkillOutput
+	if err := json.Unmarshal([]byte(out), &got); err != nil || got.Note != mcpChainRule {
+		t.Errorf("get_skill note missing or wrong: err=%v note=%q", err, got.Note)
+	}
+}
+
+// Workflow skills say "invoke X" / "load the skill using the Skill tool";
+// every way grimoire delivers a skill must say how that maps to MCP tools.
+func TestChainRuleDelivered(t *testing.T) {
+	if !strings.Contains(mcpServerInstructions, mcpChainRule) {
+		t.Error("server instructions lack the chain rule")
+	}
+	if n := len(mcpServerInstructions); n > 4096 {
+		t.Errorf("server instructions are %d chars; Claude Code cuts at 4096", n)
+	}
+	setupListSkillsHome(t)
+	res, err := getSkillPrompt(t, "write-unit-test")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(promptText(t, res), mcpChainRule) {
+		t.Error("skill prompt lacks the chain rule")
+	}
 }
 
 func TestSkillNameCompleter(t *testing.T) {

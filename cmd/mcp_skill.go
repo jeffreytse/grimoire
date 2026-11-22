@@ -29,13 +29,23 @@ import (
 // skillRefPrefix is the text-convention prefix users type before a skill name.
 const skillRefPrefix = "grimoire:"
 
+// mcpChainRule maps the skills-mode wording inside grimoire skills to MCP
+// tools. Workflow skills (suggest-best-practice, plan-best-practice-solution,
+// apply-best-practice-tree, start-best-practice, …) were written for skills
+// linked into the agent: they "invoke" other skills, "load the skill using the
+// Skill tool", and "score all installed skills" from a catalog already in
+// context. In MCP mode none of that exists, so this rule travels with every
+// skill grimoire hands out.
+const mcpChainRule = `grimoire skills run over MCP here; no grimoire skills are installed in the agent itself. When a grimoire skill says to invoke, load, run or apply another skill — "load the skill using the Skill tool", "invoke ` + "`X`" + `", "/X" — call grimoire_get_skill with that skill name and follow it. When it says to scan, score or list installed skills, get candidates with grimoire_search_skills (or grimoire_list_skills for a domain) and only name skills those tools return. Install hints like "/plugin install" mean grimoire_package_add.`
+
 // mcpServerInstructions is sent in the initialize result. Clients cut long
 // instructions (Claude Code: 4,096 chars), so the critical rule comes first.
 const mcpServerInstructions = `grimoire serves professional best-practice skills.
 - If the user writes ` + "`grimoire:<skill-name>`" + ` (e.g. ` + "`grimoire:propose-conventional-commit`" + `), call grimoire_get_skill with exactly that name — do not search first — and follow the skill, applying it to the rest of the user's message.
 - For other tasks, call grimoire_search_skills to find a relevant skill, then grimoire_get_skill to load it and follow it.
 - If a skill name is not found, the error lists close matches; use the right one.
-- Use grimoire_list_skills (no arguments) for a domain index.`
+- Use grimoire_list_skills (no arguments) for a domain index.
+- ` + mcpChainRule
 
 // skillCompletionLimit caps completion values (the spec allows up to 100).
 const skillCompletionLimit = 20
@@ -72,7 +82,7 @@ func promptGrimoireSkill(_ context.Context, request mcp.GetPromptRequest) (*mcp.
 	if err != nil {
 		return nil, fmt.Errorf("reading SKILL.md for %q: %w", name, err)
 	}
-	text := fmt.Sprintf("Follow this grimoire skill (%s) for the current task.\n\n%s", name, content)
+	text := fmt.Sprintf("Follow this grimoire skill (%s) for the current task. %s\n\n%s", name, mcpChainRule, content)
 	return mcp.NewGetPromptResult(
 		"grimoire skill: "+name,
 		[]mcp.PromptMessage{mcp.NewPromptMessage(mcp.RoleUser, mcp.NewTextContent(text))},

@@ -870,7 +870,11 @@ func toolGrimoireInfo(_ context.Context, request mcp.CallToolRequest) (*mcp.Call
 // ── grimoire_get_skill ────────────────────────────────────────────────────────
 
 type mcpGetSkillOutput struct {
-	Name    string `json:"name"`
+	Name string `json:"name"`
+	// Note tells the agent how this skill's references to other skills map
+	// to grimoire tools (see mcpChainRule). It precedes Content so it is read
+	// before the steps it applies to.
+	Note    string `json:"note"`
 	Content string `json:"content"`
 	Path    string `json:"path"`
 }
@@ -890,6 +894,7 @@ func toolGrimoireGetSkill(_ context.Context, request mcp.CallToolRequest) (*mcp.
 		Name:    name,
 		Content: string(content),
 		Path:    skillPath,
+		Note:    mcpChainRule,
 	})
 }
 
