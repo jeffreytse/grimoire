@@ -235,10 +235,13 @@ func relinkNewSkills(home, oldCommit string) {
 		}
 	}
 
-	// relink for all agents that already have a skills dir
+	// Relink only agents that already have grimoire skills linked (skills
+	// mode). A skills dir can exist for other reasons — another tool's
+	// skills, or grimoire used in MCP mode — and must not be flooded with
+	// every skill in the package.
 	for _, ag := range agent.All {
 		dir := agent.SkillsDir(ag)
-		if _, err := os.Stat(dir); err != nil {
+		if !hasLinksInto(dir, home) {
 			continue
 		}
 		allSkills, err := skills.ListAllSkills(root)
@@ -252,6 +255,32 @@ func relinkNewSkills(home, oldCommit string) {
 	}
 
 	fmt.Println()
+}
+
+// hasLinksInto reports whether dir holds at least one symlink whose target is
+// inside root.
+func hasLinksInto(dir, root string) bool {
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		return false
+	}
+	prefix := filepath.Clean(root) + string(filepath.Separator)
+	for _, e := range entries {
+		if e.Type()&os.ModeSymlink == 0 {
+			continue
+		}
+		target, err := os.Readlink(filepath.Join(dir, e.Name()))
+		if err != nil {
+			continue
+		}
+		if !filepath.IsAbs(target) {
+			target = filepath.Join(dir, target)
+		}
+		if strings.HasPrefix(filepath.Clean(target), prefix) {
+			return true
+		}
+	}
+	return false
 }
 
 func printPackageChanges(c gitops.PackageChanges, dir, oldCommit string, w io.Writer) { //nolint:gocritic // callers in two files; value semantics avoids pointer threading
