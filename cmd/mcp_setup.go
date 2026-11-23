@@ -27,6 +27,7 @@ var (
 	flagMCPSetupScope       string
 	flagMCPSetupNoConfigure bool
 	flagMCPSetupNoHook      bool
+	flagMCPSetupNoAllow     bool
 )
 
 // mcpAgent describes how to set up MCP mode for one agent. Registration
@@ -149,6 +150,11 @@ var mcpInstallCmd = &cobra.Command{
                       in ~/.gemini/config/hooks.json
      Copilot CLI drops command-hook output, so it gets none. Codex runs the
      hook only after you trust it in /hooks. --no-hook skips it.
+  5. Claude Code, Antigravity: pre-approves the read-only skill tools
+     (grimoire_search_skills, grimoire_get_skill, grimoire_list_skills) in
+     permissions.allow, so lookups never wait on an approval prompt and work
+     in headless runs. Tools that change config or packages still ask.
+     --no-allow skips it.
 
 Agents and scopes:
   claude    user, project   (instructions: CLAUDE.md)
@@ -188,6 +194,7 @@ func init() {
 	}
 	mcpInstallCmd.Flags().BoolVar(&flagMCPSetupNoConfigure, "no-configure", false, "do not write the grimoire instruction or hook")
 	mcpInstallCmd.Flags().BoolVar(&flagMCPSetupNoHook, "no-hook", false, "do not add the prompt hook (Claude Code, Codex, Gemini CLI)")
+	mcpInstallCmd.Flags().BoolVar(&flagMCPSetupNoAllow, "no-allow", false, "do not pre-approve grimoire's read-only skill tools (Claude Code, Antigravity)")
 }
 
 // mcpRunCmd runs an external command in dir and returns combined output.
@@ -340,6 +347,11 @@ func installMCPAgent(a *mcpAgent, serve string) error {
 			tui.IconSkip, a.display, scope, agent.MCPTriggerLine)
 	}
 
+	if !flagMCPSetupNoAllow {
+		if err := installToolAllow(a.key, scope); err != nil {
+			return err
+		}
+	}
 	if flagMCPSetupNoHook {
 		return nil
 	}
@@ -452,6 +464,7 @@ func runMCPUninstall(_ *cobra.Command, _ []string) error {
 			}
 		}
 		removePromptHook(a.key, scope)
+		removeToolAllow(a.key, scope)
 		path := agent.MCPInstructionFile(a.key, scope, getProjectDir())
 		if path == "" {
 			continue
@@ -615,3 +628,35 @@ func registerOpenCodeMCP(scope, serve string) (bool, error) {
 	return openCodeFile.register(scope, serve)
 }
 func unregisterOpenCodeMCP(scope string) (bool, error) { return openCodeFile.unregister(scope) }
+
+// installToolAllow pre-approves grimoire's read-only skill tools in the
+// agent's permission allow list, so a skill lookup never waits on an
+// approval prompt (headless runs refuse unapproved MCP tools outright).
+func installToolAllow(ag, scope string) error {
+	p := agent.ToolAllowFile(ag, scope, getProjectDir())
+	if p == "" {
+		return nil
+	}
+	changed, err := agent.ConfigureToolAllow(p, agent.ToolAllowRules(ag))
+	if err != nil {
+		return fmt.Errorf("pre-approving grimoire skill tools in %s: %w", p, err)
+	}
+	reportChange(changed, "pre-approved read-only grimoire skill tools in "+p,
+		"read-only grimoire skill tools already approved in "+p)
+	return nil
+}
+
+// removeToolAllow undoes installToolAllow. Errors are reported, not fatal.
+func removeToolAllow(ag, scope string) {
+	p := agent.ToolAllowFile(ag, scope, getProjectDir())
+	if p == "" {
+		return
+	}
+	changed, err := agent.RemoveToolAllow(p, agent.ToolAllowRules(ag))
+	switch {
+	case err != nil:
+		fmt.Fprintf(os.Stderr, "  %s  %v\n", tui.IconWarn, err)
+	case changed:
+		fmt.Printf("  %s  removed grimoire tool approvals from %s\n", tui.IconOK, p)
+	}
+}

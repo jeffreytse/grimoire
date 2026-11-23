@@ -53,7 +53,7 @@ func setupMCPSetupEnv(t *testing.T, claudeOnPath bool) (f *fakeClaude, home stri
 	}
 	t.Cleanup(func() { mcpRunCmd, mcpLookPath = origRun, origLook })
 	flagMCPSetupTarget, flagMCPSetupScope, flagMCPSetupNoConfigure = "claude", "user", false
-	flagMCPSetupNoHook = false
+	flagMCPSetupNoHook, flagMCPSetupNoAllow = false, false
 	return f, home
 }
 
@@ -88,8 +88,8 @@ func TestMCPInstall_NoHookFlag(t *testing.T) {
 	if err := runMCPInstall(nil, nil); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := os.Stat(filepath.Join(home, ".claude", "settings.json")); !os.IsNotExist(err) {
-		t.Errorf("settings.json written despite --no-hook: %v", err)
+	if b, _ := os.ReadFile(filepath.Join(home, ".claude", "settings.json")); strings.Contains(string(b), "hook prompt") {
+		t.Errorf("hook written despite --no-hook: %s", b)
 	}
 }
 
@@ -466,6 +466,52 @@ func TestMCPInstall_OpenCodePluginAndAntigravityHooks(t *testing.T) {
 			}
 			if b, _ := os.ReadFile(path); strings.Contains(string(b), tc.marker) {
 				t.Errorf("hook not removed: %s", b)
+			}
+		})
+	}
+}
+
+// Install pre-approves only grimoire's read-only skill tools; uninstall
+// removes exactly those entries; --no-allow skips it.
+func TestMCPInstall_PreApprovesReadOnlyTools(t *testing.T) {
+	for _, tc := range []struct{ target, file, rule string }{
+		{"claude", filepath.Join(".claude", "settings.json"), "mcp__grimoire__grimoire_get_skill"},
+		{"antigravity", filepath.Join(".gemini", "antigravity-cli", "settings.json"), "mcp(grimoire/grimoire_get_skill)"},
+	} {
+		t.Run(tc.target, func(t *testing.T) {
+			_, home := setupMCPSetupEnv(t, true)
+			path := filepath.Join(home, tc.file)
+			if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+				t.Fatal(err)
+			}
+			if err := os.WriteFile(path, []byte(`{"permissions":{"allow":["command(git log)"]}}`), 0o644); err != nil {
+				t.Fatal(err)
+			}
+			flagMCPSetupTarget = tc.target
+			if err := runMCPInstall(nil, nil); err != nil {
+				t.Fatal(err)
+			}
+			b, _ := os.ReadFile(path)
+			if !strings.Contains(string(b), tc.rule) || !strings.Contains(string(b), "command(git log)") {
+				t.Fatalf("allow list = %s", b)
+			}
+			if strings.Contains(string(b), "grimoire_config_set") || strings.Contains(string(b), "grimoire_package_add") {
+				t.Errorf("mutating tool pre-approved: %s", b)
+			}
+			if err := runMCPUninstall(nil, nil); err != nil {
+				t.Fatal(err)
+			}
+			b, _ = os.ReadFile(path)
+			if strings.Contains(string(b), tc.rule) || !strings.Contains(string(b), "command(git log)") {
+				t.Errorf("after uninstall = %s", b)
+			}
+
+			flagMCPSetupNoAllow = true
+			if err := runMCPInstall(nil, nil); err != nil {
+				t.Fatal(err)
+			}
+			if b, _ := os.ReadFile(path); strings.Contains(string(b), tc.rule) {
+				t.Errorf("--no-allow still pre-approved: %s", b)
 			}
 		})
 	}
