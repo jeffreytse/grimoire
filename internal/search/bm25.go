@@ -18,6 +18,24 @@ const (
 	bm25B  = 0.75
 )
 
+// field is one searchable part of a skill. BM25F (Robertson & Zaragoza 2009)
+// weights each field's term frequency, normalized by that field's own average
+// length, before saturation. A skill's name and tags state what it is for;
+// its description also carries incidental words ("in the 24-48 hours before a
+// competition"), which plain BM25 over the concatenated text scored as highly
+// as the topic itself.
+type field struct {
+	weight float64
+	text   func(sk *skills.Skill) string
+}
+
+var fields = []field{
+	{3, func(sk *skills.Skill) string { return sk.Name }},
+	{2, func(sk *skills.Skill) string { return strings.Join(sk.Tags, " ") }},
+	{1, func(sk *skills.Skill) string { return sk.Description }},
+	{1, func(sk *skills.Skill) string { return sk.Domain + " " + sk.Subdomain }},
+}
+
 // Result is a skill with its BM25 relevance score.
 type Result struct {
 	Skill skills.Skill
@@ -27,84 +45,85 @@ type Result struct {
 	Matched, Terms int
 }
 
-// BM25Search scores corpus skills against query and returns top-N results sorted
-// by score descending. If topN <= 0, all non-zero-score documents are returned.
+// BM25Search scores corpus skills against query with BM25F and returns top-N
+// results sorted by score descending. If topN <= 0, all non-zero-score
+// documents are returned.
 func BM25Search(query string, corpus []skills.Skill, topN int) []Result {
 	if len(corpus) == 0 || strings.TrimSpace(query) == "" {
 		return nil
 	}
-
 	tokens := uniqueTokens(tokenize(query))
 	if len(tokens) == 0 {
 		return nil
 	}
 
-	// Document lengths and average
-	docTexts := make([][]string, len(corpus))
-	docLen := make([]float64, len(corpus))
-	for i := range corpus {
-		docTexts[i] = tokenize(docText(&corpus[i]))
-		docLen[i] = float64(len(docTexts[i]))
-	}
-	avgDL := avgFloat(docLen)
-	if avgDL == 0 {
-		avgDL = 1
-	}
-
-	// Document frequency per token
+	// Per-field term frequencies and lengths, and per-field average lengths.
+	n := len(corpus)
+	tfs := make([][]map[string]float64, n)
+	lens := make([][]float64, n)
+	avg := make([]float64, len(fields))
 	df := make(map[string]int)
-	for _, toks := range docTexts {
-		seen := make(map[string]bool, len(toks))
-		for _, t := range toks {
-			if !seen[t] {
-				df[t]++
-				seen[t] = true
+	for i := range corpus {
+		tfs[i] = make([]map[string]float64, len(fields))
+		lens[i] = make([]float64, len(fields))
+		seen := map[string]bool{}
+		for f := range fields {
+			toks := tokenize(fields[f].text(&corpus[i]))
+			tfs[i][f] = termFreq(toks)
+			lens[i][f] = float64(len(toks))
+			avg[f] += float64(len(toks))
+			for _, t := range toks {
+				if !seen[t] {
+					seen[t] = true
+					df[t]++
+				}
 			}
 		}
 	}
+	for f := range avg {
+		avg[f] /= float64(n)
+		if avg[f] == 0 {
+			avg[f] = 1
+		}
+	}
 
-	N := float64(len(corpus))
-	results := make([]Result, 0, len(corpus))
+	N := float64(n)
+	idf := make(map[string]float64, len(tokens))
+	for _, t := range tokens {
+		idf[t] = math.Log((N-float64(df[t])+0.5)/(float64(df[t])+0.5) + 1)
+	}
 
+	results := make([]Result, 0, n)
 	for i := range corpus {
-		sk := &corpus[i]
-		tf := termFreq(docTexts[i])
 		score := 0.0
 		matched := 0
 		for _, t := range tokens {
-			if tf[t] == 0 {
+			wtf := 0.0
+			for f := range fields {
+				if tf := tfs[i][f][t]; tf > 0 {
+					wtf += fields[f].weight * tf / (1 - bm25B + bm25B*lens[i][f]/avg[f])
+				}
+			}
+			if wtf == 0 {
 				continue
 			}
 			matched++
-			idf := math.Log((N-float64(df[t])+0.5)/(float64(df[t])+0.5) + 1)
-			num := tf[t] * (bm25K1 + 1)
-			den := tf[t] + bm25K1*(1-bm25B+bm25B*docLen[i]/avgDL)
-			score += idf * num / den
+			score += idf[t] * wtf * (bm25K1 + 1) / (wtf + bm25K1)
 		}
 		if score > 0 {
-			results = append(results, Result{Skill: *sk, Score: score, Matched: matched, Terms: len(tokens)})
+			results = append(results, Result{Skill: corpus[i], Score: score, Matched: matched, Terms: len(tokens)})
 		}
 	}
-
 	sort.Slice(results, func(i, j int) bool {
 		if results[i].Score != results[j].Score {
 			return results[i].Score > results[j].Score
 		}
 		return results[i].Skill.Name < results[j].Skill.Name
 	})
-
 	if topN > 0 && len(results) > topN {
 		results = results[:topN]
 	}
 	return results
-}
-
-// docText concatenates all searchable text fields for a skill.
-func docText(sk *skills.Skill) string {
-	parts := make([]string, 0, 5+len(sk.Tags))
-	parts = append(parts, sk.Name, sk.Description, sk.Domain, sk.Subdomain)
-	parts = append(parts, sk.Tags...)
-	return strings.Join(parts, " ")
 }
 
 // tokenize lowercases and splits on anything that is not a letter or digit, so
@@ -117,12 +136,24 @@ func tokenize(s string) []string {
 	})
 	out := make([]string, 0, len(fields))
 	for _, f := range fields {
-		if len(f) <= 1 || stopwords[f] {
+		// Bare numbers ("48", "10") are quantities, not topics; they matched
+		// whatever skill happened to quote a number. Mixed tokens ("oauth2",
+		// "s3", "h264") are kept.
+		if len(f) <= 1 || stopwords[f] || isNumber(f) {
 			continue
 		}
 		out = append(out, stem(f))
 	}
 	return out
+}
+
+func isNumber(s string) bool {
+	for _, r := range s {
+		if !unicode.IsDigit(r) {
+			return false
+		}
+	}
+	return true
 }
 
 func uniqueTokens(tokens []string) []string {

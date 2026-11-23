@@ -40,9 +40,10 @@ const (
 // which the text is moved to a file.
 var hookInlineBudget = 9000
 
-// hookMinScore is the BM25 score a skill needs to be suggested. Below it the
-// hook stays silent so small talk ("ok", "thanks") costs no tokens.
-var hookMinScore = 8.0
+// hookMinScore is the BM25F score a skill needs to be suggested. Below it the
+// hook stays silent so small talk ("ok", "thanks") costs no tokens. Tuned with
+// TestHookEval (cmd/testdata/hook_eval.json); retune there if the scoring changes.
+var hookMinScore = 9.0
 
 // hookRouteMinWords is the prompt length (words) from which a task is treated
 // as possibly multi-step and the hook adds hookRouteHint. In skills mode the

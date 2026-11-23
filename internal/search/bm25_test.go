@@ -39,3 +39,24 @@ func TestBM25Search_MatchedTerms(t *testing.T) {
 		t.Errorf("stopword-only query should return nil, got %+v", got)
 	}
 }
+
+// A term in a skill's name outranks the same term in passing in another
+// skill's description (BM25F field weights).
+func TestBM25Search_NameOutweighsDescription(t *testing.T) {
+	corpus := []skills.Skill{
+		{Name: "plan-race-meals", Description: "load test"},
+		{Name: "run-api-load-test-suite", Description: "Use when checking capacity under real production traffic"},
+		{Name: "write-readme", Description: "Use when writing a README"},
+	}
+	hits := BM25Search("load test", corpus, 0)
+	if len(hits) != 2 || hits[0].Skill.Name != "run-api-load-test-suite" || hits[0].Score <= hits[1].Score {
+		t.Fatalf("hits = %+v", hits)
+	}
+}
+
+// Bare numbers are quantities, not topics; mixed tokens like "oauth2" stay.
+func TestTokenize_DropsBareNumbers(t *testing.T) {
+	if got := strings.Join(tokenize("launch in 48 hours with oauth2 and s3"), " "); got != "launch hour oauth2 s3" {
+		t.Errorf("tokenize = %q", got)
+	}
+}

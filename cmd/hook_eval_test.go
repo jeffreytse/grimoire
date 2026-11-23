@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -56,10 +57,12 @@ func TestHookEval(t *testing.T) {
 		}
 		picks := hookPicks(c.Prompt, all)
 		names := make([]string, len(picks))
+		shown := make([]string, len(picks))
 		for i := range picks {
 			names[i] = picks[i].Skill.Name
+			shown[i] = fmt.Sprintf("%s(%.1f)", picks[i].Skill.Name, picks[i].Score)
 		}
-		got := strings.Join(names, ", ")
+		got := strings.Join(shown, ", ")
 
 		if len(c.Want) == 0 {
 			neg++
