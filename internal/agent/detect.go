@@ -106,7 +106,9 @@ func SkillCount(ag string) int {
 	}
 	count := 0
 	for _, e := range entries {
-		if !hasHiddenPrefix(e.Name()) {
+		// Skills are directories (or symlinks to them); files such as
+		// grimoire's _GRIMOIRE_INDEX.md are not skills.
+		if !hasHiddenPrefix(e.Name()) && !e.Type().IsRegular() {
 			count++
 		}
 	}
