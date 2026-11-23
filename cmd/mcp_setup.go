@@ -390,6 +390,15 @@ func installPromptHook(ag, scope, serve string) error {
 			return fmt.Errorf("adding prompt hook to %s: %w", settings, err)
 		}
 		reportChange(changed, "added prompt hook to "+settings, "prompt hook already in "+settings)
+		sessionChanged, err := agent.ConfigureSessionHook(settings, h, agent.SessionHookCommand(serve))
+		if err != nil {
+			return fmt.Errorf("adding session hook to %s: %w", settings, err)
+		}
+		if h.SessionEvent != "" {
+			reportChange(sessionChanged, "added session hook (injects the grimoire router) to "+settings,
+				"session hook already in "+settings)
+		}
+		changed = changed || sessionChanged
 		if changed && h.Trust != "" {
 			fmt.Printf("  %s  %s\n", tui.IconWarn, h.Trust)
 		}
@@ -424,7 +433,7 @@ func removePromptHook(ag, scope string) {
 	case err != nil:
 		fmt.Fprintf(os.Stderr, "  %s  %v\n", tui.IconWarn, err)
 	case changed:
-		fmt.Printf("  %s  removed prompt hook from %s\n", tui.IconOK, where)
+		fmt.Printf("  %s  removed grimoire hooks from %s\n", tui.IconOK, where)
 	}
 }
 

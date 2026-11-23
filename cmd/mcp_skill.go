@@ -42,8 +42,7 @@ const mcpChainRule = `grimoire skills run over MCP here; no grimoire skills are 
 // instructions (Claude Code: 4,096 chars), so the critical rule comes first.
 const mcpServerInstructions = `grimoire serves professional best-practice skills.
 - If the user writes ` + "`grimoire:<skill-name>`" + ` (e.g. ` + "`grimoire:propose-conventional-commit`" + `), call grimoire_get_skill with exactly that name — do not search first — and follow the skill, applying it to the rest of the user's message.
-- For other tasks, call grimoire_search_skills to find a relevant skill, then grimoire_get_skill to load it and follow it.
-- For a multi-step or unclear problem, load start-best-practice first. It routes to the workflow that fits: suggest-best-practice (one skill), plan-best-practice-solution (several skills in order), apply-best-practice-tree (break an opaque problem down), discover-best-practices (browse a domain), learn-best-practice (retain a practice).
+- Before responding to any other user request, run start-best-practice (load it with grimoire_get_skill if it is not already in context). It routes to the workflow that fits: suggest-best-practice (one skill), plan-best-practice-solution (several skills in order), apply-best-practice-tree (break an opaque problem down), discover-best-practices (browse a domain), learn-best-practice (retain a practice). Follow the routed skill: it asks clarifying questions when needed and loads the specific best practices. If nothing routes, proceed normally.
 - To load several skills in one call, pass grimoire_get_skill a names list.
 - If a skill name is not found, the error lists close matches; use the right one.
 - Use grimoire_list_skills (no arguments) for a domain index.

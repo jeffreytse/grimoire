@@ -3,6 +3,8 @@ package cmd
 import (
 	"bytes"
 	"encoding/json"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 )
@@ -122,15 +124,130 @@ func TestHookPrompt_EchoesEventName(t *testing.T) {
 	}
 }
 
-// Long prompts get the start-best-practice routing hint, matches or not;
-// short ones never do.
-func TestHookPrompt_RouteHintOnLongPrompts(t *testing.T) {
+// Every substantive prompt gets the start-best-practice reminder, long or
+// short, matches or not; small talk and follow-ups get nothing.
+func TestHookPrompt_RouteReminderOnEveryRequest(t *testing.T) {
 	setupListSkillsHome(t)
-	long := strings.Repeat("we need to migrate our billing service and rework how the team ships releases ", 3)
-	if ctx := runHook(t, long); !strings.Contains(ctx, "start-best-practice") {
-		t.Errorf("long prompt: want route hint, got %q", ctx)
+	for _, p := range []string{
+		"migrate the billing service",
+		"We're launching our SaaS in 48 hours. I'm terrified something will break. What do we do?",
+	} {
+		ctx := runHook(t, p)
+		if !strings.HasPrefix(ctx, hookRouteReminder) {
+			t.Errorf("%q: want route reminder first, got %q", p, ctx)
+		}
+		if strings.Contains(ctx, "ignore this note") {
+			t.Errorf("%q: reminder must not offer an opt-out, got %q", p, ctx)
+		}
 	}
-	if ctx := runHook(t, "migrate the billing service"); strings.Contains(ctx, "start-best-practice") {
-		t.Errorf("short prompt: want no route hint, got %q", ctx)
+	for _, p := range []string{"ok", "Thanks!", "looks good", "go ahead", "fix it"} {
+		if ctx := runHook(t, p); ctx != "" {
+			t.Errorf("%q: want silence, got %q", p, ctx)
+		}
+	}
+}
+
+// Keyword matches are offered as unverified candidates after the reminder.
+func TestHookPrompt_CandidatesFollowReminder(t *testing.T) {
+	setupListSkillsHome(t)
+	orig := hookMinScore
+	hookMinScore = 0.1
+	t.Cleanup(func() { hookMinScore = orig })
+
+	ctx := runHook(t, "write a conventional commit message")
+	r := strings.Index(ctx, hookRouteReminder)
+	c := strings.Index(ctx, "propose-conventional-commit")
+	if r != 0 || c < 0 || !strings.Contains(ctx, "unverified") {
+		t.Errorf("context = %q", ctx)
+	}
+}
+
+func runSessionHook(t *testing.T, event string) string {
+	t.Helper()
+	in, _ := json.Marshal(map[string]string{"hook_event_name": event, "source": "startup"})
+	var out bytes.Buffer
+	runHookSession(bytes.NewReader(in), &out)
+	var o hookOutput
+	if err := json.Unmarshal(out.Bytes(), &o); err != nil {
+		t.Fatalf("session hook output is not JSON: %v: %s", err, out.String())
+	}
+	want := event
+	if want == "" {
+		want = "SessionStart"
+	}
+	if o.HookSpecificOutput.HookEventName != want {
+		t.Errorf("hookEventName = %q; want %q", o.HookSpecificOutput.HookEventName, want)
+	}
+	return o.HookSpecificOutput.AdditionalContext
+}
+
+const routerFixture = `---
+name: start-best-practice
+description: Use when responding to any user request
+---
+
+# Start Best Practice
+
+## Why This Is Best Practice
+
+WHY-MARKER
+
+## Steps
+
+### Step 0: Route
+
+| Intent signal | Route |
+|---|---|
+| Describes a problem | invoke ` + "`suggest-best-practice`" + ` |
+
+` + "```" + `
+## not a heading inside a fence
+` + "```" + `
+
+## Rules
+
+- RULES-MARKER
+
+## Common Mistakes
+
+MISTAKES-MARKER
+`
+
+// The session hook inlines the router's Steps and Rules, nothing else.
+func TestHookSession_InlinesRouter(t *testing.T) {
+	setupListSkillsHome(t)
+	dir := filepath.Join(os.Getenv("GRIMOIRE_SOURCE"), "skills", "meta", "skills", "start-best-practice")
+	if err := os.MkdirAll(dir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(dir, "SKILL.md"), []byte(routerFixture), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	ctx := runSessionHook(t, "SessionStart")
+	for _, want := range []string{"suggest-best-practice", "RULES-MARKER", "not a heading inside a fence", mcpChainRule} {
+		if !strings.Contains(ctx, want) {
+			t.Errorf("missing %q in %q", want, ctx)
+		}
+	}
+	for _, bad := range []string{"WHY-MARKER", "MISTAKES-MARKER"} {
+		if strings.Contains(ctx, bad) {
+			t.Errorf("unexpected %q in %q", bad, ctx)
+		}
+	}
+	if len(ctx) > hookInlineBudget {
+		t.Errorf("context is %d bytes, over budget %d", len(ctx), hookInlineBudget)
+	}
+	if got := runSessionHook(t, "BeforeAgent"); got == "" {
+		t.Error("event name not echoed")
+	}
+}
+
+// Without the router installed (or over budget) the session hook still tells
+// the model to load it.
+func TestHookSession_FallsBackToDirective(t *testing.T) {
+	setupListSkillsHome(t)
+	ctx := runSessionHook(t, "")
+	if !strings.Contains(ctx, `grimoire_get_skill with name "start-best-practice"`) {
+		t.Errorf("context = %q", ctx)
 	}
 }

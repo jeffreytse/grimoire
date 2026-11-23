@@ -19,17 +19,18 @@ import (
 // rule in its initialize instructions, but not every client shows server
 // instructions to the model, so the instruction file must say it too.
 //
-// It also routes multi-step problems through start-best-practice. In skills
-// mode the instruction runs that router on every task; without this clause
-// MCP mode would jump straight to one skill and never reach the plan or tree
-// workflows.
-const MCPTriggerLine = "For any task, first use the grimoire MCP tools: `grimoire_search_skills` to find a relevant best-practice skill, then `grimoire_get_skill` to load and follow it. For a multi-step or unclear problem, load `start-best-practice` first: it routes to the right grimoire workflow. If the user writes `grimoire:<skill-name>`, call `grimoire_get_skill` with that exact name first, without searching, and follow it."
+// Like skills mode's triggerLine, it runs start-best-practice on every
+// request. An earlier wording ("for a multi-step or unclear problem") let the
+// model judge the task simple, skip the router and answer from its own
+// knowledge, so no workflow ever asked questions or loaded a skill.
+const MCPTriggerLine = "Before responding to any user request, run grimoire's `start-best-practice` routing — load it with the grimoire MCP tool `grimoire_get_skill` if it is not already in context — and follow the workflow it routes to (it asks clarifying questions when needed and loads the specific best-practice skills). If the user writes `grimoire:<skill-name>`, call `grimoire_get_skill` with that exact name first, without searching, and follow it."
 
 // legacyMCPTriggerLines are earlier MCPTriggerLine texts. They count as
 // grimoire's own lines: configure replaces them and uninstall removes them.
 var legacyMCPTriggerLines = []string{
 	"For any task, first use the grimoire MCP tools: `grimoire_search_skills` to find a relevant best-practice skill, then `grimoire_get_skill` to load and follow it.",
 	"For any task, first use the grimoire MCP tools: `grimoire_search_skills` to find a relevant best-practice skill, then `grimoire_get_skill` to load and follow it. If the user writes `grimoire:<skill-name>`, call `grimoire_get_skill` with that exact name first, without searching, and follow it.",
+	"For any task, first use the grimoire MCP tools: `grimoire_search_skills` to find a relevant best-practice skill, then `grimoire_get_skill` to load and follow it. For a multi-step or unclear problem, load `start-best-practice` first: it routes to the right grimoire workflow. If the user writes `grimoire:<skill-name>`, call `grimoire_get_skill` with that exact name first, without searching, and follow it.",
 }
 
 // hasStaleTrigger reports whether content holds a skills-mode or older MCP

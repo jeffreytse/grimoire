@@ -288,6 +288,16 @@ func doctorMCPChecks(ag, label, vs, pkgHome string) (checks []doctorCheck, found
 			Detail: fmt.Sprintf("%s prompt hook missing — run: grimoire mcp install --target %s --scope %s", label, ag, scope)})
 	}
 
+	if s.SessionHookSupported {
+		if s.SessionHook {
+			checks = append(checks, doctorCheck{Name: name + "-session-hook", Status: "ok",
+				Detail: label + " session hook present (injects the grimoire router)"})
+		} else {
+			checks = append(checks, doctorCheck{Name: name + "-session-hook", Status: "warn",
+				Detail: fmt.Sprintf("%s session hook missing — requests skip the grimoire router; run: grimoire mcp install --target %s --scope %s", label, ag, scope)})
+		}
+	}
+
 	if n := agent.LinkedSkillCount(ag, pkgHome); n > 0 {
 		checks = append(checks, doctorCheck{Name: name + "-duplicate", Status: "warn",
 			Detail: fmt.Sprintf("%s also has %d grimoire skills linked (skills mode) — duplicates MCP; run: grimoire uninstall --target %s", label, n, ag)})

@@ -41,18 +41,39 @@ const (
 var hookInlineBudget = 9000
 
 // hookMinScore is the BM25F score a skill needs to be suggested. Below it the
-// hook stays silent so small talk ("ok", "thanks") costs no tokens. Tuned with
-// TestHookEval (cmd/testdata/hook_eval.json); retune there if the scoring changes.
+// hook lists no candidates. Tuned with TestHookEval (cmd/testdata/hook_eval.json);
+// retune there if the scoring changes.
 var hookMinScore = 9.0
 
-// hookRouteMinWords is the prompt length (words) from which a task is treated
-// as possibly multi-step and the hook adds hookRouteHint. In skills mode the
-// instruction runs start-best-practice on every task; a top-3 BM25 list
-// alone would never lead to the plan or tree workflows.
-var hookRouteMinWords = 25
+// hookRouteReminder is the per-prompt nudge onto grimoire's router. The
+// router itself is injected once per session by `grimoire hook session`;
+// re-asserting it on every prompt is what keeps the model from judging a task
+// "simple" and answering from its own knowledge. In skills mode the
+// instruction runs start-best-practice on every task; this is MCP mode's
+// equivalent.
+const hookRouteReminder = "grimoire: before responding, apply the start-best-practice routing (injected at session start; if it is not in your context, load it with grimoire_get_skill). If it routes to a workflow, follow that skill: it asks clarifying questions when needed and loads the specific best practices. If nothing routes, proceed normally."
 
-// hookRouteHint points long prompts at grimoire's workflow router.
-const hookRouteHint = "If this is a multi-step or unclear problem, load start-best-practice with grimoire_get_skill first: it routes to the right workflow (one skill, a sequenced plan, or a decomposition)."
+// routerSkill is grimoire's entry-point workflow router.
+const routerSkill = "start-best-practice"
+
+// routerSections are the parts of the router SKILL.md the session hook
+// inlines: the routing table and its rules. The rationale and examples are
+// left to grimoire_get_skill.
+var routerSections = []string{"Steps", "Rules"}
+
+// hookSmallTalk are replies that never start a new task, so the hook stays
+// silent for them (start-best-practice passes them through anyway).
+var hookSmallTalk = map[string]bool{
+	"ok": true, "okay": true, "k": true, "thanks": true, "thank you": true, "thx": true, "ty": true,
+	"yes": true, "y": true, "no": true, "n": true, "yep": true, "nope": true, "sure": true,
+	"continue": true, "go on": true, "go ahead": true, "proceed": true, "next": true, "done": true,
+	"looks good": true, "lgtm": true, "got it": true, "great": true, "nice": true, "cool": true,
+	"perfect": true, "good": true, "do it": true, "ship it": true, "sounds good": true,
+}
+
+// hookMinWords is the prompt length (words) below which a prompt is treated
+// as a follow-up rather than a new request.
+var hookMinWords = 3
 
 // hookMinMatched is how many distinct prompt terms a skill must contain.
 var hookMinMatched = 2
@@ -74,10 +95,11 @@ UserPromptSubmit, Gemini CLI BeforeAgent) and prints
 additional context for the model:
 
   - grimoire:<name> in the prompt  the named skill's SKILL.md, to follow
-  - otherwise                      the best-matching skills (BM25), with a
-                                   note to load one with grimoire_get_skill
+  - otherwise                      a reminder to apply the start-best-practice
+                                   routing, plus candidate skills (BM25)
 
-Prints nothing when no skill matches well. Registered by: grimoire mcp install`,
+Prints nothing for slash commands and small talk ("ok", "thanks").
+Registered by: grimoire mcp install`,
 	Args:          cobra.NoArgs,
 	SilenceUsage:  true,
 	SilenceErrors: true,
@@ -87,9 +109,26 @@ Prints nothing when no skill matches well. Registered by: grimoire mcp install`,
 	},
 }
 
+var hookSessionCmd = &cobra.Command{
+	Use:   "session",
+	Short: "Agent session-start hook: inject grimoire's workflow router",
+	Long: `Reads a session-start hook's input on stdin (Claude Code, Codex and
+Gemini CLI SessionStart) and prints additional context for the model: the
+start-best-practice routing table and rules, read from the installed skills
+package, so every request in the session is routed to the grimoire workflow
+that fits. Registered by: grimoire mcp install`,
+	Args:          cobra.NoArgs,
+	SilenceUsage:  true,
+	SilenceErrors: true,
+	RunE: func(_ *cobra.Command, _ []string) error {
+		runHookSession(os.Stdin, os.Stdout)
+		return nil
+	},
+}
+
 func init() {
 	hookPromptCmd.Flags().Float64Var(&hookMinScore, "min-score", hookMinScore, "minimum BM25 score for a skill to be suggested")
-	hookCmd.AddCommand(hookPromptCmd)
+	hookCmd.AddCommand(hookPromptCmd, hookSessionCmd)
 	rootCmd.AddCommand(hookCmd)
 }
 
@@ -116,14 +155,31 @@ func runHookPrompt(in io.Reader, out io.Writer) {
 	if json.Unmarshal(raw, &input) != nil {
 		return
 	}
-	ctx := hookContext(input.Prompt)
+	writeHookOutput(out, input.HookEventName, "UserPromptSubmit", hookContext(input.Prompt))
+}
+
+// runHookSession prints the router context for a session-start hook.
+func runHookSession(in io.Reader, out io.Writer) {
+	raw, err := io.ReadAll(io.LimitReader(in, 1<<20))
+	if err != nil {
+		return
+	}
+	var input hookInput
+	// Some agents send no input to session hooks; that is fine.
+	_ = json.Unmarshal(raw, &input)
+	writeHookOutput(out, input.HookEventName, "SessionStart", sessionContext())
+}
+
+// writeHookOutput prints ctx as the hook's additional context, echoing the
+// agent's event name (or fallback when it sent none). Empty ctx prints nothing.
+func writeHookOutput(out io.Writer, event, fallback, ctx string) {
 	if ctx == "" {
 		return
 	}
 	var o hookOutput
-	o.HookSpecificOutput.HookEventName = input.HookEventName
-	if o.HookSpecificOutput.HookEventName == "" {
-		o.HookSpecificOutput.HookEventName = "UserPromptSubmit"
+	o.HookSpecificOutput.HookEventName = event
+	if event == "" {
+		o.HookSpecificOutput.HookEventName = fallback
 	}
 	o.HookSpecificOutput.AdditionalContext = ctx
 	b, err := json.Marshal(o)
@@ -131,6 +187,63 @@ func runHookPrompt(in io.Reader, out io.Writer) {
 		return
 	}
 	fmt.Fprintln(out, string(b))
+}
+
+// sessionContext is the router injected once per session: the chain rule and
+// the start-best-practice routing, inlined from the installed package so it
+// stays in step with the skills library. Without the package it falls back to
+// a directive to load the router.
+func sessionContext() string {
+	head := "grimoire is active for this session. Before responding to each new user request, apply the start-best-practice routing below and follow the workflow it routes to; load routed skills with grimoire_get_skill.\n\n" + mcpChainRule
+	fallback := head + "\n\nThe router is not inlined here: call grimoire_get_skill with name \"" + routerSkill + "\" once, at the first request of the session, and follow it."
+	_, path, err := resolveSkillOrSuggest(routerSkill)
+	if err != nil {
+		return fallback
+	}
+	raw, err := os.ReadFile(filepath.Join(path, "SKILL.md"))
+	if err != nil {
+		return fallback
+	}
+	body := markdownSections(string(raw), routerSections...)
+	if body == "" {
+		return fallback
+	}
+	ctx := head + "\n\n# start-best-practice (router)\n\n" + body
+	if len(ctx) > hookInlineBudget {
+		return fallback
+	}
+	return ctx
+}
+
+// markdownSections returns the level-2 sections of md whose headings are in
+// names, in document order, each with its heading.
+func markdownSections(md string, names ...string) string {
+	want := map[string]bool{}
+	for _, n := range names {
+		want[n] = true
+	}
+	var b strings.Builder
+	keep, inFence := false, false
+	for _, line := range strings.Split(md, "\n") {
+		if strings.HasPrefix(strings.TrimSpace(line), "```") {
+			inFence = !inFence
+		}
+		if !inFence && strings.HasPrefix(line, "## ") {
+			keep = want[strings.TrimSpace(strings.TrimPrefix(line, "## "))]
+		}
+		if keep {
+			b.WriteString(line)
+			b.WriteString("\n")
+		}
+	}
+	return strings.TrimSpace(b.String())
+}
+
+// isSmallTalk reports whether prompt is an acknowledgement or short
+// follow-up rather than a new request.
+func isSmallTalk(prompt string) bool {
+	norm := strings.ToLower(strings.Trim(strings.TrimSpace(prompt), ".!?,;: "))
+	return hookSmallTalk[norm] || len(strings.Fields(norm)) < hookMinWords
 }
 
 var skillRefPattern = regexp.MustCompile(`(?:^|[\s(\[` + "`" + `])grimoire:([A-Za-z0-9][A-Za-z0-9._/-]*)`)
@@ -145,14 +258,13 @@ func hookContext(prompt string) string {
 	if refs := explicitSkillRefs(prompt); len(refs) > 0 {
 		return explicitSkillContext(refs)
 	}
-	ctx := suggestedSkillContext(prompt)
-	if len(strings.Fields(prompt)) < hookRouteMinWords {
-		return ctx
+	if isSmallTalk(prompt) {
+		return ""
 	}
-	if ctx == "" {
-		return hookRouteHint
+	if ctx := suggestedSkillContext(prompt); ctx != "" {
+		return hookRouteReminder + "\n" + ctx
 	}
-	return ctx + "\n" + hookRouteHint
+	return hookRouteReminder
 }
 
 // explicitSkillRefs returns the distinct skill names written as grimoire:<name>.
@@ -207,8 +319,10 @@ func explicitSkillContext(names []string) string {
 	return strings.TrimSpace(b.String())
 }
 
-// suggestedSkillContext lists the skills that best match prompt, or "" when
-// none scores at least hookMinScore.
+// suggestedSkillContext lists the skills that best match prompt as
+// candidates for the routed workflow, or "" when none scores at least
+// hookMinScore. Keyword matches can be off-topic, so they are offered as
+// unverified rather than as the answer.
 func suggestedSkillContext(prompt string) string {
 	regs := skills.AllSkillsPackages()
 	if len(regs) == 0 {
@@ -224,7 +338,7 @@ func suggestedSkillContext(prompt string) string {
 	}
 
 	var b strings.Builder
-	b.WriteString("grimoire: best-practice skills matching this prompt:\n")
+	b.WriteString("grimoire: candidate skills by keyword match (unverified; the routed workflow confirms or discards them):\n")
 	for i := range picks {
 		sk := &picks[i].Skill
 		desc := strings.Join(strings.Fields(sk.Description), " ")
@@ -237,8 +351,7 @@ func suggestedSkillContext(prompt string) string {
 			fmt.Fprintf(&b, "- %s — %s\n", sk.Name, desc)
 		}
 	}
-	b.WriteString("Before acting, if one fits the task, call grimoire_get_skill with its name and follow it. If none fits, ignore this note.")
-	return b.String()
+	return strings.TrimRight(b.String(), "\n")
 }
 
 // hookPicks returns the skills worth suggesting for prompt, best first.

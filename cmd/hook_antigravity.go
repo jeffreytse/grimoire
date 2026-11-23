@@ -79,10 +79,12 @@ func writeAgy(out io.Writer, step agyStep) {
 }
 
 // runAgySession injects the instruction line that other agents read from
-// their instruction file (Antigravity has no user-level one).
+// their instruction file (Antigravity has no user-level one), followed by
+// grimoire's router.
 func runAgySession(in io.Reader, out io.Writer) {
 	_, _ = io.Copy(io.Discard, io.LimitReader(in, 1<<20))
-	writeAgy(out, agyStep{SystemMessage: &agySystemMessage{SystemMessage: agent.MCPTriggerLine}})
+	msg := agent.MCPTriggerLine + "\n\n" + sessionContext()
+	writeAgy(out, agyStep{SystemMessage: &agySystemMessage{SystemMessage: msg}})
 }
 
 // runAgyPrompt suggests skills for the latest user prompt. PreInvocation runs

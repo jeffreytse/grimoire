@@ -25,8 +25,12 @@ func TestAgySession_InjectsInstruction(t *testing.T) {
 	var out bytes.Buffer
 	runAgySession(strings.NewReader(`{"conversationId":"c1"}`), &out)
 	steps := agySteps(t, &out)
-	if len(steps) != 1 || steps[0].SystemMessage == nil || steps[0].SystemMessage.SystemMessage != agent.MCPTriggerLine {
+	if len(steps) != 1 || steps[0].SystemMessage == nil {
 		t.Fatalf("steps = %+v", steps)
+	}
+	msg := steps[0].SystemMessage.SystemMessage
+	if !strings.HasPrefix(msg, agent.MCPTriggerLine) || !strings.Contains(msg, "start-best-practice") {
+		t.Fatalf("system message = %q", msg)
 	}
 }
 

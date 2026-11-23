@@ -191,3 +191,40 @@ func TestPromptHookFile(t *testing.T) {
 		}
 	}
 }
+
+// The session hook sits beside the prompt hook in the same file; both are
+// detected and removed together, and other session hooks are kept.
+func TestSessionHook_InstallDetectRemove(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "settings.json")
+	other := `{"hooks":{"SessionStart":[{"hooks":[{"type":"command","command":"node caveman-activate.js"}]}]}}`
+	if err := os.WriteFile(path, []byte(other), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	h, _ := PromptHookFor("claude")
+	if _, err := ConfigurePromptHook(path, h, PromptHookCommand("grimoire")); err != nil {
+		t.Fatal(err)
+	}
+	if changed, err := ConfigureSessionHook(path, h, SessionHookCommand("/opt/bin/grimoire")); err != nil || !changed {
+		t.Fatalf("session hook: %v %v", changed, err)
+	}
+	if changed, _ := ConfigureSessionHook(path, h, SessionHookCommand("/opt/bin/grimoire")); changed {
+		t.Error("second install changed the file")
+	}
+	if !HasSessionHook(path, h) {
+		t.Error("session hook not detected")
+	}
+	if changed, err := RemovePromptHook(path, h); err != nil || !changed {
+		t.Fatalf("remove: %v %v", changed, err)
+	}
+	if HasSessionHook(path, h) {
+		t.Error("session hook left behind")
+	}
+	cfg, _ := readSettings(path)
+	groups, _ := hookGroups(cfg, path, "SessionStart")
+	if len(groups) != 1 || hookCommand(groupHooks(groups[0])[0]) != "node caveman-activate.js" {
+		t.Errorf("other session hook lost: %v", groups)
+	}
+	if _, ok := cfg["hooks"].(map[string]any)["UserPromptSubmit"]; ok {
+		t.Error("prompt hook left behind")
+	}
+}

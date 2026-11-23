@@ -16,6 +16,10 @@ type MCPSetup struct {
 	Hook bool
 	// HookSupported is false for agents that cannot run a prompt hook.
 	HookSupported bool
+	// SessionHook: grimoire's session hook (which injects the router) is
+	// registered. SessionHookSupported is false where grimoire has none.
+	SessionHook          bool
+	SessionHookSupported bool
 }
 
 // Active reports whether grimoire is set up in MCP mode here at all.
@@ -47,7 +51,9 @@ func DetectMCPSetup(ag, scope, projectDir string) MCPSetup {
 			return s
 		}
 		s.HookSupported = true
+		s.SessionHookSupported = h.SessionEvent != ""
 		path := PromptHookFile(ag, scope, projectDir)
+		s.SessionHook = HasSessionHook(path, h)
 		cfg, err := readSettings(path)
 		if err != nil {
 			return s
@@ -58,7 +64,7 @@ func DetectMCPSetup(ag, scope, projectDir string) MCPSetup {
 		}
 		for _, g := range groups {
 			for _, hk := range groupHooks(g) {
-				if isGrimoireHook(hookCommand(hk)) {
+				if strings.HasSuffix(strings.TrimSpace(hookCommand(hk)), " "+promptHookArgs) && isGrimoireHook(hookCommand(hk)) {
 					s.Hook = true
 				}
 			}

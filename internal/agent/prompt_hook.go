@@ -25,6 +25,10 @@ import (
 type PromptHook struct {
 	// Event is the hook event under "hooks" in the settings file.
 	Event string
+	// SessionEvent is the session-start event that injects grimoire's
+	// router once per session (and again after /clear or compaction where
+	// the agent fires it then).
+	SessionEvent string
 	// Timeout bounds the hook, in the agent's unit; a slow search must
 	// never stall the user's prompt.
 	Timeout int
@@ -42,10 +46,10 @@ type PromptHook struct {
 //	codex   UserPromptSubmit  timeout s   $CODEX_HOME/hooks.json    ./.codex/hooks.json
 //	gemini  BeforeAgent       timeout ms  ~/.gemini/settings.json   ./.gemini/settings.json
 var promptHooks = map[string]PromptHook{
-	"claude": {Event: "UserPromptSubmit", Timeout: 10},
-	"codex": {Event: "UserPromptSubmit", Timeout: 10,
+	"claude": {Event: "UserPromptSubmit", SessionEvent: "SessionStart", Timeout: 10},
+	"codex": {Event: "UserPromptSubmit", SessionEvent: "SessionStart", Timeout: 10,
 		Trust: "Codex skips new hooks until you trust them — run /hooks in codex and trust it"},
-	"gemini": {Event: "BeforeAgent", Timeout: 10000, Name: "grimoire"},
+	"gemini": {Event: "BeforeAgent", SessionEvent: "SessionStart", Timeout: 10000, Name: "grimoire"},
 }
 
 // PromptHookFor returns ag's prompt hook, or false when grimoire has none
@@ -78,12 +82,21 @@ func PromptHookFile(ag, scope, projectDir string) string {
 	}
 }
 
-// promptHookArgs is what follows the grimoire binary in the hook command.
-const promptHookArgs = "hook prompt"
+// promptHookArgs and sessionHookArgs follow the grimoire binary in the hook
+// commands.
+const (
+	promptHookArgs  = "hook prompt"
+	sessionHookArgs = "hook session"
+)
 
-// PromptHookCommand is the hook command line for the grimoire binary bin.
+// PromptHookCommand is the prompt hook command line for the grimoire binary bin.
 func PromptHookCommand(bin string) string {
 	return shellQuote(bin) + " " + promptHookArgs
+}
+
+// SessionHookCommand is the session hook command line for the grimoire binary bin.
+func SessionHookCommand(bin string) string {
+	return shellQuote(bin) + " " + sessionHookArgs
 }
 
 // shellQuote single-quotes bin for a POSIX shell when it needs it.
@@ -94,15 +107,20 @@ func shellQuote(bin string) string {
 	return bin
 }
 
-// isGrimoireHook reports whether command is a grimoire prompt hook, whatever
-// binary path it was registered with.
+// isGrimoireHook reports whether command is a grimoire prompt or session
+// hook, whatever binary path it was registered with.
 func isGrimoireHook(command string) bool {
 	c := strings.TrimSpace(command)
-	if !strings.HasSuffix(c, " "+promptHookArgs) {
-		return false
+	for _, args := range []string{promptHookArgs, sessionHookArgs} {
+		if !strings.HasSuffix(c, " "+args) {
+			continue
+		}
+		bin := strings.Trim(strings.TrimSpace(strings.TrimSuffix(c, args)), `'"`)
+		if filepath.Base(bin) == "grimoire" {
+			return true
+		}
 	}
-	bin := strings.Trim(strings.TrimSpace(strings.TrimSuffix(c, promptHookArgs)), `'"`)
-	return filepath.Base(bin) == "grimoire"
+	return false
 }
 
 // ConfigurePromptHook makes the settings file at path run command on every
@@ -110,11 +128,25 @@ func isGrimoireHook(command string) bool {
 // binary path). Other settings and hooks are kept. Reports whether the file
 // changed.
 func ConfigurePromptHook(path string, h PromptHook, command string) (bool, error) {
+	return configureEventHook(path, h, h.Event, command)
+}
+
+// ConfigureSessionHook makes the settings file at path run command at session
+// start under h.SessionEvent, like ConfigurePromptHook. It does nothing when
+// the agent has no session event.
+func ConfigureSessionHook(path string, h PromptHook, command string) (bool, error) {
+	if h.SessionEvent == "" {
+		return false, nil
+	}
+	return configureEventHook(path, h, h.SessionEvent, command)
+}
+
+func configureEventHook(path string, h PromptHook, event, command string) (bool, error) {
 	cfg, err := readSettings(path)
 	if err != nil {
 		return false, err
 	}
-	groups, err := hookGroups(cfg, path, h.Event)
+	groups, err := hookGroups(cfg, path, event)
 	if err != nil {
 		return false, err
 	}
@@ -143,12 +175,13 @@ func ConfigurePromptHook(path string, h PromptHook, command string) (bool, error
 	}
 	groups = withoutGrimoireHooks(groups)
 	groups = append(groups, map[string]any{"hooks": []any{entry}})
-	setHookGroups(cfg, h.Event, groups)
+	setHookGroups(cfg, event, groups)
 	return true, writeSettings(path, cfg)
 }
 
-// RemovePromptHook drops grimoire's prompt hook from h.Event in the settings
-// file at path, leaving every other hook. Reports whether the file changed.
+// RemovePromptHook drops grimoire's prompt and session hooks from the
+// settings file at path, leaving every other hook. Reports whether the file
+// changed.
 func RemovePromptHook(path string, h PromptHook) (bool, error) {
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		return false, nil
@@ -157,16 +190,50 @@ func RemovePromptHook(path string, h PromptHook) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	groups, err := hookGroups(cfg, path, h.Event)
-	if err != nil {
-		return false, err
+	changed := false
+	for _, event := range []string{h.Event, h.SessionEvent} {
+		if event == "" {
+			continue
+		}
+		groups, err := hookGroups(cfg, path, event)
+		if err != nil {
+			return false, err
+		}
+		kept := withoutGrimoireHooks(groups)
+		if len(kept) == len(groups) && countHooks(kept) == countHooks(groups) {
+			continue
+		}
+		setHookGroups(cfg, event, kept)
+		changed = true
 	}
-	kept := withoutGrimoireHooks(groups)
-	if len(kept) == len(groups) && countHooks(kept) == countHooks(groups) {
+	if !changed {
 		return false, nil
 	}
-	setHookGroups(cfg, h.Event, kept)
 	return true, writeSettings(path, cfg)
+}
+
+// HasSessionHook reports whether the settings file at path has grimoire's
+// session hook under h.SessionEvent.
+func HasSessionHook(path string, h PromptHook) bool {
+	if h.SessionEvent == "" {
+		return false
+	}
+	cfg, err := readSettings(path)
+	if err != nil {
+		return false
+	}
+	groups, err := hookGroups(cfg, path, h.SessionEvent)
+	if err != nil {
+		return false
+	}
+	for _, g := range groups {
+		for _, hk := range groupHooks(g) {
+			if strings.HasSuffix(strings.TrimSpace(hookCommand(hk)), " "+sessionHookArgs) && isGrimoireHook(hookCommand(hk)) {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 func readSettings(path string) (map[string]any, error) {
