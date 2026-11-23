@@ -11,11 +11,18 @@ import (
 
 func runHook(t *testing.T, prompt string) string {
 	t.Helper()
+	ctx, _ := runHookFull(t, prompt)
+	return ctx
+}
+
+// runHookFull runs the prompt hook and returns its context and status line.
+func runHookFull(t *testing.T, prompt string) (ctx, msg string) {
+	t.Helper()
 	in, _ := json.Marshal(map[string]string{"prompt": prompt, "hook_event_name": "UserPromptSubmit"})
 	var out bytes.Buffer
 	runHookPrompt(bytes.NewReader(in), &out)
 	if out.Len() == 0 {
-		return ""
+		return "", ""
 	}
 	var o hookOutput
 	if err := json.Unmarshal(out.Bytes(), &o); err != nil {
@@ -24,7 +31,7 @@ func runHook(t *testing.T, prompt string) string {
 	if o.HookSpecificOutput.HookEventName != "UserPromptSubmit" {
 		t.Errorf("hookEventName = %q", o.HookSpecificOutput.HookEventName)
 	}
-	return o.HookSpecificOutput.AdditionalContext
+	return o.HookSpecificOutput.AdditionalContext, o.SystemMessage
 }
 
 func TestHookPrompt_SuggestsMatchingSkill(t *testing.T) {
@@ -249,5 +256,78 @@ func TestHookSession_FallsBackToDirective(t *testing.T) {
 	ctx := runSessionHook(t, "")
 	if !strings.Contains(ctx, `grimoire_get_skill with name "start-best-practice"`) {
 		t.Errorf("context = %q", ctx)
+	}
+}
+
+// The prompt hook shows the user a grimoire ▸ status line and asks the model
+// for a trace; small talk shows nothing.
+func TestHookPrompt_StatusLine(t *testing.T) {
+	setupListSkillsHome(t)
+	orig := hookMinScore
+	hookMinScore = 0.1
+	t.Cleanup(func() { hookMinScore = orig })
+
+	ctx, msg := runHookFull(t, "write a conventional commit message")
+	if !strings.HasPrefix(msg, "grimoire ▸ routing via start-best-practice · candidates: ") || !strings.Contains(msg, "propose-conventional-commit") {
+		t.Errorf("candidates status = %q", msg)
+	}
+	if !strings.Contains(ctx, traceRule) {
+		t.Errorf("trace rule missing from context %q", ctx)
+	}
+
+	hookMinScore = 1e9
+	if _, msg := runHookFull(t, "migrate the billing service"); msg != "grimoire ▸ routing via start-best-practice" {
+		t.Errorf("no-candidate status = %q", msg)
+	}
+	if _, msg := runHookFull(t, "use grimoire:write-unit-test and grimoire:nope-skill"); msg != "grimoire ▸ loading skill write-unit-test · unknown skill nope-skill" {
+		t.Errorf("explicit status = %q", msg)
+	}
+	if ctx, msg := runHookFull(t, "thanks!"); ctx != "" || msg != "" {
+		t.Errorf("small talk: ctx=%q msg=%q", ctx, msg)
+	}
+}
+
+// Trace off (env or core.trace) drops the status line and tells the model
+// not to narrate.
+func TestHookPrompt_TraceOff(t *testing.T) {
+	setupListSkillsHome(t)
+	t.Setenv("GRIMOIRE_TRACE", "off")
+	ctx, msg := runHookFull(t, "migrate the billing service")
+	if msg != "" || !strings.Contains(ctx, traceOffRule) || strings.Contains(ctx, traceRule) {
+		t.Errorf("env off: ctx=%q msg=%q", ctx, msg)
+	}
+
+	t.Setenv("GRIMOIRE_TRACE", "")
+	cfg := filepath.Join(os.Getenv("XDG_CONFIG_HOME"), "grimoire")
+	if err := os.MkdirAll(cfg, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(cfg, "grimoire.toml"), []byte("[core]\ntrace = \"off\"\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if traceEnabled() {
+		t.Errorf("core.trace = off in %s not honored", cfg)
+	}
+}
+
+func TestHookSession_StatusLine(t *testing.T) {
+	setupListSkillsHome(t)
+	_, msg := sessionTurn(true)
+	if msg != "grimoire ▸ router not inlined · will load start-best-practice on demand" {
+		t.Errorf("fallback status = %q", msg)
+	}
+	dir := filepath.Join(os.Getenv("GRIMOIRE_SOURCE"), "skills", "meta", "skills", "start-best-practice")
+	if err := os.MkdirAll(dir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(dir, "SKILL.md"), []byte(routerFixture), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	ctx, msg := sessionTurn(true)
+	if msg != "grimoire ▸ router ready · start-best-practice (1 route)" || !strings.Contains(ctx, traceRule) {
+		t.Errorf("status = %q", msg)
+	}
+	if ctx, msg := sessionTurn(false); msg != "" || !strings.Contains(ctx, traceOffRule) {
+		t.Errorf("trace off: msg = %q", msg)
 	}
 }

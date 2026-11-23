@@ -915,7 +915,7 @@ func toolGrimoireGetSkill(_ context.Context, request mcp.CallToolRequest) (*mcp.
 		Name:    name,
 		Content: string(content),
 		Path:    skillPath,
-		Note:    mcpChainRule,
+		Note:    skillNote(),
 	})
 }
 
@@ -926,7 +926,7 @@ func getSkillsBatch(names []string) *mcp.CallToolResult {
 	if len(names) > mcpGetSkillsMax {
 		return mcp.NewToolResultError(fmt.Sprintf("at most %d names per call (got %d)", mcpGetSkillsMax, len(names)))
 	}
-	out := mcpGetSkillsOutput{Note: mcpChainRule}
+	out := mcpGetSkillsOutput{Note: skillNote()}
 	seen := map[string]bool{}
 	for _, ref := range names {
 		name, skillPath, err := resolveSkillOrSuggest(ref)

@@ -115,13 +115,14 @@ func OpenCodePluginFile(scope, projectDir string) string {
 }
 
 const openCodePluginTemplate = `%s; ` + "`grimoire mcp uninstall`" + ` removes it.
-// Runs grimoire's skill matching on each new user message and adds the
-// result to the system prompt for that turn.
+// Runs grimoire's skill matching on each new user message, adds the result
+// to the system prompt for that turn, and shows grimoire's status line
+// ("grimoire ▸ …") as a toast.
 const BIN = %s
 const TIMEOUT_MS = 10000
 const contextBySession = new Map()
 
-async function skillContext(prompt) {
+async function hookOutput(prompt) {
   try {
     const proc = Bun.spawn([BIN, "hook", "prompt"], {
       stdin: new Blob([JSON.stringify({ prompt, hook_event_name: "UserPromptSubmit" })]),
@@ -131,20 +132,27 @@ async function skillContext(prompt) {
     const timer = setTimeout(() => proc.kill(), TIMEOUT_MS)
     const out = await new Response(proc.stdout).text()
     clearTimeout(timer)
-    if (!out.trim()) return ""
-    return JSON.parse(out).hookSpecificOutput?.additionalContext ?? ""
+    if (!out.trim()) return {}
+    const o = JSON.parse(out)
+    return { context: o.hookSpecificOutput?.additionalContext ?? "", status: o.systemMessage ?? "" }
   } catch {
-    return ""
+    return {}
   }
 }
 
-export const GrimoirePromptHook = async () => ({
+export const GrimoirePromptHook = async ({ client } = {}) => ({
   "chat.message": async (input, output) => {
     const prompt = (output.parts ?? [])
       .filter((p) => p.type === "text" && !p.synthetic)
       .map((p) => p.text)
       .join("\n")
-    contextBySession.set(input.sessionID, prompt ? await skillContext(prompt) : "")
+    const { context = "", status = "" } = prompt ? await hookOutput(prompt) : {}
+    contextBySession.set(input.sessionID, context)
+    if (status) {
+      try {
+        await client?.tui?.showToast?.({ body: { message: status, variant: "info" } })
+      } catch {}
+    }
   },
   "experimental.chat.system.transform": async (input, output) => {
     const ctx = input.sessionID ? contextBySession.get(input.sessionID) : ""

@@ -11,6 +11,7 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/jeffreytse/grimoire/internal/config"
 	"github.com/jeffreytse/grimoire/internal/search"
 	"github.com/jeffreytse/grimoire/internal/skills"
 )
@@ -140,6 +141,9 @@ type hookInput struct {
 }
 
 type hookOutput struct {
+	// SystemMessage is shown to the user, not the model: grimoire's status
+	// line ("grimoire ▸ …"). Empty when trace is off.
+	SystemMessage      string `json:"systemMessage,omitempty"`
 	HookSpecificOutput struct {
 		HookEventName     string `json:"hookEventName"`
 		AdditionalContext string `json:"additionalContext"`
@@ -155,7 +159,8 @@ func runHookPrompt(in io.Reader, out io.Writer) {
 	if json.Unmarshal(raw, &input) != nil {
 		return
 	}
-	writeHookOutput(out, input.HookEventName, "UserPromptSubmit", hookContext(input.Prompt))
+	ctx, msg := hookTurn(input.Prompt, traceEnabled())
+	writeHookOutput(out, input.HookEventName, "UserPromptSubmit", ctx, msg)
 }
 
 // runHookSession prints the router context for a session-start hook.
@@ -167,16 +172,19 @@ func runHookSession(in io.Reader, out io.Writer) {
 	var input hookInput
 	// Some agents send no input to session hooks; that is fine.
 	_ = json.Unmarshal(raw, &input)
-	writeHookOutput(out, input.HookEventName, "SessionStart", sessionContext())
+	ctx, msg := sessionTurn(traceEnabled())
+	writeHookOutput(out, input.HookEventName, "SessionStart", ctx, msg)
 }
 
-// writeHookOutput prints ctx as the hook's additional context, echoing the
-// agent's event name (or fallback when it sent none). Empty ctx prints nothing.
-func writeHookOutput(out io.Writer, event, fallback, ctx string) {
+// writeHookOutput prints ctx as the hook's additional context and msg as the
+// status line shown to the user, echoing the agent's event name (or fallback
+// when it sent none). Empty ctx prints nothing.
+func writeHookOutput(out io.Writer, event, fallback, ctx, msg string) {
 	if ctx == "" {
 		return
 	}
 	var o hookOutput
+	o.SystemMessage = msg
 	o.HookSpecificOutput.HookEventName = event
 	if event == "" {
 		o.HookSpecificOutput.HookEventName = fallback
@@ -189,30 +197,84 @@ func writeHookOutput(out io.Writer, event, fallback, ctx string) {
 	fmt.Fprintln(out, string(b))
 }
 
-// sessionContext is the router injected once per session: the chain rule and
-// the start-best-practice routing, inlined from the installed package so it
-// stays in step with the skills library. Without the package it falls back to
-// a directive to load the router.
+// statusPrefix starts every grimoire status and trace line.
+const statusPrefix = "grimoire ▸ "
+
+// traceEnabled reports whether grimoire shows its status lines and asks the
+// model for a decision trace: GRIMOIRE_TRACE overrides core.trace, and both
+// default to on. A config that cannot be read counts as on.
+func traceEnabled() bool {
+	if v := strings.ToLower(strings.TrimSpace(os.Getenv("GRIMOIRE_TRACE"))); v != "" {
+		return v != "off" && v != "0" && v != "false"
+	}
+	r, err := config.Load(getProjectDir())
+	if err != nil {
+		return true
+	}
+	return r.Core.Trace != "off"
+}
+
+// traceContext is the trace instruction for the model, per the trace setting.
+func traceContext(trace bool) string {
+	if trace {
+		return traceRule
+	}
+	return traceOffRule
+}
+
+// sessionContext is the router context for a session (trace on).
 func sessionContext() string {
-	head := "grimoire is active for this session. Before responding to each new user request, apply the start-best-practice routing below and follow the workflow it routes to; load routed skills with grimoire_get_skill.\n\n" + mcpChainRule
+	ctx, _ := sessionTurn(true)
+	return ctx
+}
+
+// sessionTurn returns the router injected once per session — the chain rule
+// and the start-best-practice routing, inlined from the installed package so
+// it stays in step with the skills library — and the status line for the
+// user. Without the package it falls back to a directive to load the router.
+func sessionTurn(trace bool) (ctx, msg string) {
+	head := "grimoire is active for this session. Before responding to each new user request, apply the start-best-practice routing below and follow the workflow it routes to; load routed skills with grimoire_get_skill.\n\n" + mcpChainRule + "\n\n" + traceContext(trace)
 	fallback := head + "\n\nThe router is not inlined here: call grimoire_get_skill with name \"" + routerSkill + "\" once, at the first request of the session, and follow it."
+	fallbackMsg := statusPrefix + "router not inlined · will load " + routerSkill + " on demand"
+	if !trace {
+		fallbackMsg = ""
+	}
 	_, path, err := resolveSkillOrSuggest(routerSkill)
 	if err != nil {
-		return fallback
+		return fallback, fallbackMsg
 	}
 	raw, err := os.ReadFile(filepath.Join(path, "SKILL.md"))
 	if err != nil {
-		return fallback
+		return fallback, fallbackMsg
 	}
 	body := markdownSections(string(raw), routerSections...)
 	if body == "" {
-		return fallback
+		return fallback, fallbackMsg
 	}
-	ctx := head + "\n\n# start-best-practice (router)\n\n" + body
+	ctx = head + "\n\n# start-best-practice (router)\n\n" + body
 	if len(ctx) > hookInlineBudget {
-		return fallback
+		return fallback, fallbackMsg
 	}
-	return ctx
+	if trace {
+		n := countRoutes(body)
+		unit := "routes"
+		if n == 1 {
+			unit = "route"
+		}
+		msg = fmt.Sprintf("%srouter ready · %s (%d %s)", statusPrefix, routerSkill, n, unit)
+	}
+	return ctx, msg
+}
+
+// countRoutes counts the routing table rows that invoke a workflow.
+func countRoutes(body string) int {
+	n := 0
+	for _, line := range strings.Split(body, "\n") {
+		if strings.HasPrefix(strings.TrimSpace(line), "|") && strings.Contains(line, "invoke `") {
+			n++
+		}
+	}
+	return n
 }
 
 // markdownSections returns the level-2 sections of md whose headings are in
@@ -248,23 +310,49 @@ func isSmallTalk(prompt string) bool {
 
 var skillRefPattern = regexp.MustCompile(`(?:^|[\s(\[` + "`" + `])grimoire:([A-Za-z0-9][A-Za-z0-9._/-]*)`)
 
-// hookContext returns the context to add for prompt, or "" for none.
+// hookContext returns the context to add for prompt (trace on), or "" for none.
 func hookContext(prompt string) string {
+	ctx, _ := hookTurn(prompt, true)
+	return ctx
+}
+
+// hookTurn returns the context to add for prompt and the status line for the
+// user, or "" for none. The status line is "" when trace is off.
+func hookTurn(prompt string, trace bool) (ctx, msg string) {
 	prompt = strings.TrimSpace(prompt)
 	// Slash commands are handled by the agent (including /grimoire:skill).
 	if prompt == "" || strings.HasPrefix(prompt, "/") {
-		return ""
+		return "", ""
 	}
 	if refs := explicitSkillRefs(prompt); len(refs) > 0 {
-		return explicitSkillContext(refs)
+		ctx, loaded, unknown := explicitSkillContext(refs)
+		var parts []string
+		if len(loaded) > 0 {
+			parts = append(parts, "loading skill "+strings.Join(loaded, ", "))
+		}
+		if len(unknown) > 0 {
+			parts = append(parts, "unknown skill "+strings.Join(unknown, ", "))
+		}
+		return ctx, statusLine(trace, strings.Join(parts, " · "))
 	}
 	if isSmallTalk(prompt) {
+		return "", ""
+	}
+	reminder := hookRouteReminder + " " + traceContext(trace)
+	route := "routing via " + routerSkill
+	if cands, names := suggestedSkillContext(prompt); cands != "" {
+		return reminder + "\n" + cands, statusLine(trace, route+" · candidates: "+strings.Join(names, ", "))
+	}
+	return reminder, statusLine(trace, route)
+}
+
+// statusLine prefixes text as a grimoire status line, or returns "" when
+// trace is off or there is nothing to say.
+func statusLine(trace bool, text string) string {
+	if !trace || text == "" {
 		return ""
 	}
-	if ctx := suggestedSkillContext(prompt); ctx != "" {
-		return hookRouteReminder + "\n" + ctx
-	}
-	return hookRouteReminder
+	return statusPrefix + text
 }
 
 // explicitSkillRefs returns the distinct skill names written as grimoire:<name>.
@@ -288,12 +376,13 @@ func explicitSkillRefs(prompt string) []string {
 // Read back, which costs a turn. A skill that would push the context past
 // hookInlineBudget is therefore named for grimoire_get_skill instead of
 // inlined: one tool call either way, and the server attaches the chain rule.
-func explicitSkillContext(names []string) string {
+func explicitSkillContext(names []string) (ctx string, loaded, unknown []string) {
 	var b strings.Builder
 	resolved := false
 	for _, ref := range names {
 		name, path, err := resolveSkillOrSuggest(ref)
 		if err != nil {
+			unknown = append(unknown, ref)
 			msg := err.Error()
 			if !strings.HasSuffix(msg, "?") {
 				msg += "."
@@ -309,6 +398,7 @@ func explicitSkillContext(names []string) string {
 			resolved = true
 			b.WriteString(mcpChainRule + "\n\n")
 		}
+		loaded = append(loaded, name)
 		inline := fmt.Sprintf("The user invoked grimoire skill %q. Follow it for this prompt, applied to the rest of the user's message.\n\n%s\n\n", name, strings.TrimSpace(string(content)))
 		if b.Len()+len(inline) <= hookInlineBudget {
 			b.WriteString(inline)
@@ -316,31 +406,32 @@ func explicitSkillContext(names []string) string {
 		}
 		fmt.Fprintf(&b, "The user invoked grimoire skill %q. Before anything else, call grimoire_get_skill with name %q and follow it for this prompt, applied to the rest of the user's message.\n\n", name, name)
 	}
-	return strings.TrimSpace(b.String())
+	return strings.TrimSpace(b.String()), loaded, unknown
 }
 
 // suggestedSkillContext lists the skills that best match prompt as
 // candidates for the routed workflow, or "" when none scores at least
 // hookMinScore. Keyword matches can be off-topic, so they are offered as
 // unverified rather than as the answer.
-func suggestedSkillContext(prompt string) string {
+func suggestedSkillContext(prompt string) (ctx string, names []string) {
 	regs := skills.AllSkillsPackages()
 	if len(regs) == 0 {
-		return ""
+		return "", nil
 	}
 	all, _, err := skills.ListAllSkillsFromPackages(regs)
 	if err != nil {
-		return ""
+		return "", nil
 	}
 	picks := hookPicks(prompt, all)
 	if len(picks) == 0 {
-		return ""
+		return "", nil
 	}
 
 	var b strings.Builder
 	b.WriteString("grimoire: candidate skills by keyword match (unverified; the routed workflow confirms or discards them):\n")
 	for i := range picks {
 		sk := &picks[i].Skill
+		names = append(names, sk.Name)
 		desc := strings.Join(strings.Fields(sk.Description), " ")
 		if r := []rune(desc); len(r) > hookMaxDesc {
 			desc = string(r[:hookMaxDesc]) + "…"
@@ -351,7 +442,7 @@ func suggestedSkillContext(prompt string) string {
 			fmt.Fprintf(&b, "- %s — %s\n", sk.Name, desc)
 		}
 	}
-	return strings.TrimRight(b.String(), "\n")
+	return strings.TrimRight(b.String(), "\n"), names
 }
 
 // hookPicks returns the skills worth suggesting for prompt, best first.

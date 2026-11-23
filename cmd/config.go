@@ -229,6 +229,8 @@ func getKeyResolved(r *config.Config, key string) (val, src string, err error) {
 		return strings.Join(r.Core.Agents, ", "), r.Sources["core.agents"], nil
 	case "core.install-mode":
 		return r.Core.InstallMode, r.Sources["core.install-mode"], nil
+	case "core.trace":
+		return r.Core.Trace, r.Sources["core.trace"], nil
 	}
 	if strings.HasPrefix(key, "standards.") {
 		domain, field, err := config.ParseStandardsKey(key)
@@ -292,6 +294,12 @@ func applyKey(fs *config.FileConfig, key, value string) error {
 			return fmt.Errorf("core.install-mode must be \"symlink\" or \"copy\"")
 		}
 		fs.Core.InstallMode = value
+		return nil
+	case "core.trace":
+		if value != "" && value != "on" && value != "off" {
+			return fmt.Errorf("core.trace must be \"on\" or \"off\"")
+		}
+		fs.Core.Trace = value
 		return nil
 	}
 	if strings.HasPrefix(key, "standards.") {

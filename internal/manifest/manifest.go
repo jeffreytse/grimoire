@@ -385,6 +385,10 @@ func merge(layers []ManifestFile, paths []string) Resolved {
 			r.Core.InstallMode = mf.Core.InstallMode
 			r.Sources["core.install-mode"] = src
 		}
+		if r.Core.Trace == "" && mf.Core.Trace != "" {
+			r.Core.Trace = mf.Core.Trace
+			r.Sources["core.trace"] = src
+		}
 		if len(r.Core.Agents) == 0 && len(mf.Core.Agents) > 0 {
 			r.Core.Agents = mf.Core.Agents
 			r.Sources["core.agents"] = src
@@ -547,6 +551,9 @@ func parseCoreSection(m map[string]any) config.CoreSection {
 	if v, ok := m["install-mode"].(string); ok {
 		cs.InstallMode = v
 	}
+	if v, ok := m["trace"].(string); ok {
+		cs.Trace = v
+	}
 	cs.Agents = parseStringSlice(m["agents"])
 	cs.SearchPackages = parseStringSlice(m["search-packages"])
 	if v, ok := anyToInt(m["update-concurrency"]); ok && v >= 0 {
@@ -643,6 +650,9 @@ func toRawMap(mf *ManifestFile) map[string]any {
 	}
 	if len(mf.Core.Agents) > 0 {
 		core["agents"] = mf.Core.Agents
+	}
+	if mf.Core.Trace != "" {
+		core["trace"] = mf.Core.Trace
 	}
 	if mf.Core.InstallMode != "" {
 		core["install-mode"] = mf.Core.InstallMode
