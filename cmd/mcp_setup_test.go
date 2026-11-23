@@ -510,7 +510,9 @@ func TestMCPInstall_PreApprovesReadOnlyTools(t *testing.T) {
 			if err := runMCPInstall(nil, nil); err != nil {
 				t.Fatal(err)
 			}
-			if b, _ := os.ReadFile(path); strings.Contains(string(b), tc.rule) {
+			// Match the quoted allow entry: the skill-used hook's matcher also
+			// names grimoire_get_skill.
+			if b, _ := os.ReadFile(path); strings.Contains(string(b), `"`+tc.rule+`"`) {
 				t.Errorf("--no-allow still pre-approved: %s", b)
 			}
 		})

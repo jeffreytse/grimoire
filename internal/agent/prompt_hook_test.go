@@ -228,3 +228,59 @@ func TestSessionHook_InstallDetectRemove(t *testing.T) {
 		t.Error("prompt hook left behind")
 	}
 }
+
+// Skills-mode hooks: registered beside other tools' hooks, the skill-used
+// hook under PostToolUse/Skill (Claude only), removed without touching an
+// MCP-mode hook, and replaced when the agent switches to MCP mode.
+func TestSkillsHooks_InstallRemoveAndModeSwitch(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "settings.json")
+	h, _ := PromptHookFor("claude")
+	if _, err := ConfigurePromptHook(path, h, SkillsPromptHookCommand("grimoire")); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := ConfigureSessionHook(path, h, SkillsSessionHookCommand("grimoire")); err != nil {
+		t.Fatal(err)
+	}
+	if changed, err := ConfigureSkillUsedHook(path, "claude", SkillUsedHookCommand("grimoire")); err != nil || !changed {
+		t.Fatalf("skill-used: %v %v", changed, err)
+	}
+	if changed, _ := ConfigureSkillUsedHook(path, "codex", SkillUsedHookCommand("grimoire")); changed {
+		t.Error("skill-used hook written for codex")
+	}
+	cfg, _ := readSettings(path)
+	post, _ := hookGroups(cfg, path, "PostToolUse")
+	if len(post) != 1 || post[0].(map[string]any)["matcher"] != skillUsedMatcher {
+		t.Fatalf("PostToolUse = %v", post)
+	}
+
+	// Switching to MCP mode replaces the skills-mode prompt hook.
+	if _, err := ConfigurePromptHook(path, h, PromptHookCommand("grimoire")); err != nil {
+		t.Fatal(err)
+	}
+	cfg, _ = readSettings(path)
+	prompt, _ := hookGroups(cfg, path, "UserPromptSubmit")
+	if len(prompt) != 1 || hookCommand(groupHooks(prompt[0])[0]) != "grimoire hook prompt" {
+		t.Fatalf("UserPromptSubmit = %v", prompt)
+	}
+
+	// Removing skills-mode hooks leaves the MCP prompt hook.
+	if changed, err := RemoveSkillsHooks(path, h); err != nil || !changed {
+		t.Fatalf("remove: %v %v", changed, err)
+	}
+	cfg, _ = readSettings(path)
+	prompt, _ = hookGroups(cfg, path, "UserPromptSubmit")
+	session, _ := hookGroups(cfg, path, "SessionStart")
+	post, _ = hookGroups(cfg, path, "PostToolUse")
+	// The skill-used hook is shared with MCP mode, so it stays until removed
+	// on its own.
+	if len(prompt) != 1 || len(session) != 0 || len(post) != 1 {
+		t.Errorf("after remove: prompt=%v session=%v post=%v", prompt, session, post)
+	}
+	if changed, err := RemoveSkillUsedHook(path); err != nil || !changed {
+		t.Fatalf("remove skill-used: %v %v", changed, err)
+	}
+	cfg, _ = readSettings(path)
+	if post, _ = hookGroups(cfg, path, "PostToolUse"); len(post) != 0 {
+		t.Errorf("skill-used left: %v", post)
+	}
+}

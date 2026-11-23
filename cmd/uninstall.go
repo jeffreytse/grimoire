@@ -124,6 +124,14 @@ func runUninstall(cmd *cobra.Command, args []string) error {
 	for _, ag := range targets {
 		if agent.SkillCount(ag) == 0 {
 			_ = agent.RemoveAgentMDConfig(ag)
+			removeSkillsHooks(ag)
+			// The badge and its skill-used hook stay while MCP mode uses them.
+			if ag == "claude" && !agent.DetectMCPSetup(ag, "user", getProjectDir()).Active() {
+				removeStatusLine(ag, "user")
+				if _, err := agent.RemoveSkillUsedHook(agent.PromptHookFile(ag, "user", getProjectDir())); err != nil {
+					fmt.Fprintf(os.Stderr, "  warn: %v\n", err)
+				}
+			}
 		}
 	}
 

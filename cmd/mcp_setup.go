@@ -370,11 +370,17 @@ func installMCPAgent(a *mcpAgent, serve string) error {
 // installStatusLine adds the [GRIMOIRE] badge to Claude Code's status line.
 // Another tool's status line is chained only with --statusline.
 func installStatusLine(ag, scope, serve string) error {
+	return installStatusLineFor(ag, scope, serve, flagMCPSetupStatusLine)
+}
+
+// installStatusLineFor adds the badge to ag's status line (Claude Code only),
+// chaining another tool's status line only when chain is set.
+func installStatusLineFor(ag, scope, serve string, chain bool) error {
 	if ag != "claude" {
 		return nil
 	}
 	p := agent.StatusLineFile(scope, getProjectDir())
-	changed, other, err := agent.ConfigureStatusLine(p, serve, flagMCPSetupStatusLine)
+	changed, other, err := agent.ConfigureStatusLine(p, serve, chain)
 	if err != nil {
 		return fmt.Errorf("adding status line badge to %s: %w", p, err)
 	}
@@ -442,7 +448,14 @@ func installPromptHook(ag, scope, serve string) error {
 			reportChange(sessionChanged, "added session hook (injects the grimoire router) to "+settings,
 				"session hook already in "+settings)
 		}
-		changed = changed || sessionChanged
+		usedChanged, err := agent.ConfigureSkillUsedHook(settings, ag, agent.SkillUsedHookCommand(serve))
+		if err != nil {
+			return fmt.Errorf("adding skill-used hook to %s: %w", settings, err)
+		}
+		if usedChanged {
+			reportChange(true, "added skill-used hook (per-session status line badge) to "+settings, "")
+		}
+		changed = changed || sessionChanged || usedChanged
 		if changed && h.Trust != "" {
 			fmt.Printf("  %s  %s\n", tui.IconWarn, h.Trust)
 		}

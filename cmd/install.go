@@ -341,9 +341,7 @@ func runInstall(cmd *cobra.Command, args []string) error {
 	// configure agent MD files
 	if !flagInstallNoCfg {
 		for _, ag := range targets {
-			if err := agent.ConfigureAgentMD(ag); err != nil {
-				fmt.Fprintf(os.Stderr, "  warn: configuring %s: %v\n", ag, err)
-			}
+			configureSkillsAgent(ag)
 		}
 	}
 
@@ -594,9 +592,7 @@ func runInstallSkillRef(rawKey string, pkgRef *config.PackageRef) error {
 	}
 	if !flagInstallNoCfg {
 		for _, ag := range targets {
-			if err := agent.ConfigureAgentMD(ag); err != nil {
-				fmt.Fprintf(os.Stderr, "  warn: configuring %s: %v\n", ag, err)
-			}
+			configureSkillsAgent(ag)
 		}
 	}
 
@@ -759,9 +755,7 @@ func runInstallFromManifest(projectDir string) error {
 	}
 	if !flagInstallNoCfg {
 		for _, ag := range targets {
-			if err := agent.ConfigureAgentMD(ag); err != nil {
-				fmt.Fprintf(os.Stderr, "  warn: configuring %s: %v\n", ag, err)
-			}
+			configureSkillsAgent(ag)
 		}
 	}
 
@@ -945,9 +939,7 @@ func runInstallFromPackageURL(ref string) error {
 	}
 	if !flagInstallNoCfg {
 		for _, ag := range targets {
-			if err := agent.ConfigureAgentMD(ag); err != nil {
-				fmt.Fprintf(os.Stderr, "  warn: configuring %s: %v\n", ag, err)
-			}
+			configureSkillsAgent(ag)
 		}
 	}
 	finalizePluginAgents(targets)
@@ -999,9 +991,7 @@ func runInstallFromRoot(root string) error {
 	}
 	if !flagInstallNoCfg {
 		for _, ag := range targets {
-			if err := agent.ConfigureAgentMD(ag); err != nil {
-				fmt.Fprintf(os.Stderr, "  warn: configuring %s: %v\n", ag, err)
-			}
+			configureSkillsAgent(ag)
 		}
 	}
 	finalizePluginAgents(targets)

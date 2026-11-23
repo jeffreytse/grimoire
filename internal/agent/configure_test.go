@@ -220,3 +220,26 @@ func TestRemoveAgentMDConfig_RoundtripWithConfigure(t *testing.T) {
 		t.Errorf("file differs after configure+remove roundtrip:\ngot:  %q\nwant: %q", got, original)
 	}
 }
+
+// The skills index file is not a skill: an agent with only the index left
+// counts as having no skills, so uninstall cleans up its grimoire config.
+func TestSkillCount_IgnoresIndexFile(t *testing.T) {
+	home := t.TempDir()
+	t.Setenv("HOME", home)
+	dir := SkillsDir("claude")
+	if err := os.MkdirAll(filepath.Join(dir, "write-unit-test"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(dir, "_GRIMOIRE_INDEX.md"), []byte("index"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if n := SkillCount("claude"); n != 1 {
+		t.Errorf("SkillCount = %d; want 1", n)
+	}
+	if err := os.Remove(filepath.Join(dir, "write-unit-test")); err != nil {
+		t.Fatal(err)
+	}
+	if n := SkillCount("claude"); n != 0 {
+		t.Errorf("SkillCount with only the index = %d; want 0", n)
+	}
+}

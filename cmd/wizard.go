@@ -362,7 +362,7 @@ func runWizard() error {
 		}
 		for _, ag := range selectedAgents {
 			_, _ = skills.CleanBrokenSymlinks(agent.SkillsDir(ag))
-			_ = agent.ConfigureAgentMD(ag)
+			configureSkillsAgent(ag)
 		}
 
 		// Record installed domains in the global manifest for reproducibility.

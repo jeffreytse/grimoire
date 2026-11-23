@@ -23,6 +23,8 @@ import (
 //
 //	GRIMOIRE_DISPLAY_EVAL=1 go test ./cmd -run TestDisplayEval -v -timeout 60m
 //	GRIMOIRE_DISPLAY_EVAL_MODE=mcp|skills|both   grimoire mode(s) to run (default mcp)
+//	GRIMOIRE_DISPLAY_EVAL_MODEL=<m> claude --model for every case; pin it when
+//	                                comparing runs, so only one thing changes
 //	GRIMOIRE_DISPLAY_EVAL_LIMIT=4   run only the first N cases
 //	GRIMOIRE_SOURCE=<skills repo>   evaluate a draft skills package
 //	GRIMOIRE_DISPLAY_EVAL_OUT=<dir> keep each case's transcript there, to
@@ -286,15 +288,18 @@ func saveTranscript(t *testing.T, mode string, n int, level, prompt string, text
 var displayMarker = regexp.MustCompile("(?m)grimoire ▸|^\\*\\*[a-z0-9-]+\\*\\*[^\\n]*`[a-z0-9-]+/[a-z0-9-]+`")
 
 // evidenceMarker matches the full level's evidence: a source, severity or risk.
-var evidenceMarker = regexp.MustCompile(`(?i)_?source:|🔴|🟡|⚪|⚠️ without this`)
+var evidenceMarker = regexp.MustCompile(`(?i)_?source:|🔴|🟡|⚪|⚠️[\s*_]*without this`)
 
 // runClaudeEval runs one prompt headless in work with extra claude args and
 // returns the assistant's text messages and the run's cost.
 func runClaudeEval(work, level, prompt string, args ...string) (texts []string, cost float64, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 8*time.Minute)
 	defer cancel()
-	cmd := exec.CommandContext(ctx, "claude", append([]string{"-p", prompt,
-		"--output-format", "stream-json", "--verbose", "--max-turns", "12"}, args...)...)
+	base := []string{"-p", prompt, "--output-format", "stream-json", "--verbose", "--max-turns", "12"}
+	if m := os.Getenv("GRIMOIRE_DISPLAY_EVAL_MODEL"); m != "" {
+		base = append(base, "--model", m)
+	}
+	cmd := exec.CommandContext(ctx, "claude", append(base, args...)...)
 	cmd.Dir = work
 	cmd.Env = append(os.Environ(), "GRIMOIRE_TRACE="+level)
 	cmd.Stdin = strings.NewReader("")
@@ -363,6 +368,7 @@ func TestScoreDisplay(t *testing.T) {
 		{"prefixed prose", prose, "brief", true, map[string]bool{"shown": true, "clean": false}},
 		{"full with source", block + "\n_Source: Klein (1998)_", "full", true, map[string]bool{"shown": true, "clean": true, "evidence": true}},
 		{"full without evidence", block, "full", true, map[string]bool{"shown": true, "clean": true, "evidence": false}},
+		{"full with bold risk line", block + "\n⎿  ⚠️ **Without this:** no backup", "full", true, map[string]bool{"shown": true, "clean": true, "evidence": true}},
 	}
 	for _, c := range cases {
 		got := scoreDisplay(c.reply, c.routes, c.level)

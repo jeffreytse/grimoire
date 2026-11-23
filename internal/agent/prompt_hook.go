@@ -87,6 +87,44 @@ func PromptHookFile(ag, scope, projectDir string) string {
 const (
 	promptHookArgs  = "hook prompt"
 	sessionHookArgs = "hook session"
+
+	// Skills mode (grimoire install): skills are linked into the agent, so
+	// these hooks deliver only grimoire's display and status lines.
+	skillsPromptHookArgs  = "hook skills-prompt"
+	skillsSessionHookArgs = "hook skills-session"
+	skillUsedHookArgs     = "hook skill-used"
+)
+
+// grimoireHookArgs are all grimoire hook commands, after the binary.
+var grimoireHookArgs = []string{promptHookArgs, sessionHookArgs, skillsPromptHookArgs, skillsSessionHookArgs, skillUsedHookArgs}
+
+// skillsHookArgs are the skills-mode hook commands. The skill-used hook is
+// shared with MCP mode, so it is removed separately (RemoveSkillUsedHook).
+var skillsHookArgs = []string{skillsPromptHookArgs, skillsSessionHookArgs}
+
+// SkillsPromptHookCommand is the skills-mode prompt hook command for bin.
+func SkillsPromptHookCommand(bin string) string {
+	return shellQuote(bin) + " " + skillsPromptHookArgs
+}
+
+// SkillsSessionHookCommand is the skills-mode session hook command for bin.
+func SkillsSessionHookCommand(bin string) string {
+	return shellQuote(bin) + " " + skillsSessionHookArgs
+}
+
+// SkillUsedHookCommand is the hook that records each skill the agent
+// invokes, for the status line badge.
+func SkillUsedHookCommand(bin string) string {
+	return shellQuote(bin) + " " + skillUsedHookArgs
+}
+
+// skillUsedEvent and skillUsedMatcher register SkillUsedHookCommand: Claude
+// Code runs PostToolUse hooks after its Skill tool (skills mode) and after
+// grimoire_get_skill (MCP mode), with the session id the status line keys
+// its badge on. Other agents have no status line.
+const (
+	skillUsedEvent   = "PostToolUse"
+	skillUsedMatcher = "Skill|mcp__grimoire__grimoire_get_skill"
 )
 
 // PromptHookCommand is the prompt hook command line for the grimoire binary bin.
@@ -110,8 +148,19 @@ func shellQuote(bin string) string {
 // isGrimoireHook reports whether command is a grimoire prompt or session
 // hook, whatever binary path it was registered with.
 func isGrimoireHook(command string) bool {
+	return hookHasArgs(command, grimoireHookArgs)
+}
+
+// isSkillsHook reports whether command is one of grimoire's skills-mode hooks.
+func isSkillsHook(command string) bool {
+	return hookHasArgs(command, skillsHookArgs)
+}
+
+// hookHasArgs reports whether command runs the grimoire binary with one of
+// argsList, whatever binary path it was registered with.
+func hookHasArgs(command string, argsList []string) bool {
 	c := strings.TrimSpace(command)
-	for _, args := range []string{promptHookArgs, sessionHookArgs} {
+	for _, args := range argsList {
 		if !strings.HasSuffix(c, " "+args) {
 			continue
 		}
@@ -142,6 +191,23 @@ func ConfigureSessionHook(path string, h PromptHook, command string) (bool, erro
 }
 
 func configureEventHook(path string, h PromptHook, event, command string) (bool, error) {
+	return configureMatchedHook(path, h, event, "", command)
+}
+
+// ConfigureSkillUsedHook registers the skill-used hook (Claude Code's
+// PostToolUse on the Skill tool) in the settings file at path. It does
+// nothing for other agents.
+func ConfigureSkillUsedHook(path, ag, command string) (bool, error) {
+	h, ok := promptHooks[ag]
+	if !ok || ag != "claude" {
+		return false, nil
+	}
+	return configureMatchedHook(path, h, skillUsedEvent, skillUsedMatcher, command)
+}
+
+// configureMatchedHook makes the settings file at path run command under
+// event (with matcher, when set), replacing any older grimoire hook there.
+func configureMatchedHook(path string, h PromptHook, event, matcher, command string) (bool, error) {
 	cfg, err := readSettings(path)
 	if err != nil {
 		return false, err
@@ -174,7 +240,11 @@ func configureEventHook(path string, h PromptHook, event, command string) (bool,
 		entry["name"] = h.Name
 	}
 	groups = withoutGrimoireHooks(groups)
-	groups = append(groups, map[string]any{"hooks": []any{entry}})
+	group := map[string]any{"hooks": []any{entry}}
+	if matcher != "" {
+		group["matcher"] = matcher
+	}
+	groups = append(groups, group)
 	setHookGroups(cfg, event, groups)
 	return true, writeSettings(path, cfg)
 }
@@ -183,6 +253,26 @@ func configureEventHook(path string, h PromptHook, event, command string) (bool,
 // settings file at path, leaving every other hook. Reports whether the file
 // changed.
 func RemovePromptHook(path string, h PromptHook) (bool, error) {
+	return removeHooks(path, []string{h.Event, h.SessionEvent, skillUsedEvent}, isGrimoireHook)
+}
+
+// RemoveSkillsHooks drops only grimoire's skills-mode hooks from the settings
+// file at path, so an MCP-mode setup on the same agent keeps its hooks.
+func RemoveSkillsHooks(path string, h PromptHook) (bool, error) {
+	return removeHooks(path, []string{h.Event, h.SessionEvent, skillUsedEvent}, isSkillsHook)
+}
+
+// RemoveSkillUsedHook drops grimoire's skill-used hook from the settings file
+// at path.
+func RemoveSkillUsedHook(path string) (bool, error) {
+	return removeHooks(path, []string{skillUsedEvent}, func(c string) bool {
+		return hookHasArgs(c, []string{skillUsedHookArgs})
+	})
+}
+
+// removeHooks drops the hooks matching drop from events in the settings file
+// at path, leaving every other hook. Reports whether the file changed.
+func removeHooks(path string, events []string, drop func(string) bool) (bool, error) {
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		return false, nil
 	}
@@ -191,7 +281,7 @@ func RemovePromptHook(path string, h PromptHook) (bool, error) {
 		return false, err
 	}
 	changed := false
-	for _, event := range []string{h.Event, h.SessionEvent} {
+	for _, event := range events {
 		if event == "" {
 			continue
 		}
@@ -199,7 +289,7 @@ func RemovePromptHook(path string, h PromptHook) (bool, error) {
 		if err != nil {
 			return false, err
 		}
-		kept := withoutGrimoireHooks(groups)
+		kept := withoutHooks(groups, drop)
 		if len(kept) == len(groups) && countHooks(kept) == countHooks(groups) {
 			continue
 		}
@@ -337,6 +427,12 @@ func countHooks(groups []any) int {
 // withoutGrimoireHooks removes grimoire hooks from each group and drops groups
 // left empty by that. Groups of unknown shape are kept untouched.
 func withoutGrimoireHooks(groups []any) []any {
+	return withoutHooks(groups, isGrimoireHook)
+}
+
+// withoutHooks removes the hooks whose command matches drop from each group
+// and drops groups left empty by that. Groups of unknown shape are kept.
+func withoutHooks(groups []any, drop func(string) bool) []any {
 	out := make([]any, 0, len(groups))
 	for _, g := range groups {
 		m, ok := g.(map[string]any)
@@ -347,7 +443,7 @@ func withoutGrimoireHooks(groups []any) []any {
 		hs := groupHooks(g)
 		kept := make([]any, 0, len(hs))
 		for _, h := range hs {
-			if !isGrimoireHook(hookCommand(h)) {
+			if !drop(hookCommand(h)) {
 				kept = append(kept, h)
 			}
 		}
