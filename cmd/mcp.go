@@ -78,21 +78,21 @@ func runMCPServe(_ *cobra.Command, _ []string) error {
 }
 
 func registerMCPTools(s *server.MCPServer) {
-	s.AddTool(
+	addTool(s,
 		mcp.NewTool("grimoire_context",
 			mcp.WithDescription("Get full grimoire environment context: CLI version, grimoire version, installed agents, resolved settings, last compliance report, packages, and structural rule findings. Call this at session start to get deterministic ground truth."),
 		),
 		toolGrimoireContext,
 	)
 
-	s.AddTool(
+	addTool(s,
 		mcp.NewTool("grimoire_check",
 			mcp.WithDescription("Read the cached compliance report (.grimoire/reports/compliance-latest.json). Returns coverage score, per-practice breakdown, diagnostics, and rule engine findings. Does not re-run the check — run `grimoire check` first for a fresh analysis. Use this to assess BPDD compliance state."),
 		),
 		toolGrimoireCheck,
 	)
 
-	s.AddTool(
+	addTool(s,
 		mcp.NewTool("grimoire_list_skills",
 			mcp.WithDescription("Browse available skills. Without arguments, returns a compact index of domains and subdomains with skill counts. Pass a domain (and optionally a subdomain) to list those skills with name, description, tags, and package. For keyword lookup use grimoire_search_skills; to read a skill use grimoire_get_skill."),
 			mcp.WithString("domain", mcp.Description("Domain to list (e.g. engineering). Omit for the domain index.")),
@@ -101,7 +101,7 @@ func registerMCPTools(s *server.MCPServer) {
 		toolGrimoireListSkills,
 	)
 
-	s.AddTool(
+	addTool(s,
 		mcp.NewTool("grimoire_get_skill",
 			mcp.WithDescription("Fetch the full SKILL.md content for a skill by exact name. When the user writes `grimoire:<skill-name>`, call this with that name directly (no search). A leading `grimoire:` is accepted; an unknown name returns close matches. Returns name, full content, and source path. To load several skills at once (e.g. the steps of a plan), pass `names` instead of `name`."),
 			mcp.WithString("name", mcp.Description("Skill name (e.g. propose-conventional-commit)")),
@@ -110,7 +110,7 @@ func registerMCPTools(s *server.MCPServer) {
 		toolGrimoireGetSkill,
 	)
 
-	s.AddTool(
+	addTool(s,
 		mcp.NewTool("grimoire_search_skills",
 			mcp.WithDescription("Search skills using BM25 relevance ranking. Handles semantic queries like 'write better commit messages' matching propose-conventional-commit — better than exact substring matching. Returns top matches with scores."),
 			mcp.WithString("query", mcp.Required(), mcp.Description("Natural language or keyword search query")),
@@ -119,35 +119,35 @@ func registerMCPTools(s *server.MCPServer) {
 		toolGrimoireSearchSkills,
 	)
 
-	s.AddTool(
+	addTool(s,
 		mcp.NewTool("grimoire_doctor",
 			mcp.WithDescription("Run a health check on the grimoire installation. Returns status of grimoire source, AI agent installations, and config files. Use this to diagnose setup issues."),
 		),
 		toolGrimoireDoctor,
 	)
 
-	s.AddTool(
+	addTool(s,
 		mcp.NewTool("grimoire_run_rules",
 			mcp.WithDescription("Run the deterministic structural rule engine. Checks skill directory structure (missing SKILL.md, missing frontmatter fields), broken agent symlinks, and grimoire.toml parseability. Returns diagnostics tagged source=grimoire-rules."),
 		),
 		toolGrimoireRunRules,
 	)
 
-	s.AddTool(
+	addTool(s,
 		mcp.NewTool("grimoire_get_config",
 			mcp.WithDescription("Return resolved grimoire config for the current project after merging all layers (project > global > system). Equivalent to grimoire config show --json."),
 		),
 		toolGrimoireGetConfig,
 	)
 
-	s.AddTool(
+	addTool(s,
 		mcp.NewTool("grimoire_profile_list",
 			mcp.WithDescription("List all available grimoire profiles (project .grimoire/profiles/ and user directories) plus profiles active in config."),
 		),
 		toolGrimoireProfileList,
 	)
 
-	s.AddTool(
+	addTool(s,
 		mcp.NewTool("grimoire_profile_show",
 			mcp.WithDescription("Show resolved skills and metadata for a named grimoire profile."),
 			mcp.WithString("name", mcp.Required(), mcp.Description("Profile name (without .toml extension)")),
@@ -155,7 +155,7 @@ func registerMCPTools(s *server.MCPServer) {
 		toolGrimoireProfileShow,
 	)
 
-	s.AddTool(
+	addTool(s,
 		mcp.NewTool("grimoire_profile_init",
 			mcp.WithDescription("Create a new profile file at .grimoire/profiles/<name>.toml with a starter template. Returns the relative path of the created file."),
 			mcp.WithString("name", mcp.Required(), mcp.Description("Profile name (without .toml extension)")),
@@ -163,7 +163,7 @@ func registerMCPTools(s *server.MCPServer) {
 		toolGrimoireProfileInit,
 	)
 
-	s.AddTool(
+	addTool(s,
 		mcp.NewTool("grimoire_config_get",
 			mcp.WithDescription("Get the resolved value and source file for a grimoire config key (e.g. standards.engineering.compliance-threshold)."),
 			mcp.WithString("key", mcp.Required(), mcp.Description("Dotted config key")),
@@ -171,7 +171,7 @@ func registerMCPTools(s *server.MCPServer) {
 		toolGrimoireConfigGet,
 	)
 
-	s.AddTool(
+	addTool(s,
 		mcp.NewTool("grimoire_config_set",
 			mcp.WithDescription("Write a grimoire config key. Level defaults to 'local' for standards.* keys, 'global' for core.* keys."),
 			mcp.WithString("key", mcp.Required(), mcp.Description("Dotted config key")),
@@ -181,7 +181,7 @@ func registerMCPTools(s *server.MCPServer) {
 		toolGrimoireConfigSet,
 	)
 
-	s.AddTool(
+	addTool(s,
 		mcp.NewTool("grimoire_config_unset",
 			mcp.WithDescription("Clear a grimoire config key from a config file."),
 			mcp.WithString("key", mcp.Required(), mcp.Description("Dotted config key")),
@@ -190,7 +190,7 @@ func registerMCPTools(s *server.MCPServer) {
 		toolGrimoireConfigUnset,
 	)
 
-	s.AddTool(
+	addTool(s,
 		mcp.NewTool("grimoire_config_add",
 			mcp.WithDescription("Append a value to a list-type config key (idempotent). Supports: standards.extends, standards.profiles, standards.<domain>.practices, standards.<domain>.disabled."),
 			mcp.WithString("key", mcp.Required(), mcp.Description("Dotted config key (must be a list key)")),
@@ -200,7 +200,7 @@ func registerMCPTools(s *server.MCPServer) {
 		toolGrimoireConfigAdd,
 	)
 
-	s.AddTool(
+	addTool(s,
 		mcp.NewTool("grimoire_config_remove",
 			mcp.WithDescription("Remove a value from a list-type config key (idempotent, no error if not present). Mirrors grimoire_config_add."),
 			mcp.WithString("key", mcp.Required(), mcp.Description("Dotted config key (must be a list key)")),
@@ -210,7 +210,7 @@ func registerMCPTools(s *server.MCPServer) {
 		toolGrimoireConfigRemove,
 	)
 
-	s.AddTool(
+	addTool(s,
 		mcp.NewTool("grimoire_install",
 			mcp.WithDescription("Install grimoire skills to AI agent directories. Omit all params to install everything."),
 			mcp.WithString("domain", mcp.Description("Domain to install (e.g. engineering)")),
@@ -221,7 +221,7 @@ func registerMCPTools(s *server.MCPServer) {
 		toolGrimoireInstall,
 	)
 
-	s.AddTool(
+	addTool(s,
 		mcp.NewTool("grimoire_uninstall",
 			mcp.WithDescription("Remove grimoire skills from AI agent directories."),
 			mcp.WithString("domain", mcp.Description("Domain to uninstall")),
@@ -232,7 +232,7 @@ func registerMCPTools(s *server.MCPServer) {
 		toolGrimoireUninstall,
 	)
 
-	s.AddTool(
+	addTool(s,
 		mcp.NewTool("grimoire_update",
 			mcp.WithDescription("Pull the latest grimoire skills and relink. Clones if not yet installed."),
 			mcp.WithBoolean("stable", mcp.Description("Check out latest tagged release instead of HEAD")),
@@ -241,7 +241,7 @@ func registerMCPTools(s *server.MCPServer) {
 		toolGrimoireUpdate,
 	)
 
-	s.AddTool(
+	addTool(s,
 		mcp.NewTool("grimoire_clean",
 			mcp.WithDescription("Remove stale grimoire-managed skills from agent directories (broken symlinks and stale copy-mode installs)."),
 			mcp.WithString("target", mcp.Description("Agent to clean: claude, codex, gemini, antigravity, openclaw, opencode, copilot, pi, dsh, kimi, omp, grok, muse, minimax, all, auto (default: auto)")),
@@ -249,14 +249,14 @@ func registerMCPTools(s *server.MCPServer) {
 		toolGrimoireClean,
 	)
 
-	s.AddTool(
+	addTool(s,
 		mcp.NewTool("grimoire_version",
 			mcp.WithDescription("Show grimoire CLI and skills version information."),
 		),
 		toolGrimoireVersion,
 	)
 
-	s.AddTool(
+	addTool(s,
 		mcp.NewTool("grimoire_init",
 			mcp.WithDescription("Initialize .grimoire/ in the project directory. Creates grimoire.toml with auto-detected profile."),
 			mcp.WithString("profile", mcp.Description("Profile to activate (e.g. engineering, writing, design). Defaults to auto-detected.")),
@@ -266,7 +266,7 @@ func registerMCPTools(s *server.MCPServer) {
 		toolGrimoireInit,
 	)
 
-	s.AddTool(
+	addTool(s,
 		mcp.NewTool("grimoire_self_update",
 			mcp.WithDescription("Check for or apply updates to the grimoire CLI binary. Default is check-only."),
 			mcp.WithBoolean("yes", mcp.Description("Apply the update (default: check only, returns available version)")),
@@ -274,14 +274,14 @@ func registerMCPTools(s *server.MCPServer) {
 		toolGrimoireSelfUpdate,
 	)
 
-	s.AddTool(
+	addTool(s,
 		mcp.NewTool("grimoire_package_list",
 			mcp.WithDescription("List all configured grimoire skill packages with skill counts and clone status."),
 		),
 		toolGrimoirePackageList,
 	)
 
-	s.AddTool(
+	addTool(s,
 		mcp.NewTool("grimoire_package_add",
 			mcp.WithDescription("Add a package to standards.extends and clone it. Accepts owner/repo shorthand, full git URL, or absolute local path."),
 			mcp.WithString("ref", mcp.Required(), mcp.Description("Grimoire ref: owner/repo[@version], git URL, or absolute local path")),
@@ -289,7 +289,7 @@ func registerMCPTools(s *server.MCPServer) {
 		toolGrimoirePackageAdd,
 	)
 
-	s.AddTool(
+	addTool(s,
 		mcp.NewTool("grimoire_package_remove",
 			mcp.WithDescription("Remove a package from standards.extends by name (derived owner/repo or absolute path)."),
 			mcp.WithString("name", mcp.Required(), mcp.Description("Package name as returned by grimoire_package_list")),
@@ -297,7 +297,7 @@ func registerMCPTools(s *server.MCPServer) {
 		toolGrimoirePackageRemove,
 	)
 
-	s.AddTool(
+	addTool(s,
 		mcp.NewTool("grimoire_package_enable",
 			mcp.WithDescription("Enable a previously disabled package."),
 			mcp.WithString("name", mcp.Required(), mcp.Description("Package name as returned by grimoire_package_list")),
@@ -305,7 +305,7 @@ func registerMCPTools(s *server.MCPServer) {
 		toolGrimoirePackageEnable,
 	)
 
-	s.AddTool(
+	addTool(s,
 		mcp.NewTool("grimoire_package_disable",
 			mcp.WithDescription("Disable a package without removing it. Skills from this package will not be loaded."),
 			mcp.WithString("name", mcp.Required(), mcp.Description("Package name as returned by grimoire_package_list")),
@@ -313,7 +313,7 @@ func registerMCPTools(s *server.MCPServer) {
 		toolGrimoirePackageDisable,
 	)
 
-	s.AddTool(
+	addTool(s,
 		mcp.NewTool("grimoire_package_update",
 			mcp.WithDescription("Pull the latest skills from all packages or a specific one."),
 			mcp.WithString("name", mcp.Description("Package name (omit to update all)")),
@@ -322,7 +322,7 @@ func registerMCPTools(s *server.MCPServer) {
 		toolGrimoirePackageUpdate,
 	)
 
-	s.AddTool(
+	addTool(s,
 		mcp.NewTool("grimoire_package_set",
 			mcp.WithDescription("Set the official (core) package. Accepts owner/repo shorthand, full git URL, or absolute local path. Run grimoire_update after to apply."),
 			mcp.WithString("ref", mcp.Required(), mcp.Description("Grimoire ref: owner/repo[@version], git URL, or absolute local path")),
@@ -330,14 +330,14 @@ func registerMCPTools(s *server.MCPServer) {
 		toolGrimoirePackageSet,
 	)
 
-	s.AddTool(
+	addTool(s,
 		mcp.NewTool("grimoire_package_reset",
 			mcp.WithDescription("Clear core.package and revert to the built-in official default (jeffreytse/grimoire-core)."),
 		),
 		toolGrimoirePackageReset,
 	)
 
-	s.AddTool(
+	addTool(s,
 		mcp.NewTool("grimoire_package_validate",
 			mcp.WithDescription("Validate a package's structure before publishing. Pass a path or installed package name; omit to validate the current directory."),
 			mcp.WithString("target", mcp.Description("Absolute path, installed package name (owner/repo), or omit for current directory")),
@@ -345,14 +345,14 @@ func registerMCPTools(s *server.MCPServer) {
 		toolGrimoirePackageValidate,
 	)
 
-	s.AddTool(
+	addTool(s,
 		mcp.NewTool("grimoire_status",
 			mcp.WithDescription("Show project compliance health: active profile, skill count, last check result and age, staleness."),
 		),
 		toolGrimoireStatus,
 	)
 
-	s.AddTool(
+	addTool(s,
 		mcp.NewTool("grimoire_search",
 			mcp.WithDescription("Search installed packages for skills matching a query. Searches name, description, domain, and tags."),
 			mcp.WithString("query", mcp.Description("Search query (omit to list all skills)")),
@@ -360,7 +360,7 @@ func registerMCPTools(s *server.MCPServer) {
 		toolGrimoireSearch,
 	)
 
-	s.AddTool(
+	addTool(s,
 		mcp.NewTool("grimoire_info",
 			mcp.WithDescription("Show metadata for an installed skill: description, domain, tags, path, authors, dependencies."),
 			mcp.WithString("skill", mcp.Required(), mcp.Description("Skill name (e.g. apply-solid-principles)")),
