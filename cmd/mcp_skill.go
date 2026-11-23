@@ -38,10 +38,16 @@ const skillRefPrefix = "grimoire:"
 // skill grimoire hands out.
 const mcpChainRule = `grimoire skills run over MCP here; no grimoire skills are installed in the agent itself. When a grimoire skill says to invoke, load, run or apply another skill — "load the skill using the Skill tool", "invoke ` + "`X`" + `", "/X" — call grimoire_get_skill with that skill name and follow it. When it says to scan, score or list installed skills, get candidates with grimoire_search_skills (or grimoire_list_skills for a domain) and only name skills those tools return. Install hints like "/plugin install" mean grimoire_package_add.`
 
+// mcpRouteDirective opens the descriptions of the skill tools. Every MCP
+// client puts tool descriptions in front of the model, unlike server
+// instructions (some clients drop them) and hooks (some agents have none), so
+// this is the one channel that reaches Copilot CLI, Pi, Kimi and OMP too.
+const mcpRouteDirective = "grimoire entry point: before responding to a user request, load start-best-practice with grimoire_get_skill (once per session) and follow the workflow it routes to; it asks clarifying questions when needed and loads the specific best-practice skills."
+
 // traceRule asks the model to narrate grimoire's decisions, so the user sees
 // what grimoire did and why and can redirect it. It overrides the router's
 // "invoke silently": in MCP mode the user otherwise only sees "Called grimoire".
-const traceRule = "grimoire trace is on: tell the user each grimoire decision in one line starting with `grimoire ▸` — the workflow routed to and why (e.g. `grimoire ▸ start-best-practice → suggest-best-practice (problem described, no approach chosen)`), and the skills loaded and why (e.g. `grimoire ▸ applying design-deployment-strategy, apply-premortem — say \"skip grimoire\" to opt out`). This overrides any \"invoke silently\" in grimoire skills. Print nothing for grimoire when nothing routes."
+const traceRule = "grimoire trace is on: tell the user each grimoire decision in one line starting with `grimoire ▸` — the workflow routed to and why (e.g. `grimoire ▸ start-best-practice → suggest-best-practice (problem described, no approach chosen)`), and the skills loaded and why (e.g. `grimoire ▸ applying design-deployment-strategy, apply-premortem — say \"skip grimoire\" to opt out`). This overrides any \"invoke silently\" in grimoire skills. Use the prefix only for these decision lines, never on the answer itself; print nothing for grimoire when nothing routes."
 
 // traceOffRule replaces traceRule when the user turned trace off
 // (core.trace = off or GRIMOIRE_TRACE=off).
@@ -52,7 +58,7 @@ const traceOffRule = "grimoire trace is off: do not print `grimoire ▸` lines; 
 // It is built when the server starts so core.trace applies in agents that
 // have no grimoire hook to say so (Copilot CLI, Pi, Kimi, OMP).
 func mcpServerInstructions(trace bool) string {
-	traceLine := "- Tell the user each grimoire decision in one line starting with `grimoire ▸`: the workflow routed to and why, and the skills loaded and why, so they can redirect it."
+	traceLine := "- Tell the user each grimoire decision in one line starting with `grimoire ▸`: the workflow routed to and why, and the skills loaded and why, so they can redirect it. Use the prefix only for those lines, not the answer."
 	if !trace {
 		traceLine = "- grimoire trace is off: do not print `grimoire ▸` lines."
 	}

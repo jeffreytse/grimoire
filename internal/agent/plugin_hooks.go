@@ -115,17 +115,21 @@ func OpenCodePluginFile(scope, projectDir string) string {
 }
 
 const openCodePluginTemplate = `%s; ` + "`grimoire mcp uninstall`" + ` removes it.
-// Runs grimoire's skill matching on each new user message, adds the result
-// to the system prompt for that turn, and shows grimoire's status line
-// ("grimoire ▸ …") as a toast.
+// OpenCode has no session-start hook, so this plugin plays both of grimoire's
+// hook roles: it keeps grimoire's workflow router (start-best-practice) in
+// the system prompt of every turn, adds the per-prompt routing reminder and
+// skill candidates, and shows grimoire's status lines ("grimoire ▸ …") as
+// toasts. Nothing is written into the session history.
 const BIN = %s
 const TIMEOUT_MS = 10000
 const contextBySession = new Map()
+const routedSessions = new Set()
+let router = null // Promise of the session hook output, shared by all sessions
 
-async function hookOutput(prompt) {
+async function hook(sub, input) {
   try {
-    const proc = Bun.spawn([BIN, "hook", "prompt"], {
-      stdin: new Blob([JSON.stringify({ prompt, hook_event_name: "UserPromptSubmit" })]),
+    const proc = Bun.spawn([BIN, "hook", sub], {
+      stdin: new Blob([JSON.stringify(input)]),
       stdout: "pipe",
       stderr: "ignore",
     })
@@ -140,21 +144,33 @@ async function hookOutput(prompt) {
   }
 }
 
+async function toast(client, message) {
+  if (!message) return
+  try {
+    await client?.tui?.showToast?.({ body: { message, variant: "info" } })
+  } catch {}
+}
+
 export const GrimoirePromptHook = async ({ client } = {}) => ({
   "chat.message": async (input, output) => {
+    router ??= hook("session", { hook_event_name: "SessionStart" })
+    if (!routedSessions.has(input.sessionID)) {
+      routedSessions.add(input.sessionID)
+      await toast(client, (await router).status)
+    }
     const prompt = (output.parts ?? [])
       .filter((p) => p.type === "text" && !p.synthetic)
       .map((p) => p.text)
       .join("\n")
-    const { context = "", status = "" } = prompt ? await hookOutput(prompt) : {}
+    const { context = "", status = "" } = prompt
+      ? await hook("prompt", { prompt, hook_event_name: "UserPromptSubmit" })
+      : {}
     contextBySession.set(input.sessionID, context)
-    if (status) {
-      try {
-        await client?.tui?.showToast?.({ body: { message: status, variant: "info" } })
-      } catch {}
-    }
+    await toast(client, status)
   },
   "experimental.chat.system.transform": async (input, output) => {
+    const { context: routerCtx = "" } = router ? await router : {}
+    if (routerCtx) output.system.push(routerCtx)
     const ctx = input.sessionID ? contextBySession.get(input.sessionID) : ""
     if (ctx) output.system.push(ctx)
   },

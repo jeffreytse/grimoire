@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/mark3labs/mcp-go/server"
@@ -38,6 +39,19 @@ func TestMCPTools_Annotated(t *testing.T) {
 	for name := range mcpToolMeta {
 		if _, ok := tools[name]; !ok {
 			t.Errorf("mcpToolMeta has %s, which is not registered", name)
+		}
+	}
+}
+
+// The routing directive rides on the skill tools' descriptions: the one
+// channel every MCP client shows the model (Copilot CLI drops server
+// instructions by default, and several agents have no hooks).
+func TestMCPTools_DescriptionsCarryRouteDirective(t *testing.T) {
+	s := server.NewMCPServer("grimoire", "test")
+	registerMCPTools(s)
+	for _, name := range []string{"grimoire_get_skill", "grimoire_search_skills"} {
+		if d := s.GetTool(name).Tool.Description; !strings.HasPrefix(d, mcpRouteDirective) {
+			t.Errorf("%s description = %q", name, d)
 		}
 	}
 }

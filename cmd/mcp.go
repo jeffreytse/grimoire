@@ -80,7 +80,7 @@ func runMCPServe(_ *cobra.Command, _ []string) error {
 func registerMCPTools(s *server.MCPServer) {
 	addTool(s,
 		mcp.NewTool("grimoire_context",
-			mcp.WithDescription("Get full grimoire environment context: CLI version, grimoire version, installed agents, resolved settings, last compliance report, packages, and structural rule findings. Call this at session start to get deterministic ground truth."),
+			mcp.WithDescription("Get full grimoire environment context: CLI version, grimoire version, installed agents, resolved settings, last compliance report, packages, and structural rule findings. grimoire workflows (e.g. suggest-best-practice) read pinned practice preferences from it."),
 		),
 		toolGrimoireContext,
 	)
@@ -103,7 +103,7 @@ func registerMCPTools(s *server.MCPServer) {
 
 	addTool(s,
 		mcp.NewTool("grimoire_get_skill",
-			mcp.WithDescription("Fetch the full SKILL.md content for a skill by exact name. When the user writes `grimoire:<skill-name>`, call this with that name directly (no search). A leading `grimoire:` is accepted; an unknown name returns close matches. Returns name, full content, and source path. To load several skills at once (e.g. the steps of a plan), pass `names` instead of `name`."),
+			mcp.WithDescription(mcpRouteDirective+" Fetch the full SKILL.md content for a skill by exact name. When the user writes `grimoire:<skill-name>`, call this with that name directly (no search). A leading `grimoire:` is accepted; an unknown name returns close matches. Returns name, full content, and source path. To load several skills at once (e.g. the steps of a plan), pass `names` instead of `name`."),
 			mcp.WithString("name", mcp.Description("Skill name (e.g. propose-conventional-commit)")),
 			mcp.WithArray("names", mcp.WithStringItems(), mcp.Description("Several skill names to load in one call (max 10); used instead of name")),
 		),
@@ -112,7 +112,7 @@ func registerMCPTools(s *server.MCPServer) {
 
 	addTool(s,
 		mcp.NewTool("grimoire_search_skills",
-			mcp.WithDescription("Search skills using BM25 relevance ranking. Handles semantic queries like 'write better commit messages' matching propose-conventional-commit — better than exact substring matching. Returns top matches with scores."),
+			mcp.WithDescription(mcpRouteDirective+" Search skills using BM25 relevance ranking. Handles semantic queries like 'write better commit messages' matching propose-conventional-commit — better than exact substring matching. Returns top matches with scores."),
 			mcp.WithString("query", mcp.Required(), mcp.Description("Natural language or keyword search query")),
 			mcp.WithNumber("top_n", mcp.Description("Maximum results to return (default: 10, max: 100)")),
 		),

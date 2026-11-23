@@ -14,6 +14,8 @@ var mcpReadOnlyTools = []string{
 	"grimoire_search_skills",
 	"grimoire_get_skill",
 	"grimoire_list_skills",
+	"grimoire_context",
+	"grimoire_info",
 }
 
 // mcpServerName is the name grimoire registers its MCP server under.
