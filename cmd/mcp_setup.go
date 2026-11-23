@@ -28,6 +28,8 @@ var (
 	flagMCPSetupNoConfigure bool
 	flagMCPSetupNoHook      bool
 	flagMCPSetupNoAllow     bool
+	flagMCPSetupStatusLine  bool
+	flagMCPSetupNoStatus    bool
 )
 
 // mcpAgent describes how to set up MCP mode for one agent. Registration
@@ -195,6 +197,8 @@ func init() {
 	mcpInstallCmd.Flags().BoolVar(&flagMCPSetupNoConfigure, "no-configure", false, "do not write the grimoire instruction or hook")
 	mcpInstallCmd.Flags().BoolVar(&flagMCPSetupNoHook, "no-hook", false, "do not add the prompt hook (Claude Code, Codex, Gemini CLI)")
 	mcpInstallCmd.Flags().BoolVar(&flagMCPSetupNoAllow, "no-allow", false, "do not pre-approve grimoire's read-only skill tools (Claude Code, Antigravity)")
+	mcpInstallCmd.Flags().BoolVar(&flagMCPSetupStatusLine, "statusline", false, "chain an existing Claude Code status line so the [GRIMOIRE] badge is shown after it")
+	mcpInstallCmd.Flags().BoolVar(&flagMCPSetupNoStatus, "no-statusline", false, "do not add the [GRIMOIRE] badge to the Claude Code status line")
 }
 
 // mcpRunCmd runs an external command in dir and returns combined output.
@@ -352,10 +356,50 @@ func installMCPAgent(a *mcpAgent, serve string) error {
 			return err
 		}
 	}
+	if !flagMCPSetupNoStatus {
+		if err := installStatusLine(a.key, scope, serve); err != nil {
+			return err
+		}
+	}
 	if flagMCPSetupNoHook {
 		return nil
 	}
 	return installPromptHook(a.key, scope, serve)
+}
+
+// installStatusLine adds the [GRIMOIRE] badge to Claude Code's status line.
+// Another tool's status line is chained only with --statusline.
+func installStatusLine(ag, scope, serve string) error {
+	if ag != "claude" {
+		return nil
+	}
+	p := agent.StatusLineFile(scope, getProjectDir())
+	changed, other, err := agent.ConfigureStatusLine(p, serve, flagMCPSetupStatusLine)
+	if err != nil {
+		return fmt.Errorf("adding status line badge to %s: %w", p, err)
+	}
+	if other != "" {
+		fmt.Printf("  %s  status line already used (%s) — rerun with --statusline to show the [GRIMOIRE] badge after it\n",
+			tui.IconSkip, other)
+		return nil
+	}
+	reportChange(changed, "added [GRIMOIRE] status line badge to "+p, "status line badge already in "+p)
+	return nil
+}
+
+// removeStatusLine undoes installStatusLine, restoring a chained status line.
+func removeStatusLine(ag, scope string) {
+	if ag != "claude" {
+		return
+	}
+	p := agent.StatusLineFile(scope, getProjectDir())
+	changed, err := agent.RemoveStatusLine(p)
+	switch {
+	case err != nil:
+		fmt.Fprintf(os.Stderr, "  %s  %v\n", tui.IconWarn, err)
+	case changed:
+		fmt.Printf("  %s  removed status line badge from %s\n", tui.IconOK, p)
+	}
 }
 
 // installPromptHook adds the hook that puts matching skills in front of the
@@ -474,6 +518,7 @@ func runMCPUninstall(_ *cobra.Command, _ []string) error {
 		}
 		removePromptHook(a.key, scope)
 		removeToolAllow(a.key, scope)
+		removeStatusLine(a.key, scope)
 		path := agent.MCPInstructionFile(a.key, scope, getProjectDir())
 		if path == "" {
 			continue

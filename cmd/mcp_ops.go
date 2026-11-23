@@ -910,6 +910,7 @@ func toolGrimoireGetSkill(_ context.Context, request mcp.CallToolRequest) (*mcp.
 		return mcp.NewToolResultError(fmt.Sprintf("reading SKILL.md for %q: %v", name, err)), nil
 	}
 
+	recordLastSkill(name)
 	return jsonResult(mcpGetSkillOutput{
 		Name:    name,
 		Content: string(content),
@@ -937,6 +938,7 @@ func getSkillsBatch(names []string) *mcp.CallToolResult {
 			continue
 		}
 		seen[name] = true
+		recordLastSkill(name)
 		content, err := os.ReadFile(filepath.Join(skillPath, "SKILL.md"))
 		if err != nil {
 			out.Skills = append(out.Skills, mcpGetSkillsEntry{Name: name, Error: fmt.Sprintf("reading SKILL.md: %v", err)})

@@ -298,6 +298,20 @@ func doctorMCPChecks(ag, label, vs, pkgHome string) (checks []doctorCheck, found
 		}
 	}
 
+	if ag == "claude" {
+		switch st, other := agent.StatusLineState(agent.StatusLineFile(scope, getProjectDir())); st {
+		case agent.StatusLineOurs, agent.StatusLineChained:
+			checks = append(checks, doctorCheck{Name: name + "-statusline", Status: "ok",
+				Detail: label + " status line shows the [GRIMOIRE] badge"})
+		case agent.StatusLineOther:
+			checks = append(checks, doctorCheck{Name: name + "-statusline", Status: "skip",
+				Detail: fmt.Sprintf("%s status line is %q — to add the badge after it: grimoire mcp install --target %s --scope %s --statusline", label, other, ag, scope)})
+		default:
+			checks = append(checks, doctorCheck{Name: name + "-statusline", Status: "skip",
+				Detail: fmt.Sprintf("%s status line badge not set — run: grimoire mcp install --target %s --scope %s", label, ag, scope)})
+		}
+	}
+
 	if n := agent.LinkedSkillCount(ag, pkgHome); n > 0 {
 		checks = append(checks, doctorCheck{Name: name + "-duplicate", Status: "warn",
 			Detail: fmt.Sprintf("%s also has %d grimoire skills linked (skills mode) — duplicates MCP; run: grimoire uninstall --target %s", label, n, ag)})
