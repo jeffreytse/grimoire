@@ -11,7 +11,6 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/jeffreytse/grimoire/internal/config"
 	"github.com/jeffreytse/grimoire/internal/search"
 	"github.com/jeffreytse/grimoire/internal/skills"
 )
@@ -60,7 +59,7 @@ const routerSkill = "start-best-practice"
 // routerSections are the parts of the router SKILL.md the session hook
 // inlines: the routing table and its rules. The rationale and examples are
 // left to grimoire_get_skill.
-var routerSections = []string{"Steps", "Rules"}
+var routerSections = []string{"Steps", "Rules", "Display"}
 
 // hookSmallTalk are replies that never start a new task, so the hook stays
 // silent for them (start-best-practice passes them through anyway).
@@ -159,7 +158,7 @@ func runHookPrompt(in io.Reader, out io.Writer) {
 	if json.Unmarshal(raw, &input) != nil {
 		return
 	}
-	ctx, msg := hookTurn(input.Prompt, traceEnabled())
+	ctx, msg := hookTurn(input.Prompt, displayLevelSetting())
 	writeHookOutput(out, input.HookEventName, "UserPromptSubmit", ctx, msg)
 }
 
@@ -172,7 +171,7 @@ func runHookSession(in io.Reader, out io.Writer) {
 	var input hookInput
 	// Some agents send no input to session hooks; that is fine.
 	_ = json.Unmarshal(raw, &input)
-	ctx, msg := sessionTurn(traceEnabled())
+	ctx, msg := sessionTurn(displayLevelSetting())
 	writeHookOutput(out, input.HookEventName, "SessionStart", ctx, msg)
 }
 
@@ -197,34 +196,9 @@ func writeHookOutput(out io.Writer, event, fallback, ctx, msg string) {
 	fmt.Fprintln(out, string(b))
 }
 
-// statusPrefix starts every grimoire status and trace line.
-const statusPrefix = "grimoire ▸ "
-
-// traceEnabled reports whether grimoire shows its status lines and asks the
-// model for a decision trace: GRIMOIRE_TRACE overrides core.trace, and both
-// default to on. A config that cannot be read counts as on.
-func traceEnabled() bool {
-	if v := strings.ToLower(strings.TrimSpace(os.Getenv("GRIMOIRE_TRACE"))); v != "" {
-		return v != "off" && v != "0" && v != "false"
-	}
-	r, err := config.Load(getProjectDir())
-	if err != nil {
-		return true
-	}
-	return r.Core.Trace != "off"
-}
-
-// traceContext is the trace instruction for the model, per the trace setting.
-func traceContext(trace bool) string {
-	if trace {
-		return traceRule
-	}
-	return traceOffRule
-}
-
-// sessionContext is the router context for a session (trace on).
+// sessionContext is the router context for a session at the brief level.
 func sessionContext() string {
-	ctx, _ := sessionTurn(true)
+	ctx, _ := sessionTurn(displayBrief)
 	return ctx
 }
 
@@ -232,16 +206,16 @@ func sessionContext() string {
 // and the start-best-practice routing, inlined from the installed package so
 // it stays in step with the skills library — and the status line for the
 // user. Without the package it falls back to a directive to load the router.
-func sessionTurn(trace bool) (ctx, msg string) {
-	head := "grimoire is active for this session. Before responding to each new user request, apply the start-best-practice routing below and follow the workflow it routes to; load routed skills with grimoire_get_skill.\n\n" + mcpChainRule + "\n\n" + traceContext(trace)
+//
+// The status line states facts: the router and display level in effect, or
+// what is wrong when the skills package is missing.
+func sessionTurn(l displayLevel) (ctx, msg string) {
+	head := "grimoire is active for this session. Before responding to each new user request, apply the start-best-practice routing below and follow the workflow it routes to; load routed skills with grimoire_get_skill.\n\n" + mcpChainRule + "\n\n" + displayContext(l)
 	fallback := head + "\n\nThe router is not inlined here: call grimoire_get_skill with name \"" + routerSkill + "\" once, at the first request of the session, and follow it."
-	fallbackMsg := statusPrefix + "router not inlined · will load " + routerSkill + " on demand"
-	if !trace {
-		fallbackMsg = ""
-	}
+	fallbackMsg := statusLine(l, "router not inlined · the model loads "+routerSkill+" on demand")
 	_, path, err := resolveSkillOrSuggest(routerSkill)
 	if err != nil {
-		return fallback, fallbackMsg
+		return fallback, statusLine(l, "no skills package with "+routerSkill+" — run `grimoire update`")
 	}
 	raw, err := os.ReadFile(filepath.Join(path, "SKILL.md"))
 	if err != nil {
@@ -255,15 +229,12 @@ func sessionTurn(trace bool) (ctx, msg string) {
 	if len(ctx) > hookInlineBudget {
 		return fallback, fallbackMsg
 	}
-	if trace {
-		n := countRoutes(body)
-		unit := "routes"
-		if n == 1 {
-			unit = "route"
-		}
-		msg = fmt.Sprintf("%srouter ready · %s (%d %s)", statusPrefix, routerSkill, n, unit)
+	n := countRoutes(body)
+	unit := "routes"
+	if n == 1 {
+		unit = "route"
 	}
-	return ctx, msg
+	return ctx, statusLine(l, fmt.Sprintf("ready · %s (%d %s) · display %s", routerSkill, n, unit, l))
 }
 
 // countRoutes counts the routing table rows that invoke a workflow.
@@ -310,15 +281,17 @@ func isSmallTalk(prompt string) bool {
 
 var skillRefPattern = regexp.MustCompile(`(?:^|[\s(\[` + "`" + `])grimoire:([A-Za-z0-9][A-Za-z0-9._/-]*)`)
 
-// hookContext returns the context to add for prompt (trace on), or "" for none.
+// hookContext returns the context to add for prompt (brief level), or "" for none.
 func hookContext(prompt string) string {
-	ctx, _ := hookTurn(prompt, true)
+	ctx, _ := hookTurn(prompt, displayBrief)
 	return ctx
 }
 
 // hookTurn returns the context to add for prompt and the status line for the
-// user, or "" for none. The status line is "" when trace is off.
-func hookTurn(prompt string, trace bool) (ctx, msg string) {
+// user, or "" for none. The status line states only what the hook knows: a
+// skill it loaded, or (full level) the unverified keyword candidates it
+// passed to the model. It never claims a route — the model shows that.
+func hookTurn(prompt string, l displayLevel) (ctx, msg string) {
 	prompt = strings.TrimSpace(prompt)
 	// Slash commands are handled by the agent (including /grimoire:skill).
 	if prompt == "" || strings.HasPrefix(prompt, "/") {
@@ -333,26 +306,25 @@ func hookTurn(prompt string, trace bool) (ctx, msg string) {
 		if len(unknown) > 0 {
 			parts = append(parts, "unknown skill "+strings.Join(unknown, ", "))
 		}
-		return ctx, statusLine(trace, strings.Join(parts, " · "))
+		return ctx, statusLine(l, strings.Join(parts, " · "))
 	}
 	if isSmallTalk(prompt) {
 		return "", ""
 	}
-	reminder := hookRouteReminder + " " + traceContext(trace)
-	route := "routing via " + routerSkill
+	reminder := hookRouteReminder + " " + displayContext(l)
 	if cands, names := suggestedSkillContext(prompt); cands != "" {
-		return reminder + "\n" + cands, statusLine(trace, route+" · candidates: "+strings.Join(names, ", "))
+		return reminder + "\n" + cands, candidatesStatus(l, names)
 	}
-	return reminder, statusLine(trace, route)
+	return reminder, ""
 }
 
-// statusLine prefixes text as a grimoire status line, or returns "" when
-// trace is off or there is nothing to say.
-func statusLine(trace bool, text string) string {
-	if !trace || text == "" {
+// candidatesStatus shows the keyword candidates at the full level only,
+// labeled as unverified: at brief they are noise, and often off-topic.
+func candidatesStatus(l displayLevel, names []string) string {
+	if l != displayFull {
 		return ""
 	}
-	return statusPrefix + text
+	return statusLine(l, "keyword candidates (unverified): "+strings.Join(names, ", "))
 }
 
 // explicitSkillRefs returns the distinct skill names written as grimoire:<name>.

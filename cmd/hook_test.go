@@ -259,26 +259,24 @@ func TestHookSession_FallsBackToDirective(t *testing.T) {
 	}
 }
 
-// The prompt hook shows the user a grimoire ▸ status line and asks the model
-// for a trace; small talk shows nothing.
-func TestHookPrompt_StatusLine(t *testing.T) {
+// Status lines state only facts the hook knows: a skill it loaded, or at the
+// full level the unverified keyword candidates. Brief shows no per-prompt
+// line — the model's own blocks show the route.
+func TestHookPrompt_StatusLineFactsOnly(t *testing.T) {
 	setupListSkillsHome(t)
 	orig := hookMinScore
 	hookMinScore = 0.1
 	t.Cleanup(func() { hookMinScore = orig })
 
 	ctx, msg := runHookFull(t, "write a conventional commit message")
-	if !strings.HasPrefix(msg, "grimoire ▸ routing via start-best-practice · candidates: ") || !strings.Contains(msg, "propose-conventional-commit") {
-		t.Errorf("candidates status = %q", msg)
+	if msg != "" || !strings.Contains(ctx, "propose-conventional-commit") || !strings.Contains(ctx, "grimoire display: brief") {
+		t.Errorf("brief: ctx=%q msg=%q", ctx, msg)
 	}
-	if !strings.Contains(ctx, traceRule) {
-		t.Errorf("trace rule missing from context %q", ctx)
+	t.Setenv("GRIMOIRE_TRACE", "full")
+	if _, msg := runHookFull(t, "write a conventional commit message"); !strings.HasPrefix(msg, "grimoire ▸ keyword candidates (unverified): ") {
+		t.Errorf("full candidates status = %q", msg)
 	}
-
-	hookMinScore = 1e9
-	if _, msg := runHookFull(t, "migrate the billing service"); msg != "grimoire ▸ routing via start-best-practice" {
-		t.Errorf("no-candidate status = %q", msg)
-	}
+	t.Setenv("GRIMOIRE_TRACE", "")
 	if _, msg := runHookFull(t, "use grimoire:write-unit-test and grimoire:nope-skill"); msg != "grimoire ▸ loading skill write-unit-test · unknown skill nope-skill" {
 		t.Errorf("explicit status = %q", msg)
 	}
@@ -287,14 +285,20 @@ func TestHookPrompt_StatusLine(t *testing.T) {
 	}
 }
 
-// Trace off (env or core.trace) drops the status line and tells the model
-// not to narrate.
-func TestHookPrompt_TraceOff(t *testing.T) {
+// Display levels come from GRIMOIRE_TRACE, then core.trace; "on" reads as
+// brief; off silences status lines and tells the model to stay silent.
+func TestDisplayLevelSetting(t *testing.T) {
 	setupListSkillsHome(t)
+	for v, want := range map[string]displayLevel{"off": displayOff, "brief": displayBrief, "full": displayFull, "on": displayBrief, "bogus": displayBrief} {
+		t.Setenv("GRIMOIRE_TRACE", v)
+		if got := displayLevelSetting(); got != want {
+			t.Errorf("GRIMOIRE_TRACE=%s: level %q, want %q", v, got, want)
+		}
+	}
 	t.Setenv("GRIMOIRE_TRACE", "off")
 	ctx, msg := runHookFull(t, "migrate the billing service")
-	if msg != "" || !strings.Contains(ctx, traceOffRule) || strings.Contains(ctx, traceRule) {
-		t.Errorf("env off: ctx=%q msg=%q", ctx, msg)
+	if msg != "" || !strings.Contains(ctx, displayOffRule) {
+		t.Errorf("off: ctx=%q msg=%q", ctx, msg)
 	}
 
 	t.Setenv("GRIMOIRE_TRACE", "")
@@ -302,19 +306,18 @@ func TestHookPrompt_TraceOff(t *testing.T) {
 	if err := os.MkdirAll(cfg, 0o755); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(filepath.Join(cfg, "grimoire.toml"), []byte("[core]\ntrace = \"off\"\n"), 0o644); err != nil {
+	if err := os.WriteFile(filepath.Join(cfg, "grimoire.toml"), []byte("[core]\ntrace = \"full\"\n"), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	if traceEnabled() {
-		t.Errorf("core.trace = off in %s not honored", cfg)
+	if got := displayLevelSetting(); got != displayFull {
+		t.Errorf("core.trace = full in %s: got %q", cfg, got)
 	}
 }
 
 func TestHookSession_StatusLine(t *testing.T) {
 	setupListSkillsHome(t)
-	_, msg := sessionTurn(true)
-	if msg != "grimoire ▸ router not inlined · will load start-best-practice on demand" {
-		t.Errorf("fallback status = %q", msg)
+	if _, msg := sessionTurn(displayBrief); msg != "grimoire ▸ no skills package with start-best-practice — run `grimoire update`" {
+		t.Errorf("missing-router status = %q", msg)
 	}
 	dir := filepath.Join(os.Getenv("GRIMOIRE_SOURCE"), "skills", "meta", "skills", "start-best-practice")
 	if err := os.MkdirAll(dir, 0o755); err != nil {
@@ -323,11 +326,35 @@ func TestHookSession_StatusLine(t *testing.T) {
 	if err := os.WriteFile(filepath.Join(dir, "SKILL.md"), []byte(routerFixture), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	ctx, msg := sessionTurn(true)
-	if msg != "grimoire ▸ router ready · start-best-practice (1 route)" || !strings.Contains(ctx, traceRule) {
+	ctx, msg := sessionTurn(displayBrief)
+	if msg != "grimoire ▸ ready · start-best-practice (1 route) · display brief" || !strings.Contains(ctx, "grimoire display: brief") {
 		t.Errorf("status = %q", msg)
 	}
-	if ctx, msg := sessionTurn(false); msg != "" || !strings.Contains(ctx, traceOffRule) {
-		t.Errorf("trace off: msg = %q", msg)
+	if ctx, msg := sessionTurn(displayOff); msg != "" || !strings.Contains(ctx, displayOffRule) {
+		t.Errorf("off: msg = %q", msg)
+	}
+}
+
+// A router skill with a Display section is the single source of the format:
+// the session hook inlines it and the CLI only names the level.
+func TestHookSession_RouterDisplaySection(t *testing.T) {
+	setupListSkillsHome(t)
+	dir := filepath.Join(os.Getenv("GRIMOIRE_SOURCE"), "skills", "meta", "skills", "start-best-practice")
+	if err := os.MkdirAll(dir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if got := displayContext(displayBrief); !strings.Contains(got, "one line starting with `grimoire ▸`") {
+		t.Errorf("fallback without Display = %q", got)
+	}
+	withDisplay := routerFixture + "\n## Display\n\nDISPLAY-MARKER\n"
+	if err := os.WriteFile(filepath.Join(dir, "SKILL.md"), []byte(withDisplay), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	ctx, _ := sessionTurn(displayFull)
+	if !strings.Contains(ctx, "DISPLAY-MARKER") || !strings.Contains(ctx, "Display section, at the full level") {
+		t.Errorf("ctx = %q", ctx)
+	}
+	if n := skillNote(); !strings.Contains(n, "Display section, at the brief level") {
+		t.Errorf("note = %q", n)
 	}
 }

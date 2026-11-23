@@ -83,7 +83,7 @@ func TestGetSkillTool_AcceptsPrefixAndSuggests(t *testing.T) {
 	}
 	out, _ := call("write-readme")
 	var got mcpGetSkillOutput
-	if err := json.Unmarshal([]byte(out), &got); err != nil || got.Note != mcpChainRule+" "+traceRule {
+	if err := json.Unmarshal([]byte(out), &got); err != nil || !strings.HasPrefix(got.Note, mcpChainRule+" grimoire display: ") {
 		t.Errorf("get_skill note missing or wrong: err=%v note=%q", err, got.Note)
 	}
 }
@@ -91,10 +91,10 @@ func TestGetSkillTool_AcceptsPrefixAndSuggests(t *testing.T) {
 // Workflow skills say "invoke X" / "load the skill using the Skill tool";
 // every way grimoire delivers a skill must say how that maps to MCP tools.
 func TestChainRuleDelivered(t *testing.T) {
-	if !strings.Contains(mcpServerInstructions(true), mcpChainRule) {
+	if !strings.Contains(mcpServerInstructions(displayBrief), mcpChainRule) {
 		t.Error("server instructions lack the chain rule")
 	}
-	if n := len(mcpServerInstructions(true)); n > 4096 {
+	if n := len(mcpServerInstructions(displayBrief)); n > 4096 {
 		t.Errorf("server instructions are %d chars; Claude Code cuts at 4096", n)
 	}
 	setupListSkillsHome(t)
@@ -204,7 +204,7 @@ func TestGetSkillTool_NamesBatch(t *testing.T) {
 	if err := json.Unmarshal([]byte(out), &got); err != nil {
 		t.Fatal(err)
 	}
-	if got.Note != mcpChainRule+" "+traceRule {
+	if !strings.HasPrefix(got.Note, mcpChainRule+" grimoire display: ") {
 		t.Errorf("note = %q", got.Note)
 	}
 	// Duplicate loaded once; the typo is reported in place with a suggestion.
@@ -229,24 +229,24 @@ func TestGetSkillTool_NamesBatch(t *testing.T) {
 
 func TestServerInstructions_RouteWorkflows(t *testing.T) {
 	for _, s := range []string{"start-best-practice", "plan-best-practice-solution", "apply-best-practice-tree", "names"} {
-		if !strings.Contains(mcpServerInstructions(true), s) {
+		if !strings.Contains(mcpServerInstructions(displayBrief), s) {
 			t.Errorf("server instructions do not mention %s", s)
 		}
 	}
 }
 
-// Trace off reaches agents without grimoire hooks through the server
+// The display level reaches agents without grimoire hooks through the server
 // instructions and every grimoire_get_skill result.
-func TestTraceOff_InstructionsAndSkillNote(t *testing.T) {
-	on, off := mcpServerInstructions(true), mcpServerInstructions(false)
-	if !strings.Contains(on, "Tell the user each grimoire decision") || strings.Contains(on, "{{trace}}") {
-		t.Errorf("trace-on instructions = %q", on)
+func TestDisplayLevel_InstructionsAndSkillNote(t *testing.T) {
+	setupListSkillsHome(t)
+	if on := mcpServerInstructions(displayBrief); !strings.Contains(on, "grimoire display: brief") || strings.Contains(on, "{{trace}}") {
+		t.Errorf("brief instructions = %q", on)
 	}
-	if !strings.Contains(off, "trace is off") || strings.Contains(off, "Tell the user each grimoire decision") {
-		t.Errorf("trace-off instructions = %q", off)
+	if off := mcpServerInstructions(displayOff); !strings.Contains(off, displayOffRule) {
+		t.Errorf("off instructions = %q", off)
 	}
 	t.Setenv("GRIMOIRE_TRACE", "off")
-	if n := skillNote(); n != mcpChainRule+" "+traceOffRule {
-		t.Errorf("trace-off note = %q", n)
+	if n := skillNote(); n != mcpChainRule+" "+displayOffRule {
+		t.Errorf("off note = %q", n)
 	}
 }

@@ -27,7 +27,7 @@ type CoreSection struct {
 	Profiles          []string          // from [standards] profiles — stored here for convenience
 	Agents            []string          // [core] agents — pinned agent targets (empty = auto-detect)
 	InstallMode       string            // [core] install-mode — "symlink" (default) | "copy"
-	Trace             string            // [core] trace — "on" (default) | "off": grimoire ▸ status lines and decision trace in agents
+	Trace             string            // [core] trace — grimoire display level: "brief" (default) | "full" | "off"
 	UpdateConcurrency *int              // [core] update-concurrency — nil=default(8), 0=unlimited, N=cap at N
 	SearchPackages    []string          `toml:"search-packages"` // additional packages for `grimoire search` (global only)
 	CheckAgents       []string          `toml:"check-agents"`    // local CLI resolution order for --independent; empty = default

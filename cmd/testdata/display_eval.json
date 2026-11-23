@@ -1,0 +1,89 @@
+{
+  "cases": [
+    {
+      "prompt": "We're launching our SaaS in 48 hours. I'm terrified something will break. What do we do?",
+      "routes": true
+    },
+    {
+      "prompt": "our checkout API p99 latency doubled after yesterday's deploy, how should we investigate?",
+      "routes": true
+    },
+    {
+      "prompt": "I want to set up an on-call rotation and incident process for a 4-person team",
+      "routes": true
+    },
+    {
+      "prompt": "write unit tests for a function that parses ISO 8601 dates",
+      "routes": true
+    },
+    {
+      "prompt": "help me plan a migration from a monolith to services over the next year",
+      "routes": true
+    },
+    {
+      "prompt": "my team keeps missing sprint commitments, what should we change?",
+      "routes": true
+    },
+    {
+      "prompt": "review this plan: we deploy straight to prod from main with no staging, tests run nightly",
+      "routes": true
+    },
+    {
+      "prompt": "what best practices exist for API design?",
+      "routes": true
+    },
+    {
+      "prompt": "design a REST endpoint for listing orders with pagination",
+      "routes": true
+    },
+    {
+      "prompt": "how do I reduce my monthly grocery spending as a family of four?",
+      "routes": true
+    },
+    {
+      "prompt": "what does the HTTP status code 418 mean?",
+      "routes": false
+    },
+    {
+      "prompt": "convert 72 fahrenheit to celsius",
+      "routes": false
+    },
+    {
+      "prompt": "what is the capital of Australia?",
+      "routes": false
+    },
+    {
+      "prompt": "just print hello world in python, nothing else",
+      "routes": false
+    },
+    {
+      "prompt": "explain what a goroutine is in one sentence",
+      "routes": false
+    },
+    {
+      "prompt": "We're launching our SaaS in 48 hours. I'm terrified something will break. What do we do?",
+      "routes": true,
+      "level": "off"
+    },
+    {
+      "prompt": "write unit tests for a function that parses ISO 8601 dates",
+      "routes": true,
+      "level": "off"
+    },
+    {
+      "prompt": "We're launching our SaaS in 48 hours. I'm terrified something will break. What do we do?",
+      "routes": true,
+      "level": "full"
+    },
+    {
+      "prompt": "our checkout API p99 latency doubled after yesterday's deploy, how should we investigate?",
+      "routes": true,
+      "level": "full"
+    },
+    {
+      "prompt": "what is the capital of Australia?",
+      "routes": false,
+      "level": "full"
+    }
+  ]
+}

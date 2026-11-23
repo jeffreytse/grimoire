@@ -296,8 +296,8 @@ func applyKey(fs *config.FileConfig, key, value string) error {
 		fs.Core.InstallMode = value
 		return nil
 	case "core.trace":
-		if value != "" && value != "on" && value != "off" {
-			return fmt.Errorf("core.trace must be \"on\" or \"off\"")
+		if _, ok := parseDisplayLevel(value); value != "" && !ok {
+			return fmt.Errorf("core.trace must be \"off\", \"brief\" or \"full\"")
 		}
 		fs.Core.Trace = value
 		return nil

@@ -83,7 +83,7 @@ func writeAgy(out io.Writer, step agyStep) {
 // grimoire's router.
 func runAgySession(in io.Reader, out io.Writer) {
 	_, _ = io.Copy(io.Discard, io.LimitReader(in, 1<<20))
-	ctx, _ := sessionTurn(traceEnabled())
+	ctx, _ := sessionTurn(displayLevelSetting())
 	msg := agent.MCPTriggerLine + "\n\n" + ctx
 	writeAgy(out, agyStep{SystemMessage: &agySystemMessage{SystemMessage: msg}})
 }
@@ -114,7 +114,7 @@ func runAgyPrompt(in io.Reader, out io.Writer, stateDir string) {
 	}
 	// Antigravity has no user-visible hook field, so the status line is
 	// dropped; the model's trace lines still show grimoire's decisions.
-	if ctx, _ := hookTurn(input.LastUserInput, traceEnabled()); ctx != "" {
+	if ctx, _ := hookTurn(input.LastUserInput, displayLevelSetting()); ctx != "" {
 		writeAgy(out, agyStep{EphemeralMessage: ctx})
 	}
 }
