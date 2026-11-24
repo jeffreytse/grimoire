@@ -9,7 +9,7 @@ import (
 	"github.com/mark3labs/mcp-go/mcp"
 )
 
-func callSearch(t *testing.T, args map[string]any) ([]mcpSearchSkillsResult, string) {
+func callSearch(t *testing.T, args map[string]any) (hits []mcpSearchSkillsResult, errText string) {
 	t.Helper()
 	req := mcp.CallToolRequest{}
 	req.Params.Name = "grimoire_search_skills"

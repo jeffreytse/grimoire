@@ -392,9 +392,10 @@ func parseCoreSection(m map[string]any) CoreSection {
 	cs.InstallMode, _ = m["install-mode"].(string)   //nolint:revive // wrong type silently skipped
 	cs.Trace, _ = m["trace"].(string)                //nolint:revive // wrong type silently skipped
 	cs.DisplayStyle, _ = m["display-style"].(string) //nolint:revive // wrong type silently skipped
-	if v, ok := m["active"].(bool); ok {
+	switch v := m["active"].(type) {
+	case bool:
 		cs.Active = strconv.FormatBool(v)
-	} else if v, ok := m["active"].(string); ok {
+	case string:
 		cs.Active = v
 	}
 	cs.Agents = parseStringSlice(m["agents"])

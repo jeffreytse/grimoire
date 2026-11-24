@@ -127,7 +127,7 @@ func TestSelectionEval(t *testing.T) {
 		}
 		res := scoreSelection(c, strings.Join(r.texts, "\n"), r.loaded)
 		results = append(results, res)
-		saveSelection(t, mode, i+1, c, res, r.texts)
+		saveSelection(t, mode, i+1, c, &res, r.texts)
 	}
 	logSelection(t, mode, results)
 	t.Logf("%s cases=%d cost=$%.2f", mode, len(results), cost)
@@ -393,7 +393,7 @@ func labeledSubdomains(cases []selectionCase) ([]string, error) {
 }
 
 // saveSelection keeps a case's picks and reply under GRIMOIRE_DISPLAY_EVAL_OUT.
-func saveSelection(t *testing.T, mode string, n int, c selectionCase, res selectionResult, texts []string) {
+func saveSelection(t *testing.T, mode string, n int, c selectionCase, res *selectionResult, texts []string) {
 	dir := os.Getenv("GRIMOIRE_DISPLAY_EVAL_OUT")
 	if dir == "" {
 		return

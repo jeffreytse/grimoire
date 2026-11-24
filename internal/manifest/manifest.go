@@ -572,9 +572,10 @@ func parseCoreSection(m map[string]any) config.CoreSection {
 	if v, ok := m["display-style"].(string); ok {
 		cs.DisplayStyle = v
 	}
-	if v, ok := m["active"].(bool); ok {
+	switch v := m["active"].(type) {
+	case bool:
 		cs.Active = strconv.FormatBool(v)
-	} else if v, ok := m["active"].(string); ok {
+	case string:
 		cs.Active = v
 	}
 	cs.Agents = parseStringSlice(m["agents"])

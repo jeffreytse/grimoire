@@ -327,7 +327,7 @@ func seedWorkspace(dir string) error {
 		return err
 	}
 	if _, err := f.WriteString(change); err != nil {
-		f.Close()
+		_ = f.Close()
 		return err
 	}
 	if err := f.Close(); err != nil {
@@ -605,7 +605,7 @@ func saveTranscript(t *testing.T, mode string, n int, level string, turns []eval
 // (bold skill name followed by a domain code span).
 // The route line is plain text under the Display spec (start-best-practice ▸
 // workflow), so it is matched on its own, not only through bold headers.
-var displayMarker = regexp.MustCompile("(?m)grimoire ▸|^\\s*start-best-practice ▸|^\\*\\*[a-z0-9]+(?:-[a-z0-9]+)+\\*\\*")
+var displayMarker = regexp.MustCompile(`(?m)grimoire ▸|^\s*start-best-practice ▸|^\*\*[a-z0-9]+(?:-[a-z0-9]+)+\*\*`)
 
 // stepCounter matches a plan step's position, "step 2 of 4" or a sub-step's,
 // "step 3a of 7".
@@ -615,14 +615,6 @@ var stepCounter = regexp.MustCompile(`(?i)\bstep \d+[a-z]? of \d+\b`)
 // A risk is any line led by ⚠ (the Display section's risk glyph), whatever
 // words follow — "⚠ Without this:" is the template, not the only phrasing.
 var evidenceMarker = regexp.MustCompile(`(?im)_?source:|🔴|🟡|⚪|^\s*(⎿\s*)?⚠|^\s*(⎿\s*)?Why ★`)
-
-// runClaudeEval runs one prompt headless in work with extra claude args —
-// resuming session resume when set — and returns the assistant's text
-// messages, the run's cost and its session id.
-func runClaudeEval(work, level, prompt, resume string, args ...string) (texts []string, cost float64, session string, err error) {
-	r, err := runClaudeEvalResult(work, level, prompt, resume, args...)
-	return r.texts, r.cost, r.session, err
-}
 
 // evalResult is one headless run: the assistant's text messages, its cost,
 // its session id, and the skills it loaded (grimoire_get_skill or the Skill
@@ -885,7 +877,7 @@ const planChoices = "grimoire ▸ planning several skills — launch needs them 
 	"Apply this plan? Reply \"yes\", or pick another choice (e.g. \"2b\"). Steps that change files or run commands ask first."
 
 // planBrief is the Plan template at brief: no domains.
-var planBrief = regexp.MustCompile("  `[a-z0-9-]+/[a-z0-9-]+`").ReplaceAllString(planChoices, "")
+var planBrief = regexp.MustCompile(" {2}`[a-z0-9-]+/[a-z0-9-]+`").ReplaceAllString(planChoices, "")
 
 // The format check holds a reply to the Display templates' fixed parts and
 // leaves answer prose alone.
@@ -954,13 +946,13 @@ func accurateSkills(reply string, index map[string]string) (ok, checked bool) {
 	}
 	ok = true
 	for _, m := range skillRowRef.FindAllStringSubmatch(reply, -1) {
-		real, known := index[m[1]]
+		domain, known := index[m[1]]
 		if !known {
 			continue
 		}
 		checked = true
 		header := strings.HasPrefix(strings.TrimSpace(m[0]), "**")
-		if (m[2] != "" && m[2] != real) || (real == "meta" && !header) {
+		if (m[2] != "" && m[2] != domain) || (domain == "meta" && !header) {
 			ok = false
 		}
 	}
@@ -985,13 +977,13 @@ func evalSkillIndex() map[string]string {
 
 // buildSkillIndex walks a package's skills tree:
 // <domain>/<subdomain>/skills/<name>/SKILL.md, or <domain>/skills/<name>/SKILL.md.
-func buildSkillIndex(skills string) map[string]string {
+func buildSkillIndex(root string) map[string]string {
 	index := map[string]string{}
-	_ = filepath.WalkDir(skills, func(path string, d fs.DirEntry, err error) error {
+	_ = filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
 		if err != nil || d.IsDir() || d.Name() != "SKILL.md" {
 			return nil
 		}
-		rel, _ := filepath.Rel(skills, path)
+		rel, _ := filepath.Rel(root, path)
 		parts := strings.Split(filepath.ToSlash(rel), "/")
 		switch {
 		case len(parts) == 5 && parts[2] == "skills":

@@ -99,7 +99,7 @@ var routeLine = regexp.MustCompile(`start-best-practice\**\s*(?:▸|→)\s*\**([
 
 // routeWorkflow matches a workflow the current route line names at the full
 // level: "· <workflow>" or a hand-off "→ <workflow>".
-var routeWorkflow = regexp.MustCompile(`(?:·|→)\s*([a-z0-9]+(?:-[a-z0-9]+)+)`)
+var routeWorkflow = regexp.MustCompile(`[·→]\s*([a-z0-9]+(?:-[a-z0-9]+)+)`)
 
 // reachedWorkflows is the set of skills a run loaded or routed to.
 func reachedWorkflows(reply string, loaded []string) map[string]bool {

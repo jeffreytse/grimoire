@@ -57,11 +57,6 @@ const hookRouteReminder = "grimoire: before responding, apply the start-best-pra
 // routerSkill is grimoire's entry-point workflow router.
 const routerSkill = "start-best-practice"
 
-// routerSections are the parts of the router SKILL.md the session hook
-// inlines: the routing table and its rules. The rationale and examples are
-// left to grimoire_get_skill.
-var routerSections = []string{"Steps", "Rules", "Display"}
-
 // hookSmallTalk are replies that never start a new task, so the hook stays
 // silent for them (start-best-practice passes them through anyway).
 var hookSmallTalk = map[string]bool{

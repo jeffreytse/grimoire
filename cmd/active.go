@@ -143,15 +143,6 @@ func toggleContext(active bool) string {
 	return "The user just turned grimoire off for this session. Acknowledge in one short line. " + inactiveRule
 }
 
-// toggleStatus is the status line confirming a toggle: feedback for the
-// user's own action, shown at any visible display level.
-func toggleStatus(active bool) string {
-	if active {
-		return statusPrefix + `on for this session — routing requests again; say "grimoire off" to stop`
-	}
-	return statusPrefix + `off for this session — not routing requests; say "grimoire on" to resume`
-}
-
 // handleToggle applies an on/off phrase in prompt to session. ok is false
 // when prompt is not a toggle.
 func handleToggle(prompt, session string) (ctx, msg string, ok bool) {
@@ -237,9 +228,10 @@ func inactiveSessionStatus(l displayLevel, src activeSource) string {
 		return ""
 	}
 	where := "for this session"
-	if src == activeFromConfig {
+	switch src {
+	case activeFromConfig:
 		where = "for all sessions (grimoire disable)"
-	} else if src == activeFromEnv {
+	case activeFromEnv:
 		where = "(GRIMOIRE_ACTIVE)"
 	}
 	return statusLine(l, "off "+where+` — say "grimoire on" to resume`)
