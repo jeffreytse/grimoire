@@ -26,6 +26,7 @@ import (
 //	GRIMOIRE_DISPLAY_EVAL_MODEL=<m> claude --model for every case; pin it when
 //	                                comparing runs, so only one thing changes
 //	GRIMOIRE_DISPLAY_EVAL_LIMIT=4   run only the first N cases
+//	GRIMOIRE_DISPLAY_EVAL_ONLY=21,22  run only these cases (1-based)
 //	GRIMOIRE_SOURCE=<skills repo>   evaluate a draft skills package
 //	GRIMOIRE_DISPLAY_EVAL_OUT=<dir> keep each case's transcript there, to
 //	                                re-score without re-running
@@ -45,6 +46,10 @@ import (
 //   - silent:   a non-routing prompt, or display off, shows nothing of grimoire
 //   - clean:    the answer itself never carries the grimoire prefix
 //   - evidence: at full, a routed reply cites a source or severity
+//   - progress: a case with a followup ("yes, apply the plan") runs a second
+//     turn in the same session; its plan steps show "step i of N"
+//   - hierarchy: ⎿ rows carry no bold and route/header lines at most one bold
+//     span (the skill name), so grimoire's process never outweighs the answer
 func TestDisplayEval(t *testing.T) {
 	if os.Getenv("GRIMOIRE_DISPLAY_EVAL") == "" {
 		t.Skip("set GRIMOIRE_DISPLAY_EVAL=1 to run against Claude Code (uses API credits)")
@@ -64,6 +69,15 @@ func TestDisplayEval(t *testing.T) {
 	}
 	if n, err := strconv.Atoi(os.Getenv("GRIMOIRE_DISPLAY_EVAL_LIMIT")); err == nil && n > 0 && n < len(set.Cases) {
 		set.Cases = set.Cases[:n]
+	}
+	if only := os.Getenv("GRIMOIRE_DISPLAY_EVAL_ONLY"); only != "" {
+		var picked []displayEvalCase
+		for _, f := range strings.Split(only, ",") {
+			if n, err := strconv.Atoi(strings.TrimSpace(f)); err == nil && n >= 1 && n <= len(set.Cases) {
+				picked = append(picked, set.Cases[n-1])
+			}
+		}
+		set.Cases = picked
 	}
 	modes := []string{"mcp"}
 	switch m := os.Getenv("GRIMOIRE_DISPLAY_EVAL_MODE"); m {
@@ -93,20 +107,22 @@ func TestDisplayEval(t *testing.T) {
 }
 
 type displayEvalCase struct {
-	Prompt string `json:"prompt"`
-	Routes bool   `json:"routes"`
-	Level  string `json:"level"`
+	Prompt   string `json:"prompt"`
+	Routes   bool   `json:"routes"`
+	Level    string `json:"level"`
+	Followup string `json:"followup"`
 }
 
-// evalRun runs one prompt at a display level and returns the assistant's
-// text messages and the run's cost.
-type evalRun func(prompt, level string) (texts []string, cost float64, err error)
+// evalRun runs one prompt at a display level — in a new session, or resuming
+// session resume — and returns the assistant's text messages, the run's cost
+// and its session id.
+type evalRun func(prompt, level, resume string) (texts []string, cost float64, session string, err error)
 
 // runDisplayEvalMode runs and scores every case in one mode, and logs the
 // pass rate per check.
 func runDisplayEvalMode(t *testing.T, mode string, cases []displayEvalCase, run evalRun) float64 {
 	type tally struct{ pass, total int }
-	checks := map[string]*tally{"shown": {}, "silent": {}, "clean": {}, "evidence": {}}
+	checks := map[string]*tally{"shown": {}, "silent": {}, "clean": {}, "evidence": {}, "hierarchy": {}, "progress": {}}
 	var cost float64
 	for i, c := range cases {
 		level := c.Level
@@ -114,14 +130,27 @@ func runDisplayEvalMode(t *testing.T, mode string, cases []displayEvalCase, run 
 			level = "brief"
 		}
 		label := fmt.Sprintf("%s #%d [%s] %q", mode, i+1, level, c.Prompt)
-		texts, usd, err := run(c.Prompt, level)
+		texts, usd, session, err := run(c.Prompt, level, "")
 		cost += usd
 		if err != nil {
 			t.Logf("ERROR %s: %v", label, err)
 			continue
 		}
+		var followTexts []string
+		if c.Followup != "" && session != "" {
+			followTexts, usd, _, err = run(c.Followup, level, session)
+			cost += usd
+			if err != nil {
+				t.Logf("ERROR %s (followup): %v", label, err)
+			}
+			texts = append(texts, followTexts...)
+		}
 		saveTranscript(t, mode, i+1, level, c.Prompt, texts)
-		for name, ok := range scoreDisplay(strings.Join(texts, "\n"), c.Routes, level) {
+		scores := scoreDisplay(strings.Join(texts, "\n"), c.Routes, level)
+		if c.Followup != "" && level != "off" {
+			scores["progress"] = stepCounter.MatchString(strings.Join(followTexts, "\n"))
+		}
+		for name, ok := range scores {
 			checks[name].total++
 			if ok {
 				checks[name].pass++
@@ -130,7 +159,7 @@ func runDisplayEvalMode(t *testing.T, mode string, cases []displayEvalCase, run 
 			}
 		}
 	}
-	for _, name := range []string{"shown", "silent", "clean", "evidence"} {
+	for _, name := range []string{"shown", "silent", "clean", "evidence", "hierarchy", "progress"} {
 		if c := checks[name]; c.total > 0 {
 			t.Logf("%-6s %-8s %d/%d (%.0f%%)", mode, name, c.pass, c.total, 100*float64(c.pass)/float64(c.total))
 		}
@@ -160,14 +189,22 @@ func displayEvalRunner(t *testing.T, dir, bin, mode string) (evalRun, error) {
 			"permissions": map[string]any{"allow": []string{"mcp__grimoire__grimoire_search_skills", "mcp__grimoire__grimoire_get_skill", "mcp__grimoire__grimoire_list_skills", "mcp__grimoire__grimoire_context", "mcp__grimoire__grimoire_info"}},
 		})
 		writeJSON(t, mcpConfig, map[string]any{"mcpServers": map[string]any{"grimoire": map[string]any{"command": bin, "args": []string{"mcp", "serve"}}}})
-		return func(prompt, level string) ([]string, float64, error) {
-			work, err := os.MkdirTemp(dir, "mcp-case")
-			if err != nil {
-				return nil, 0, err
+		workBySession := map[string]string{} // a resumed session needs its own cwd
+		return func(prompt, level, resume string) ([]string, float64, string, error) {
+			work := workBySession[resume]
+			if work == "" {
+				var err error
+				if work, err = os.MkdirTemp(dir, "mcp-case"); err != nil {
+					return nil, 0, "", err
+				}
 			}
-			return runClaudeEval(work, level, prompt,
+			texts, cost, session, err := runClaudeEval(work, level, prompt, resume,
 				"--setting-sources", "project", "--settings", settings,
 				"--mcp-config", mcpConfig, "--strict-mcp-config")
+			if session != "" {
+				workBySession[session] = work
+			}
+			return texts, cost, session, err
 		}, nil
 	case "skills":
 		project := filepath.Join(dir, "skills-project")
@@ -187,8 +224,8 @@ func displayEvalRunner(t *testing.T, dir, bin, mode string) (evalRun, error) {
 		if err := os.WriteFile(filepath.Join(project, "CLAUDE.md"), []byte(instruction), 0o644); err != nil {
 			return nil, err
 		}
-		return func(prompt, level string) ([]string, float64, error) {
-			return runClaudeEval(project, level, prompt,
+		return func(prompt, level, resume string) ([]string, float64, string, error) {
+			return runClaudeEval(project, level, prompt, resume,
 				"--setting-sources", "project",
 				"--mcp-config", `{"mcpServers":{}}`, "--strict-mcp-config")
 		}, nil
@@ -261,10 +298,37 @@ func scoreDisplay(reply string, routes bool, level string) map[string]bool {
 		}
 	}
 	got["clean"] = clean
+	if shows {
+		got["hierarchy"] = flatHierarchy(reply)
+	}
 	if routes && level == "full" {
 		got["evidence"] = evidenceMarker.MatchString(reply)
 	}
 	return got
+}
+
+// boldSpan matches one **bold** span.
+var boldSpan = regexp.MustCompile(`\*\*[^*\n]+\*\*`)
+
+// flatHierarchy reports whether grimoire's lines follow the Display
+// section's hierarchy: a ⎿ row has no bold (labels are tertiary), and a route
+// line or block header has at most one bold span (the skill name).
+func flatHierarchy(reply string) bool {
+	for _, line := range strings.Split(reply, "\n") {
+		l := strings.TrimSpace(line)
+		bold := len(boldSpan.FindAllString(l, -1))
+		switch {
+		case strings.HasPrefix(l, "⎿"):
+			if bold > 0 {
+				return false
+			}
+		case strings.HasPrefix(l, "grimoire ▸"), strings.HasPrefix(l, "start-best-practice ▸"), displayMarker.MatchString(l):
+			if bold > 1 {
+				return false
+			}
+		}
+	}
+	return true
 }
 
 // saveTranscript keeps a case's reply under GRIMOIRE_DISPLAY_EVAL_OUT.
@@ -287,17 +351,26 @@ func saveTranscript(t *testing.T, mode string, n int, level, prompt string, text
 // (bold skill name followed by a domain code span).
 var displayMarker = regexp.MustCompile("(?m)grimoire ▸|^\\*\\*[a-z0-9-]+\\*\\*[^\\n]*`[a-z0-9-]+/[a-z0-9-]+`")
 
-// evidenceMarker matches the full level's evidence: a source, severity or risk.
-var evidenceMarker = regexp.MustCompile(`(?i)_?source:|🔴|🟡|⚪|⚠️[\s*_]*without this`)
+// stepCounter matches a plan step's position, "step 2 of 4".
+var stepCounter = regexp.MustCompile(`(?i)\bstep \d+ of \d+\b`)
 
-// runClaudeEval runs one prompt headless in work with extra claude args and
-// returns the assistant's text messages and the run's cost.
-func runClaudeEval(work, level, prompt string, args ...string) (texts []string, cost float64, err error) {
+// evidenceMarker matches the full level's evidence: a source, severity or risk.
+// A risk is any line led by ⚠ (the Display section's risk glyph), whatever
+// words follow — "⚠ Without this:" is the template, not the only phrasing.
+var evidenceMarker = regexp.MustCompile("(?im)_?source:|🔴|🟡|⚪|^\\s*(⎿\\s*)?⚠")
+
+// runClaudeEval runs one prompt headless in work with extra claude args —
+// resuming session resume when set — and returns the assistant's text
+// messages, the run's cost and its session id.
+func runClaudeEval(work, level, prompt, resume string, args ...string) (texts []string, cost float64, session string, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 8*time.Minute)
 	defer cancel()
 	base := []string{"-p", prompt, "--output-format", "stream-json", "--verbose", "--max-turns", "12"}
 	if m := os.Getenv("GRIMOIRE_DISPLAY_EVAL_MODEL"); m != "" {
 		base = append(base, "--model", m)
+	}
+	if resume != "" {
+		base = append(base, "--resume", resume)
 	}
 	cmd := exec.CommandContext(ctx, "claude", append(base, args...)...)
 	cmd.Dir = work
@@ -306,15 +379,16 @@ func runClaudeEval(work, level, prompt string, args ...string) (texts []string, 
 	var out bytes.Buffer
 	cmd.Stdout = &out
 	if err := cmd.Run(); err != nil && out.Len() == 0 {
-		return nil, 0, err
+		return nil, 0, "", err
 	}
 	sc := bufio.NewScanner(&out)
 	sc.Buffer(make([]byte, 1<<20), 16<<20)
 	for sc.Scan() {
 		var e struct {
-			Type    string  `json:"type"`
-			Cost    float64 `json:"total_cost_usd"`
-			Message struct {
+			Type      string  `json:"type"`
+			Cost      float64 `json:"total_cost_usd"`
+			SessionID string  `json:"session_id"`
+			Message   struct {
 				Content []struct {
 					Type string `json:"type"`
 					Text string `json:"text"`
@@ -323,6 +397,9 @@ func runClaudeEval(work, level, prompt string, args ...string) (texts []string, 
 		}
 		if json.Unmarshal(sc.Bytes(), &e) != nil {
 			continue
+		}
+		if session == "" {
+			session = e.SessionID
 		}
 		switch e.Type {
 		case "assistant":
@@ -335,7 +412,7 @@ func runClaudeEval(work, level, prompt string, args ...string) (texts []string, 
 			cost = e.Cost
 		}
 	}
-	return texts, cost, nil
+	return texts, cost, session, nil
 }
 
 func writeJSON(t *testing.T, path string, v any) {
@@ -360,15 +437,19 @@ func TestScoreDisplay(t *testing.T) {
 		routes             bool
 		want               map[string]bool
 	}{
-		{"decision line then answer", decision, "brief", true, map[string]bool{"shown": true, "clean": true}},
-		{"block header", block, "brief", true, map[string]bool{"shown": true, "clean": true}},
+		{"decision line then answer", decision, "brief", true, map[string]bool{"shown": true, "clean": true, "hierarchy": true}},
+		{"block header", block, "brief", true, map[string]bool{"shown": true, "clean": true, "hierarchy": false}},
+		{"plain row labels", "**apply-premortem**  `business/strategy`\n⎿  Top risk  DB pool", "brief", true, map[string]bool{"shown": true, "clean": true, "hierarchy": true}},
 		{"routed but silent", "Here is a plan.", "brief", true, map[string]bool{"shown": false, "clean": true}},
 		{"no route stays silent", "Canberra.", "brief", false, map[string]bool{"silent": true, "clean": true}},
-		{"off but shown", decision, "off", true, map[string]bool{"silent": false, "clean": true}},
-		{"prefixed prose", prose, "brief", true, map[string]bool{"shown": true, "clean": false}},
-		{"full with source", block + "\n_Source: Klein (1998)_", "full", true, map[string]bool{"shown": true, "clean": true, "evidence": true}},
-		{"full without evidence", block, "full", true, map[string]bool{"shown": true, "clean": true, "evidence": false}},
-		{"full with bold risk line", block + "\n⎿  ⚠️ **Without this:** no backup", "full", true, map[string]bool{"shown": true, "clean": true, "evidence": true}},
+		{"off but shown", decision, "off", true, map[string]bool{"silent": false, "clean": true, "hierarchy": true}},
+		{"prefixed prose", prose, "brief", true, map[string]bool{"shown": true, "clean": false, "hierarchy": true}},
+		{"full with source", block + "\n_Source: Klein (1998)_", "full", true, map[string]bool{"shown": true, "clean": true, "evidence": true, "hierarchy": false}},
+		{"full without evidence", block, "full", true, map[string]bool{"shown": true, "clean": true, "evidence": false, "hierarchy": false}},
+		{"full with bold risk line", block + "\n⎿  ⚠️ **Without this:** no backup", "full", true, map[string]bool{"shown": true, "clean": true, "evidence": true, "hierarchy": false}},
+		{"text-glyph risk line", "**x**  `a/b`\n⚠ Without this: no backup", "full", true, map[string]bool{"shown": true, "clean": true, "evidence": true, "hierarchy": true}},
+		{"risk line in own words", "**x**  `a/b`\n⚠ Without measuring first, you risk the wrong fix", "full", true, map[string]bool{"shown": true, "clean": true, "evidence": true, "hierarchy": true}},
+		{"warning sign mid-sentence is not a risk row", "**x**  `a/b`\nSee the ⚠ above.", "full", true, map[string]bool{"shown": true, "clean": true, "evidence": false, "hierarchy": true}},
 	}
 	for _, c := range cases {
 		got := scoreDisplay(c.reply, c.routes, c.level)
@@ -397,6 +478,19 @@ func TestLinkEvalSkills(t *testing.T) {
 	for _, name := range []string{"write-unit-test", "write-readme"} {
 		if _, err := os.Stat(filepath.Join(dst, name, "SKILL.md")); err != nil {
 			t.Errorf("%s not linked: %v", name, err)
+		}
+	}
+}
+
+func TestStepCounter(t *testing.T) {
+	for s, want := range map[string]bool{
+		"**design-slo**  `engineering/reliability` — step 2 of 4": true,
+		"Step 1 of 3: premortem":                                  true,
+		"⎿  Step 1  apply-premortem":                              false,
+		"stepped 2 of 4":                                          false,
+	} {
+		if got := stepCounter.MatchString(s); got != want {
+			t.Errorf("%q: %v, want %v", s, got, want)
 		}
 	}
 }

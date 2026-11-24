@@ -84,6 +84,16 @@
       "prompt": "what is the capital of Australia?",
       "routes": false,
       "level": "full"
+    },
+    {
+      "prompt": "We're launching our SaaS in 48 hours. I'm terrified something will break. What do we do?",
+      "routes": true,
+      "followup": "Yes, apply the plan. Run all the steps without stopping."
+    },
+    {
+      "prompt": "help me plan a migration from a monolith to services over the next year",
+      "routes": true,
+      "followup": "Yes, apply the plan. Run all the steps without stopping."
     }
   ]
 }
