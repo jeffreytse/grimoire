@@ -22,6 +22,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/pelletier/go-toml/v2"
@@ -385,6 +386,10 @@ func merge(layers []ManifestFile, paths []string) Resolved {
 			r.Core.InstallMode = mf.Core.InstallMode
 			r.Sources["core.install-mode"] = src
 		}
+		if r.Core.Active == "" && mf.Core.Active != "" {
+			r.Core.Active = mf.Core.Active
+			r.Sources["core.active"] = src
+		}
 		if r.Core.DisplayStyle == "" && mf.Core.DisplayStyle != "" {
 			r.Core.DisplayStyle = mf.Core.DisplayStyle
 			r.Sources["core.display-style"] = src
@@ -561,6 +566,11 @@ func parseCoreSection(m map[string]any) config.CoreSection {
 	if v, ok := m["display-style"].(string); ok {
 		cs.DisplayStyle = v
 	}
+	if v, ok := m["active"].(bool); ok {
+		cs.Active = strconv.FormatBool(v)
+	} else if v, ok := m["active"].(string); ok {
+		cs.Active = v
+	}
 	cs.Agents = parseStringSlice(m["agents"])
 	cs.SearchPackages = parseStringSlice(m["search-packages"])
 	if v, ok := anyToInt(m["update-concurrency"]); ok && v >= 0 {
@@ -663,6 +673,9 @@ func toRawMap(mf *ManifestFile) map[string]any {
 	}
 	if mf.Core.DisplayStyle != "" {
 		core["display-style"] = mf.Core.DisplayStyle
+	}
+	if b, err := strconv.ParseBool(mf.Core.Active); err == nil {
+		core["active"] = b
 	}
 	if mf.Core.InstallMode != "" {
 		core["install-mode"] = mf.Core.InstallMode

@@ -28,6 +28,7 @@ type CoreSection struct {
 	Agents            []string          // [core] agents — pinned agent targets (empty = auto-detect)
 	InstallMode       string            // [core] install-mode — "symlink" (default) | "copy"
 	Trace             string            // [core] trace — grimoire display level: "brief" (default) | "full" | "off"
+	Active            string            // [core] active — "true" (default) | "false": grimoire routes requests or stays out of the way
 	DisplayStyle      string            // [core] display-style — "rich" (default) | "plain": words instead of decorative glyphs
 	UpdateConcurrency *int              // [core] update-concurrency — nil=default(8), 0=unlimited, N=cap at N
 	SearchPackages    []string          `toml:"search-packages"` // additional packages for `grimoire search` (global only)
@@ -218,6 +219,10 @@ func Merge(layers []FileConfig, paths []string) Config {
 		if r.Core.InstallMode == "" && fs.Core.InstallMode != "" {
 			r.Core.InstallMode = fs.Core.InstallMode
 			r.Sources["core.install-mode"] = src
+		}
+		if r.Core.Active == "" && fs.Core.Active != "" {
+			r.Core.Active = fs.Core.Active
+			r.Sources["core.active"] = src
 		}
 		if r.Core.DisplayStyle == "" && fs.Core.DisplayStyle != "" {
 			r.Core.DisplayStyle = fs.Core.DisplayStyle

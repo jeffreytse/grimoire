@@ -163,7 +163,7 @@ export const GrimoirePromptHook = async ({ client } = {}) => ({
       .map((p) => p.text)
       .join("\n")
     const { context = "", status = "" } = prompt
-      ? await hook("prompt", { prompt, hook_event_name: "UserPromptSubmit" })
+      ? await hook("prompt", { prompt, hook_event_name: "UserPromptSubmit", session_id: input.sessionID })
       : {}
     contextBySession.set(input.sessionID, context)
     await toast(client, status)

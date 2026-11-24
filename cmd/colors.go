@@ -66,3 +66,10 @@ func renderBadge(label string) string {
 	}
 	return "[" + label + "]"
 }
+
+// renderBadgeOff is the badge while grimoire is inactive: plain text in the
+// terminal's own foreground color — no brand chip, so "off" does not look
+// like grimoire is working, and its contrast is the user's own theme's.
+func renderBadgeOff() string {
+	return "[GRIMOIRE off]"
+}

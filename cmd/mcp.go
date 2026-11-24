@@ -103,7 +103,7 @@ func registerMCPTools(s *server.MCPServer) {
 
 	addTool(s,
 		mcp.NewTool("grimoire_get_skill",
-			mcp.WithDescription(mcpRouteDirective+" Fetch the full SKILL.md content for a skill by exact name. When the user writes `grimoire:<skill-name>`, call this with that name directly (no search). A leading `grimoire:` is accepted; an unknown name returns close matches. Returns name, full content, and source path. To load several skills at once (e.g. the steps of a plan), pass `names` instead of `name`."),
+			mcp.WithDescription(routeDirective()+" Fetch the full SKILL.md content for a skill by exact name. When the user writes `grimoire:<skill-name>`, call this with that name directly (no search). A leading `grimoire:` is accepted; an unknown name returns close matches. Returns name, full content, and source path. To load several skills at once (e.g. the steps of a plan), pass `names` instead of `name`."),
 			mcp.WithString("name", mcp.Description("Skill name (e.g. propose-conventional-commit)")),
 			mcp.WithArray("names", mcp.WithStringItems(), mcp.Description("Several skill names to load in one call (max 10); used instead of name")),
 		),
@@ -112,7 +112,7 @@ func registerMCPTools(s *server.MCPServer) {
 
 	addTool(s,
 		mcp.NewTool("grimoire_search_skills",
-			mcp.WithDescription(mcpRouteDirective+" Search skills using BM25 relevance ranking. Handles semantic queries like 'write better commit messages' matching propose-conventional-commit — better than exact substring matching. Returns top matches with scores."),
+			mcp.WithDescription(routeDirective()+" Search skills using BM25 relevance ranking. Handles semantic queries like 'write better commit messages' matching propose-conventional-commit — better than exact substring matching. Returns top matches with scores."),
 			mcp.WithString("query", mcp.Required(), mcp.Description("Natural language or keyword search query")),
 			mcp.WithNumber("top_n", mcp.Description("Maximum results to return (default: 10, max: 100)")),
 		),

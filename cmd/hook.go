@@ -134,6 +134,9 @@ func init() {
 
 type hookInput struct {
 	Prompt string `json:"prompt"`
+	// SessionID keys per-session state (an on/off toggle). Claude Code,
+	// Codex and Gemini CLI send it; the OpenCode plugin passes its own.
+	SessionID string `json:"session_id"`
 	// HookEventName is echoed back: Claude Code and Codex send
 	// "UserPromptSubmit", Gemini CLI sends "BeforeAgent".
 	HookEventName string `json:"hook_event_name"`
@@ -158,9 +161,8 @@ func runHookPrompt(in io.Reader, out io.Writer) {
 	if json.Unmarshal(raw, &input) != nil {
 		return
 	}
-	l := displayLevelSetting()
-	ctx, msg := hookTurn(input.Prompt, l)
-	writeHookOutput(out, input.HookEventName, "UserPromptSubmit", ctx, withOnboardingTip(l, ctx, msg))
+	ctx, msg := promptTurn(input.Prompt, input.SessionID, displayLevelSetting(), true, hookTurn)
+	writeHookOutput(out, input.HookEventName, "UserPromptSubmit", ctx, msg)
 }
 
 // runHookSession prints the router context for a session-start hook.
@@ -172,7 +174,12 @@ func runHookSession(in io.Reader, out io.Writer) {
 	var input hookInput
 	// Some agents send no input to session hooks; that is fine.
 	_ = json.Unmarshal(raw, &input)
-	ctx, msg := sessionTurn(displayLevelSetting())
+	l := displayLevelSetting()
+	if active, src := grimoireActive(input.SessionID); !active {
+		writeHookOutput(out, input.HookEventName, "SessionStart", inactiveRule, inactiveSessionStatus(l, src))
+		return
+	}
+	ctx, msg := sessionTurn(l)
 	writeHookOutput(out, input.HookEventName, "SessionStart", ctx, msg)
 }
 

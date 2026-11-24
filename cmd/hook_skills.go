@@ -68,7 +68,12 @@ func runSkillsSession(in io.Reader, out io.Writer) {
 	}
 	var input hookInput
 	_ = json.Unmarshal(raw, &input)
-	ctx, msg := skillsSessionTurn(displayLevelSetting())
+	l := displayLevelSetting()
+	if active, src := grimoireActive(input.SessionID); !active {
+		writeHookOutput(out, input.HookEventName, "SessionStart", inactiveRule, inactiveSessionStatus(l, src))
+		return
+	}
+	ctx, msg := skillsSessionTurn(l)
 	writeHookOutput(out, input.HookEventName, "SessionStart", ctx, msg)
 }
 
@@ -87,9 +92,8 @@ func runSkillsPrompt(in io.Reader, out io.Writer) {
 	if json.Unmarshal(raw, &input) != nil {
 		return
 	}
-	l := displayLevelSetting()
-	ctx, msg := skillsHookTurn(input.Prompt, l)
-	writeHookOutput(out, input.HookEventName, "UserPromptSubmit", ctx, withOnboardingTip(l, ctx, msg))
+	ctx, msg := promptTurn(input.Prompt, input.SessionID, displayLevelSetting(), true, skillsHookTurn)
+	writeHookOutput(out, input.HookEventName, "UserPromptSubmit", ctx, msg)
 }
 
 // skillsHookTurn is hookTurn for skills mode: the skills are already in the

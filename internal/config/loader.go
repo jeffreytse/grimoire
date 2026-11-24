@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/pelletier/go-toml/v2"
@@ -391,6 +392,11 @@ func parseCoreSection(m map[string]any) CoreSection {
 	cs.InstallMode, _ = m["install-mode"].(string)   //nolint:revive // wrong type silently skipped
 	cs.Trace, _ = m["trace"].(string)                //nolint:revive // wrong type silently skipped
 	cs.DisplayStyle, _ = m["display-style"].(string) //nolint:revive // wrong type silently skipped
+	if v, ok := m["active"].(bool); ok {
+		cs.Active = strconv.FormatBool(v)
+	} else if v, ok := m["active"].(string); ok {
+		cs.Active = v
+	}
 	cs.Agents = parseStringSlice(m["agents"])
 	cs.CheckExclude = parseStringSlice(m["check-exclude"])
 	if v, ok := anyToInt(m["update-concurrency"]); ok && v >= 0 {
@@ -502,6 +508,9 @@ func toMap(fs *FileConfig) map[string]any {
 	}
 	if fs.Core.DisplayStyle != "" {
 		core["display-style"] = fs.Core.DisplayStyle
+	}
+	if b, err := strconv.ParseBool(fs.Core.Active); err == nil {
+		core["active"] = b
 	}
 	if fs.Core.UpdateConcurrency != nil {
 		core["update-concurrency"] = *fs.Core.UpdateConcurrency

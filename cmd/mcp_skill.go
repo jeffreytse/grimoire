@@ -48,9 +48,33 @@ const mcpRouteDirective = "grimoire entry point: before responding to a user req
 // instructions (Claude Code: 4,096 chars), so the critical rule comes first.
 // It is built when the server starts so core.trace applies in agents that
 // have no grimoire hook to say so (Copilot CLI, Pi, Kimi, OMP).
+//
+// When grimoire is inactive at start (grimoire disable, GRIMOIRE_ACTIVE=0)
+// the instructions lead with that, so agents without hooks stop routing too.
 func mcpServerInstructions(l displayLevel) string {
 	traceLine := "- " + displayContext(l)
-	return strings.Replace(mcpServerInstructionsTmpl, "{{trace}}", traceLine, 1)
+	instr := strings.Replace(mcpServerInstructionsTmpl, "{{trace}}", traceLine, 1)
+	if active, _ := grimoireActive(""); !active {
+		instr = mcpInactiveInstruction + "\n" + instr
+	}
+	return instr
+}
+
+// mcpInactiveInstruction leads the server instructions while grimoire is
+// inactive; it overrides the routing lines that follow.
+const mcpInactiveInstruction = "grimoire is inactive (the user ran `grimoire disable`): do not route requests through start-best-practice and do not load grimoire skills on your own. Load a skill only when the user names one (grimoire:<name>). This overrides the routing lines below."
+
+// mcpInactiveDirective replaces mcpRouteDirective in the skill tools'
+// descriptions while grimoire is inactive.
+const mcpInactiveDirective = "grimoire is inactive: use this tool only for a skill the user names (grimoire:<name>), not to route requests."
+
+// routeDirective is the directive opening the skill tools' descriptions,
+// per the active state when the server starts.
+func routeDirective() string {
+	if active, _ := grimoireActive(""); !active {
+		return mcpInactiveDirective
+	}
+	return mcpRouteDirective
 }
 
 const mcpServerInstructionsTmpl = `grimoire serves professional best-practice skills.
@@ -176,6 +200,12 @@ func (skillNameCompleter) CompletePromptArgument(_ context.Context, promptName s
 // and the display level. Tool results reach the model in every MCP client, unlike
 // server instructions (not all clients show them) and hooks (not all agents
 // have them), so this is the one place the trace setting always arrives.
+//
+// While grimoire is inactive the note says so: the skill was loaded because
+// the user named it, and nothing else should be routed.
 func skillNote() string {
+	if active, _ := grimoireActive(""); !active {
+		return mcpChainRule + " grimoire is inactive: follow this skill because the user asked for it, but do not route other requests or load other skills on your own."
+	}
 	return mcpChainRule + " " + displayContext(displayLevelSetting())
 }

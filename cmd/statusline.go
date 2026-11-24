@@ -77,7 +77,11 @@ func runStatusLine(in io.Reader, out io.Writer, then, stateRoot string) {
 			parts = append(parts, s)
 		}
 	}
-	parts = append(parts, statusBadge(lastFile))
+	if active, _ := grimoireActive(input.SessionID); !active {
+		parts = append(parts, renderBadgeOff())
+	} else {
+		parts = append(parts, statusBadge(lastFile))
+	}
 	fmt.Fprint(out, strings.Join(parts, " "))
 }
 
