@@ -111,15 +111,14 @@ func readyStatus(l displayLevel, mode, detail string) string {
 	if mode != "" {
 		ready += " (" + mode + ")"
 	}
-	switch l {
-	case displayFull:
-		line := ready + " · full view — say \"quiet grimoire\" to hide"
-		if detail != "" {
-			line += " · " + detail
-		}
-		return statusLine(l, line)
+	if l != displayFull {
+		return ""
 	}
-	return ""
+	line := ready + " · full view — say \"quiet grimoire\" to hide"
+	if detail != "" {
+		line += " · " + detail
+	}
+	return statusLine(l, line)
 }
 
 // routerHasDisplay reports whether the installed start-best-practice skill

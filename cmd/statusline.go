@@ -148,7 +148,7 @@ func recentLastSkill(path string) string {
 	if err != nil {
 		return ""
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 	raw, _ := io.ReadAll(io.LimitReader(f, lastSkillMax))
 	return sanitizeSkillName(string(raw))
 }

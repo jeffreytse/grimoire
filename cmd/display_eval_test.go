@@ -357,7 +357,7 @@ var stepCounter = regexp.MustCompile(`(?i)\bstep \d+ of \d+\b`)
 // evidenceMarker matches the full level's evidence: a source, severity or risk.
 // A risk is any line led by ⚠ (the Display section's risk glyph), whatever
 // words follow — "⚠ Without this:" is the template, not the only phrasing.
-var evidenceMarker = regexp.MustCompile("(?im)_?source:|🔴|🟡|⚪|^\\s*(⎿\\s*)?⚠")
+var evidenceMarker = regexp.MustCompile(`(?im)_?source:|🔴|🟡|⚪|^\s*(⎿\s*)?⚠`)
 
 // runClaudeEval runs one prompt headless in work with extra claude args —
 // resuming session resume when set — and returns the assistant's text

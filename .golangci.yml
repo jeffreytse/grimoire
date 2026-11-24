@@ -32,7 +32,9 @@ linters:
             - "fmt.Printf"
             - "fmt.Println"
             - "fmt.Print"
+            - "fmt.Fprint"
             - "strings.Builder.WriteString"
+            - "strings.Builder.WriteRune"
             - "os.File.Write"
         - name: unchecked-type-assertion
         # Imports
@@ -74,6 +76,7 @@ linters:
         - fmt.Printf
         - fmt.Println
         - fmt.Print
+        - fmt.Fprint
         - (strings.Builder).WriteString
         - (*os.File).Write
 

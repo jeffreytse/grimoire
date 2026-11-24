@@ -47,7 +47,10 @@ func TestStatusLine_SetChainRestore(t *testing.T) {
 		t.Fatalf("remove chained: %v %v", changed, err)
 	}
 	cfg, _ := readSettings(path)
-	sl := cfg["statusLine"].(map[string]any)
+	sl, ok := cfg["statusLine"].(map[string]any)
+	if !ok {
+		t.Fatalf("statusLine = %v, want object", cfg["statusLine"])
+	}
 	if sl["command"] != orig || sl["padding"] != float64(1) {
 		t.Errorf("restored statusLine = %v", sl)
 	}

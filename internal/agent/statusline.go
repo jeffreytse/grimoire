@@ -100,7 +100,10 @@ func statusLineCommandOf(cfg map[string]any, path string) (command string, set b
 	if !ok {
 		return "", true, fmt.Errorf(`%s: "statusLine" is not an object — fix it by hand`, path)
 	}
-	c, _ := m["command"].(string)
+	c, ok := m["command"].(string)
+	if !ok {
+		return "", true, nil
+	}
 	return c, true, nil
 }
 
@@ -152,8 +155,8 @@ func ConfigureStatusLine(path, bin string, chain bool) (changed bool, other stri
 	if want == cur {
 		return false, "", nil
 	}
-	sl, _ := cfg["statusLine"].(map[string]any)
-	if sl == nil {
+	sl, ok := cfg["statusLine"].(map[string]any)
+	if !ok {
 		sl = map[string]any{}
 	}
 	sl["type"] = "command"
@@ -184,7 +187,11 @@ func RemoveStatusLine(path string) (bool, error) {
 	if then == "" {
 		delete(cfg, "statusLine")
 	} else {
-		sl := cfg["statusLine"].(map[string]any)
+		sl, ok := cfg["statusLine"].(map[string]any)
+		if !ok {
+			sl = map[string]any{}
+			cfg["statusLine"] = sl
+		}
 		sl["command"] = then
 	}
 	return true, writeSettings(path, cfg)

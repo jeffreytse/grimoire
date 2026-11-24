@@ -197,12 +197,6 @@ func writeHookOutput(out io.Writer, event, fallback, ctx, msg string) {
 	fmt.Fprintln(out, string(b))
 }
 
-// sessionContext is the router context for a session at the brief level.
-func sessionContext() string {
-	ctx, _ := sessionTurn(displayBrief)
-	return ctx
-}
-
 // sessionTurn returns the router injected once per session — the chain rule
 // and the start-best-practice routing, inlined from the installed package so
 // it stays in step with the skills library — and the status line for the
