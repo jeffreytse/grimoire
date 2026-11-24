@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/jeffreytse/grimoire/internal/agent"
 	"os"
 	"path/filepath"
 	"sort"
@@ -58,7 +59,7 @@ var mcpConfigCmd = &cobra.Command{
 }
 
 func init() {
-	mcpConfigCmd.Flags().StringVar(&flagMCPConfigTarget, "target", "claude", "AI assistant to configure (claude, cursor, windsurf, cline)")
+	mcpConfigCmd.Flags().StringVar(&flagMCPConfigTarget, "target", "claude", "AI assistant to configure (claude, claude-desktop, cursor, windsurf, cline)")
 	mcpCmd.AddCommand(mcpServeCmd)
 	mcpCmd.AddCommand(mcpConfigCmd)
 }
@@ -735,6 +736,21 @@ Or write .mcp.json at the project root yourself:
   }
 }
 `)
+	case "claude-desktop":
+		fmt.Printf(`Add to %s
+(or run: grimoire mcp install --target claude-desktop), then quit and reopen Claude Desktop:
+
+{
+  "mcpServers": {
+    "grimoire": {
+      "command": %q,
+      "args": ["mcp", "serve"]
+    }
+  }
+}
+
+The command is an absolute path: Claude Desktop doesn't use your shell's PATH.
+`, agent.ClaudeDesktopConfig(), absoluteCommand("grimoire"))
 	case "cline":
 		fmt.Print(`In Cline settings → MCP Servers → Add Server:
 
@@ -742,7 +758,7 @@ Command: grimoire
 Args: ["mcp", "serve"]
 `)
 	default:
-		return fmt.Errorf("unknown target %q — supported: claude, cursor, windsurf, cline", flagMCPConfigTarget)
+		return fmt.Errorf("unknown target %q — supported: claude, claude-desktop, cursor, windsurf, cline", flagMCPConfigTarget)
 	}
 	return nil
 }

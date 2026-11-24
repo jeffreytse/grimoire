@@ -95,6 +95,33 @@ var mcpAgents = []mcpAgent{
 		return e
 	}, "/mcp in a new omp session"),
 	fileAgent("antigravity", "Antigravity", "agy", []string{"user"}, commandArgsEntry, "/mcp in a new agy session"),
+	// Claude Desktop: the desktop app, for people who don't work in a terminal
+	// agent. No CLI on PATH, so --target all skips it; name it explicitly.
+	fileAgent("claude-desktop", "Claude Desktop", "", []string{"user"}, desktopEntry, "quit and reopen Claude Desktop, then look for grimoire in its connectors"),
+}
+
+// desktopEntry is commandArgsEntry with an absolute command: desktop apps
+// don't inherit the shell's PATH (macOS GUI apps start with a minimal one),
+// so a bare "grimoire" would fail to start there.
+func desktopEntry(serve string) map[string]any {
+	return commandArgsEntry(absoluteCommand(serve))
+}
+
+// absoluteCommand resolves cmd to an absolute path: through PATH, else this
+// binary's own path; unchanged when neither resolves.
+func absoluteCommand(cmd string) string {
+	if filepath.IsAbs(cmd) {
+		return cmd
+	}
+	if p, err := exec.LookPath(cmd); err == nil {
+		if abs, err := filepath.Abs(p); err == nil {
+			return abs
+		}
+	}
+	if exe, err := os.Executable(); err == nil {
+		return exe
+	}
+	return cmd
 }
 
 func fileAgent(key, display, bin string, scopes []string, entry func(string) map[string]any, verify string) mcpAgent {
@@ -224,6 +251,10 @@ func resolveMCPAgents() ([]*mcpAgent, error) {
 	if flagMCPSetupTarget == "all" {
 		for i := range mcpAgents {
 			a := &mcpAgents[i]
+			// An agent without a CLI (Claude Desktop) can't be detected; name it.
+			if a.bin == "" {
+				continue
+			}
 			if _, err := mcpLookPath(a.bin); err == nil && a.supports(flagMCPSetupScope) {
 				out = append(out, a)
 			}
@@ -347,6 +378,10 @@ func installMCPAgent(a *mcpAgent, serve string) error {
 		reportChange(changed, "added grimoire instruction to "+path, "grimoire instruction already in "+path)
 	case a.key == "antigravity" && !flagMCPSetupNoHook:
 		// No instruction file: the SessionStart hook injects the line.
+	case a.key == "claude-desktop":
+		// No instruction file or hooks: grimoire's MCP server instructions
+		// tell Claude when to route through it.
+		fmt.Printf("  %s  Claude Desktop needs no instruction file — grimoire's server tells Claude when to use it\n", tui.IconSkip)
 	default:
 		fmt.Printf("  %s  %s has no %s-level instruction file — add this line to a project AGENTS.md yourself:\n       %s\n",
 			tui.IconSkip, a.display, scope, agent.MCPTriggerLine)

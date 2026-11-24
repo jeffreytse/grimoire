@@ -518,3 +518,59 @@ func TestMCPInstall_PreApprovesReadOnlyTools(t *testing.T) {
 		})
 	}
 }
+
+// Claude Desktop: registered in its config file with an absolute command
+// (desktop apps don't inherit the shell's PATH); rerun is a no-op, uninstall
+// removes only grimoire, and --target all leaves it out (no CLI to detect).
+func TestMCPInstall_ClaudeDesktop(t *testing.T) {
+	f, _ := setupMCPSetupEnv(t, true)
+	cfgPath := agent.ClaudeDesktopConfig()
+	if err := os.MkdirAll(filepath.Dir(cfgPath), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(cfgPath, []byte(`{"mcpServers":{"other":{"command":"x"}},"keep":1}`), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	flagMCPSetupTarget = "claude-desktop"
+	if err := runMCPInstall(nil, nil); err != nil {
+		t.Fatal(err)
+	}
+	if len(f.calls) != 0 {
+		t.Errorf("ran a CLI: %v", f.calls)
+	}
+	var cfg struct {
+		MCPServers map[string]map[string]any `json:"mcpServers"`
+		Keep       int                       `json:"keep"`
+	}
+	b, _ := os.ReadFile(cfgPath)
+	if err := json.Unmarshal(b, &cfg); err != nil {
+		t.Fatal(err)
+	}
+	cmd, _ := cfg.MCPServers["grimoire"]["command"].(string)
+	if !filepath.IsAbs(cmd) || cfg.Keep != 1 || cfg.MCPServers["other"] == nil {
+		t.Errorf("config = %s", b)
+	}
+	before := string(b)
+	if err := runMCPInstall(nil, nil); err != nil {
+		t.Fatal(err)
+	}
+	if b2, _ := os.ReadFile(cfgPath); string(b2) != before {
+		t.Errorf("rerun changed config")
+	}
+	if err := runMCPUninstall(nil, nil); err != nil {
+		t.Fatal(err)
+	}
+	if b3, _ := os.ReadFile(cfgPath); strings.Contains(string(b3), "grimoire") || !strings.Contains(string(b3), "other") {
+		t.Errorf("uninstall: %s", b3)
+	}
+
+	flagMCPSetupTarget = "all"
+	agents, err := resolveMCPAgents()
+	if err == nil {
+		for _, a := range agents {
+			if a.key == "claude-desktop" {
+				t.Error("--target all included Claude Desktop")
+			}
+		}
+	}
+}

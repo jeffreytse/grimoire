@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 )
 
@@ -200,8 +201,25 @@ func MCPServersFile(ag, scope, projectDir string) string {
 		return filepath.Join(ompAgentDir(home), "mcp.json")
 	case "antigravity":
 		return filepath.Join(home, ".gemini", "config", "mcp_config.json")
+	case "claude-desktop":
+		return ClaudeDesktopConfig()
 	}
 	return ""
+}
+
+// ClaudeDesktopConfig is Claude Desktop's MCP config file, per the MCP docs:
+// ~/Library/Application Support/Claude/claude_desktop_config.json (macOS),
+// %APPDATA%\Claude\claude_desktop_config.json (Windows),
+// ~/.config/Claude/claude_desktop_config.json (Linux).
+func ClaudeDesktopConfig() string {
+	home := mustHome()
+	switch runtime.GOOS {
+	case "darwin":
+		return filepath.Join(home, "Library", "Application Support", "Claude", "claude_desktop_config.json")
+	case "windows":
+		return filepath.Join(envDir("APPDATA", filepath.Join(home, "AppData", "Roaming")), "Claude", "claude_desktop_config.json")
+	}
+	return filepath.Join(home, ".config", "Claude", "claude_desktop_config.json")
 }
 
 // OpenCodeConfigDir is OpenCode's global config dir
