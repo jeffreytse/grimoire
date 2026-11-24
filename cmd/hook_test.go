@@ -327,11 +327,16 @@ func TestHookSession_StatusLine(t *testing.T) {
 		t.Fatal(err)
 	}
 	ctx, msg := sessionTurn(displayBrief)
-	if msg != "grimoire ▸ ready · start-best-practice (1 route) · display brief" || !strings.Contains(ctx, "grimoire display: brief") {
+	// Silent on success at brief; problems (above) still show.
+	if msg != "" || !strings.Contains(ctx, "grimoire display: brief") {
 		t.Errorf("status = %q", msg)
 	}
 	if ctx, msg := sessionTurn(displayOff); msg != "" || !strings.Contains(ctx, displayOffRule) {
 		t.Errorf("off: msg = %q", msg)
+	}
+	// Internals (the router and its route count) appear at full only.
+	if _, msg := sessionTurn(displayFull); msg != `grimoire ▸ ready · full view — say "quiet grimoire" to hide · router: start-best-practice, 1 route` {
+		t.Errorf("full status = %q", msg)
 	}
 }
 
@@ -343,7 +348,7 @@ func TestHookSession_RouterDisplaySection(t *testing.T) {
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		t.Fatal(err)
 	}
-	if got := displayContext(displayBrief); !strings.Contains(got, "one line starting with `grimoire ▸`") {
+	if got := displayContext(displayBrief); !strings.Contains(got, "one short line starting with `grimoire ▸`") {
 		t.Errorf("fallback without Display = %q", got)
 	}
 	withDisplay := routerFixture + "\n## Display\n\nDISPLAY-MARKER\n"
@@ -356,5 +361,78 @@ func TestHookSession_RouterDisplaySection(t *testing.T) {
 	}
 	if n := skillNote(); !strings.Contains(n, "Display section, at the brief level") {
 		t.Errorf("note = %q", n)
+	}
+}
+
+// The plain style (core.display-style, GRIMOIRE_DISPLAY_STYLE, or NO_COLOR)
+// asks for words instead of decorative glyphs.
+func TestDisplayPlainStyle(t *testing.T) {
+	setupListSkillsHome(t)
+	t.Setenv("NO_COLOR", "")
+	t.Setenv("GRIMOIRE_DISPLAY_STYLE", "")
+	if strings.Contains(displayContext(displayBrief), displayPlainRule) {
+		t.Error("rich style asked for plain")
+	}
+	t.Setenv("NO_COLOR", "1")
+	if !strings.Contains(displayContext(displayBrief), displayPlainRule) {
+		t.Error("NO_COLOR did not select plain")
+	}
+	t.Setenv("GRIMOIRE_DISPLAY_STYLE", "rich")
+	if displayPlain() {
+		t.Error("GRIMOIRE_DISPLAY_STYLE=rich did not override NO_COLOR")
+	}
+	t.Setenv("GRIMOIRE_DISPLAY_STYLE", "")
+	t.Setenv("NO_COLOR", "")
+	cfg := filepath.Join(os.Getenv("XDG_CONFIG_HOME"), "grimoire")
+	if err := os.MkdirAll(cfg, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(cfg, "grimoire.toml"), []byte("[core]\ndisplay-style = \"plain\"\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if !displayPlain() {
+		t.Error("core.display-style = plain not honored")
+	}
+	if strings.Contains(displayContext(displayOff), displayPlainRule) {
+		t.Error("off level carries a style rule")
+	}
+}
+
+// markTipShown records the one-time tip as already shown.
+func markTipShown(t *testing.T) {
+	t.Helper()
+	dir, err := os.UserCacheDir()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(filepath.Join(dir, "grimoire"), 0o700); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(dir, "grimoire", "tip-shown"), nil, 0o600); err != nil {
+		t.Fatal(err)
+	}
+}
+
+// The tip appears once, on the first request grimoire acts on — not on small
+// talk, not when display is off — and never again.
+func TestOnboardingTip_Once(t *testing.T) {
+	setupListSkillsHome(t)
+	dir, _ := os.UserCacheDir()
+	if err := os.Remove(filepath.Join(dir, "grimoire", "tip-shown")); err != nil {
+		t.Fatal(err)
+	}
+	if _, msg := runHookFull(t, "thanks!"); msg != "" {
+		t.Errorf("small talk consumed the tip: %q", msg)
+	}
+	t.Setenv("GRIMOIRE_TRACE", "off")
+	if _, msg := runHookFull(t, "migrate the billing service"); msg != "" {
+		t.Errorf("display off showed: %q", msg)
+	}
+	t.Setenv("GRIMOIRE_TRACE", "")
+	if _, msg := runHookFull(t, "migrate the billing service"); msg != statusPrefix+onboardingTip {
+		t.Errorf("first request: %q", msg)
+	}
+	if _, msg := runHookFull(t, "migrate the billing service"); msg != "" {
+		t.Errorf("tip repeated: %q", msg)
 	}
 }

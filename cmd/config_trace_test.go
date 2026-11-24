@@ -22,3 +22,15 @@ func TestApplyKey_CoreTrace(t *testing.T) {
 		t.Errorf("get: v=%q src=%q err=%v", v, src, err)
 	}
 }
+
+func TestApplyKey_CoreDisplayStyle(t *testing.T) {
+	var fs config.FileConfig
+	for _, v := range []string{"rich", "plain", ""} {
+		if err := applyKey(&fs, "core.display-style", v); err != nil || fs.Core.DisplayStyle != v {
+			t.Errorf("set %q: err=%v style=%q", v, err, fs.Core.DisplayStyle)
+		}
+	}
+	if err := applyKey(&fs, "core.display-style", "fancy"); err == nil {
+		t.Error("core.display-style = fancy: want error")
+	}
+}

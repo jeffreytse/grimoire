@@ -158,8 +158,9 @@ func runHookPrompt(in io.Reader, out io.Writer) {
 	if json.Unmarshal(raw, &input) != nil {
 		return
 	}
-	ctx, msg := hookTurn(input.Prompt, displayLevelSetting())
-	writeHookOutput(out, input.HookEventName, "UserPromptSubmit", ctx, msg)
+	l := displayLevelSetting()
+	ctx, msg := hookTurn(input.Prompt, l)
+	writeHookOutput(out, input.HookEventName, "UserPromptSubmit", ctx, withOnboardingTip(l, ctx, msg))
 }
 
 // runHookSession prints the router context for a session-start hook.
@@ -212,7 +213,11 @@ func sessionContext() string {
 func sessionTurn(l displayLevel) (ctx, msg string) {
 	head := "grimoire is active for this session. Before responding to each new user request, apply the start-best-practice routing below and follow the workflow it routes to; load routed skills with grimoire_get_skill.\n\n" + mcpChainRule + "\n\n" + displayContext(l)
 	fallback := head + "\n\nThe router is not inlined here: call grimoire_get_skill with name \"" + routerSkill + "\" once, at the first request of the session, and follow it."
-	fallbackMsg := statusLine(l, "router not inlined · the model loads "+routerSkill+" on demand")
+	// Not a problem — the model loads the router itself — so full only.
+	fallbackMsg := ""
+	if l == displayFull {
+		fallbackMsg = statusLine(l, "router not inlined · the model loads "+routerSkill+" on demand")
+	}
 	_, path, err := resolveSkillOrSuggest(routerSkill)
 	if err != nil {
 		return fallback, statusLine(l, "no skills package with "+routerSkill+" — run `grimoire update`")
@@ -234,7 +239,7 @@ func sessionTurn(l displayLevel) (ctx, msg string) {
 	if n == 1 {
 		unit = "route"
 	}
-	return ctx, statusLine(l, fmt.Sprintf("ready · %s (%d %s) · display %s", routerSkill, n, unit, l))
+	return ctx, readyStatus(l, "", fmt.Sprintf("router: %s, %d %s", routerSkill, n, unit))
 }
 
 // countRoutes counts the routing table rows that invoke a workflow.

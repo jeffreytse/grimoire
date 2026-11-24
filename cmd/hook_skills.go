@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"os"
 	"strings"
@@ -76,7 +75,7 @@ func runSkillsSession(in io.Reader, out io.Writer) {
 // skillsSessionTurn returns the session context and status line in skills mode.
 func skillsSessionTurn(l displayLevel) (ctx, msg string) {
 	return skillsSessionHead + "\n\n" + displayContext(l),
-		statusLine(l, fmt.Sprintf("ready · skills mode · display %s", l))
+		readyStatus(l, "skills mode", "")
 }
 
 func runSkillsPrompt(in io.Reader, out io.Writer) {
@@ -88,8 +87,9 @@ func runSkillsPrompt(in io.Reader, out io.Writer) {
 	if json.Unmarshal(raw, &input) != nil {
 		return
 	}
-	ctx, msg := skillsHookTurn(input.Prompt, displayLevelSetting())
-	writeHookOutput(out, input.HookEventName, "UserPromptSubmit", ctx, msg)
+	l := displayLevelSetting()
+	ctx, msg := skillsHookTurn(input.Prompt, l)
+	writeHookOutput(out, input.HookEventName, "UserPromptSubmit", ctx, withOnboardingTip(l, ctx, msg))
 }
 
 // skillsHookTurn is hookTurn for skills mode: the skills are already in the

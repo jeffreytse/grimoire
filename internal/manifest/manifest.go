@@ -385,6 +385,10 @@ func merge(layers []ManifestFile, paths []string) Resolved {
 			r.Core.InstallMode = mf.Core.InstallMode
 			r.Sources["core.install-mode"] = src
 		}
+		if r.Core.DisplayStyle == "" && mf.Core.DisplayStyle != "" {
+			r.Core.DisplayStyle = mf.Core.DisplayStyle
+			r.Sources["core.display-style"] = src
+		}
 		if r.Core.Trace == "" && mf.Core.Trace != "" {
 			r.Core.Trace = mf.Core.Trace
 			r.Sources["core.trace"] = src
@@ -554,6 +558,9 @@ func parseCoreSection(m map[string]any) config.CoreSection {
 	if v, ok := m["trace"].(string); ok {
 		cs.Trace = v
 	}
+	if v, ok := m["display-style"].(string); ok {
+		cs.DisplayStyle = v
+	}
 	cs.Agents = parseStringSlice(m["agents"])
 	cs.SearchPackages = parseStringSlice(m["search-packages"])
 	if v, ok := anyToInt(m["update-concurrency"]); ok && v >= 0 {
@@ -653,6 +660,9 @@ func toRawMap(mf *ManifestFile) map[string]any {
 	}
 	if mf.Core.Trace != "" {
 		core["trace"] = mf.Core.Trace
+	}
+	if mf.Core.DisplayStyle != "" {
+		core["display-style"] = mf.Core.DisplayStyle
 	}
 	if mf.Core.InstallMode != "" {
 		core["install-mode"] = mf.Core.InstallMode

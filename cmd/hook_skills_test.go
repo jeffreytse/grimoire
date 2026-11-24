@@ -11,8 +11,11 @@ func TestSkillsHooks_DisplayAndStatus(t *testing.T) {
 	if !strings.Contains(ctx, "grimoire display: brief") || !strings.Contains(ctx, "invoke the start-best-practice skill") || strings.Contains(ctx, "grimoire_get_skill") {
 		t.Errorf("session ctx = %q", ctx)
 	}
-	if msg != "grimoire ▸ ready · skills mode · display brief" {
-		t.Errorf("session msg = %q", msg)
+	if msg != "" {
+		t.Errorf("brief session msg = %q, want silent on success", msg)
+	}
+	if _, msg := skillsSessionTurn(displayFull); msg != `grimoire ▸ ready (skills mode) · full view — say "quiet grimoire" to hide` {
+		t.Errorf("full session msg = %q", msg)
 	}
 	if ctx, msg := skillsSessionTurn(displayOff); msg != "" || !strings.Contains(ctx, displayOffRule) {
 		t.Errorf("off: ctx=%q msg=%q", ctx, msg)
@@ -28,6 +31,7 @@ func TestSkillsHooks_DisplayAndStatus(t *testing.T) {
 }
 
 func TestSkillUsed_RecordsSkillPerSession(t *testing.T) {
+	t.Setenv("NO_COLOR", "1")
 	t.Setenv("HOME", t.TempDir())
 	t.Setenv("XDG_CACHE_HOME", t.TempDir())
 	runSkillUsed(strings.NewReader(`{"session_id":"a","tool_name":"Skill","tool_input":{"skill":"grimoire:plan-best-practice-solution"}}`))

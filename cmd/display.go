@@ -61,6 +61,24 @@ func displayLevelSetting() displayLevel {
 	return l
 }
 
+// displayPlain reports whether grimoire's display uses words instead of
+// decorative glyphs (⎿ ★ ✓ and emoji), which screen readers announce by name:
+// GRIMOIRE_DISPLAY_STYLE, then core.display-style, and plain whenever
+// NO_COLOR is set.
+func displayPlain() bool {
+	if v := strings.ToLower(strings.TrimSpace(os.Getenv("GRIMOIRE_DISPLAY_STYLE"))); v != "" {
+		return v == "plain"
+	}
+	if os.Getenv("NO_COLOR") != "" {
+		return true
+	}
+	r, err := config.Load(getProjectDir())
+	return err == nil && r.Core.DisplayStyle == "plain"
+}
+
+// displayPlainRule asks for the plain style.
+const displayPlainRule = " Style: plain — no decorative glyphs or emoji; use words instead (\"Step 1:\", \"Risk (high):\", \"Done:\")."
+
 // displayOffRule tells the model to keep grimoire silent.
 const displayOffRule = "grimoire display is off: do not show grimoire blocks or `grimoire ▸` lines; route and load skills silently."
 
@@ -69,13 +87,39 @@ const displayOffRule = "grimoire display is off: do not show grimoire blocks or 
 // only names the level. Older skill packages get a one-line-per-decision
 // fallback rather than a second copy of the format.
 func displayContext(l displayLevel) string {
-	switch {
-	case !l.on():
+	if !l.on() {
 		return displayOffRule
-	case routerHasDisplay():
-		return fmt.Sprintf("grimoire display: %s. Show grimoire's work in the format of start-best-practice's Display section, at the %s level. The user can say \"show grimoire details\" (full) or \"quiet grimoire\" (off) for the rest of the session.", l, l)
 	}
-	return fmt.Sprintf("grimoire display: %s. Tell the user each grimoire decision in one line starting with `grimoire ▸`: the workflow routed to and why, then the skills applied and why. Use the prefix only on those lines, never on the answer. Show nothing for grimoire when nothing routes.", l)
+	style := ""
+	if displayPlain() {
+		style = displayPlainRule
+	}
+	if routerHasDisplay() {
+		return fmt.Sprintf("grimoire display: %s. Show grimoire's work in the format of start-best-practice's Display section, at the %s level. The user can say \"show grimoire details\" (full) or \"quiet grimoire\" (off) for the rest of the session.%s", l, l, style)
+	}
+	return fmt.Sprintf("grimoire display: %s. Tell the user each grimoire decision in one short line starting with `grimoire ▸`: the workflow routed to and why, then the skills applied and why. Use the prefix only on those lines, never on the answer. Show nothing for grimoire when nothing routes.%s", l, style)
+}
+
+// readyStatus is the session-start status line at the full level: that
+// grimoire is ready, the view in effect, how to change it, and detail. At
+// brief it is empty — silent on success. Agents render hook messages as
+// warnings (Claude Code's systemMessage, Codex's Warning event), so a routine
+// "ready" there would wear the warning role and dull real warnings; grimoire
+// shows it is on through the badge and its first route line instead.
+func readyStatus(l displayLevel, mode, detail string) string {
+	ready := "ready"
+	if mode != "" {
+		ready += " (" + mode + ")"
+	}
+	switch l {
+	case displayFull:
+		line := ready + " · full view — say \"quiet grimoire\" to hide"
+		if detail != "" {
+			line += " · " + detail
+		}
+		return statusLine(l, line)
+	}
+	return ""
 }
 
 // routerHasDisplay reports whether the installed start-best-practice skill
@@ -101,4 +145,48 @@ func statusLine(l displayLevel, text string) string {
 		return ""
 	}
 	return statusPrefix + text
+}
+
+// onboardingTip is shown once, on the first request grimoire acts on after
+// install: the controls a user would otherwise only find in the README. It
+// is a contextual reveal — taught when grimoire first does something — and,
+// shown once, it does not wear down the warning role the way a per-session
+// line would. Recorded under the user cache dir; a cleared cache shows it
+// again, which is harmless.
+const onboardingTip = `tip: say "show grimoire details" for evidence, "quiet grimoire" to hide it, "skip grimoire" to skip one request`
+
+// takeOnboardingTip returns the tip status line the first time it is called
+// (per machine) at a visible level, and "" afterwards.
+func takeOnboardingTip(l displayLevel) string {
+	if !l.on() {
+		return ""
+	}
+	dir, err := os.UserCacheDir()
+	if err != nil {
+		return ""
+	}
+	marker := filepath.Join(dir, "grimoire", "tip-shown")
+	if _, err := os.Lstat(marker); err == nil {
+		return ""
+	}
+	if os.MkdirAll(filepath.Dir(marker), 0o700) != nil || os.WriteFile(marker, nil, 0o600) != nil {
+		return "" // cannot remember it: stay quiet rather than repeat it
+	}
+	return statusLine(l, onboardingTip)
+}
+
+// withOnboardingTip adds the one-time tip to a prompt hook's output when the
+// hook is adding context (grimoire is acting on the request).
+func withOnboardingTip(l displayLevel, ctx, msg string) string {
+	if ctx == "" {
+		return msg
+	}
+	tip := takeOnboardingTip(l)
+	switch {
+	case tip == "":
+		return msg
+	case msg == "":
+		return tip
+	}
+	return msg + " · " + strings.TrimPrefix(tip, statusPrefix)
 }

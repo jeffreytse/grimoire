@@ -19,6 +19,7 @@ func setupListSkillsHome(t *testing.T) {
 	t.Setenv("GRIMOIRE_SOURCE", pkg) // absolute path = official package home
 	t.Setenv("XDG_CONFIG_HOME", t.TempDir())
 	t.Setenv("HOME", t.TempDir())
+	markTipShown(t) // most tests check status lines without the one-time tip
 	mk := func(rel, name, desc string) {
 		dir := filepath.Join(pkg, "skills", filepath.FromSlash(rel), name)
 		if err := os.MkdirAll(dir, 0o755); err != nil {

@@ -231,6 +231,8 @@ func getKeyResolved(r *config.Config, key string) (val, src string, err error) {
 		return r.Core.InstallMode, r.Sources["core.install-mode"], nil
 	case "core.trace":
 		return r.Core.Trace, r.Sources["core.trace"], nil
+	case "core.display-style":
+		return r.Core.DisplayStyle, r.Sources["core.display-style"], nil
 	}
 	if strings.HasPrefix(key, "standards.") {
 		domain, field, err := config.ParseStandardsKey(key)
@@ -300,6 +302,12 @@ func applyKey(fs *config.FileConfig, key, value string) error {
 			return fmt.Errorf("core.trace must be \"off\", \"brief\" or \"full\"")
 		}
 		fs.Core.Trace = value
+		return nil
+	case "core.display-style":
+		if value != "" && value != "rich" && value != "plain" {
+			return fmt.Errorf("core.display-style must be \"rich\" or \"plain\"")
+		}
+		fs.Core.DisplayStyle = value
 		return nil
 	}
 	if strings.HasPrefix(key, "standards.") {

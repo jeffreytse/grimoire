@@ -122,23 +122,7 @@ func statusBadge(lastFile string) string {
 	case skill != "":
 		label += ":" + skill
 	}
-	return badgeColor() + "[" + label + "]\033[0m"
-}
-
-// brandGold is grimoire's brand color, #c9933a (assets/icon-book.svg).
-const (
-	brandGoldTrue = "\033[1;38;2;201;147;58m" // 24-bit
-	brandGold256  = "\033[1;38;5;173m"        // nearest xterm-256 color, #d7875f
-)
-
-// badgeColor is the brand gold in 24-bit color where the terminal says it
-// supports it (COLORTERM), else the nearest 256-color.
-func badgeColor() string {
-	switch strings.ToLower(os.Getenv("COLORTERM")) {
-	case "truecolor", "24bit":
-		return brandGoldTrue
-	}
-	return brandGold256
+	return renderBadge(label)
 }
 
 // workflowFile holds the last workflow skill served, next to lastFile.
