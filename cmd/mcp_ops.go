@@ -1012,6 +1012,28 @@ type mcpSearchSkillsResult struct {
 	Score    float64 `json:"score"`
 }
 
+// rankSkills is skill search as the agent sees it, shared by the MCP tool
+// and `grimoire search`: hybrid BM25F ranking of the scope's skills, with the
+// project's declared practices preferred, paged by offset and topN.
+func rankSkills(queries []string, all []skills.Skill, scope *skillScope, opts search.Options, offset, topN int) []search.Result {
+	all = scope.filter(all)
+	// A project's declared practices lead among comparable matches; rank a
+	// deeper pool first so one just below the page can still surface.
+	depth := offset + topN
+	if scope.hasDeclaration() && depth < 50 {
+		depth = 50
+	}
+	hits := search.HybridSearch(queries, all, depth, opts)
+	scope.prefer(hits)
+	if len(hits) > offset+topN {
+		hits = hits[:offset+topN]
+	}
+	if offset >= len(hits) {
+		return nil
+	}
+	return hits[offset:]
+}
+
 func toolGrimoireSearchSkills(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
 	queries := request.GetStringSlice("queries", nil)
 	if q := strings.TrimSpace(request.GetString("query", "")); q != "" {
@@ -1048,24 +1070,7 @@ func toolGrimoireSearchSkills(_ context.Context, request mcp.CallToolRequest) (*
 		return mcp.NewToolResultError(err.Error()), nil
 	}
 	scope := requestScope(request)
-	all = scope.filter(all)
-
-	// A project's declared practices lead among comparable matches; rank a
-	// deeper pool first so one just below the page can still surface.
-	depth := offset + topN
-	if scope.hasDeclaration() && depth < 50 {
-		depth = 50
-	}
-	hits := search.HybridSearch(queries, all, depth, opts)
-	scope.prefer(hits)
-	if len(hits) > offset+topN {
-		hits = hits[:offset+topN]
-	}
-	if offset >= len(hits) {
-		hits = nil
-	} else {
-		hits = hits[offset:]
-	}
+	hits := rankSkills(queries, all, scope, opts, offset, topN)
 	out := make([]mcpSearchSkillsResult, len(hits))
 	for i := range hits {
 		h := &hits[i]

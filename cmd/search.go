@@ -8,21 +8,37 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/jeffreytse/grimoire/internal/search"
 	"github.com/jeffreytse/grimoire/internal/skills"
 	"github.com/jeffreytse/grimoire/internal/tui"
 )
 
 var searchCmd = &cobra.Command{
-	Use:   "search <query>",
+	Use:   "search [<query>...]",
 	Short: "Search installed packages for skills matching a query",
-	Args:  cobra.MaximumNArgs(1),
-	RunE:  runSearch,
+	Long: `Search skills the way your agent does over MCP: results are ranked by
+relevance across skill names, tags, descriptions and full text, matching
+word forms ("testing" finds "test"). Several queries are different phrasings
+of one need and are ranked together. Your project's declared practices
+come first among comparable matches.
+
+With no query, every skill is listed.`,
+	Example: `  grimoire search "flaky tests"
+  grimoire search "release checklist" "go-live readiness"
+  grimoire search incident --domain engineering --top 5 --json`,
+	RunE: runSearch,
 }
 
-var flagSearchJSON bool
+var (
+	flagSearchJSON   bool
+	flagSearchTop    int
+	flagSearchDomain string
+)
 
 func init() {
-	searchCmd.Flags().BoolVar(&flagSearchJSON, "json", false, "output JSON array (same shape as grimoire list --json)")
+	searchCmd.Flags().BoolVar(&flagSearchJSON, "json", false, "output JSON array, best match first (same shape as grimoire list --json)")
+	searchCmd.Flags().IntVar(&flagSearchTop, "top", 10, "how many results to show (1-100)")
+	searchCmd.Flags().StringVar(&flagSearchDomain, "domain", "", "only search one domain")
 	rootCmd.AddCommand(searchCmd)
 }
 
@@ -31,21 +47,33 @@ func runSearch(_ *cobra.Command, args []string) error {
 	if len(regs) == 0 {
 		return errNoSkillLibrary
 	}
-
 	all, _, err := skills.ListAllSkillsFromPackages(regs)
 	if err != nil {
 		return err
 	}
-
-	query := ""
-	if len(args) > 0 {
-		query = strings.ToLower(strings.TrimSpace(args[0]))
+	if flagSearchTop < 1 || flagSearchTop > 100 {
+		return fmt.Errorf("--top must be between 1 and 100, got %d", flagSearchTop)
 	}
 
+	var queries []string
+	for _, a := range args {
+		if q := strings.TrimSpace(a); q != "" {
+			queries = append(queries, q)
+		}
+	}
+	scope := projectScope(getProjectDir())
 	var matches []skills.Skill
-	for i := range all {
-		if query == "" || matchesQuery(&all[i], query) {
-			matches = append(matches, all[i])
+	if len(queries) == 0 {
+		pool := scope.filter(all)
+		for i := range pool {
+			if flagSearchDomain == "" || pool[i].Domain == flagSearchDomain {
+				matches = append(matches, pool[i])
+			}
+		}
+	} else {
+		hits := rankSkills(queries, all, scope, search.Options{Domain: flagSearchDomain}, 0, flagSearchTop)
+		for i := range hits {
+			matches = append(matches, hits[i].Skill)
 		}
 	}
 
@@ -59,17 +87,21 @@ func runSearch(_ *cobra.Command, args []string) error {
 	}
 
 	if len(matches) == 0 {
-		if query != "" {
-			fmt.Printf("%s  no skills match %q\n", tui.IconWarn, query)
+		if len(queries) > 0 {
+			fmt.Printf("%s  no skills match %q\n", tui.IconWarn, strings.Join(queries, `", "`))
 		} else {
 			fmt.Printf("%s  no skills found\n", tui.IconWarn)
 		}
 		return nil
 	}
 
-	fmt.Printf("Found %d skill(s):\n\n", len(matches))
+	if len(queries) > 0 {
+		fmt.Printf("Top %d match(es), best first:\n\n", len(matches))
+	} else {
+		fmt.Printf("Found %d skill(s):\n\n", len(matches))
+	}
 	for i := range matches {
-		printSkillSummary(&matches[i])
+		printSkillSummary(&matches[i], scope.standard(matches[i].Name))
 	}
 	return nil
 }
@@ -92,7 +124,9 @@ func matchesQuery(sk *skills.Skill, query string) bool {
 	return false
 }
 
-func printSkillSummary(sk *skills.Skill) {
+// printSkillSummary prints one search result; standard is where the skill
+// was declared as a practice ("project", "user", "org"), or "".
+func printSkillSummary(sk *skills.Skill, standard string) {
 	name := sk.Name
 	if sk.Version != "" {
 		name += " v" + sk.Version
@@ -110,6 +144,9 @@ func printSkillSummary(sk *skills.Skill) {
 	}
 	if len(sk.Tags) > 0 {
 		fmt.Printf("    tags: %s\n", strings.Join(sk.Tags, ", "))
+	}
+	if standard != "" {
+		fmt.Printf("    declared standard: %s\n", standard)
 	}
 	fmt.Println()
 }
