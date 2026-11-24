@@ -171,6 +171,22 @@ func runDisplayEvalMode(t *testing.T, mode string, cases []displayEvalCase, run 
 // displayEvalRunner sets up grimoire in one mode under dir and returns how
 // to run a prompt against it.
 func displayEvalRunner(t *testing.T, dir, bin, mode string) (evalRun, error) {
+	run, err := evalRunner(t, dir, bin, mode)
+	if err != nil {
+		return nil, err
+	}
+	return func(prompt, level, resume string) ([]string, float64, string, error) {
+		r, err := run(prompt, level, resume)
+		return r.texts, r.cost, r.session, err
+	}, nil
+}
+
+// evalResultRun runs one prompt and returns the full result.
+type evalResultRun func(prompt, level, resume string) (evalResult, error)
+
+// evalRunner sets up grimoire in one mode under dir (see TestDisplayEval)
+// and returns how to run a prompt against it.
+func evalRunner(t *testing.T, dir, bin, mode string) (evalResultRun, error) {
 	hook := func(args string) any {
 		return []any{map[string]any{"hooks": []any{map[string]any{"type": "command", "command": bin + " " + args}}}}
 	}
@@ -190,26 +206,32 @@ func displayEvalRunner(t *testing.T, dir, bin, mode string) (evalRun, error) {
 		})
 		writeJSON(t, mcpConfig, map[string]any{"mcpServers": map[string]any{"grimoire": map[string]any{"command": bin, "args": []string{"mcp", "serve"}}}})
 		workBySession := map[string]string{} // a resumed session needs its own cwd
-		return func(prompt, level, resume string) ([]string, float64, string, error) {
+		return func(prompt, level, resume string) (evalResult, error) {
 			work := workBySession[resume]
 			if work == "" {
 				var err error
 				if work, err = os.MkdirTemp(dir, "mcp-case"); err != nil {
-					return nil, 0, "", err
+					return evalResult{}, err
+				}
+				if err := seedWorkspace(work); err != nil {
+					return evalResult{}, err
 				}
 			}
-			texts, cost, session, err := runClaudeEval(work, level, prompt, resume,
+			r, err := runClaudeEvalResult(work, level, prompt, resume,
 				"--setting-sources", "project", "--settings", settings,
 				"--mcp-config", mcpConfig, "--strict-mcp-config")
-			if session != "" {
-				workBySession[session] = work
+			if r.session != "" {
+				workBySession[r.session] = work
 			}
-			return texts, cost, session, err
+			return r, err
 		}, nil
 	case "skills":
 		project := filepath.Join(dir, "skills-project")
 		n, err := linkEvalSkills(filepath.Join(project, ".claude", "skills"))
 		if err != nil {
+			return nil, err
+		}
+		if err := seedWorkspace(project); err != nil {
 			return nil, err
 		}
 		t.Logf("skills mode: linked %d skills", n)
@@ -224,13 +246,57 @@ func displayEvalRunner(t *testing.T, dir, bin, mode string) (evalRun, error) {
 		if err := os.WriteFile(filepath.Join(project, "CLAUDE.md"), []byte(instruction), 0o644); err != nil {
 			return nil, err
 		}
-		return func(prompt, level, resume string) ([]string, float64, string, error) {
-			return runClaudeEval(project, level, prompt, resume,
+		return func(prompt, level, resume string) (evalResult, error) {
+			return runClaudeEvalResult(project, level, prompt, resume,
 				"--setting-sources", "project",
 				"--mcp-config", `{"mcpServers":{}}`, "--strict-mcp-config")
 		}, nil
 	}
 	return nil, fmt.Errorf("unknown mode %q", mode)
+}
+
+// seedWorkspace makes dir look like a real project: a git repository with a
+// small source file and a staged change. In an empty folder the model spends
+// a code or commit prompt discovering there is nothing to work on, and never
+// routes — a test-environment artifact, not grimoire behavior.
+func seedWorkspace(dir string) error {
+	files := map[string]string{
+		"parser.go": "package app\n\n// ParseDate parses an ISO 8601 date.\nfunc ParseDate(s string) (string, error) { return s, nil }\n",
+		"README.md": "# app\n\nA small service.\n",
+	}
+	for name, body := range files {
+		if err := os.WriteFile(filepath.Join(dir, name), []byte(body), 0o644); err != nil {
+			return err
+		}
+	}
+	git := func(args ...string) error {
+		c := exec.Command("git", args...)
+		c.Dir = dir
+		c.Env = append(os.Environ(), "GIT_AUTHOR_NAME=eval", "GIT_AUTHOR_EMAIL=eval@example.invalid",
+			"GIT_COMMITTER_NAME=eval", "GIT_COMMITTER_EMAIL=eval@example.invalid")
+		if out, err := c.CombinedOutput(); err != nil {
+			return fmt.Errorf("git %s: %v: %s", strings.Join(args, " "), err, out)
+		}
+		return nil
+	}
+	for _, args := range [][]string{{"init", "-q"}, {"add", "."}, {"commit", "-q", "-m", "initial"}} {
+		if err := git(args...); err != nil {
+			return err
+		}
+	}
+	change := "\n## Usage\n\nRun the service with `go run .`.\n"
+	f, err := os.OpenFile(filepath.Join(dir, "README.md"), os.O_APPEND|os.O_WRONLY, 0o644)
+	if err != nil {
+		return err
+	}
+	if _, err := f.WriteString(change); err != nil {
+		f.Close()
+		return err
+	}
+	if err := f.Close(); err != nil {
+		return err
+	}
+	return git("add", "README.md")
 }
 
 // evalSubdomains are the domain skills linked in skills mode by default:
@@ -363,6 +429,23 @@ var evidenceMarker = regexp.MustCompile(`(?im)_?source:|🔴|🟡|⚪|^\s*(⎿\s
 // resuming session resume when set — and returns the assistant's text
 // messages, the run's cost and its session id.
 func runClaudeEval(work, level, prompt, resume string, args ...string) (texts []string, cost float64, session string, err error) {
+	r, err := runClaudeEvalResult(work, level, prompt, resume, args...)
+	return r.texts, r.cost, r.session, err
+}
+
+// evalResult is one headless run: the assistant's text messages, its cost,
+// its session id, and the skills it loaded (grimoire_get_skill or the Skill
+// tool), in order.
+type evalResult struct {
+	texts   []string
+	cost    float64
+	session string
+	loaded  []string
+}
+
+// runClaudeEvalResult runs one prompt headless and returns everything the
+// evals score.
+func runClaudeEvalResult(work, level, prompt, resume string, args ...string) (r evalResult, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 8*time.Minute)
 	defer cancel()
 	base := []string{"-p", prompt, "--output-format", "stream-json", "--verbose", "--max-turns", "12"}
@@ -379,7 +462,7 @@ func runClaudeEval(work, level, prompt, resume string, args ...string) (texts []
 	var out bytes.Buffer
 	cmd.Stdout = &out
 	if err := cmd.Run(); err != nil && out.Len() == 0 {
-		return nil, 0, "", err
+		return r, err
 	}
 	sc := bufio.NewScanner(&out)
 	sc.Buffer(make([]byte, 1<<20), 16<<20)
@@ -390,29 +473,65 @@ func runClaudeEval(work, level, prompt, resume string, args ...string) (texts []
 			SessionID string  `json:"session_id"`
 			Message   struct {
 				Content []struct {
-					Type string `json:"type"`
-					Text string `json:"text"`
+					Type  string          `json:"type"`
+					Text  string          `json:"text"`
+					Name  string          `json:"name"`
+					Input json.RawMessage `json:"input"`
 				} `json:"content"`
 			} `json:"message"`
 		}
 		if json.Unmarshal(sc.Bytes(), &e) != nil {
 			continue
 		}
-		if session == "" {
-			session = e.SessionID
+		if r.session == "" {
+			r.session = e.SessionID
 		}
 		switch e.Type {
 		case "assistant":
 			for _, c := range e.Message.Content {
-				if c.Type == "text" && strings.TrimSpace(c.Text) != "" {
-					texts = append(texts, c.Text)
+				switch {
+				case c.Type == "text" && strings.TrimSpace(c.Text) != "":
+					r.texts = append(r.texts, c.Text)
+				case c.Type == "tool_use":
+					r.loaded = append(r.loaded, loadedSkills(c.Name, c.Input)...)
 				}
 			}
 		case "result":
-			cost = e.Cost
+			r.cost = e.Cost
 		}
 	}
-	return texts, cost, session, nil
+	return r, nil
+}
+
+// loadedSkills returns the skills a tool call loads: grimoire_get_skill's
+// name/names (MCP mode) or the Skill tool's skill (skills mode).
+func loadedSkills(tool string, input json.RawMessage) []string {
+	var in struct {
+		Name  string   `json:"name"`
+		Names []string `json:"names"`
+		Skill string   `json:"skill"`
+	}
+	if json.Unmarshal(input, &in) != nil {
+		return nil
+	}
+	var names []string
+	switch tool {
+	case mcpGetSkillTool:
+		names = append([]string{in.Name}, in.Names...)
+	case "Skill":
+		names = []string{in.Skill}
+	}
+	var out []string
+	for _, n := range names {
+		n = strings.TrimPrefix(strings.TrimSpace(n), "grimoire:")
+		if i := strings.LastIndex(n, ":"); i >= 0 {
+			n = n[i+1:]
+		}
+		if n != "" {
+			out = append(out, n)
+		}
+	}
+	return out
 }
 
 func writeJSON(t *testing.T, path string, v any) {
@@ -492,5 +611,17 @@ func TestStepCounter(t *testing.T) {
 		if got := stepCounter.MatchString(s); got != want {
 			t.Errorf("%q: %v, want %v", s, got, want)
 		}
+	}
+}
+
+// The eval workspace is a git repo with a staged change.
+func TestSeedWorkspace(t *testing.T) {
+	dir := t.TempDir()
+	if err := seedWorkspace(dir); err != nil {
+		t.Fatal(err)
+	}
+	out, err := exec.Command("git", "-C", dir, "diff", "--cached", "--name-only").Output()
+	if err != nil || strings.TrimSpace(string(out)) != "README.md" {
+		t.Errorf("staged = %q, err %v", out, err)
 	}
 }
