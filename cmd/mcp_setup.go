@@ -90,7 +90,7 @@ var mcpAgents = []mcpAgent{
 	},
 	// Pi, Kimi, OMP, Antigravity: documented "mcpServers" JSON files. Their
 	// CLIs are not needed for registration (bin is only used by --target all).
-	fileAgent("pi", "Pi", "pi", []string{"user", "project"}, commandArgsEntry, "pi mcp list"),
+	fileAgent("pi", "Pi", "pi", []string{"user", "project"}, piEntry, "pi mcp list"),
 	fileAgent("kimi", "Kimi Code", "kimi", []string{"user", "project"}, commandArgsEntry, "/mcp in a new kimi session"),
 	fileAgent("omp", "OMP", "omp", []string{"user", "project"}, func(serve string) map[string]any {
 		e := commandArgsEntry(serve)
@@ -101,6 +101,23 @@ var mcpAgents = []mcpAgent{
 	// Claude Desktop: the desktop app, for people who don't work in a terminal
 	// agent. No CLI on PATH, so --target all skips it; name it explicitly.
 	fileAgent("claude-desktop", "Claude Desktop", "", []string{"user"}, desktopEntry, "quit and reopen Claude Desktop, then look for grimoire in its connectors"),
+}
+
+// piSkillTools are declared to Pi's model directly. Pi's default exposure,
+// codemode, makes MCP tools reachable only from scripts and leaves them out of
+// the tool list, so the model rarely looked a skill up. The other grimoire
+// tools stay in codemode: they are used less and would crowd the tool list.
+var piSkillTools = []string{"grimoire_search_skills", "grimoire_get_skill", "grimoire_list_skills"}
+
+// piEntry is commandArgsEntry with Pi's toolExposure for the skill tools.
+func piEntry(serve string) map[string]any {
+	e := commandArgsEntry(serve)
+	exposure := map[string]any{}
+	for _, t := range piSkillTools {
+		exposure[t] = "direct"
+	}
+	e["toolExposure"] = exposure
+	return e
 }
 
 // desktopEntry is commandArgsEntry with an absolute command: desktop apps
@@ -178,10 +195,16 @@ var mcpInstallCmd = &cobra.Command{
        claude, codex  UserPromptSubmit in .claude/settings.json, .codex/hooks.json
        gemini         BeforeAgent in .gemini/settings.json
        opencode       plugin plugins/grimoire.js
+       pi             extension extensions/grimoire.ts (project scope: after
+                      you trust the folder)
        antigravity    SessionStart (injects the instruction) + PreInvocation
                       in ~/.gemini/config/hooks.json
-     Copilot CLI drops command-hook output, so it gets none. Codex runs the
-     hook only after you trust it in /hooks. --no-hook skips it.
+       omp            extension extensions/grimoire.ts
+       kimi           UserPromptSubmit in ~/.kimi-code/config.toml (user
+                      scope only; Kimi ignores session-start output)
+       copilot        SessionStart + UserPromptSubmit in
+                      ~/.copilot/hooks/grimoire.json (flat output)
+     Codex runs the hook only after you trust it in /hooks. --no-hook skips it.
   5. Claude Code, Antigravity: pre-approves the read-only skill tools
      (grimoire_search_skills, grimoire_get_skill, grimoire_list_skills) in
      permissions.allow, so lookups never wait on an approval prompt and work
@@ -456,7 +479,7 @@ func removeStatusLine(ag, scope string) {
 
 // installPromptHook adds the hook that puts matching skills in front of the
 // model on every prompt, in whatever form the agent supports. Agents without
-// a usable prompt hook (Copilot CLI drops command-hook output) are skipped.
+// a usable prompt hook are skipped.
 func installPromptHook(ag, scope, serve string) error {
 	dir := getProjectDir()
 	switch ag {
@@ -467,6 +490,41 @@ func installPromptHook(ag, scope, serve string) error {
 			return fmt.Errorf("adding prompt hook plugin: %w", err)
 		}
 		reportChange(changed, "added prompt hook plugin "+p, "prompt hook plugin already at "+p)
+	case "omp":
+		p := agent.OMPExtensionFile(scope, dir)
+		changed, err := agent.ConfigureOMPExtension(p, serve)
+		if err != nil {
+			return fmt.Errorf("adding prompt hook extension: %w", err)
+		}
+		reportChange(changed, "added prompt hook extension "+p, "prompt hook extension already at "+p)
+	case "kimi":
+		if scope == "project" {
+			fmt.Printf("  %s  Kimi Code reads hooks only from your user config — rerun with --scope user for automatic routing\n", tui.IconSkip)
+			return nil
+		}
+		p := agent.KimiConfigFile()
+		changed, err := agent.ConfigureKimiHook(p, serve)
+		if err != nil {
+			return fmt.Errorf("adding prompt hook: %w", err)
+		}
+		reportChange(changed, "added prompt hook to "+p, "prompt hook already in "+p)
+	case "copilot":
+		p := agent.CopilotHooksFile(scope, dir)
+		changed, err := agent.ConfigureCopilotHooks(p, serve)
+		if err != nil {
+			return fmt.Errorf("adding hooks to %s: %w", p, err)
+		}
+		reportChange(changed, "added session + prompt hooks "+p, "session + prompt hooks already at "+p)
+	case "pi":
+		p := agent.PiExtensionFile(scope, dir)
+		changed, err := agent.ConfigurePiExtension(p, serve)
+		if err != nil {
+			return fmt.Errorf("adding prompt hook extension: %w", err)
+		}
+		reportChange(changed, "added prompt hook extension "+p, "prompt hook extension already at "+p)
+		if changed && scope == "project" {
+			fmt.Printf("  %s  Pi loads project extensions only after you trust the folder when Pi asks\n", tui.IconWarn)
+		}
 	case "antigravity":
 		p := agent.AntigravityHooksFile(scope, dir)
 		changed, err := agent.ConfigureAntigravityHooks(p, serve)
@@ -521,6 +579,21 @@ func removePromptHook(ag, scope string) {
 	case "opencode":
 		where = agent.OpenCodePluginFile(scope, dir)
 		changed, err = agent.RemoveOpenCodePlugin(where)
+	case "omp":
+		where = agent.OMPExtensionFile(scope, dir)
+		changed, err = agent.RemoveOMPExtension(where)
+	case "kimi":
+		if scope == "project" {
+			return
+		}
+		where = agent.KimiConfigFile()
+		changed, err = agent.RemoveKimiHook(where)
+	case "copilot":
+		where = agent.CopilotHooksFile(scope, dir)
+		changed, err = agent.RemoveCopilotHooks(where)
+	case "pi":
+		where = agent.PiExtensionFile(scope, dir)
+		changed, err = agent.RemovePiExtension(where)
 	case "antigravity":
 		where = agent.AntigravityHooksFile(scope, dir)
 		changed, err = agent.RemoveAntigravityHooks(where)

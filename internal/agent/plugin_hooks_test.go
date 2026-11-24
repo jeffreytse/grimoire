@@ -88,3 +88,65 @@ func TestOpenCodePlugin_LeavesForeignFile(t *testing.T) {
 		t.Error("foreign plugin modified")
 	}
 }
+
+func TestPiExtension_ConfigureAndRemove(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "extensions", "grimoire.ts")
+	if changed, err := ConfigurePiExtension(path, "/opt/bin/grimoire"); err != nil || !changed {
+		t.Fatalf("configure: changed=%v err=%v", changed, err)
+	}
+	if changed, err := ConfigurePiExtension(path, "/opt/bin/grimoire"); err != nil || changed {
+		t.Errorf("re-configure: changed=%v err=%v; want no change", changed, err)
+	}
+	b, _ := os.ReadFile(path)
+	for _, s := range []string{piExtensionMarker, `const BIN = "/opt/bin/grimoire";`, `pi.on("before_agent_start"`, `sections["grimoire_router"]`} {
+		if !strings.Contains(string(b), s) {
+			t.Errorf("extension lacks %s", s)
+		}
+	}
+	// The generated extension must parse as TypeScript (Node strips the types).
+	if node, err := exec.LookPath("node"); err == nil {
+		mts := filepath.Join(t.TempDir(), "grimoire.mts")
+		if err := os.WriteFile(mts, b, 0o644); err != nil {
+			t.Fatal(err)
+		}
+		if out, err := exec.Command(node, "--experimental-strip-types", "--check", mts).CombinedOutput(); err != nil {
+			t.Errorf("extension does not parse: %v: %s", err, out)
+		}
+	}
+	if changed, err := RemovePiExtension(path); err != nil || !changed {
+		t.Fatalf("remove: changed=%v err=%v", changed, err)
+	}
+	if _, err := os.Stat(path); !os.IsNotExist(err) {
+		t.Errorf("extension not deleted")
+	}
+}
+
+// A user's own extension with the same name is never overwritten or deleted.
+func TestPiExtension_LeavesForeignFile(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "grimoire.ts")
+	if err := os.WriteFile(path, []byte("export default function () {} // mine\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := ConfigurePiExtension(path, "grimoire"); err == nil {
+		t.Error("want error for a file grimoire did not write")
+	}
+	if changed, err := RemovePiExtension(path); err != nil || changed {
+		t.Errorf("remove foreign: changed=%v err=%v", changed, err)
+	}
+	if b, _ := os.ReadFile(path); !strings.Contains(string(b), "mine") {
+		t.Error("foreign extension modified")
+	}
+}
+
+func TestPiExtensionFile(t *testing.T) {
+	home := t.TempDir()
+	t.Setenv("HOME", home)
+	t.Setenv("PI_CODING_AGENT_DIR", "")
+	proj := t.TempDir()
+	if got, want := PiExtensionFile("user", proj), filepath.Join(home, ".pi", "agent", "extensions", "grimoire.ts"); got != want {
+		t.Errorf("user = %s, want %s", got, want)
+	}
+	if got, want := PiExtensionFile("project", proj), filepath.Join(proj, ".pi", "extensions", "grimoire.ts"); got != want {
+		t.Errorf("project = %s, want %s", got, want)
+	}
+}

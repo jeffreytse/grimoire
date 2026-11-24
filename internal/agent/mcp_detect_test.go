@@ -32,12 +32,18 @@ func TestDetectMCPSetup(t *testing.T) {
 		t.Errorf("claude: %+v", s)
 	}
 
-	// copilot: instruction only, no hook support
+	// copilot: hooks are supported; detected once its hook file is written
 	if _, err := ConfigureMCPInstruction(MCPInstructionFile("copilot", "user", proj)); err != nil {
 		t.Fatal(err)
 	}
-	if s := DetectMCPSetup("copilot", "user", proj); !s.Instruction || s.Hook || s.HookSupported {
-		t.Errorf("copilot: %+v", s)
+	if s := DetectMCPSetup("copilot", "user", proj); !s.Instruction || s.Hook || !s.HookSupported {
+		t.Errorf("copilot before hooks: %+v", s)
+	}
+	if _, err := ConfigureCopilotHooks(CopilotHooksFile("user", proj), "grimoire"); err != nil {
+		t.Fatal(err)
+	}
+	if s := DetectMCPSetup("copilot", "user", proj); !s.Hook || !s.SessionHook {
+		t.Errorf("copilot after hooks: %+v", s)
 	}
 
 	// antigravity: the session hook stands in for the instruction file

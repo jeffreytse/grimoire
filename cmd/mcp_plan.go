@@ -45,6 +45,16 @@ func mcpPlan(a *mcpAgent, scope, serve string, install bool) []string {
 	switch a.key {
 	case "opencode":
 		steps = append(steps, "write "+agent.OpenCodePluginFile(scope, dir)+" (prompt hook plugin)")
+	case "pi":
+		steps = append(steps, "write "+agent.PiExtensionFile(scope, dir)+" (prompt hook extension)")
+	case "copilot":
+		steps = append(steps, "write "+agent.CopilotHooksFile(scope, dir)+" (session and prompt hooks)")
+	case "omp":
+		steps = append(steps, "write "+agent.OMPExtensionFile(scope, dir)+" (prompt hook extension)")
+	case "kimi":
+		if scope == "user" {
+			steps = append(steps, "edit "+agent.KimiConfigFile()+" (prompt hook)")
+		}
 	case "antigravity":
 		steps = append(steps, "edit "+agent.AntigravityHooksFile(scope, dir)+" (session and prompt hooks)")
 	default:

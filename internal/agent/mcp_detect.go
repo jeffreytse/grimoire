@@ -39,6 +39,24 @@ func DetectMCPSetup(ag, scope, projectDir string) MCPSetup {
 		if b, err := os.ReadFile(OpenCodePluginFile(scope, projectDir)); err == nil {
 			s.Hook = bytes.HasPrefix(b, []byte(openCodePluginMarker))
 		}
+	case "omp":
+		s.HookSupported = true
+		if b, err := os.ReadFile(OMPExtensionFile(scope, projectDir)); err == nil {
+			s.Hook = bytes.HasPrefix(b, []byte(ompExtensionMarker))
+		}
+	case "kimi":
+		s.HookSupported = scope == "user"
+		s.Hook = s.HookSupported && HasKimiHook(KimiConfigFile())
+	case "copilot":
+		s.HookSupported = true
+		s.SessionHookSupported = true
+		s.Hook = HasCopilotHooks(CopilotHooksFile(scope, projectDir))
+		s.SessionHook = s.Hook
+	case "pi":
+		s.HookSupported = true
+		if b, err := os.ReadFile(PiExtensionFile(scope, projectDir)); err == nil {
+			s.Hook = bytes.HasPrefix(b, []byte(piExtensionMarker))
+		}
 	case "antigravity":
 		s.HookSupported = true
 		if cfg, err := readSettings(AntigravityHooksFile(scope, projectDir)); err == nil {

@@ -36,6 +36,10 @@ func setupMCPSetupEnv(t *testing.T, claudeOnPath bool) (f *fakeClaude, home stri
 	home = t.TempDir()
 	t.Setenv("HOME", home)
 	t.Setenv("XDG_CONFIG_HOME", filepath.Join(home, ".config"))
+	// Agent dirs the caller's shell may point elsewhere: keep every write in home.
+	for _, v := range []string{"KIMI_CODE_HOME", "PI_CODING_AGENT_DIR", "PI_CONFIG_DIR", "COPILOT_HOME", "CODEX_HOME"} {
+		t.Setenv(v, "")
+	}
 	pkg := t.TempDir()
 	t.Setenv("GRIMOIRE_SOURCE", pkg)
 	if err := os.MkdirAll(filepath.Join(pkg, "skills", "x", "skills", "s"), 0o755); err != nil {
@@ -585,5 +589,64 @@ func TestMCPInstall_ClaudeDesktop(t *testing.T) {
 				t.Error("--target all included Claude Desktop")
 			}
 		}
+	}
+}
+
+// Pi: the skill tools are declared to the model directly (Pi's default,
+// codemode, hides them from the tool list), and an extension plays the
+// prompt and session hooks. Uninstall removes both.
+func TestMCPInstall_PiExposesSkillToolsAndAddsExtension(t *testing.T) {
+	_, home := setupMCPSetupEnv(t, true)
+	t.Setenv("PI_CODING_AGENT_DIR", "")
+	flagMCPSetupTarget = "pi"
+	if err := runMCPInstall(nil, nil); err != nil {
+		t.Fatal(err)
+	}
+	b, err := os.ReadFile(filepath.Join(home, ".pi", "agent", "mcp.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var cfg struct {
+		MCPServers map[string]struct {
+			ToolExposure map[string]string `json:"toolExposure"`
+		} `json:"mcpServers"`
+	}
+	if err := json.Unmarshal(b, &cfg); err != nil {
+		t.Fatal(err)
+	}
+	for _, tool := range piSkillTools {
+		if got := cfg.MCPServers["grimoire"].ToolExposure[tool]; got != "direct" {
+			t.Errorf("%s exposure = %q, want direct", tool, got)
+		}
+	}
+	ext := filepath.Join(home, ".pi", "agent", "extensions", "grimoire.ts")
+	if _, err := os.Stat(ext); err != nil {
+		t.Fatalf("extension not written: %v", err)
+	}
+	if s := agent.DetectMCPSetup("pi", "user", t.TempDir()); !s.Hook || !s.HookSupported {
+		t.Errorf("doctor should see the pi extension: %+v", s)
+	}
+
+	if err := runMCPUninstall(nil, nil); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := os.Stat(ext); !os.IsNotExist(err) {
+		t.Error("uninstall left the extension")
+	}
+}
+
+// --no-hook skips the extension but still registers the server.
+func TestMCPInstall_PiNoHook(t *testing.T) {
+	_, home := setupMCPSetupEnv(t, true)
+	t.Setenv("PI_CODING_AGENT_DIR", "")
+	flagMCPSetupTarget, flagMCPSetupNoHook = "pi", true
+	if err := runMCPInstall(nil, nil); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := os.Stat(filepath.Join(home, ".pi", "agent", "extensions", "grimoire.ts")); !os.IsNotExist(err) {
+		t.Error("--no-hook should not write the extension")
+	}
+	if _, err := os.Stat(filepath.Join(home, ".pi", "agent", "mcp.json")); err != nil {
+		t.Error("server should still be registered")
 	}
 }

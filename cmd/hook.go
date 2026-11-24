@@ -122,7 +122,19 @@ that fits. Registered by: grimoire mcp install`,
 	},
 }
 
+// hookFormat is how the hooks print their result, for agents that read
+// a different shape than Claude Code's:
+//
+//	claude  {"systemMessage", "hookSpecificOutput": {"hookEventName", "additionalContext"}}
+//	        Claude Code, Codex, Gemini CLI, Antigravity
+//	flat    {"additionalContext"}: GitHub Copilot CLI, which ignores
+//	        hookSpecificOutput
+//	text    the context as plain text: Kimi Code, which adds a hook's stdout
+//	        to the context as is
+var hookFormat = "claude"
+
 func init() {
+	hookCmd.PersistentFlags().StringVar(&hookFormat, "format", hookFormat, "output shape: claude, flat or text")
 	hookPromptCmd.Flags().Float64Var(&hookMinScore, "min-score", hookMinScore, "minimum BM25 score for a skill to be suggested")
 	hookCmd.AddCommand(hookPromptCmd, hookSessionCmd)
 	rootCmd.AddCommand(hookCmd)
@@ -184,6 +196,17 @@ func runHookSession(in io.Reader, out io.Writer) {
 // when it sent none). Empty ctx prints nothing.
 func writeHookOutput(out io.Writer, event, fallback, ctx, msg string) {
 	if ctx == "" {
+		return
+	}
+	switch hookFormat {
+	case "text":
+		fmt.Fprintln(out, ctx)
+		return
+	case "flat":
+		b, err := json.Marshal(map[string]string{"additionalContext": ctx})
+		if err == nil {
+			fmt.Fprintln(out, string(b))
+		}
 		return
 	}
 	var o hookOutput

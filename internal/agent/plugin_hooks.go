@@ -185,12 +185,24 @@ func openCodePlugin(bin string) []byte {
 // ConfigureOpenCodePlugin writes the grimoire plugin to path. A file at path
 // that grimoire did not write is left alone (error). Reports whether it changed.
 func ConfigureOpenCodePlugin(path, bin string) (bool, error) {
-	want := openCodePlugin(bin)
+	return writeOwnedFile(path, openCodePlugin(bin), openCodePluginMarker)
+}
+
+// RemoveOpenCodePlugin deletes the grimoire plugin at path if grimoire wrote
+// it. Reports whether it was removed.
+func RemoveOpenCodePlugin(path string) (bool, error) {
+	return removeOwnedFile(path, openCodePluginMarker)
+}
+
+// writeOwnedFile writes want to path, where grimoire owns any file that
+// starts with marker. A file at path without the marker belongs to someone
+// else and is left alone (error). Reports whether the file changed.
+func writeOwnedFile(path string, want []byte, marker string) (bool, error) {
 	cur, err := os.ReadFile(path)
 	switch {
 	case err == nil && bytes.Equal(cur, want):
 		return false, nil
-	case err == nil && !bytes.HasPrefix(cur, []byte(openCodePluginMarker)):
+	case err == nil && !bytes.HasPrefix(cur, []byte(marker)):
 		return false, fmt.Errorf("%s exists and was not written by grimoire — remove or rename it, then rerun", path)
 	case err != nil && !os.IsNotExist(err):
 		return false, err
@@ -201,9 +213,9 @@ func ConfigureOpenCodePlugin(path, bin string) (bool, error) {
 	return true, os.WriteFile(path, want, 0o644)
 }
 
-// RemoveOpenCodePlugin deletes the grimoire plugin at path if grimoire wrote
-// it. Reports whether it was removed.
-func RemoveOpenCodePlugin(path string) (bool, error) {
+// removeOwnedFile deletes path only if it starts with marker. Reports
+// whether it was removed.
+func removeOwnedFile(path, marker string) (bool, error) {
 	cur, err := os.ReadFile(path)
 	if os.IsNotExist(err) {
 		return false, nil
@@ -211,8 +223,131 @@ func RemoveOpenCodePlugin(path string) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	if !bytes.HasPrefix(cur, []byte(openCodePluginMarker)) {
+	if !bytes.HasPrefix(cur, []byte(marker)) {
 		return false, nil
 	}
 	return true, os.Remove(path)
+}
+
+// ── Pi ───────────────────────────────────────────────────────────────────────
+//
+// Pi has no hooks in its settings files, but loads every extension in
+// <pi agent dir>/extensions (global) or .pi/extensions (project, once the
+// project is trusted). The grimoire extension runs grimoire's session and
+// prompt hooks before each user turn (before_agent_start) and puts their
+// output in system prompt sections, so nothing is written into the session
+// history and Pi patches only the sections that changed.
+
+// piExtensionMarker identifies an extension file grimoire wrote; uninstall
+// only deletes a file that carries it.
+const piExtensionMarker = "// grimoire prompt hook — written by `grimoire mcp install`"
+
+// PiExtensionFile returns the grimoire extension path for scope.
+func PiExtensionFile(scope, projectDir string) string {
+	if scope == "project" {
+		return filepath.Join(projectDir, ".pi", "extensions", "grimoire.ts")
+	}
+	return filepath.Join(piAgentDir(mustHome()), "extensions", "grimoire.ts")
+}
+
+const piExtensionTemplate = `%s; ` + "`grimoire mcp uninstall`" + ` removes it.
+// Pi has no settings-file hooks, so this extension plays grimoire's two hook
+// roles: it keeps grimoire's workflow router (start-best-practice) in the
+// system prompt, adds the per-prompt routing reminder and skill candidates,
+// and shows grimoire's status lines ("grimoire ▸ …") as notifications.
+import { spawn } from "node:child_process";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+
+const BIN = %s;
+const TIMEOUT_MS = 10000;
+
+type HookOut = { context?: string; status?: string };
+
+function hook(sub: string, input: unknown, cwd: string): Promise<HookOut> {
+	return new Promise((resolve) => {
+		let out = "";
+		let done = false;
+		const finish = (v: HookOut) => {
+			if (!done) {
+				done = true;
+				resolve(v);
+			}
+		};
+		try {
+			const proc = spawn(BIN, ["hook", sub], { cwd, stdio: ["pipe", "pipe", "ignore"] });
+			const timer = setTimeout(() => {
+				proc.kill();
+				finish({});
+			}, TIMEOUT_MS);
+			proc.stdout.on("data", (d) => (out += d));
+			proc.on("error", () => finish({}));
+			proc.on("close", () => {
+				clearTimeout(timer);
+				if (!out.trim()) return finish({});
+				try {
+					const o = JSON.parse(out);
+					finish({
+						context: o.hookSpecificOutput?.additionalContext ?? "",
+						status: o.systemMessage ?? "",
+					});
+				} catch {
+					finish({});
+				}
+			});
+			proc.stdin.end(JSON.stringify(input));
+		} catch {
+			finish({});
+		}
+	});
+}
+
+export default function (pi: ExtensionAPI) {
+	let router: Promise<HookOut> | null = null;
+	let announced = false;
+
+	pi.on("before_agent_start", async (event, ctx) => {
+		if (event.messageType !== "user" || !event.prompt) return;
+		const cwd = event.systemPromptOptions?.cwd ?? process.cwd();
+
+		router ??= hook("session", { hook_event_name: "SessionStart", cwd }, cwd);
+		const r = await router;
+		if (!announced && r.status) {
+			announced = true;
+			ctx.ui.notify(r.status, "info");
+		}
+
+		let session_id: string | undefined;
+		try {
+			session_id = ctx.sessionManager?.getSessionId?.();
+		} catch {}
+		const p = await hook("prompt", { prompt: event.prompt, hook_event_name: "UserPromptSubmit", cwd, session_id }, cwd);
+		if (p.status) ctx.ui.notify(p.status, "info");
+
+		const sections = event.systemPromptOptions?.sections;
+		if (sections) {
+			if (r.context) sections["grimoire_router"] = r.context;
+			sections["grimoire_prompt"] = p.context ?? "";
+			return;
+		}
+		const extra = [r.context, p.context].filter(Boolean).join("\n\n");
+		if (extra) return { systemPrompt: event.systemPrompt + "\n\n" + extra };
+	});
+}
+`
+
+func piExtension(bin string) []byte {
+	quoted, _ := json.Marshal(bin) // a JSON string is a valid TS string literal
+	return []byte(fmt.Sprintf(piExtensionTemplate, piExtensionMarker, quoted))
+}
+
+// ConfigurePiExtension writes the grimoire extension to path. A file at path
+// that grimoire did not write is left alone (error). Reports whether it changed.
+func ConfigurePiExtension(path, bin string) (bool, error) {
+	return writeOwnedFile(path, piExtension(bin), piExtensionMarker)
+}
+
+// RemovePiExtension deletes the grimoire extension at path if grimoire wrote
+// it. Reports whether it was removed.
+func RemovePiExtension(path string) (bool, error) {
+	return removeOwnedFile(path, piExtensionMarker)
 }

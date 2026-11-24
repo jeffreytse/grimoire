@@ -23,6 +23,9 @@ func TestDoctorMCPChecks(t *testing.T) {
 	if _, err := agent.ConfigureMCPInstruction(agent.MCPInstructionFile("copilot", "user", getProjectDir())); err != nil {
 		t.Fatal(err)
 	}
+	if _, err := agent.ConfigureCopilotHooks(agent.CopilotHooksFile("user", getProjectDir()), "grimoire"); err != nil {
+		t.Fatal(err)
+	}
 	checks, found := doctorMCPChecks("copilot", "Copilot", "1.0", pkg)
 	if !found {
 		t.Fatal("copilot not detected in MCP mode")

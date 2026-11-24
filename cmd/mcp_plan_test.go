@@ -23,7 +23,7 @@ func planFiles(steps []string) []string {
 // The dry-run plan must match what a real install does: every file it names
 // exists after a real install, and the dry run itself changes nothing.
 func TestMCPDryRun_MatchesRealInstall(t *testing.T) {
-	for _, key := range []string{"claude", "codex", "gemini", "opencode", "pi", "antigravity"} {
+	for _, key := range []string{"claude", "codex", "gemini", "opencode", "pi", "antigravity", "copilot", "kimi", "omp"} {
 		t.Run(key, func(t *testing.T) {
 			f, home := setupMCPSetupEnv(t, true)
 			flagMCPSetupTarget = key

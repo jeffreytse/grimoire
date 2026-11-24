@@ -29,15 +29,15 @@ For other MCP clients, `grimoire mcp config --target cursor|windsurf|cline` prin
 | Claude Code | user, project | `claude mcp add` | `~/.claude/CLAUDE.md` / `./CLAUDE.md` | ✓ hooks in `.claude/settings.json` | `/mcp` |
 | Codex | user | `codex mcp add` | `~/.codex/AGENTS.md` | ✓ hooks in `~/.codex/hooks.json`; trust them once in `/hooks` | `codex mcp list` |
 | Gemini CLI | user, project | `gemini mcp add` | `~/.gemini/GEMINI.md` / `./GEMINI.md` | ✓ hooks in `.gemini/settings.json` | `gemini mcp list` |
-| GitHub Copilot CLI | user | `copilot mcp add` | `~/.copilot/copilot-instructions.md` | instruction only | `copilot mcp list` |
+| GitHub Copilot CLI | user | `copilot mcp add` | `~/.copilot/copilot-instructions.md` | ✓ hooks in `~/.copilot/hooks/grimoire.json` | `copilot mcp list` |
 | OpenCode | user, project | `opencode.json` | `~/.config/opencode/AGENTS.md` / `./AGENTS.md` | ✓ grimoire plugin | `opencode mcp list` |
-| Pi | user, project | `~/.pi/agent/mcp.json` / `.pi/mcp.json` | `~/.pi/agent/AGENTS.md` / `./AGENTS.md` | instruction only | `pi mcp list` |
-| Kimi Code | user, project | `~/.kimi-code/mcp.json` / `.kimi-code/mcp.json` | `~/.kimi-code/AGENTS.md` / `./AGENTS.md` | instruction only | `/mcp` |
-| OMP | user, project | `~/.omp/agent/mcp.json` / `.omp/mcp.json` | `~/.omp/agent/AGENTS.md` / `.omp/AGENTS.md` | instruction only | `/mcp` |
+| Pi | user, project | `~/.pi/agent/mcp.json` / `.pi/mcp.json` | `~/.pi/agent/AGENTS.md` / `./AGENTS.md` | ✓ extension `~/.pi/agent/extensions/grimoire.ts` / `.pi/extensions/grimoire.ts` | `pi mcp list` |
+| Kimi Code | user, project | `~/.kimi-code/mcp.json` / `.kimi-code/mcp.json` | `~/.kimi-code/AGENTS.md` / `./AGENTS.md` | ✓ prompt hook in `~/.kimi-code/config.toml` (user scope only) | `/mcp` |
+| OMP | user, project | `~/.omp/agent/mcp.json` / `.omp/mcp.json` | `~/.omp/agent/AGENTS.md` / `.omp/AGENTS.md` | ✓ extension `~/.omp/agent/extensions/grimoire.ts` / `.omp/extensions/grimoire.ts` | `/mcp` |
 | Antigravity | user | `~/.gemini/config/mcp_config.json` | (added by its hooks) | ✓ hooks in `~/.gemini/config/hooks.json` | `/mcp` |
 | Claude Desktop | user | `claude_desktop_config.json` | — | grimoire's server tells Claude when to use it | reopen the app; grimoire appears in its connectors |
 
-**Automatic routing** means every request goes through grimoire's workflows without you asking. Where it says *instruction only*, the agent is told to use grimoire but decides for itself whether a request needs it, so routing is less consistent. Claude Desktop is written with the full path to grimoire, because desktop apps don't use your shell's PATH.
+**Automatic routing** means every request goes through grimoire's workflows without you asking. Claude Desktop has no hooks: grimoire's server tells Claude to use it, but Claude decides for itself whether a request needs it, so routing there is less consistent. Claude Desktop is written with the full path to grimoire, because desktop apps don't use your shell's PATH.
 
 Install options:
 - `--no-hook`: skip automatic routing; the instruction is still added.
@@ -46,6 +46,10 @@ Install options:
 - `--no-statusline` / `--statusline`: skip the Claude Code status bar badge, or add it after an existing status line.
 
 Gemini keeps MCP servers disabled in folders you haven't trusted. Open Gemini in the folder and trust it, or install with `--scope user`.
+
+In Pi, install also makes grimoire's three skill tools (search, get, list) directly visible to the model. Pi otherwise reaches MCP tools only through scripts, so it rarely looks a skill up. With `--scope project`, Pi loads the grimoire extension only after you trust the folder when Pi asks.
+
+Kimi Code reads hooks only from your user config, so its automatic routing needs `--scope user`. Kimi ignores what session-start hooks print, so grimoire's prompt hook reminds the model on each request to load the router.
 
 ## How it works in a session
 
@@ -102,7 +106,7 @@ The first time grimoire acts after install, a one-time tip points you to "grimoi
 
 ### Notes from grimoire
 
-Some agents show short notes from grimoire itself: Claude Code, Codex and Gemini CLI (Codex shows them as warnings), and OpenCode as pop-ups. To avoid noise, grimoire says nothing when all is well at `brief`. It speaks up:
+Some agents show short notes from grimoire itself: Claude Code, Codex and Gemini CLI (Codex shows them as warnings), and OpenCode, Pi and OMP as pop-ups. To avoid noise, grimoire says nothing when all is well at `brief`. It speaks up:
 - **when something needs fixing**, e.g. `grimoire ▸ this project needs <package> — run grimoire update`
 - **when you name a skill** (`grimoire ▸ loading skill <name>`, or "unknown skill")
 - **at `full`**, also a "ready" note and the skills it matched by keyword
@@ -121,7 +125,7 @@ Active (the default), grimoire routes every request. Off, it stays out of the wa
 | This session | say "grimoire off" | say "grimoire on" |
 | One run (CI, scripts) | `GRIMOIRE_ACTIVE=0` | `GRIMOIRE_ACTIVE=1` |
 
-`GRIMOIRE_ACTIVE` wins over the session setting, which wins over `grimoire enable`/`disable`. Turning it off in one session doesn't affect others, and the assistant confirms it in its reply. While off, a new session reminds you at most once a day. The in-session phrases need automatic routing; agents with *instruction only* follow `grimoire disable`.
+`GRIMOIRE_ACTIVE` wins over the session setting, which wins over `grimoire enable`/`disable`. Turning it off in one session doesn't affect others, and the assistant confirms it in its reply. While off, a new session reminds you at most once a day. The in-session phrases need automatic routing; Claude Desktop follows `grimoire disable`.
 
 Turning grimoire off is different from hiding its notes: `core.trace hidden` (or "quiet grimoire") keeps grimoire working but silent.
 

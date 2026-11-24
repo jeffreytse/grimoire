@@ -160,6 +160,10 @@ func isSkillsHook(command string) bool {
 // argsList, whatever binary path it was registered with.
 func hookHasArgs(command string, argsList []string) bool {
 	c := strings.TrimSpace(command)
+	// A trailing output-format flag (Copilot, Kimi) doesn't change which hook it is.
+	if i := strings.LastIndex(c, " --format "); i >= 0 && !strings.Contains(c[i+len(" --format "):], " ") {
+		c = strings.TrimSpace(c[:i])
+	}
 	for _, args := range argsList {
 		if !strings.HasSuffix(c, " "+args) {
 			continue
