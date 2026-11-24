@@ -14,9 +14,10 @@ import (
 // skill's Display section; the CLI only says which level applies and shows
 // facts it knows in status lines.
 //
-//	off    nothing: route and load skills silently
-//	brief  (default) the decisions: route, plan, each skill applied, outcome
-//	full   brief plus the evidence: candidates and why, severity, sources
+//	hidden  no notes: route and load skills silently ("off" is accepted as
+//	        an alias, but "off" for grimoire itself means not routing at all)
+//	brief   (default) the decisions: route, plan, each skill applied, outcome
+//	full    brief plus the evidence: candidates and why, severity, sources
 //
 // Set with core.trace (grimoire config set core.trace brief) or, for one run,
 // GRIMOIRE_TRACE. "on" is read as brief for configs written before levels.
@@ -24,7 +25,7 @@ import (
 type displayLevel string
 
 const (
-	displayOff   displayLevel = "off"
+	displayOff   displayLevel = "hidden"
 	displayBrief displayLevel = "brief"
 	displayFull  displayLevel = "full"
 )
@@ -36,7 +37,7 @@ func (l displayLevel) on() bool { return l != displayOff }
 // for anything that is not a level.
 func parseDisplayLevel(v string) (l displayLevel, ok bool) {
 	switch strings.ToLower(strings.TrimSpace(v)) {
-	case "off", "0", "false":
+	case "hidden", "off", "0", "false":
 		return displayOff, true
 	case "brief", "on", "1", "true":
 		return displayBrief, true
@@ -80,7 +81,7 @@ func displayPlain() bool {
 const displayPlainRule = " Style: plain — no decorative glyphs or emoji; use words instead (\"Step 1:\", \"Risk (high):\", \"Done:\")."
 
 // displayOffRule tells the model to keep grimoire silent.
-const displayOffRule = "grimoire display is off: do not show grimoire blocks or `grimoire ▸` lines; route and load skills silently."
+const displayOffRule = "grimoire's notes are hidden (display off): do not show grimoire blocks or `grimoire ▸` lines, but keep routing and applying skills — silently."
 
 // displayContext is the display instruction for the model at level l. When
 // the installed router skill defines the format (its Display section), this
@@ -95,7 +96,7 @@ func displayContext(l displayLevel) string {
 		style = displayPlainRule
 	}
 	if routerHasDisplay() {
-		return fmt.Sprintf("grimoire display: %s. Show grimoire's work in the format of start-best-practice's Display section, at the %s level. The user can say \"show grimoire details\" (full) or \"quiet grimoire\" (off) for the rest of the session.%s", l, l, style)
+		return fmt.Sprintf("grimoire display: %s. Show grimoire's work in the format of start-best-practice's Display section, at the %s level. The user can say \"show grimoire details\" (full), \"quiet grimoire\" (hidden: notes hidden, routing continues) or \"grimoire help\" (lists the controls).%s", l, l, style)
 	}
 	return fmt.Sprintf("grimoire display: %s. Tell the user each grimoire decision in one short line starting with `grimoire ▸`: the workflow routed to and why, then the skills applied and why. Use the prefix only on those lines, never on the answer. Show nothing for grimoire when nothing routes.%s", l, style)
 }
@@ -114,7 +115,7 @@ func readyStatus(l displayLevel, mode, detail string) string {
 	if l != displayFull {
 		return ""
 	}
-	line := ready + " · full view — say \"quiet grimoire\" to hide"
+	line := ready + " · full view — say \"quiet grimoire\" to hide these notes"
 	if detail != "" {
 		line += " · " + detail
 	}
@@ -152,7 +153,7 @@ func statusLine(l displayLevel, text string) string {
 // shown once, it does not wear down the warning role the way a per-session
 // line would. Recorded under the user cache dir; a cleared cache shows it
 // again, which is harmless.
-const onboardingTip = `tip: say "show grimoire details" for evidence, "quiet grimoire" to hide it, "skip grimoire" to skip one request`
+const onboardingTip = `tip: say "grimoire help" for grimoire's controls — e.g. "show grimoire details" for evidence, "quiet grimoire" to hide these notes`
 
 // takeOnboardingTip returns the tip status line the first time it is called
 // (per machine) at a visible level, and "" afterwards.

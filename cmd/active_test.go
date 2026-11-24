@@ -17,7 +17,7 @@ func TestParseToggle(t *testing.T) {
 		"Grimoire off.":                   "off",
 		"turn off grimoire":               "off",
 		"please disable grimoire mode":    "off",
-		"quiet grimoire":                  "off",
+		"quiet grimoire":                  "", // hides notes; does not turn grimoire off
 		"grimoire on":                     "on",
 		"enable grimoire":                 "on",
 		"Activate grimoire!":              "on",
@@ -62,7 +62,8 @@ func TestSessionToggle(t *testing.T) {
 	setupListSkillsHome(t)
 
 	ctx, msg := runPromptHook(t, "s1", "grimoire off")
-	if !strings.Contains(ctx, "turned grimoire off") || msg != toggleStatus(false) {
+	// Confirmed in the model's reply (and the badge), not a warning-styled status line.
+	if !strings.Contains(ctx, "turned grimoire off") || msg != "" {
 		t.Fatalf("off toggle: ctx=%q msg=%q", ctx, msg)
 	}
 	if ctx, msg := runPromptHook(t, "s1", "migrate the billing service"); ctx != inactiveRule || msg != "" {
@@ -78,8 +79,8 @@ func TestSessionToggle(t *testing.T) {
 		t.Errorf("small talk while inactive: %q", ctx)
 	}
 
-	if _, msg := runPromptHook(t, "s1", "grimoire on"); msg != toggleStatus(true) {
-		t.Fatalf("on toggle: %q", msg)
+	if ctx, msg := runPromptHook(t, "s1", "grimoire on"); !strings.Contains(ctx, "turned grimoire on") || msg != "" {
+		t.Fatalf("on toggle: ctx=%q msg=%q", ctx, msg)
 	}
 	if ctx, _ := runPromptHook(t, "s1", "migrate the billing service"); !strings.HasPrefix(ctx, hookRouteReminder) {
 		t.Errorf("routing not restored: %q", ctx)
@@ -137,6 +138,9 @@ func TestSessionHook_Inactive(t *testing.T) {
 		"mcp":    func(in *bytes.Reader, out *bytes.Buffer) { runHookSession(in, out) },
 		"skills": func(in *bytes.Reader, out *bytes.Buffer) { runSkillsSession(in, out) },
 	} {
+		if dir, err := os.UserCacheDir(); err == nil {
+			_ = os.Remove(filepath.Join(dir, "grimoire", "off-notice")) // once a day: reset per mode
+		}
 		in, _ := json.Marshal(map[string]string{"hook_event_name": "SessionStart", "session_id": "s1"})
 		var out bytes.Buffer
 		run(bytes.NewReader(in), &out)
@@ -233,5 +237,53 @@ func TestAgy_ToggleAndTip(t *testing.T) {
 	}
 	if ctx := run("migrate the billing service again"); ctx != inactiveRule {
 		t.Errorf("inactive: %q", ctx)
+	}
+}
+
+// The "grimoire is off" session line shows once a day at brief, every
+// session at full.
+func TestInactiveSessionStatus_OncePerDay(t *testing.T) {
+	setupListSkillsHome(t)
+	first := inactiveSessionStatus(displayBrief, activeFromConfig)
+	if !strings.Contains(first, "off for all sessions") {
+		t.Fatalf("first: %q", first)
+	}
+	if again := inactiveSessionStatus(displayBrief, activeFromConfig); again != "" {
+		t.Errorf("repeated the same day: %q", again)
+	}
+	if full := inactiveSessionStatus(displayFull, activeFromConfig); full == "" {
+		t.Error("full level should always show it")
+	}
+	if off := inactiveSessionStatus(displayOff, activeFromConfig); off != "" {
+		t.Errorf("display off: %q", off)
+	}
+}
+
+// "grimoire help" lists the controls, active or not; other mentions of help
+// are ordinary requests.
+func TestGrimoireHelp(t *testing.T) {
+	setupListSkillsHome(t)
+	for _, p := range []string{"grimoire help", "Grimoire help?", "help grimoire", "grimoire commands"} {
+		if ctx, _ := runPromptHook(t, "s1", p); ctx != grimoireHelp {
+			t.Errorf("%q: %q", p, ctx)
+		}
+	}
+	if ctx, _ := runPromptHook(t, "s1", "help me migrate the billing service"); ctx == grimoireHelp {
+		t.Error("ordinary request treated as grimoire help")
+	}
+	if err := setSessionActive("s2", false); err != nil {
+		t.Fatal(err)
+	}
+	if ctx, _ := runPromptHook(t, "s2", "grimoire help"); ctx != grimoireHelp {
+		t.Errorf("help while off: %q", ctx)
+	}
+	for _, want := range []string{"show grimoire details", "quiet grimoire", "plain grimoire", "skip grimoire", "grimoire off"} {
+		if !strings.Contains(grimoireHelp, want) {
+			t.Errorf("help lacks %q", want)
+		}
+	}
+	// The one-time tip leads with the one phrase that reveals the rest.
+	if !strings.HasPrefix(onboardingTip, `tip: say "grimoire help"`) {
+		t.Errorf("tip does not lead with grimoire help: %q", onboardingTip)
 	}
 }

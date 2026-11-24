@@ -301,7 +301,7 @@ func applyKey(fs *config.FileConfig, key, value string) error {
 		return nil
 	case "core.trace":
 		if _, ok := parseDisplayLevel(value); value != "" && !ok {
-			return fmt.Errorf("core.trace must be \"off\", \"brief\" or \"full\"")
+			return fmt.Errorf("core.trace must be \"hidden\", \"brief\" or \"full\"")
 		}
 		fs.Core.Trace = value
 		return nil

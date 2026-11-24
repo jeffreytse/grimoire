@@ -16,7 +16,7 @@ func TestSkillsHooks_DisplayAndStatus(t *testing.T) {
 	if msg != "" {
 		t.Errorf("brief session msg = %q, want silent on success", msg)
 	}
-	if _, msg := skillsSessionTurn(displayFull); msg != `grimoire ▸ ready (skills mode) · full view — say "quiet grimoire" to hide` {
+	if _, msg := skillsSessionTurn(displayFull); msg != `grimoire ▸ ready (skills mode) · full view — say "quiet grimoire" to hide these notes` {
 		t.Errorf("full session msg = %q", msg)
 	}
 	if ctx, msg := skillsSessionTurn(displayOff); msg != "" || !strings.Contains(ctx, displayOffRule) {

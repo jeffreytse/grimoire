@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/spf13/cobra"
 
@@ -110,9 +111,10 @@ func setSessionActive(session string, active bool) error {
 
 // Phrases that turn grimoire on or off for the session. A prompt that is
 // mostly the phrase toggles; a prompt that merely mentions grimoire in
-// passing ("is grimoire off by default?") does not.
+// passing ("is grimoire off by default?") does not. "quiet grimoire" is not
+// one of them: it hides grimoire's notes (display off) and routing goes on.
 var (
-	toggleOff = regexp.MustCompile(`(?i)^\s*(?:please\s+)?(?:(?:turn|switch)\s+off|disable|deactivate|stop|pause|quiet)\s+grimoire(?:\s+mode)?\s*[.!]*\s*$|^\s*grimoire\s+(?:off|inactive|disable|stop)\s*[.!]*\s*$`)
+	toggleOff = regexp.MustCompile(`(?i)^\s*(?:please\s+)?(?:(?:turn|switch)\s+off|disable|deactivate|stop|pause)\s+grimoire(?:\s+mode)?\s*[.!]*\s*$|^\s*grimoire\s+(?:off|inactive|disable|stop)\s*[.!]*\s*$`)
 	toggleOn  = regexp.MustCompile(`(?i)^\s*(?:please\s+)?(?:(?:turn|switch)\s+on|enable|activate|start|resume)\s+grimoire(?:\s+mode)?\s*[.!]*\s*$|^\s*grimoire\s+(?:on|active|enable|start)\s*[.!]*\s*$`)
 )
 
@@ -145,9 +147,9 @@ func toggleContext(active bool) string {
 // user's own action, shown at any visible display level.
 func toggleStatus(active bool) string {
 	if active {
-		return statusPrefix + `on for this session — say "grimoire off" to turn it off`
+		return statusPrefix + `on for this session — routing requests again; say "grimoire off" to stop`
 	}
-	return statusPrefix + `off for this session — say "grimoire on" to resume`
+	return statusPrefix + `off for this session — not routing requests; say "grimoire on" to resume`
 }
 
 // handleToggle applies an on/off phrase in prompt to session. ok is false
@@ -165,8 +167,24 @@ func handleToggle(prompt, session string) (ctx, msg string, ok bool) {
 		return fmt.Sprintf("The user asked to turn grimoire %s for this session, but it could not be saved (%v). Tell them, and that `%s` changes it for all sessions.", onOff(on), err, cmd),
 			statusPrefix + "could not change grimoire for this session — " + err.Error(), true
 	}
-	return toggleContext(on), toggleStatus(on), true
+	// Confirmed by the model's own one-line acknowledgement (and the badge),
+	// not a status line: agents render those as warnings, and a toggle the
+	// user just made is no warning.
+	return toggleContext(on), "", true
 }
+
+// helpPhrase matches a request for grimoire's controls.
+var helpPhrase = regexp.MustCompile(`(?i)^\s*(?:grimoire\s+help|help\s+grimoire|grimoire\s+commands|what\s+can\s+i\s+say\s+to\s+grimoire)\s*[?.!]*\s*$`)
+
+// grimoireHelp is the list of controls, answered on "grimoire help".
+const grimoireHelp = `The user asked for grimoire's controls. Reply with exactly this list, nothing else:
+grimoire controls — say any of these:
+- "show grimoire details" — show evidence (candidates, risks, sources)
+- "quiet grimoire" — hide grimoire's notes; it keeps routing
+- "plain grimoire" — words instead of symbols (screen readers)
+- "skip grimoire" — skip it for this request
+- "grimoire off" / "grimoire on" — stop or resume routing in this session
+For all sessions: grimoire disable / grimoire enable, and grimoire config set core.trace hidden|brief|full.`
 
 func onOff(b bool) string {
 	if b {
@@ -182,6 +200,9 @@ func onOff(b bool) string {
 // false for agents whose hooks cannot show the user a status line
 // (Antigravity), so the one-time tip is not used up unseen there.
 func promptTurn(prompt, session string, l displayLevel, showsStatus bool, turn func(string, displayLevel) (string, string)) (ctx, msg string) {
+	if helpPhrase.MatchString(prompt) {
+		return grimoireHelp, ""
+	}
 	if ctx, msg, ok := handleToggle(prompt, session); ok {
 		if !l.on() {
 			msg = ""
@@ -207,9 +228,14 @@ func promptTurn(prompt, session string, l displayLevel, showsStatus bool, turn f
 }
 
 // inactiveSessionStatus is the session-start status line when grimoire is
-// inactive: shown at any visible level, since grimoire not working is state
-// the user should not have to remember (most agents have no badge).
+// inactive. Grimoire not working is state worth knowing (most agents have no
+// badge), but agents render hook messages as warnings, and repeating a
+// choice the user made on purpose at every session start is nagging — so at
+// brief it appears at most once a day; at full, every session.
 func inactiveSessionStatus(l displayLevel, src activeSource) string {
+	if l == displayBrief && !takeDailyNotice("off-notice") {
+		return ""
+	}
 	where := "for this session"
 	if src == activeFromConfig {
 		where = "for all sessions (grimoire disable)"
@@ -269,4 +295,28 @@ func setGlobalActive(active bool) error {
 		fmt.Printf("%s  GRIMOIRE_ACTIVE=%s is set and overrides this in this shell\n", tui.IconWarn, v)
 	}
 	return nil
+}
+
+// takeDailyNotice reports whether the notice named name is due today, and
+// records it as shown. Unrecordable means not due: better quiet than
+// repeated.
+func takeDailyNotice(name string) bool {
+	dir, err := os.UserCacheDir()
+	if err != nil {
+		return false
+	}
+	p := filepath.Join(dir, "grimoire", name)
+	today := time.Now().Format("2006-01-02")
+	if fi, err := os.Lstat(p); err == nil {
+		if !fi.Mode().IsRegular() {
+			return false
+		}
+		if b, err := os.ReadFile(p); err == nil && strings.TrimSpace(string(b)) == today {
+			return false
+		}
+	}
+	if os.MkdirAll(filepath.Dir(p), 0o700) != nil || os.WriteFile(p, []byte(today), 0o600) != nil {
+		return false
+	}
+	return true
 }
