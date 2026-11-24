@@ -24,7 +24,7 @@ import (
 
 var mcpCmd = &cobra.Command{
 	Use:   "mcp",
-	Short: "MCP server integration",
+	Short: "Connect grimoire to your AI agents (recommended)",
 	Long: `Model Context Protocol (MCP) integration for AI assistants.
 
   grimoire mcp install         Set up MCP mode: register the server + add the agent instruction
@@ -184,7 +184,7 @@ func registerMCPTools(s *server.MCPServer) {
 			mcp.WithDescription("Write a grimoire config key. Level defaults to 'local' for standards.* keys, 'global' for core.* keys."),
 			mcp.WithString("key", mcp.Required(), mcp.Description("Dotted config key")),
 			mcp.WithString("value", mcp.Required(), mcp.Description("New value")),
-			mcp.WithString("level", mcp.Description("Target layer: local | global | system (default: auto)")),
+			mcp.WithString("level", mcp.Description("Target layer: project | user | system (default: auto; local and global also work)")),
 		),
 		toolGrimoireConfigSet,
 	)
@@ -193,7 +193,7 @@ func registerMCPTools(s *server.MCPServer) {
 		mcp.NewTool("grimoire_config_unset",
 			mcp.WithDescription("Clear a grimoire config key from a config file."),
 			mcp.WithString("key", mcp.Required(), mcp.Description("Dotted config key")),
-			mcp.WithString("level", mcp.Description("Target layer: local | global | system (default: auto)")),
+			mcp.WithString("level", mcp.Description("Target layer: project | user | system (default: auto; local and global also work)")),
 		),
 		toolGrimoireConfigUnset,
 	)
@@ -203,7 +203,7 @@ func registerMCPTools(s *server.MCPServer) {
 			mcp.WithDescription("Append a value to a list-type config key (idempotent). Supports: standards.extends, standards.profiles, standards.<domain>.practices, standards.<domain>.disabled."),
 			mcp.WithString("key", mcp.Required(), mcp.Description("Dotted config key (must be a list key)")),
 			mcp.WithString("value", mcp.Required(), mcp.Description("Value to append")),
-			mcp.WithString("level", mcp.Description("Target layer: local | global | system (default: auto)")),
+			mcp.WithString("level", mcp.Description("Target layer: project | user | system (default: auto; local and global also work)")),
 		),
 		toolGrimoireConfigAdd,
 	)
@@ -213,7 +213,7 @@ func registerMCPTools(s *server.MCPServer) {
 			mcp.WithDescription("Remove a value from a list-type config key (idempotent, no error if not present). Mirrors grimoire_config_add."),
 			mcp.WithString("key", mcp.Required(), mcp.Description("Dotted config key (must be a list key)")),
 			mcp.WithString("value", mcp.Required(), mcp.Description("Value to remove")),
-			mcp.WithString("level", mcp.Description("Target layer: local | global | system (default: auto)")),
+			mcp.WithString("level", mcp.Description("Target layer: project | user | system (default: auto; local and global also work)")),
 		),
 		toolGrimoireConfigRemove,
 	)

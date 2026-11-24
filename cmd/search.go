@@ -1,7 +1,9 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -17,14 +19,17 @@ var searchCmd = &cobra.Command{
 	RunE:  runSearch,
 }
 
+var flagSearchJSON bool
+
 func init() {
+	searchCmd.Flags().BoolVar(&flagSearchJSON, "json", false, "output JSON array (same shape as grimoire list --json)")
 	rootCmd.AddCommand(searchCmd)
 }
 
 func runSearch(_ *cobra.Command, args []string) error {
 	regs := skills.AllSkillsPackages()
 	if len(regs) == 0 {
-		return fmt.Errorf("no packages installed — run: grimoire update")
+		return errNoSkillLibrary
 	}
 
 	all, _, err := skills.ListAllSkillsFromPackages(regs)
@@ -42,6 +47,15 @@ func runSearch(_ *cobra.Command, args []string) error {
 		if query == "" || matchesQuery(&all[i], query) {
 			matches = append(matches, all[i])
 		}
+	}
+
+	if flagSearchJSON {
+		if matches == nil {
+			matches = []skills.Skill{}
+		}
+		enc := json.NewEncoder(os.Stdout)
+		enc.SetIndent("", "  ")
+		return enc.Encode(matches)
 	}
 
 	if len(matches) == 0 {

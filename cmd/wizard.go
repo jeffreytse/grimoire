@@ -17,7 +17,7 @@ import (
 
 var wizardCmd = &cobra.Command{
 	Use:   "wizard",
-	Short: "Open the interactive TUI wizard",
+	Short: "Set up grimoire step by step, interactively",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return runWizard()
 	},
@@ -385,7 +385,7 @@ func runWizard() error {
 		}
 
 		// Record installed domains in the global manifest for reproducibility.
-		// After this, `grimoire install --global` produces the same result.
+		// After this, `grimoire install --scope user` produces the same result.
 		// Remove stale package entries first so re-runs don't accumulate old keys.
 		{
 			var mPath string
@@ -458,7 +458,7 @@ func runWizard() error {
 		fmt.Println("    start any AI session — skills activate automatically")
 		fmt.Println("    or run /start-best-practice in Claude Code to trigger manually")
 		if isGlobal {
-			fmt.Printf("\n  reproduce later: %s\n", tui.StyleCyan.Render("grimoire install --global"))
+			fmt.Printf("\n  reproduce later: %s\n", tui.StyleCyan.Render("grimoire install --scope user"))
 			fmt.Printf("    %s\n", tui.StyleDim.Render("selections saved to global manifest"))
 		} else {
 			fmt.Printf("\n  reproduce later: %s\n", tui.StyleCyan.Render("grimoire install"))

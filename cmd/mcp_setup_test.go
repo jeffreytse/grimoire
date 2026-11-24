@@ -285,9 +285,22 @@ func TestMCPInstall_RejectsBadFlags(t *testing.T) {
 	if err := runMCPInstall(nil, nil); err == nil {
 		t.Error("unsupported target should error")
 	}
-	flagMCPSetupTarget, flagMCPSetupScope = "claude", "global"
+	flagMCPSetupTarget, flagMCPSetupScope = "claude", "everywhere"
 	if err := runMCPInstall(nil, nil); err == nil {
 		t.Error("bad scope should error")
+	}
+}
+
+// "global" is the older name for "user" in install and config; mcp install
+// accepts it too, so one word works everywhere.
+func TestMCPInstall_GlobalScopeMeansUser(t *testing.T) {
+	setupMCPSetupEnv(t, true)
+	flagMCPSetupTarget, flagMCPSetupScope = "claude", "global"
+	if _, err := resolveMCPAgents(); err != nil {
+		t.Fatalf("global should be accepted: %v", err)
+	}
+	if flagMCPSetupScope != "user" {
+		t.Errorf("scope = %q, want user", flagMCPSetupScope)
 	}
 }
 

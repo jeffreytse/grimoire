@@ -39,8 +39,7 @@ func runList(cmd *cobra.Command, args []string) error {
 	}
 
 	if len(regs) == 0 {
-		root := skills.SkillsRoot()
-		return fmt.Errorf("skills not found at %s — run: grimoire update", root)
+		return errNoSkillLibrary
 	}
 
 	allSkills, conflicts, err := skills.ListAllSkillsFromPackages(regs)

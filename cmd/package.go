@@ -74,7 +74,10 @@ var packageAddCmd = &cobra.Command{
 <grimoire-ref>  git URL, owner/repo[@version] shorthand, or absolute local path
 
 User packages do not need to follow the official STANDARD.md — any
-directory with a skills/ folder (or flat .md files) is accepted.`,
+directory with a skills/ folder (or flat .md files) is accepted.
+
+In MCP mode the package's skills are available as soon as it's added.
+In skills mode, also link them into your agent with "grimoire install".`,
 	Args: cobra.RangeArgs(1, 2),
 	RunE: runPackageAdd,
 }
@@ -82,8 +85,12 @@ directory with a skills/ folder (or flat .md files) is accepted.`,
 var packageRemoveCmd = &cobra.Command{
 	Use:   "remove <name>",
 	Short: "Remove a package by name",
-	Args:  cobra.ExactArgs(1),
-	RunE:  runPackageRemove,
+	Long: `Remove a package from your config and delete its download.
+
+In skills mode, first unlink its skills from your agents with
+"grimoire uninstall <grimoire-ref>".`,
+	Args: cobra.ExactArgs(1),
+	RunE: runPackageRemove,
 }
 
 var packageEnableCmd = &cobra.Command{
@@ -103,8 +110,12 @@ var packageDisableCmd = &cobra.Command{
 var packageUpdateCmd = &cobra.Command{
 	Use:   "update [<name>]",
 	Short: "Pull latest from all (or one named) package",
-	Args:  cobra.MaximumNArgs(1),
-	RunE:  runPackageUpdate,
+	Long: `Pull the latest version of one named package, or of all of them.
+
+"grimoire update" updates every package too, and also downloads this
+project's dependencies; use it unless you want just one package.`,
+	Args: cobra.MaximumNArgs(1),
+	RunE: runPackageUpdate,
 }
 
 var packageValidateCmd = &cobra.Command{

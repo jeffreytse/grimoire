@@ -25,7 +25,7 @@ func runInfo(_ *cobra.Command, args []string) error {
 	skillName := args[0]
 	regs := skills.AllSkillsPackages()
 	if len(regs) == 0 {
-		return fmt.Errorf("no packages installed — run: grimoire update")
+		return errNoSkillLibrary
 	}
 
 	_, src, err := resolveSkillFromPackages(regs, skillName)

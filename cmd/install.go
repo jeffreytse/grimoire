@@ -33,14 +33,14 @@ var (
 	flagInstallNoCfg     bool
 	flagInstallFrom      string
 	flagInstallPackage   string
-	flagInstallScope     string // "project" (default) | "global"
+	flagInstallScope     string // "project" (default) | "user" ("global" also accepted)
 	flagInstallGlobal    bool   // shorthand for --scope global
 	flagInstallNoCap     bool   // disable agent load-performance optimization (install all skills)
 )
 
 var installCmd = &cobra.Command{
 	Use:   "install [<grimoire-ref>]",
-	Short: "Install skills from grimoire.toml or a grimoire-ref",
+	Short: "Link skills into your agents (skills mode)",
 	Long: `Install skills from grimoire.toml [dependencies] (default) or a grimoire-ref.
 
 A grimoire-ref identifies skills to install:
@@ -53,7 +53,10 @@ Examples:
   grimoire install acmecorp/practices                       # all skills from a package
   grimoire install acmecorp/practices:engineering/tdd       # one skill from a package
   grimoire install acmecorp/practices:engineering/**        # glob — multiple skills
-  grimoire install github.com/acmecorp/practices@v2         # explicit host + version`,
+  grimoire install github.com/acmecorp/practices@v2         # explicit host + version
+
+This links skills into your agent (skills mode). In MCP mode nothing needs
+linking: add a package with "grimoire package add" and the server serves it.`,
 	RunE: runInstall,
 }
 
@@ -67,14 +70,16 @@ func init() {
 	installCmd.Flags().BoolVar(&flagInstallNoCfg, "no-configure", false, "skip writing start-best-practice trigger")
 	installCmd.Flags().StringVar(&flagInstallFrom, "from", "", "install from a local path or git URL (persisted to ~/.config/grimoire/grimoire.toml)")
 	installCmd.Flags().StringVar(&flagInstallPackage, "package", "", "install skills from a specific package only")
-	installCmd.Flags().StringVar(&flagInstallScope, "scope", "project", `install scope: "project" (./.claude/skills/) or "global" (~/.claude/skills/)`)
-	installCmd.Flags().BoolVar(&flagInstallGlobal, "global", false, `global-scoped install — shorthand for --scope global`)
+	installCmd.Flags().StringVar(&flagInstallScope, "scope", "project", "install scope: "+scopeHelp)
+	installCmd.Flags().BoolVar(&flagInstallGlobal, "user", false, "shorthand for --scope user")
+	installCmd.Flags().BoolVar(&flagInstallGlobal, "global", false, "older name for --user")
+	_ = installCmd.Flags().MarkHidden("global")
 	installCmd.Flags().BoolVar(&flagInstallNoCap, "no-load-optimize", false, "install all skills; disables agent load-performance limit (may slow down AI assistant startup)")
 }
 
 // installSkillsDir returns the target skills directory for an agent based on the current scope flags.
 func installSkillsDir(ag string) string {
-	if flagInstallGlobal || flagInstallScope == "global" {
+	if installUserScope() {
 		return agent.SkillsDir(ag)
 	}
 	return agent.ProjectSkillsDir(ag, getProjectDir())
@@ -100,6 +105,12 @@ func ensureGlobalManifest() string {
 }
 
 func runInstall(cmd *cobra.Command, args []string) error {
+	if _, err := normalizeScope(flagInstallScope); err != nil {
+		return err
+	}
+	if err := validateTarget(flagInstallTarget); err != nil {
+		return err
+	}
 	// grimoire install <ref> — dispatch based on ref type
 	if len(args) > 0 {
 		return runInstallArg(args[0])
@@ -118,7 +129,7 @@ func runInstall(cmd *cobra.Command, args []string) error {
 	}
 
 	// grimoire.toml present → manifest-driven install path
-	if flagInstallGlobal || flagInstallScope == "global" {
+	if installUserScope() {
 		if _, err := os.Stat(manifest.GlobalPath()); err == nil {
 			return runInstallFromManifest(filepath.Dir(manifest.GlobalPath()))
 		}
@@ -165,7 +176,7 @@ func runInstall(cmd *cobra.Command, args []string) error {
 	}
 
 	if len(regs) == 0 {
-		return fmt.Errorf("skills not found at %s — run: grimoire update", skills.SkillsRoot())
+		return errNoSkillLibrary
 	}
 
 	// parse optional package: prefix from --skill flag  (e.g. "my-org:engineering/tdd")
@@ -606,7 +617,7 @@ func runInstallSkillRef(rawKey string, pkgRef *config.PackageRef) error {
 // saveDepToManifest appends depKey=version to [dependencies] in grimoire.toml if not already present.
 func saveDepToManifest(projectDir, depKey, version string) {
 	var manifestPath string
-	if flagInstallGlobal || flagInstallScope == "global" {
+	if installUserScope() {
 		manifestPath = ensureGlobalManifest()
 	} else {
 		manifestPath = manifest.ProjectPath(projectDir)
@@ -656,7 +667,7 @@ func runInstallFromManifest(projectDir string) error {
 	// Global install: use merged deps (global + system layers both contribute).
 	allDeps := r.Deps
 	devDeps := r.DevDeps
-	if !flagInstallGlobal && flagInstallScope != "global" {
+	if !installUserScope() {
 		projFile, projErr := manifest.ParseFile(manifest.ProjectPath(projectDir))
 		if projErr != nil {
 			return fmt.Errorf("reading project grimoire.toml: %w", projErr)
@@ -832,7 +843,7 @@ func runInstallFromPackageURL(ref string) error {
 
 	// Persist to [dependencies] in the scope-appropriate config file (idempotent).
 	var settingsPath string
-	if flagInstallGlobal || flagInstallScope == "global" {
+	if installUserScope() {
 		settingsPath = config.GlobalPath()
 	} else {
 		settingsPath = config.ProjectPath(getProjectDir())
@@ -1067,7 +1078,7 @@ func installDomainToAgent(root, domain, subdomain, ag string, symlink bool, pkgN
 	// already-linked skills (InstallSkill ok=false) that still need dep recording.
 	var globalManifestPath string
 	existingDeps := make(map[string]manifest.DepSpec)
-	if flagInstallGlobal || flagInstallScope == "global" {
+	if installUserScope() {
 		globalManifestPath = ensureGlobalManifest()
 		mf, _ := manifest.ParseFile(globalManifestPath)
 		if mf.Deps != nil {
@@ -1137,7 +1148,7 @@ func installDomainToAgent(root, domain, subdomain, ag string, symlink bool, pkgN
 func installSkillToAgent(skillPath, ag string, symlink bool) (int, error) {
 	destDir := installSkillsDir(ag)
 	if destDir == "" {
-		return 0, fmt.Errorf("%s supports global install only (use --global)", agent.DisplayName(ag))
+		return 0, fmt.Errorf("%s supports user-wide install only (use --scope user)", agent.DisplayName(ag))
 	}
 	ok, err := skills.InstallSkill(skillPath, destDir, symlink)
 	if err != nil {
@@ -1151,10 +1162,10 @@ func installSkillToAgent(skillPath, ag string, symlink bool) (int, error) {
 
 // installTargets resolves --target and drops plugin agents (Grok, Muse,
 // MiniMax) from project-scoped installs: they load skills only from a global
-// plugin bundle. Naming one explicitly without --global is an error.
+// plugin bundle. Naming one explicitly without --scope user is an error.
 func installTargets(target string) ([]string, error) {
 	resolved := resolveTargets(target)
-	if flagInstallGlobal || flagInstallScope == "global" {
+	if installUserScope() {
 		return resolved, nil
 	}
 	var out []string
@@ -1164,7 +1175,7 @@ func installTargets(target string) ([]string, error) {
 			continue
 		}
 		if target == ag {
-			return nil, fmt.Errorf("%s supports global install only — rerun with --global", agent.DisplayName(ag))
+			return nil, fmt.Errorf("%s supports user-wide install only — rerun with --scope user", agent.DisplayName(ag))
 		}
 	}
 	return out, nil
@@ -1285,7 +1296,7 @@ func checkWindowsSymlinkSupport(symlink bool) error {
 			"  • Enable Developer Mode: Settings → System → Developer Mode → On\n" +
 			"  • Run grimoire as Administrator\n\n" +
 			"Or use copy mode instead:\n" +
-			"  grimoire config set core.install-mode copy --global\n" +
+			"  grimoire config set core.install-mode copy --user\n" +
 			"  grimoire install")
 	}
 	return nil

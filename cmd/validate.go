@@ -37,6 +37,9 @@ var validateCmd = &cobra.Command{
 Each path can be a SKILL.md file, a directory, or a glob pattern.
 Defaults to the current working directory when no paths are given.
 
+To check a whole package's layout before publishing, use
+"grimoire package validate".
+
 Exit codes: 0 = all pass, 1 = errors found (or warnings with --strict).`,
 	RunE: runValidate,
 }

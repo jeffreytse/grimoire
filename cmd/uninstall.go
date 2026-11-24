@@ -21,15 +21,19 @@ var (
 	flagUninstallSubdomain string
 	flagUninstallSkill     string
 	flagUninstallTarget    string
-	flagUninstallScope     string // "project" | "global"
+	flagUninstallScope     string // "project" | "user" ("global" also accepted)
 	flagUninstallGlobal    bool   // shorthand for --scope global
 )
 
 var uninstallCmd = &cobra.Command{
 	Use:   "uninstall [<grimoire-ref>]",
 	Short: "Remove grimoire skills from agent directories",
-	Args:  cobra.MaximumNArgs(1),
-	RunE:  runUninstall,
+	Long: `Remove grimoire skills linked into your agents (skills mode).
+
+The skill packages stay downloaded. To drop a package itself, use
+"grimoire package remove <name>"; in MCP mode, that's the only step.`,
+	Args: cobra.MaximumNArgs(1),
+	RunE: runUninstall,
 }
 
 func init() {
@@ -37,13 +41,15 @@ func init() {
 	uninstallCmd.Flags().StringVar(&flagUninstallSubdomain, "subdomain", "", "restrict to one sub-domain")
 	uninstallCmd.Flags().StringVar(&flagUninstallSkill, "skill", "", "uninstall one skill (domain/subdomain/name or domain/name)")
 	uninstallCmd.Flags().StringVar(&flagUninstallTarget, "target", "", "target agent (default: all detected)")
-	uninstallCmd.Flags().StringVar(&flagUninstallScope, "scope", "project", `uninstall scope: "project" or "global"`)
-	uninstallCmd.Flags().BoolVar(&flagUninstallGlobal, "global", false, `global-scoped uninstall — shorthand for --scope global`)
+	uninstallCmd.Flags().StringVar(&flagUninstallScope, "scope", "project", "uninstall scope: "+scopeHelp)
+	uninstallCmd.Flags().BoolVar(&flagUninstallGlobal, "user", false, "shorthand for --scope user")
+	uninstallCmd.Flags().BoolVar(&flagUninstallGlobal, "global", false, "older name for --user")
+	_ = uninstallCmd.Flags().MarkHidden("global")
 }
 
 // uninstallSkillsDir returns the agent skills dir based on scope flags.
 func uninstallSkillsDir(ag string) string {
-	if flagUninstallGlobal || flagUninstallScope == "global" {
+	if uninstallUserScope() {
 		return agent.SkillsDir(ag)
 	}
 	return agent.ProjectSkillsDir(ag, getProjectDir())
@@ -51,13 +57,16 @@ func uninstallSkillsDir(ag string) string {
 
 // uninstallSettingsPath returns the config file to modify based on scope flags.
 func uninstallSettingsPath() string {
-	if flagUninstallGlobal || flagUninstallScope == "global" {
+	if uninstallUserScope() {
 		return config.GlobalPath()
 	}
 	return config.ProjectPath(getProjectDir())
 }
 
 func runUninstall(cmd *cobra.Command, args []string) error {
+	if _, err := normalizeScope(flagUninstallScope); err != nil {
+		return err
+	}
 	// grimoire uninstall <package-ref> — remove by package URL
 	if len(args) > 0 {
 		return runUninstallPackage(args[0])

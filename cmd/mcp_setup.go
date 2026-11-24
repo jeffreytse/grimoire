@@ -218,7 +218,7 @@ func init() {
 	for _, c := range []*cobra.Command{mcpInstallCmd, mcpUninstallCmd} {
 		c.Flags().StringVar(&flagMCPSetupTarget, "target", "claude",
 			"agents, comma-separated: "+strings.Join(mcpAgentKeys(), ", ")+", or all (those on PATH)")
-		c.Flags().StringVar(&flagMCPSetupScope, "scope", "user", `"user" (all projects) or "project" (current project)`)
+		c.Flags().StringVar(&flagMCPSetupScope, "scope", "user", scopeHelp)
 		mcpCmd.AddCommand(c)
 	}
 	mcpInstallCmd.Flags().BoolVar(&flagMCPSetupNoConfigure, "no-configure", false, "do not write the grimoire instruction or hook")
@@ -244,9 +244,11 @@ var mcpLookPath = exec.LookPath
 // "all" selects every supported agent whose CLI is on PATH and that supports
 // the scope; naming an agent explicitly that lacks the scope is an error.
 func resolveMCPAgents() ([]*mcpAgent, error) {
-	if flagMCPSetupScope != "user" && flagMCPSetupScope != "project" {
-		return nil, fmt.Errorf(`--scope must be "user" or "project", got %q`, flagMCPSetupScope)
+	scope, err := normalizeScope(flagMCPSetupScope)
+	if err != nil {
+		return nil, err
 	}
+	flagMCPSetupScope = scope
 	var out []*mcpAgent
 	if flagMCPSetupTarget == "all" {
 		for i := range mcpAgents {

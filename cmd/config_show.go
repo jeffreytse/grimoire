@@ -25,7 +25,7 @@ var configShowCmd = &cobra.Command{
 	Long: `Show the effective config after merging all layers (highest priority first):
 
   1. grimoire.toml                       (project — committed, --local)
-  2. ~/.config/grimoire/grimoire.toml    (user global, --global)
+  2. ~/.config/grimoire/grimoire.toml    (user, --user)
   3. /etc/grimoire/grimoire.toml         (system-wide, --system)
 
 Each key shows the source file that provided it.

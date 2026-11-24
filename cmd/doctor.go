@@ -214,7 +214,7 @@ func collectDoctorChecks() doctorOutput {
 			checks = append(checks, doctorCheck{
 				Name:   "config-core-in-project",
 				Status: "warn",
-				Detail: "[core] section in grimoire.toml is ignored — [core] is user-level; move to global: grimoire config set core.home <path> --global",
+				Detail: "[core] section in grimoire.toml is ignored — [core] is user-level; move it to your user config: grimoire config set core.home <path> --user",
 			})
 			ok = false
 		}

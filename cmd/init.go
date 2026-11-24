@@ -34,14 +34,16 @@ var (
 
 var initCmd = &cobra.Command{
 	Use:   "init",
-	Short: "Initialize .grimoire/ in the current project",
+	Short: "Create grimoire.toml in the current project",
 	RunE:  runInit,
 }
 
 func init() {
 	initCmd.Flags().BoolVarP(&flagInitYes, "yes", "y", false, "accept all defaults without prompting")
 	initCmd.Flags().BoolVar(&flagInitAuto, "auto", false, "detect project context and pre-populate grimoire.toml automatically")
-	initCmd.Flags().BoolVar(&flagInitGlobal, "global", false, "initialize global grimoire.toml (~/.config/grimoire/grimoire.toml)")
+	initCmd.Flags().BoolVar(&flagInitGlobal, "user", false, "create your user grimoire.toml (~/.config/grimoire/grimoire.toml) instead")
+	initCmd.Flags().BoolVar(&flagInitGlobal, "global", false, "older name for --user")
+	_ = initCmd.Flags().MarkHidden("global")
 	initCmd.Flags().StringVar(&flagInitProfile, "profile", "", "profile to activate (skips prompt)")
 	initCmd.Flags().IntVar(&flagInitThreshold, "threshold", 0, "compliance threshold % (skips prompt)")
 	initCmd.Flags().IntVar(&flagInitMaxErrors, "max-errors", -1, "max allowed errors (skips prompt)")
@@ -60,7 +62,7 @@ func runInit(cmd *cobra.Command, args []string) error {
 	reinit := dirExists(dir)
 	detected := detect.Profile(cwd)
 
-	// --global flag: initialize user-global grimoire.toml
+	// --user flag: initialize the user grimoire.toml
 	if flagInitGlobal {
 		return runInitGlobal()
 	}

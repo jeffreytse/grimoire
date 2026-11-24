@@ -69,7 +69,7 @@ type skillRubric struct {
 
 var checkCmd = &cobra.Command{
 	Use:   "check [files/dirs/globs...]",
-	Short: "Run independent AI compliance check",
+	Short: "Check the project against its declared practices",
 	Long: `Run an independent AI compliance check against the active profile's skills.
 
 Uses an installed local AI agent (claude, gemini, codex, copilot, etc.) when

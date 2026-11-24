@@ -27,8 +27,12 @@ var (
 var updateCmd = &cobra.Command{
 	Use:     "update",
 	Aliases: []string{"upgrade"},
-	Short:   "Update all packages to latest",
-	RunE:    runUpdate,
+	Short:   "Update all skill packages to their latest version",
+	Long: `Update every skill package to its latest version, and download the
+packages this project's grimoire.toml depends on.
+
+To update a single package: grimoire package update <name>.`,
+	RunE: runUpdate,
 }
 
 func init() {

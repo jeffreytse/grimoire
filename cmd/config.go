@@ -23,9 +23,9 @@ var configCmd = &cobra.Command{
 	Long: `Manage grimoire configuration (like git config).
 
 Levels (highest priority first):
-  default    grimoire.toml                         project — committed, shared with team
-  -g/--global  ~/.config/grimoire/grimoire.toml   per-user
-  --system   /etc/grimoire/grimoire.toml           machine-wide (requires admin)
+  default    grimoire.toml                       project — committed, shared with team
+  --user     ~/.config/grimoire/grimoire.toml    you, all your projects
+  --system   /etc/grimoire/grimoire.toml         everyone on this machine (requires admin)
 
   grimoire config get <key>               print current resolved value and source
   grimoire config set <key> <value>       write to target level (overwrites)
@@ -94,7 +94,9 @@ var configRemoveCmd = &cobra.Command{
 func init() {
 	for _, cmd := range []*cobra.Command{configGetCmd, configSetCmd, configUnsetCmd, configAddCmd, configRemoveCmd} {
 		cmd.Flags().BoolVar(&flagConfigLocal, "local", false, "use project config (grimoire.toml) — same as default")
-		cmd.Flags().BoolVarP(&flagConfigGlobal, "global", "g", false, "use user config (~/.config/grimoire/grimoire.toml)")
+		cmd.Flags().BoolVar(&flagConfigGlobal, "user", false, "use user config (~/.config/grimoire/grimoire.toml)")
+		cmd.Flags().BoolVarP(&flagConfigGlobal, "global", "g", false, "older name for --user")
+		_ = cmd.Flags().MarkHidden("global")
 		cmd.Flags().BoolVar(&flagConfigSystem, "system", false, "use system config (/etc/grimoire/grimoire.toml)")
 	}
 	configCmd.AddCommand(configShowCmd)
@@ -166,7 +168,7 @@ func runConfigUnset(_ *cobra.Command, args []string) error {
 
 // targetFilePath resolves which settings file to write based on flags and key prefix.
 // core.* keys are always written to global (they have no effect at project level).
-// All other keys default to project level; -g/--global overrides to user level.
+// All other keys default to project level; --user overrides to user level.
 func targetFilePath(key string) (string, error) {
 	if strings.HasPrefix(key, "core.") {
 		if flagConfigLocal {
@@ -186,7 +188,7 @@ func targetFilePath(key string) (string, error) {
 		count++
 	}
 	if count > 1 {
-		return "", fmt.Errorf("only one of --local, -g/--global, --system may be specified")
+		return "", fmt.Errorf("only one of --local, --user, --system may be specified")
 	}
 
 	if flagConfigGlobal {
@@ -203,12 +205,12 @@ func targetFilePath(key string) (string, error) {
 // Used by MCP tools where cobra flags are not available.
 func levelToFilePath(key, level string) (string, error) {
 	switch level {
-	case "local":
+	case "local", "project":
 		if strings.HasPrefix(key, "core.") {
 			return "", fmt.Errorf("[core] keys are always global — omit level or use global")
 		}
 		return config.ProjectPath(getProjectDir()), nil
-	case "global":
+	case "global", "user":
 		return config.GlobalPath(), nil
 	case "system":
 		return config.SystemPath(), nil

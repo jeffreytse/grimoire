@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -15,6 +16,10 @@ var cliVersion = "dev"
 func SetVersion(v string) { cliVersion = v }
 
 var flagProjectDir string
+
+// errNoSkillLibrary is the cold-start error for commands that need a
+// downloaded skill library. `grimoire doctor` shows where grimoire looked.
+var errNoSkillLibrary = errors.New("no skill library downloaded yet — run: grimoire update")
 
 // getProjectDir returns the project directory to use for all project-scoped
 // operations. Priority: --project-dir flag > GRIMOIRE_PROJECT_DIR env var > cwd.
@@ -40,25 +45,10 @@ var rootCmd = &cobra.Command{
 	Short:        "Grimoire — makes AI agents follow best practices",
 	Long: `Grimoire makes AI agents follow best practices — a package manager for best-practice skills.
 
-  grimoire init          Initialize grimoire.toml in the current project
-  grimoire install       Install skills — from grimoire.toml, or add+install a ref in one step
-  grimoire uninstall     Remove skills — all, or remove+unlink a ref in one step
-  grimoire update        Update all packages to latest
-  grimoire list          List available domains, sub-domains, and skills
-  grimoire check         Run BPDD compliance check against declared practices
-  grimoire watch         Re-run compliance check whenever files change
-  grimoire status        Show project compliance health at a glance
-  grimoire validate      Validate SKILL.md files against the grimoire STANDARD
-  grimoire wizard        Open the interactive TUI wizard
-  grimoire doctor        Run a health check on the grimoire installation
-  grimoire clean         Remove broken skill symlinks
-  grimoire config        Get or set grimoire configuration values
-  grimoire package       Manage skill packages (add, remove, list, update)
-  grimoire profile       Manage profiles (list, show, init)
-  grimoire self-update   Update the grimoire CLI binary to the latest release`,
+Start here:  grimoire mcp install   (connect grimoire to your AI agent)`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if _, err := os.Stat(skills.OfficialPackageHome()); err != nil {
-			fmt.Println("New to grimoire? Run: grimoire wizard")
+			fmt.Println("New to grimoire? Run: grimoire mcp install  (or grimoire wizard to choose step by step)")
 			fmt.Println()
 		}
 		return cmd.Help()
@@ -67,6 +57,7 @@ var rootCmd = &cobra.Command{
 
 func Execute() {
 	rootCmd.Version = cliVersion
+	groupCommands(rootCmd)
 	if err := rootCmd.Execute(); err != nil {
 		os.Exit(1) //nolint:revive // intentional: propagate cobra error as exit code 1
 	}
