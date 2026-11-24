@@ -84,6 +84,18 @@ func runWizard() error {
 			continue
 		}
 
+		// Install: MCP mode first — agents load only ~8–16k characters of
+		// skill descriptions, so linking a large library makes most of it
+		// invisible to the agent's skill discovery; MCP serves it on demand.
+		useMCP := false
+		if mode == "📥 Install" {
+			method, ok := tui.RunSelect("🧭 How should agents get grimoire's skills?", []string{wizardMCPMode, wizardSkillsMode})
+			if !ok {
+				continue
+			}
+			useMCP = method == wizardMCPMode
+		}
+
 		// Install / Uninstall — pick scope then agents
 		scopeChoice, ok := tui.RunSelect(
 			"🌐 Installation scope?",
@@ -114,6 +126,13 @@ func runWizard() error {
 		selectedAgents := make([]string, len(agentDisplays))
 		for i, d := range agentDisplays {
 			selectedAgents[i] = agent.FromDisplayName(d)
+		}
+		if useMCP {
+			selectedAgents = wizardInstallMCP(selectedAgents, isGlobal)
+			if len(selectedAgents) == 0 {
+				tui.RunSelect("", []string{"← Back"})
+				continue
+			}
 		}
 
 		// Download guard: check official package exists
@@ -602,4 +621,65 @@ func joinStrings(ss []string) string {
 		result += s
 	}
 	return result
+}
+
+const (
+	wizardMCPMode    = "MCP mode — the whole library, on demand (Recommended)"
+	wizardSkillsMode = "Skills mode — link skills into each agent"
+)
+
+// wizardInstallMCP sets up MCP mode for the selected agents that support it
+// and returns the rest, which have no MCP support and get skills mode.
+func wizardInstallMCP(selected []string, global bool) (skillsOnly []string) {
+	var keys []string
+	for _, ag := range selected {
+		if findMCPAgent(ag) != nil {
+			keys = append(keys, ag)
+		} else {
+			skillsOnly = append(skillsOnly, ag)
+		}
+	}
+	want := "user"
+	if !global {
+		want = "project"
+	}
+	groups, notes := mcpScopeGroups(keys, want)
+	origTarget, origScope := flagMCPSetupTarget, flagMCPSetupScope
+	for _, scope := range []string{"user", "project"} {
+		if len(groups[scope]) == 0 {
+			continue
+		}
+		flagMCPSetupTarget, flagMCPSetupScope = strings.Join(groups[scope], ","), scope
+		fmt.Println()
+		if err := runMCPInstall(nil, nil); err != nil {
+			fmt.Fprintf(os.Stderr, "error: %v\n", err)
+		}
+	}
+	flagMCPSetupTarget, flagMCPSetupScope = origTarget, origScope
+	for _, n := range notes {
+		fmt.Printf("  %s  %s\n", tui.IconSkip, n)
+	}
+	for _, ag := range skillsOnly {
+		fmt.Printf("\n  %s  %s has no MCP support — linking skills instead\n", tui.IconSkip, agent.DisplayName(ag))
+	}
+	return skillsOnly
+}
+
+// mcpScopeGroups groups MCP agents by the scope to install them at: want
+// when the agent supports it, else the agent's own scope, with a note.
+func mcpScopeGroups(keys []string, want string) (groups map[string][]string, notes []string) {
+	groups = map[string][]string{}
+	for _, k := range keys {
+		a := findMCPAgent(k)
+		if a == nil {
+			continue
+		}
+		scope := want
+		if !a.supports(want) {
+			scope = a.scopes[0]
+			notes = append(notes, fmt.Sprintf("%s supports %s scope only — set up for %s", a.display, scope, map[string]string{"user": "all projects", "project": "this project"}[scope]))
+		}
+		groups[scope] = append(groups[scope], k)
+	}
+	return groups, notes
 }

@@ -118,7 +118,7 @@ Write-Host "    " -NoNewline; Write-Host "grimoire wizard" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "  Or manually:" -ForegroundColor DarkGray
 Write-Host ""
-Write-Host "    " -NoNewline; Write-Host "grimoire update" -ForegroundColor Cyan -NoNewline;  Write-Host "     # fetch the official skill library" -ForegroundColor DarkGray
-Write-Host "    " -NoNewline; Write-Host "grimoire install" -ForegroundColor Cyan -NoNewline; Write-Host "    # install skills to all detected AI agents" -ForegroundColor DarkGray
-Write-Host "    " -NoNewline; Write-Host "grimoire check" -ForegroundColor Cyan -NoNewline;   Write-Host "      # run a compliance check on your project" -ForegroundColor DarkGray
+Write-Host "    " -NoNewline; Write-Host "grimoire mcp install --target all" -ForegroundColor Cyan -NoNewline;   Write-Host "  # recommended: the whole library, on demand" -ForegroundColor DarkGray
+Write-Host "    " -NoNewline; Write-Host "grimoire update; grimoire install" -ForegroundColor Cyan -NoNewline;   Write-Host "  # skills mode: agents without MCP, or a --domain subset" -ForegroundColor DarkGray
+Write-Host "    " -NoNewline; Write-Host "grimoire check" -ForegroundColor Cyan -NoNewline;                      Write-Host "                     # run a compliance check on your project" -ForegroundColor DarkGray
 Write-Host ""
