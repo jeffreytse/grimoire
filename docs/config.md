@@ -15,11 +15,11 @@ Grimoire checks these sources in order. First match per key wins.
 | Priority | Level | Source | Scope | Flag |
 |----------|-------|--------|-------|------|
 | 1st | Env vars | `GRIMOIRE_HOME`, `GRIMOIRE_SOURCE` | current process | — |
-| 2nd | Local | `grimoire.toml` | this project, all team members (committed) | `--local` |
-| 3rd | Global | `~/.config/grimoire/grimoire.toml` | all projects, this user | `--global` |
+| 2nd | Project | `grimoire.toml` | this project, all team members (committed) | `--local` (default) |
+| 3rd | User | `~/.config/grimoire/grimoire.toml` | all projects, this user | `--user` |
 | 4th | System | `/etc/grimoire/grimoire.toml` (Linux/macOS) · `%PROGRAMDATA%\grimoire\grimoire.toml` (Windows) | all users on this machine | `--system` |
 
-Each key resolves independently. Local can set `[standards.engineering].practices` while global sets `[standards].profiles` — both apply without conflict.
+Each key resolves independently. The project can set `[standards.engineering].practices` while your user config sets `[standards].profiles` — both apply without conflict.
 
 > **Note:** `[core]` keys (`core.home`) are user-level only. Grimoire strips them from project-level settings so teams cannot override machine-wide infrastructure config through a committed file.
 
@@ -189,14 +189,14 @@ profiles = [
 
 ```bash
 grimoire install jeffreytse/grimoire-core:engineering/bdd         # project-scoped (default)
-grimoire install acmecorp/standards@v0.1.0:engineering --global  # global-scoped
+grimoire install acmecorp/standards@v0.1.0:engineering --scope user  # all your projects
 ```
 
 `grimoire uninstall <package-ref>` removes matching skills and the entry from settings:
 
 ```bash
 grimoire uninstall jeffreytse/grimoire-core:engineering/bdd
-grimoire uninstall acmecorp/standards:engineering --global
+grimoire uninstall acmecorp/standards:engineering --scope user
 ```
 
 ---
@@ -560,22 +560,22 @@ Read and write settings without editing TOML manually:
 grimoire config show                     # show effective settings with per-key source
 grimoire config get standards.profiles   # show resolved value and source file
 
-# Write (default level: standards.* → --local, core.* → --global)
+# Write (default level: standards.* → --local, core.* → --user)
 grimoire config set standards.profiles "clean-architecture,tdd"
 grimoire config set standards.engineering.compliance-threshold 75
 grimoire config set standards.engineering.testing.practices "apply-test-driven-development"
 grimoire config set standards.engineering.fallback skip
 
 # Write to a specific level
-grimoire config set standards.profiles "oop" --global
-grimoire config set core.home /opt/grimoire --global
+grimoire config set standards.profiles "oop" --user
+grimoire config set core.home /opt/grimoire --user
 grimoire config set standards.engineering.practices "corp-standards" --system
 
 # Unset
 grimoire config unset standards.engineering.compliance-threshold
 ```
 
-Array values are comma-separated. `--local` writes to `grimoire.toml`, `--global` to `~/.config/grimoire/grimoire.toml`, `--system` to `/etc/grimoire/grimoire.toml` (requires admin).
+Array values are comma-separated. `--local` writes to `grimoire.toml`, `--user` to `~/.config/grimoire/grimoire.toml`, `--system` to `/etc/grimoire/grimoire.toml` (requires admin). `--global` and `-g` still work as older names for `--user`.
 
 Dependency management:
 
@@ -583,10 +583,10 @@ Dependency management:
 grimoire install                                        # install all skills in [dependencies] (skills mode)
 grimoire install <package-ref>                          # add ref to settings, clone, install
 grimoire install jeffreytse/grimoire-core:engineering   # project-scoped (default)
-grimoire install acmecorp/standards --global           # global-scoped
+grimoire install acmecorp/standards --scope user       # all your projects
 grimoire uninstall <package-ref>                       # remove matching skills + settings entry
 grimoire uninstall jeffreytse/grimoire-core:engineering/bdd
-grimoire uninstall acmecorp/standards:engineering --global
+grimoire uninstall acmecorp/standards:engineering --scope user
 ```
 
 Package management:

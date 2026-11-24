@@ -38,7 +38,7 @@ grimoire install                                            # install all packag
 grimoire install --domain engineering
 grimoire install --domain engineering --subdomain development
 grimoire install --skill engineering/development/propose-conventional-commit
-grimoire install --target pi --global                       # one agent, user-wide
+grimoire install --target pi --scope user                   # one agent, all your projects
 grimoire install --target all                               # all agents, even if not detected
 grimoire doctor                    # health check: git repo, symlinks, config
 grimoire version                   # version info with commit and date
@@ -61,12 +61,12 @@ grimoire version                   # version info with commit and date
 | Antigravity (agy) | not supported — use the CLI | `--target antigravity` |
 | OpenClaw | see [`.openclaw/INSTALL.md`](https://github.com/jeffreytse/grimoire-core/blob/main/.openclaw/INSTALL.md) | `--target openclaw` |
 | DeepSeek Harness | — | `--target dsh` |
-| Grok Build | — | `--target grok --global` |
-| Muse | — | `--target muse --global` |
-| MiniMax Code | — | `--target minimax --global` |
+| Grok Build | — | `--target grok --scope user` |
+| Muse | — | `--target muse --scope user` |
+| MiniMax Code | — | `--target minimax --scope user` |
 | Any other agent | — | `--target agent` (`~/.agents/skills`) |
 
-Every CLI row is `grimoire install --target <name>`. Add `--global` for a user-wide install; Grok, Muse, and MiniMax are global-only because they load skills from a plugin bundle, which grimoire builds and registers for you.
+Every CLI row is `grimoire install --target <name>`. Add `--scope user` to install for all your projects (`--global` also works); Grok, Muse, and MiniMax are user-only because they load skills from a plugin bundle, which grimoire builds and registers for you.
 
 **Domain plugins:** native marketplaces also offer one plugin per domain, e.g. `grimoire-engineering@grimoire`. Skills are namespaced (`/grimoire-engineering:propose-conventional-commit`). For subdomain-level installs, use the grimoire CLI.
 
