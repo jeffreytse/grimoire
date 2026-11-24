@@ -6,6 +6,7 @@ package search
 
 import (
 	"math"
+	"regexp"
 	"sort"
 	"strings"
 	"unicode"
@@ -36,6 +37,25 @@ var fields = []field{
 	{1, func(sk *skills.Skill) string { return sk.Domain + " " + sk.Subdomain }},
 }
 
+// BodyWeight is the BM25F weight of a skill's body (its full SKILL.md text)
+// when Options.Body is set. The body holds the words practitioners use for
+// a problem ("rollback", "go-live") that the name and tags often lack, but
+// also many incidental words, so it counts for less than the description.
+var BodyWeight = 0.3
+
+// bodyField is the optional body field.
+var bodyField = field{0, func(sk *skills.Skill) string { return sk.Body }}
+
+// Options narrow and widen a search.
+type Options struct {
+	// Body also matches against each skill's full text (BodyWeight).
+	Body bool
+	// Domain and Subdomain, when set, keep only skills there.
+	Domain, Subdomain string
+	// Tags, when set, keep only skills carrying every one of them.
+	Tags []string
+}
+
 // Result is a skill with its BM25 relevance score.
 type Result struct {
 	Skill skills.Skill
@@ -49,6 +69,19 @@ type Result struct {
 // results sorted by score descending. If topN <= 0, all non-zero-score
 // documents are returned.
 func BM25Search(query string, corpus []skills.Skill, topN int) []Result {
+	return Search(query, corpus, topN, Options{})
+}
+
+// Search is BM25Search with options: filters applied before scoring, and the
+// skill body as an extra field.
+func Search(query string, corpus []skills.Skill, topN int, opts Options) []Result {
+	corpus = filterCorpus(corpus, opts)
+	fields := fields
+	if opts.Body {
+		body := bodyField
+		body.weight = BodyWeight
+		fields = append(append([]field{}, fields...), body)
+	}
 	if len(corpus) == 0 || strings.TrimSpace(query) == "" {
 		return nil
 	}
@@ -126,12 +159,49 @@ func BM25Search(query string, corpus []skills.Skill, topN int) []Result {
 	return results
 }
 
+// filterCorpus keeps the skills matching opts' domain, subdomain and tags.
+func filterCorpus(corpus []skills.Skill, opts Options) []skills.Skill {
+	if opts.Domain == "" && opts.Subdomain == "" && len(opts.Tags) == 0 {
+		return corpus
+	}
+	out := make([]skills.Skill, 0, len(corpus))
+next:
+	for i := range corpus {
+		sk := &corpus[i]
+		if opts.Domain != "" && !strings.EqualFold(sk.Domain, opts.Domain) {
+			continue
+		}
+		if opts.Subdomain != "" && !strings.EqualFold(sk.Subdomain, opts.Subdomain) {
+			continue
+		}
+		for _, want := range opts.Tags {
+			found := false
+			for _, tag := range sk.Tags {
+				if strings.EqualFold(tag, want) {
+					found = true
+					break
+				}
+			}
+			if !found {
+				continue next
+			}
+		}
+		out = append(out, *sk)
+	}
+	return out
+}
+
 // tokenize lowercases and splits on anything that is not a letter or digit, so
 // "propose-conventional-commit" yields "propose", "conventional", "commit" and
 // "workflows?" yields "workflow". Single characters and stopwords are dropped,
 // and each term is lightly stemmed so "tests"/"testing" match "test".
+// slashAcronym matches short slash-joined acronyms — A/B, CI/CD, I/O — which
+// splitting would reduce to letters too short to keep.
+var slashAcronym = regexp.MustCompile(`\b([a-z0-9]{1,3})/([a-z0-9]{1,3})\b`)
+
 func tokenize(s string) []string {
-	fields := strings.FieldsFunc(strings.ToLower(s), func(r rune) bool {
+	s = slashAcronym.ReplaceAllString(strings.ToLower(s), "$1$2")
+	fields := strings.FieldsFunc(s, func(r rune) bool {
 		return !unicode.IsLetter(r) && !unicode.IsDigit(r)
 	})
 	out := make([]string, 0, len(fields))
@@ -202,14 +272,14 @@ var stopwords = func() map[string]bool {
 		having he her here hers him his how however if in into is it its itself
 		just me more most my myself no nor not now of off on once only or other
 		our ours out over own same she should so some such than that the their
-		them then there these they this those through to too under until up
+		them then there these they this those through to too under until
 		upon us very was we were what when where which while who whom why will
 		with would you your yours yourself
 		im ive id ill youre dont doesnt didnt cant wont isnt arent
 		please thanks thank ok okay yes yeah sure hi hello hey lol nice cool
 		help want wanted need needs let lets get got make made go goes going
 		ahead like well good great really actually maybe also whether way thing
-		things something anything stuff kind sort bit lot lots one ones see
+		things something anything stuff kind sort bit lot lots see
 		look looks tell give show try know think said say says now latest new
 		use using used able`) {
 		m[w] = true
@@ -223,4 +293,71 @@ func termFreq(tokens []string) map[string]float64 {
 		m[t]++
 	}
 	return m
+}
+
+// rrfK is the reciprocal rank fusion constant — the standard 60 (Cormack et
+// al., 2009); larger values flatten the advantage of top ranks.
+const rrfK = 60
+
+// rrfDepth is how deep each ranking goes into the fusion.
+const rrfDepth = 50
+
+// HybridSearch ranks corpus for the queries by fusing, with reciprocal rank
+// fusion, the field-weighted ranking (name, tags, description) and the same
+// ranking with skill bodies added. The body finds skills whose practitioner
+// vocabulary lives in their text; fusion keeps the precise field ranking on
+// top. Several queries (phrasings of one need) are fused the same way.
+// Scores are fused ranks, comparable only within one call.
+//
+// Measured on testdata/hook_eval.json (54 labeled prompts) against
+// field-only BM25: top-1 39→40, hit@3 45→48, hit@10 49→52, MRR .790→.812.
+func HybridSearch(queries []string, corpus []skills.Skill, topN int, opts Options) []Result {
+	type acc struct {
+		res   Result
+		score float64
+	}
+	fused := map[string]*acc{}
+	var order []string
+	add := func(rank []Result) {
+		for i := range rank {
+			name := rank[i].Skill.Name
+			a, ok := fused[name]
+			if !ok {
+				a = &acc{res: rank[i]}
+				fused[name] = a
+				order = append(order, name)
+			}
+			a.score += 1 / float64(rrfK+i+1)
+			if rank[i].Matched > a.res.Matched {
+				a.res.Matched, a.res.Terms = rank[i].Matched, rank[i].Terms
+			}
+		}
+	}
+	for _, q := range queries {
+		if strings.TrimSpace(q) == "" {
+			continue
+		}
+		plain := opts
+		plain.Body = false
+		add(Search(q, corpus, rrfDepth, plain))
+		body := opts
+		body.Body = true
+		add(Search(q, corpus, rrfDepth, body))
+	}
+	out := make([]Result, 0, len(order))
+	for _, name := range order {
+		a := fused[name]
+		a.res.Score = a.score
+		out = append(out, a.res)
+	}
+	sort.SliceStable(out, func(i, j int) bool {
+		if out[i].Score != out[j].Score {
+			return out[i].Score > out[j].Score
+		}
+		return out[i].Skill.Name < out[j].Skill.Name
+	})
+	if topN > 0 && len(out) > topN {
+		out = out[:topN]
+	}
+	return out
 }

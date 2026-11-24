@@ -60,3 +60,64 @@ func TestTokenize_DropsBareNumbers(t *testing.T) {
 		t.Errorf("tokenize = %q", got)
 	}
 }
+
+// A skill whose problem vocabulary is only in its body is found by the
+// hybrid search, while the field match stays on top.
+func TestHybridSearch_BodyRecallFieldPrecision(t *testing.T) {
+	corpus := []skills.Skill{
+		{Name: "design-deployment-strategy", Description: "Use when releasing software", Body: "Plan the go-live: rollback, canary, blue-green."},
+		{Name: "plan-go-live-party", Description: "Use when planning a go-live celebration", Tags: []string{"go-live"}},
+		{Name: "write-readme", Description: "Use when writing a README"},
+	}
+	hits := HybridSearch([]string{"go-live rollback"}, corpus, 0, Options{})
+	if len(hits) < 2 {
+		t.Fatalf("hits = %+v", hits)
+	}
+	found := map[string]bool{}
+	for _, h := range hits {
+		found[h.Skill.Name] = true
+	}
+	if !found["design-deployment-strategy"] {
+		t.Error("body-only match not found")
+	}
+	if len(BM25Search("rollback", corpus, 0)) != 0 {
+		t.Error("field-only search should not see body words")
+	}
+}
+
+// Several phrasings of one need fuse into one ranking; filters apply.
+func TestHybridSearch_MultiQueryAndFilters(t *testing.T) {
+	corpus := []skills.Skill{
+		{Name: "diagnose-sleep-issue", Domain: "health", Subdomain: "sleep", Tags: []string{"insomnia"}, Description: "Use when you cannot sleep"},
+		{Name: "design-sleep-hygiene-protocol", Domain: "health", Subdomain: "sleep", Description: "Use when building better sleep habits"},
+		{Name: "apply-sleep-mode-power", Domain: "engineering", Subdomain: "embedded", Description: "Use when putting a device in sleep mode"},
+	}
+	hits := HybridSearch([]string{"can't fall asleep", "insomnia"}, corpus, 0, Options{Domain: "health"})
+	if len(hits) == 0 || hits[0].Skill.Name != "diagnose-sleep-issue" {
+		t.Fatalf("hits = %+v", hits)
+	}
+	for _, h := range hits {
+		if h.Skill.Domain != "health" {
+			t.Errorf("filter leaked %s", h.Skill.Name)
+		}
+	}
+	if got := HybridSearch([]string{"sleep"}, corpus, 0, Options{Tags: []string{"insomnia"}}); len(got) != 1 {
+		t.Errorf("tag filter: %d hits", len(got))
+	}
+}
+
+// "one" is filler in chat but names topics like one-on-ones, so it is kept
+// ("down" was tried and reverted: it lowered hybrid top-1 and MRR); short
+// slash acronyms stay one token.
+func TestTokenize_MeaningfulWordsAndAcronyms(t *testing.T) {
+	for in, want := range map[string]string{
+		"prepare for a one on one": "prepare one one",
+		"run an A/B test":          "run ab test",
+		"set up CI/CD and I/O":     "set up cicd io",
+		"and/or either way":        "andor either",
+	} {
+		if got := strings.Join(tokenize(in), " "); got != want {
+			t.Errorf("tokenize(%q) = %q; want %q", in, got, want)
+		}
+	}
+}

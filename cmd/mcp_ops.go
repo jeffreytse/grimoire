@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"runtime"
 	"strings"
 	"time"
@@ -877,10 +878,13 @@ type mcpGetSkillOutput struct {
 	Note    string `json:"note"`
 	Content string `json:"content"`
 	Path    string `json:"path"`
+	// Related lists the skills this one points to, so the agent can go on
+	// retrieving without another search.
+	Related []string `json:"related,omitempty"`
 }
 
 // mcpGetSkillsMax caps a names batch; workflows chain a handful of skills.
-const mcpGetSkillsMax = 10
+const mcpGetSkillsMax = 20
 
 // mcpGetSkillsOutput is the batch form of grimoire_get_skill: one chain note,
 // then each skill (or the error for a name that did not resolve).
@@ -890,10 +894,43 @@ type mcpGetSkillsOutput struct {
 }
 
 type mcpGetSkillsEntry struct {
-	Name    string `json:"name"`
-	Content string `json:"content,omitempty"`
-	Path    string `json:"path,omitempty"`
-	Error   string `json:"error,omitempty"`
+	Name    string   `json:"name"`
+	Content string   `json:"content,omitempty"`
+	Path    string   `json:"path,omitempty"`
+	Related []string `json:"related,omitempty"`
+	Error   string   `json:"error,omitempty"`
+}
+
+// relatedLine matches a front-matter related: list, inline ([a, b]) or as a
+// block of "- a" lines.
+var (
+	relatedInline = regexp.MustCompile(`(?m)^related:\s*\[([^\]]*)\]`)
+	relatedBlock  = regexp.MustCompile(`(?m)^related:\s*\n((?:\s+-\s*\S.*\n?)+)`)
+)
+
+// relatedSkills reads the related: list from a SKILL.md's front matter.
+func relatedSkills(content string) []string {
+	fm := content
+	if strings.HasPrefix(fm, "---") {
+		if end := strings.Index(fm[3:], "\n---"); end >= 0 {
+			fm = fm[:end+3] + "\n"
+		}
+	}
+	var items []string
+	if m := relatedInline.FindStringSubmatch(fm); m != nil {
+		items = strings.Split(m[1], ",")
+	} else if m := relatedBlock.FindStringSubmatch(fm); m != nil {
+		for _, l := range strings.Split(m[1], "\n") {
+			items = append(items, strings.TrimPrefix(strings.TrimSpace(l), "-"))
+		}
+	}
+	var out []string
+	for _, it := range items {
+		if it = strings.Trim(strings.TrimSpace(it), `"'`); it != "" {
+			out = append(out, it)
+		}
+	}
+	return out
 }
 
 func toolGrimoireGetSkill(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
@@ -915,6 +952,7 @@ func toolGrimoireGetSkill(_ context.Context, request mcp.CallToolRequest) (*mcp.
 		Content: string(content),
 		Path:    skillPath,
 		Note:    skillNote(),
+		Related: relatedSkills(string(content)),
 	})
 }
 
@@ -942,7 +980,7 @@ func getSkillsBatch(names []string) *mcp.CallToolResult {
 			out.Skills = append(out.Skills, mcpGetSkillsEntry{Name: name, Error: fmt.Sprintf("reading SKILL.md: %v", err)})
 			continue
 		}
-		out.Skills = append(out.Skills, mcpGetSkillsEntry{Name: name, Content: string(content), Path: skillPath})
+		out.Skills = append(out.Skills, mcpGetSkillsEntry{Name: name, Content: string(content), Path: skillPath, Related: relatedSkills(string(content))})
 	}
 	res, err := jsonResult(out)
 	if err != nil {
@@ -953,25 +991,47 @@ func getSkillsBatch(names []string) *mcp.CallToolResult {
 
 // ── grimoire_search_skills ────────────────────────────────────────────────────
 
+// mcpSearchQueriesMax caps the phrasings fused in one search.
+const mcpSearchQueriesMax = 8
+
 type mcpSearchSkillsResult struct {
+	// Rank is the result's position overall (offset + index + 1), so a
+	// paged search can be continued with offset = last rank.
+	Rank        int      `json:"rank"`
 	Name        string   `json:"name"`
 	Description string   `json:"description"`
 	Domain      string   `json:"domain"`
 	Subdomain   string   `json:"subdomain,omitempty"`
 	Tags        []string `json:"tags,omitempty"`
+	Related     []string `json:"related,omitempty"`
 	Package     string   `json:"package,omitempty"`
 	Score       float64  `json:"score"`
 }
 
 func toolGrimoireSearchSkills(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
-	query := strings.TrimSpace(request.GetString("query", ""))
-	if query == "" {
-		return mcp.NewToolResultError("query is required"), nil
+	queries := request.GetStringSlice("queries", nil)
+	if q := strings.TrimSpace(request.GetString("query", "")); q != "" {
+		queries = append([]string{q}, queries...)
+	}
+	if len(queries) == 0 {
+		return mcp.NewToolResultError("query (or queries) is required"), nil
+	}
+	if len(queries) > mcpSearchQueriesMax {
+		return mcp.NewToolResultError(fmt.Sprintf("at most %d queries per call (got %d)", mcpSearchQueriesMax, len(queries))), nil
 	}
 
 	topN := int(request.GetFloat("top_n", 10))
 	if topN <= 0 || topN > 100 {
 		topN = 10
+	}
+	offset := int(request.GetFloat("offset", 0))
+	if offset < 0 {
+		offset = 0
+	}
+	opts := search.Options{
+		Domain:    strings.TrimSpace(request.GetString("domain", "")),
+		Subdomain: strings.TrimSpace(request.GetString("subdomain", "")),
+		Tags:      request.GetStringSlice("tags", nil),
 	}
 
 	regs := skills.AllSkillsPackages()
@@ -984,16 +1044,23 @@ func toolGrimoireSearchSkills(_ context.Context, request mcp.CallToolRequest) (*
 		return mcp.NewToolResultError(err.Error()), nil
 	}
 
-	hits := search.BM25Search(query, all, topN)
+	hits := search.HybridSearch(queries, all, offset+topN, opts)
+	if offset >= len(hits) {
+		hits = nil
+	} else {
+		hits = hits[offset:]
+	}
 	out := make([]mcpSearchSkillsResult, len(hits))
 	for i := range hits {
 		h := &hits[i]
 		out[i] = mcpSearchSkillsResult{
+			Rank:        offset + i + 1,
 			Name:        h.Skill.Name,
 			Description: h.Skill.Description,
 			Domain:      h.Skill.Domain,
 			Subdomain:   h.Skill.Subdomain,
 			Tags:        h.Skill.Tags,
+			Related:     h.Skill.Related,
 			Package:     h.Skill.Package,
 			Score:       h.Score,
 		}

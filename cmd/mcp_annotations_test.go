@@ -5,6 +5,8 @@ import (
 	"testing"
 
 	"github.com/mark3labs/mcp-go/server"
+
+	"github.com/jeffreytse/grimoire/internal/agent"
 )
 
 // Every registered tool has a title and hints; a new tool without an entry in
@@ -52,6 +54,20 @@ func TestMCPTools_DescriptionsCarryRouteDirective(t *testing.T) {
 	for _, name := range []string{"grimoire_get_skill", "grimoire_search_skills"} {
 		if d := s.GetTool(name).Tool.Description; !strings.HasPrefix(d, mcpRouteDirective) {
 			t.Errorf("%s description = %q", name, d)
+		}
+	}
+}
+
+// Every tool marked read-only is pre-approved, and nothing else is: agents
+// search and retrieve freely, while tools that change things still ask.
+func TestReadOnlyToolsPreApproved(t *testing.T) {
+	approved := map[string]bool{}
+	for _, n := range agent.ReadOnlyTools() {
+		approved[n] = true
+	}
+	for name, m := range mcpToolMeta {
+		if (m.effect == toolRead) != approved[name] {
+			t.Errorf("%s: read-only=%v, pre-approved=%v", name, m.effect == toolRead, approved[name])
 		}
 	}
 }

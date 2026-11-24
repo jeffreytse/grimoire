@@ -10,12 +10,33 @@ import (
 // where the agent has a permission allow list, so a skill lookup never stops
 // on an approval prompt (and works in headless runs). Tools that change
 // config or packages are left to the agent's normal approval flow.
+//
+// Every grimoire tool that only reads is here, so an agent can search and
+// retrieve freely — no approval prompt between lookups. cmd's
+// TestReadOnlyToolsPreApproved keeps this in step with the tool metadata.
 var mcpReadOnlyTools = []string{
 	"grimoire_search_skills",
 	"grimoire_get_skill",
 	"grimoire_list_skills",
 	"grimoire_context",
 	"grimoire_info",
+	"grimoire_search",
+	"grimoire_check",
+	"grimoire_status",
+	"grimoire_doctor",
+	"grimoire_run_rules",
+	"grimoire_get_config",
+	"grimoire_config_get",
+	"grimoire_profile_list",
+	"grimoire_profile_show",
+	"grimoire_package_list",
+	"grimoire_package_validate",
+	"grimoire_version",
+}
+
+// ReadOnlyTools returns the grimoire tools pre-approved as read-only.
+func ReadOnlyTools() []string {
+	return append([]string(nil), mcpReadOnlyTools...)
 }
 
 // mcpServerName is the name grimoire registers its MCP server under.

@@ -81,7 +81,8 @@ const mcpServerInstructionsTmpl = `grimoire serves professional best-practice sk
 - If the user writes ` + "`grimoire:<skill-name>`" + ` (e.g. ` + "`grimoire:propose-conventional-commit`" + `), call grimoire_get_skill with exactly that name — do not search first — and follow the skill, applying it to the rest of the user's message.
 - Before responding to any other user request, run start-best-practice (load it with grimoire_get_skill if it is not already in context). It routes to the workflow that fits: suggest-best-practice (one skill), plan-best-practice-solution (several skills in order), apply-best-practice-tree (break an opaque problem down), discover-best-practices (browse a domain), learn-best-practice (retain a practice). Follow the routed skill: it asks clarifying questions when needed and loads the specific best practices. If nothing routes, proceed normally.
 {{trace}}
-- To load several skills in one call, pass grimoire_get_skill a names list.
+- Search and retrieve freely — every grimoire read tool is pre-approved. Call grimoire_search_skills as often as the task needs, with several phrasings in queries (the user's words and the practitioner's term), domain/subdomain/tags filters, and offset to page. Follow a skill's related list with grimoire_get_skill.
+- To load several skills in one call, pass grimoire_get_skill a names list (up to 20).
 - If a skill name is not found, the error lists close matches; use the right one.
 - Use grimoire_list_skills (no arguments) for a domain index.
 - ` + mcpChainRule
