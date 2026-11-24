@@ -147,6 +147,10 @@ func collectDoctorChecks() doctorOutput {
 			})
 			ok = false
 		}
+		if detail := listingDoctorDetail(ag, dir); detail != "" {
+			checks = append(checks, doctorCheck{Name: "agent-" + ag + "-skill-listing", Status: "warn", Detail: detail})
+			ok = false
+		}
 		if agent.IsConfigured(ag) {
 			checks = append(checks, doctorCheck{
 				Name:   "agent-" + ag + "-configured",

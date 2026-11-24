@@ -544,3 +544,10 @@ func WalkSkillFiles(root string) ([]string, error) {
 	})
 	return paths, err
 }
+
+// Description returns the description in skillDir's SKILL.md frontmatter, or
+// "" when it has none or cannot be read.
+func Description(skillDir string) string {
+	meta, _ := parseSkillMeta(skillDir, false)
+	return meta.Description
+}

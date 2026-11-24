@@ -244,6 +244,7 @@ func runInstall(cmd *cobra.Command, args []string) error {
 		} else {
 			fmt.Printf(" %d found\n\n", len(domainSkills))
 		}
+		warnListingBudgets(os.Stderr, targets, domainSkills)
 		var skippedDomain int
 		for i := range domainSkills {
 			sk := domainSkills[i]
@@ -300,6 +301,7 @@ func runInstall(cmd *cobra.Command, args []string) error {
 		}
 		// Warn and enforce per-agent skill caps.
 		agentCaps := buildAgentCaps(targets, len(all))
+		warnListingBudgets(os.Stderr, targets, all)
 
 		var skipped int
 		for i := range all {
