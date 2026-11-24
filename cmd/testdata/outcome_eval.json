@@ -1,6 +1,6 @@
 {
   "version": 3,
-  "note": "Outcome eval pilot (docs/outcome-eval-plan.md). Rubrics come from each practice's original source, never from grimoire's skill text, and are fixed before any run. Do not edit a task once a reported number used it; add a new one. v2: the commit task's last criterion no longer counts tool-added attribution trailers (pilot finding). v3: harder criteria for the retirement and vendor-contract tasks (both arms hit 100% in the pilot), plus a debt-payoff and an employment-contract task.",
+  "note": "Outcome eval pilot. Rubrics come from each practice's original source, never from grimoire's skill text, and are fixed before any run. Do not edit a task once a reported number used it; add a new one. v2: the commit task's last criterion no longer counts tool-added attribution trailers (pilot finding). v3: harder criteria for the retirement and vendor-contract tasks (both arms hit 100% in the pilot), plus a debt-payoff and an employment-contract task.",
   "tasks": [
     {
       "id": "unit-test-parse-duration",

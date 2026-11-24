@@ -18,8 +18,8 @@ import (
 	"github.com/jeffreytse/grimoire/internal/agent"
 )
 
-// TestOutcomeEval measures whether grimoire makes the agent's work better
-// (docs/outcome-eval-plan.md): each task runs twice with the same model,
+// TestOutcomeEval measures whether grimoire makes the agent's work better:
+// each task runs twice with the same model,
 // workspace and permissions — arm A is Claude Code alone, arm B is Claude
 // Code with grimoire in MCP mode as installed — and a blind judge scores each
 // final result against a rubric written from the practice's original source.
@@ -184,8 +184,8 @@ func loadOutcomeTasks(t *testing.T) []outcomeTask {
 	return set.Tasks
 }
 
-// outcomeArm runs a task and returns the judged output: the final turn's
-// reply plus every file the agent created or changed.
+// outcomeArm runs a task and returns the judged output: every turn's reply
+// plus every file the agent created or changed.
 type outcomeArm func(task *outcomeTask) (output string, cost float64, err error)
 
 // outcomeConfirm is the one reply the harness gives when an arm ends its turn
@@ -226,15 +226,18 @@ func outcomeArms(t *testing.T, dir, bin, model string) map[string]outcomeArm {
 				return "", 0, err
 			}
 			r, err := runClaudeEvalResult(work, "brief", task.Prompt, "", args...)
-			cost, final := r.cost, r.texts
+			// Judge everything the user received, across both turns: an arm
+			// that does part of the work before asking to continue must not
+			// lose that part (judging only the last turn did).
+			cost, texts := r.cost, r.texts
 			if err == nil && endsWithQuestion(strings.Join(r.texts, "\n")) && r.session != "" {
 				r2, err2 := runClaudeEvalResult(work, "brief", outcomeConfirm, r.session, args...)
 				cost += r2.cost
 				if err2 == nil {
-					final = r2.texts
+					texts = append(texts, r2.texts...)
 				}
 			}
-			return outcomeOutput(final, workspaceChanges(work), execCheck(work, task.Exec)), cost, err
+			return outcomeOutput(texts, workspaceChanges(work), execCheck(work, task.Exec)), cost, err
 		}
 	}
 	return arms
@@ -294,10 +297,12 @@ func endsWithQuestion(reply string) bool {
 	return strings.HasSuffix(last, "?") || stopMarker.MatchString(last)
 }
 
-// Output limits keep a judged output within the judge's context.
+// Output limits keep a judged output within the judge's context. They are
+// generous: an arm that writes its work to files must not be cut short
+// (a 6,000-character cap truncated whole postmortems).
 const (
-	outcomeFileMax  = 6000
-	outcomeTotalMax = 24000
+	outcomeFileMax  = 20000
+	outcomeTotalMax = 60000
 )
 
 // workspaceChanges lists the files the agent created or changed since the
