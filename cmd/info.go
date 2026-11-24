@@ -1,7 +1,9 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -17,7 +19,10 @@ var infoCmd = &cobra.Command{
 	RunE:  runInfo,
 }
 
+var flagInfoJSON bool
+
 func init() {
+	infoCmd.Flags().BoolVar(&flagInfoJSON, "json", false, "output as JSON (same fields as grimoire list --json)")
 	rootCmd.AddCommand(infoCmd)
 }
 
@@ -50,6 +55,11 @@ func runInfo(_ *cobra.Command, args []string) error {
 		return fmt.Errorf("skill %q not found", skillName)
 	}
 
+	if flagInfoJSON {
+		enc := json.NewEncoder(os.Stdout)
+		enc.SetIndent("", "  ")
+		return enc.Encode(found)
+	}
 	printSkillInfo(found)
 	return nil
 }

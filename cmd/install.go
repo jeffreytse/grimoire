@@ -66,7 +66,7 @@ func init() {
 	installCmd.Flags().StringVar(&flagInstallSkill, "skill", "", "install one skill (domain/subdomain/name or domain/name)")
 	installCmd.Flags().StringVar(&flagInstallTarget, "target", "", "target agent: claude, codex, gemini, antigravity, openclaw, opencode, copilot, pi, dsh, kimi, omp, grok, muse, minimax, agent, all, auto")
 	installCmd.Flags().BoolVar(&flagInstallCopy, "copy", false, "copy files instead of symlinking")
-	installCmd.Flags().BoolVar(&flagInstallYes, "yes", false, "non-interactive: install all skills to all detected agents")
+	installCmd.Flags().BoolVarP(&flagInstallYes, "yes", "y", false, "non-interactive: install all skills to all detected agents, and confirm replacing the library with --from")
 	installCmd.Flags().BoolVar(&flagInstallNoCfg, "no-configure", false, "skip writing start-best-practice trigger")
 	installCmd.Flags().StringVar(&flagInstallFrom, "from", "", "install from a local path or git URL (persisted to ~/.config/grimoire/grimoire.toml)")
 	installCmd.Flags().StringVar(&flagInstallPackage, "package", "", "install skills from a specific package only")
@@ -1035,11 +1035,11 @@ func resolveAndPersistSource(from string) (string, error) {
 	if skills.IsGitURL(from) {
 		home := skills.OfficialPackageHome()
 		if _, err := os.Stat(home); err == nil {
-			chosen, ok := tui.RunSelect(
-				fmt.Sprintf("Replace existing grimoire at %s with %s?", home, from),
-				[]string{"Yes", "Cancel"},
-			)
-			if !ok || chosen == "Cancel" {
+			ok, err := confirm(fmt.Sprintf("Replace the skill library at %s with %s?", home, from), flagInstallYes, true)
+			if err != nil {
+				return "", err
+			}
+			if !ok {
 				fmt.Println("Cancelled.")
 				return "", nil
 			}

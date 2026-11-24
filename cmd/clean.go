@@ -24,6 +24,9 @@ func init() {
 }
 
 func runClean(cmd *cobra.Command, args []string) error {
+	if err := validateTarget(flagCleanTarget); err != nil {
+		return err
+	}
 	targets := resolveTargets(flagCleanTarget)
 	total := 0
 	for _, ag := range targets {

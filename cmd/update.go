@@ -37,7 +37,7 @@ To update a single package: grimoire package update <name>.`,
 
 func init() {
 	updateCmd.Flags().BoolVar(&flagUpdateStable, "stable", false, "check out the latest tagged release instead of HEAD")
-	updateCmd.Flags().BoolVar(&flagUpdateYes, "yes", false, "skip confirmation prompts")
+	updateCmd.Flags().BoolVarP(&flagUpdateYes, "yes", "y", false, "skip confirmation prompts (also skipped when not run from a terminal)")
 	updateCmd.Flags().BoolVar(&flagUpdateDryRun, "dry-run", false, "show what would change without pulling")
 	updateCmd.Flags().BoolVar(&flagUpdateForce, "force", false, "discard local package modifications and update")
 }
@@ -56,15 +56,8 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 
 	// Clone if not present
 	if _, err := os.Stat(home); err != nil {
-		fmt.Printf("Grimoire not found at %s\n", home)
-		if !flagUpdateYes {
-			chosen, ok := tui.RunSelect("Clone grimoire to "+home+"?", []string{"Yes", "No"})
-			if !ok || chosen == "No" {
-				fmt.Println("Cancelled.")
-				return nil
-			}
-		}
-		fmt.Printf("Cloning %s...\n", skills.GrimoireRepoURL())
+		// Running update with no library is the request to download it.
+		fmt.Printf("Downloading the skill library from %s...\n", skills.GrimoireRepoURL())
 		if err := os.MkdirAll(filepath.Dir(home), 0o755); err != nil {
 			return fmt.Errorf("creating dir: %w", err)
 		}
@@ -109,6 +102,13 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
+// confirmUpdate asks before applying an update. Updating is safe, so
+// without a terminal it goes ahead (see confirm).
+func confirmUpdate(title string) bool {
+	ok, _ := confirm(title, flagUpdateYes, false)
+	return ok
+}
+
 func updateStable(home string) error {
 	current, err := gitops.CurrentState(home)
 	if err != nil {
@@ -145,12 +145,9 @@ func updateStable(home string) error {
 		return nil
 	}
 
-	if !flagUpdateYes {
-		chosen, ok := tui.RunSelect("Upgrade now?", []string{"Yes", "No"})
-		if !ok || chosen == "No" {
-			fmt.Println("Upgrade cancelled.")
-			return nil
-		}
+	if !confirmUpdate("Upgrade now?") {
+		fmt.Println("Upgrade cancelled.")
+		return nil
 	}
 
 	snapshot := snapshotSkillVersions(home)
@@ -193,12 +190,9 @@ func updateUnstable(home string) error {
 	}
 	fmt.Println()
 
-	if !flagUpdateYes {
-		chosen, ok := tui.RunSelect("Pull now?", []string{"Yes", "No"})
-		if !ok || chosen == "No" {
-			fmt.Println("Update cancelled.")
-			return nil
-		}
+	if !confirmUpdate("Pull now?") {
+		fmt.Println("Update cancelled.")
+		return nil
 	}
 
 	if flagUpdateDryRun {

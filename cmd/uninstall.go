@@ -67,6 +67,9 @@ func runUninstall(cmd *cobra.Command, args []string) error {
 	if _, err := normalizeScope(flagUninstallScope); err != nil {
 		return err
 	}
+	if err := validateTarget(flagUninstallTarget); err != nil {
+		return err
+	}
 	// grimoire uninstall <package-ref> — remove by package URL
 	if len(args) > 0 {
 		return runUninstallPackage(args[0])

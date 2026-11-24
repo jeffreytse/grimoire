@@ -19,6 +19,9 @@ var wizardCmd = &cobra.Command{
 	Use:   "wizard",
 	Short: "Set up grimoire step by step, interactively",
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if !confirmIsTTY() {
+			return errNeedsTerminal
+		}
 		return runWizard()
 	},
 }

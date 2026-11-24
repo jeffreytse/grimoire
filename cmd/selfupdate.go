@@ -40,7 +40,7 @@ var selfUpdateCmd = &cobra.Command{
 }
 
 func init() {
-	selfUpdateCmd.Flags().BoolVar(&flagSelfUpdateYes, "yes", false, "skip confirmation prompt")
+	selfUpdateCmd.Flags().BoolVarP(&flagSelfUpdateYes, "yes", "y", false, "skip confirmation prompt")
 }
 
 func runSelfUpdate(cmd *cobra.Command, args []string) error {
@@ -78,12 +78,9 @@ func runSelfUpdate(cmd *cobra.Command, args []string) error {
 	}
 	fmt.Printf("  Latest:   %s\n\n", rel.TagName)
 
-	if !flagSelfUpdateYes {
-		chosen, ok := tui.RunSelect("Update to "+rel.TagName+"?", []string{"Yes", "No"})
-		if !ok || chosen == "No" {
-			fmt.Println("Cancelled.")
-			return nil
-		}
+	if ok, _ := confirm("Update to "+rel.TagName+"?", flagSelfUpdateYes, false); !ok {
+		fmt.Println("Cancelled.")
+		return nil
 	}
 
 	switch method {

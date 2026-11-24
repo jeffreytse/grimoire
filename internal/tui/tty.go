@@ -46,11 +46,9 @@ func runProgram(p *tea.Program) (tea.Model, error) {
 	return final, err
 }
 
-// IsTTY reports whether stdin is an interactive terminal.
+// IsTTY reports whether stdin is an interactive terminal. It asks the
+// terminal driver rather than checking for a character device: /dev/null is
+// a character device too, and CI jobs often run with stdin from /dev/null.
 func IsTTY() bool {
-	fi, err := os.Stdin.Stat()
-	if err != nil {
-		return false
-	}
-	return fi.Mode()&os.ModeCharDevice != 0
+	return xterm.IsTerminal(os.Stdin.Fd())
 }
