@@ -938,7 +938,7 @@ func toolGrimoireGetSkill(_ context.Context, request mcp.CallToolRequest) (*mcp.
 	if names := request.GetStringSlice("names", nil); len(names) > 0 {
 		return getSkillsBatch(names), nil
 	}
-	name, skillPath, err := resolveSkillOrSuggest(request.GetString("name", ""))
+	name, skillPath, err := resolveSkillOrSuggest(skillNameArg(request))
 	if err != nil {
 		return mcp.NewToolResultError(err.Error()), nil
 	}
@@ -955,6 +955,18 @@ func toolGrimoireGetSkill(_ context.Context, request mcp.CallToolRequest) (*mcp.
 		Note:    joinNonEmpty(skillNote(), outOfScopeNote(name, skillPath)),
 		Related: relatedSkills(string(content)),
 	})
+}
+
+// skillNameArg reads the skill name. Some agents guess the argument's name
+// before reading the schema (Antigravity tried skill_name first), so common
+// spellings are accepted rather than failing a round trip.
+func skillNameArg(request mcp.CallToolRequest) string { //nolint:gocritic
+	for _, k := range []string{"name", "skill_name", "skill", "skillName"} {
+		if v := strings.TrimSpace(request.GetString(k, "")); v != "" {
+			return v
+		}
+	}
+	return ""
 }
 
 // getSkillsBatch loads several skills in one call, so a workflow that chains

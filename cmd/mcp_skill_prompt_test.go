@@ -250,3 +250,21 @@ func TestDisplayLevel_InstructionsAndSkillNote(t *testing.T) {
 		t.Errorf("off note = %q", n)
 	}
 }
+
+// Agents that guess the argument name before reading the schema still load
+// the skill on the first call.
+func TestGetSkillTool_AcceptsNameAliases(t *testing.T) {
+	setupListSkillsHome(t)
+	for _, key := range []string{"name", "skill_name", "skill", "skillName"} {
+		req := mcp.CallToolRequest{}
+		req.Params.Arguments = map[string]any{key: "write-readme"}
+		res, err := toolGrimoireGetSkill(context.Background(), req)
+		if err != nil {
+			t.Fatal(err)
+		}
+		tc, ok := res.Content[0].(mcp.TextContent)
+		if !ok || res.IsError || !strings.Contains(tc.Text, "BODY-MARKER") {
+			t.Errorf("%s: isErr=%v out=%.80s", key, res.IsError, tc.Text)
+		}
+	}
+}
