@@ -289,7 +289,7 @@ func TestHookPrompt_StatusLineFactsOnly(t *testing.T) {
 // brief; off silences status lines and tells the model to stay silent.
 func TestDisplayLevelSetting(t *testing.T) {
 	setupListSkillsHome(t)
-	for v, want := range map[string]displayLevel{"off": displayOff, "brief": displayBrief, "full": displayFull, "on": displayBrief, "bogus": displayBrief} {
+	for v, want := range map[string]displayLevel{"hidden": displayOff, "off": displayOff, "brief": displayBrief, "full": displayFull, "on": displayBrief, "bogus": displayBrief} {
 		t.Setenv("GRIMOIRE_TRACE", v)
 		if got := displayLevelSetting(); got != want {
 			t.Errorf("GRIMOIRE_TRACE=%s: level %q, want %q", v, got, want)
@@ -335,7 +335,7 @@ func TestHookSession_StatusLine(t *testing.T) {
 		t.Errorf("off: msg = %q", msg)
 	}
 	// Internals (the router and its route count) appear at full only.
-	if _, msg := sessionTurn(displayFull); msg != `grimoire ▸ ready · full view — say "quiet grimoire" to hide · router: start-best-practice, 1 route` {
+	if _, msg := sessionTurn(displayFull); msg != `grimoire ▸ ready · full view — say "quiet grimoire" to hide these notes · router: start-best-practice, 1 route` {
 		t.Errorf("full status = %q", msg)
 	}
 }
@@ -460,5 +460,21 @@ func TestFitRouter_Degrades(t *testing.T) {
 	hookInlineBudget = 5
 	if got := fitRouter(md, 0); got != "" {
 		t.Errorf("nothing fits, got %q", got)
+	}
+}
+
+// A router whose Display section would push the session context over budget
+// is reported, since fitRouter would drop that section silently.
+func TestRouterDisplayFits(t *testing.T) {
+	setupListSkillsHome(t)
+	router := "## Steps\n\n| a | b |\n\n## Rules\n\n- r\n\n## Display\n\n"
+	if ok, size := routerDisplayFits(router + "short"); !ok || size == 0 {
+		t.Errorf("small router: ok=%v size=%d", ok, size)
+	}
+	if ok, size := routerDisplayFits(router + strings.Repeat("x", hookInlineBudget)); ok || size <= hookInlineBudget {
+		t.Errorf("oversized Display passed: size=%d", size)
+	}
+	if ok, size := routerDisplayFits("## Steps\n\nx"); !ok || size != 0 {
+		t.Errorf("no Display section: ok=%v size=%d", ok, size)
 	}
 }

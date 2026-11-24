@@ -211,8 +211,28 @@ func writeHookOutput(out io.Writer, event, fallback, ctx, msg string) {
 //
 // The status line states facts: the router and display level in effect, or
 // what is wrong when the skills package is missing.
+// sessionHead is the session context that precedes the inlined router.
+func sessionHead(l displayLevel) string {
+	return "grimoire is active for this session. Before responding to each new user request, apply the start-best-practice routing below and follow the workflow it routes to; load routed skills with grimoire_get_skill.\n\n" + mcpChainRule + "\n\n" + displayContext(l) + "\n\n" + preferencesContext()
+}
+
+// routerDisplayFits reports whether the router's Steps, Rules and Display
+// (examples stripped) fit the session's inline budget at the full level —
+// the largest session head. When they do not, fitRouter silently drops the
+// Display section and grimoire's display loses its templates. ok is true
+// for a router without a Display section.
+func routerDisplayFits(md string) (ok bool, size int) {
+	display := markdownSections(md, "Display")
+	if display == "" {
+		return true, 0
+	}
+	body := joinNonEmpty(markdownSections(md, "Steps", "Rules"), stripFences(display))
+	size = len(sessionHead(displayFull)) + len(routerHeading) + len(body)
+	return size <= hookInlineBudget, size
+}
+
 func sessionTurn(l displayLevel) (ctx, msg string) {
-	head := "grimoire is active for this session. Before responding to each new user request, apply the start-best-practice routing below and follow the workflow it routes to; load routed skills with grimoire_get_skill.\n\n" + mcpChainRule + "\n\n" + displayContext(l) + "\n\n" + preferencesContext()
+	head := sessionHead(l)
 	fallback := head + "\n\nThe router is not inlined here: call grimoire_get_skill with name \"" + routerSkill + "\" once, at the first request of the session, and follow it."
 	// Not a problem — the model loads the router itself — so full only.
 	fallbackMsg := ""

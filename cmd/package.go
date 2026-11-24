@@ -118,6 +118,8 @@ With an argument, validates an installed package by name or an absolute path.
 Checks:
   - Package markers present (skills/, profiles/, grimoire.toml)
   - skills/: domain directories with SKILL.md files
+  - start-best-practice (if present): its router and Display section fit the
+    session hook's budget, so the Display section is never dropped silently
   - profiles/: .toml files are valid TOML
   - grimoire.toml: valid TOML if present`,
 	Args: cobra.MaximumNArgs(1),
@@ -900,6 +902,21 @@ func runPackageValidate(cmd *cobra.Command, args []string) error {
 			} else {
 				pass(fmt.Sprintf("%d skill(s), all have SKILL.md", len(allSkills)))
 			}
+		}
+		// The router's Display section must fit the session hook's budget,
+		// or it is dropped silently and grimoire's display loses its templates.
+		for i := range allSkills {
+			if allSkills[i].Name != routerSkill {
+				continue
+			}
+			if raw, err := os.ReadFile(filepath.Join(allSkills[i].Path, "SKILL.md")); err == nil {
+				if ok, size := routerDisplayFits(string(raw)); !ok {
+					fail(fmt.Sprintf("%s: Steps + Rules + Display is %d chars, over the %d-char session budget — its Display section would be dropped; shorten it", routerSkill, size, hookInlineBudget))
+				} else if size > 0 {
+					pass(fmt.Sprintf("%s fits the session budget (%d/%d chars)", routerSkill, size, hookInlineBudget))
+				}
+			}
+			break
 		}
 	} else {
 		skip("no skills/ directory")
