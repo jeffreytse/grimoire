@@ -1,0 +1,198 @@
+{
+  "version": 3,
+  "note": "Outcome eval pilot (docs/outcome-eval-plan.md). Rubrics come from each practice's original source, never from grimoire's skill text, and are fixed before any run. Do not edit a task once a reported number used it; add a new one. v2: the commit task's last criterion no longer counts tool-added attribution trailers (pilot finding). v3: harder criteria for the retirement and vendor-contract tasks (both arms hit 100% in the pilot), plus a debt-payoff and an employment-contract task.",
+  "tasks": [
+    {
+      "id": "unit-test-parse-duration",
+      "field": "engineering",
+      "practice": "write-unit-test",
+      "prompt": "Write unit tests for ParseDuration in duration.go.",
+      "files": {
+        "go.mod": "module example.com/app\n\ngo 1.22\n",
+        "duration.go": "package app\n\nimport (\n\t\"errors\"\n\t\"strconv\"\n\t\"strings\"\n)\n\n// ParseDuration parses durations like \"2d\", \"4h\", \"2d4h\" or \"90m\" into minutes.\n// Units: d (days), h (hours), m (minutes). Each unit may appear once, in that order.\nfunc ParseDuration(s string) (int, error) {\n\tif s == \"\" {\n\t\treturn 0, errors.New(\"empty duration\")\n\t}\n\ttotal, num := 0, \"\"\n\tseen := map[rune]bool{}\n\tfor _, r := range s {\n\t\tswitch {\n\t\tcase r >= '0' && r <= '9':\n\t\t\tnum += string(r)\n\t\tcase strings.ContainsRune(\"dhm\", r):\n\t\t\tif num == \"\" || seen[r] {\n\t\t\t\treturn 0, errors.New(\"invalid duration: \" + s)\n\t\t\t}\n\t\t\tseen[r] = true\n\t\t\tn, _ := strconv.Atoi(num)\n\t\t\ttotal += n * map[rune]int{'d': 1440, 'h': 60, 'm': 1}[r]\n\t\t\tnum = \"\"\n\t\tdefault:\n\t\t\treturn 0, errors.New(\"invalid unit in: \" + s)\n\t\t}\n\t}\n\tif num != \"\" {\n\t\treturn 0, errors.New(\"missing unit in: \" + s)\n\t}\n\treturn total, nil\n}\n"
+      },
+      "exec": "go-test",
+      "source": "Meszaros, xUnit Test Patterns (2007); Google Testing Blog, \"Testing on the Toilet\" series",
+      "rubric": [
+        "Tests cover typical valid inputs with exact expected values (e.g. a single unit and a combined value like \"2d4h\").",
+        "Tests cover invalid inputs and assert that an error is returned (e.g. empty string, unknown unit, number without unit).",
+        "Tests cover edge cases: zero values, a repeated unit, or a unit without a number.",
+        "Each test case checks one behavior and its name or description says which.",
+        "Tests are deterministic: no sleeps, wall-clock time, randomness or network.",
+        "The tests are written in the repository's language and test framework (Go's testing package) and are placed where `go test` finds them."
+      ]
+    },
+    {
+      "id": "commit-message-nil-check",
+      "field": "engineering",
+      "practice": "propose-conventional-commit",
+      "prompt": "Write the commit message for the staged change. Don't commit — just give me the message.",
+      "files": {
+        "handler.go": "package app\n\ntype User struct{ Name string }\n\nfunc Greeting(u *User) string {\n\treturn \"Hello, \" + u.Name\n}\n"
+      },
+      "staged": {
+        "handler.go": "package app\n\ntype User struct{ Name string }\n\n// Greeting returns a greeting for u; a nil user gets a generic one.\nfunc Greeting(u *User) string {\n\tif u == nil {\n\t\treturn \"Hello, guest\"\n\t}\n\treturn \"Hello, \" + u.Name\n}\n"
+      },
+      "source": "Conventional Commits 1.0.0 (conventionalcommits.org); Chris Beams, \"How to Write a Git Commit Message\" (2014)",
+      "rubric": [
+        "The header follows `<type>(<optional scope>): <description>`.",
+        "The type fits the change (a bug fix, so `fix`).",
+        "The description is in the imperative mood and has no trailing period.",
+        "The header line is 72 characters or fewer.",
+        "The message describes the actual change: a nil user now gets a generic greeting instead of a crash.",
+        "No unrelated content is included in the message (no invented tickets, files or changes). Attribution trailers the tool adds by default (e.g. Co-Authored-By) don't count either way."
+      ]
+    },
+    {
+      "id": "runbook-payments-db",
+      "field": "engineering",
+      "practice": "write-sre-runbook",
+      "prompt": "Write the runbook for our PaymentsDBConnectionsHigh alert. It fires when the payments Postgres primary is above 90% of max_connections for 5 minutes.",
+      "files": {},
+      "source": "Beyer et al., The Site Reliability Workbook (2018), ch. 8 \"On-Call\"; Google SRE Book (2016), ch. 11",
+      "rubric": [
+        "Explains what the alert means and the likely user impact (e.g. failed or slow payments).",
+        "States the severity or urgency and who responds.",
+        "Gives concrete first diagnostic steps, with exact queries or commands (e.g. pg_stat_activity).",
+        "Gives concrete mitigation steps for the likely causes (e.g. connection leak, pool misconfiguration, long-running queries).",
+        "Says how to verify recovery.",
+        "Defines an escalation path for when mitigation fails.",
+        "Warns about actions that could make things worse (e.g. restarting the primary, killing replication)."
+      ]
+    },
+    {
+      "id": "postmortem-checkout-outage",
+      "field": "engineering",
+      "practice": "write-post-mortem",
+      "prompt": "Write the postmortem for yesterday's checkout outage, using incident-timeline.md.",
+      "files": {
+        "incident-timeline.md": "# Checkout outage — raw notes\n\n- 14:02 deploy of checkout-api v2.31 (adds a new tax-rate cache) by the payments team\n- 14:05 error rate on POST /checkout starts climbing (cache returns nil for new regions)\n- 14:23 first page: CheckoutErrorRateHigh (alert threshold was 10% for 15m)\n- 14:25 on-call (Dana) acknowledges, starts looking at dashboards\n- 14:31 Sam notices the deploy in #deploys, suggests rollback\n- 14:34 rollback to v2.30 started\n- 14:42 rollback complete, error rate back to baseline\n- Impact: ~37% of checkout attempts failed for 37 minutes; ~4,100 orders affected; est. $210k delayed or lost revenue\n- Note: the canary step was skipped for this deploy because the pipeline's canary stage was disabled last month during a migration and never re-enabled\n"
+      },
+      "source": "Beyer et al., Site Reliability Engineering (2016), ch. 15 \"Postmortem Culture: Learning from Failure\"",
+      "rubric": [
+        "Includes a summary with impact: duration, share of failed checkouts or orders affected, and revenue.",
+        "Includes a timeline consistent with the notes.",
+        "Distinguishes the trigger (the v2.31 deploy) from the root causes (the nil-returning cache, and the canary stage being disabled).",
+        "Calls out the detection gap: about 18 minutes from impact to the first page, because of the alert threshold.",
+        "Uses blameless language: no individual is blamed, and named people appear only as actors in the timeline.",
+        "Lists action items with an owner or team and a priority.",
+        "Includes action items for both the root cause and the detection and deploy-safety gaps (alerting, canary)."
+      ]
+    },
+    {
+      "id": "ci-pipeline-go",
+      "field": "engineering",
+      "practice": "design-ci-pipeline",
+      "prompt": "Set up CI for this repo on GitHub Actions.",
+      "files": {
+        "go.mod": "module example.com/app\n\ngo 1.22\n",
+        "main.go": "package main\n\nimport \"fmt\"\n\nfunc main() { fmt.Println(Add(2, 3)) }\n\nfunc Add(a, b int) int { return a + b }\n",
+        "main_test.go": "package main\n\nimport \"testing\"\n\nfunc TestAdd(t *testing.T) {\n\tif Add(2, 3) != 5 {\n\t\tt.Fatal(\"Add(2, 3) != 5\")\n\t}\n}\n"
+      },
+      "source": "Humble & Farley, Continuous Delivery (2010); GitHub Docs, \"Security hardening for GitHub Actions\"",
+      "rubric": [
+        "A workflow file is created under .github/workflows/.",
+        "It runs on pull requests and on pushes to the main branch.",
+        "It builds the code and runs the tests (`go build`, `go test`).",
+        "It runs static checks (`go vet`, a linter or a formatting check).",
+        "It sets up Go with a pinned version, and caches modules or the build cache.",
+        "Third-party actions are pinned to a version or commit, not a moving branch.",
+        "It sets least-privilege `permissions:` for the workflow token."
+      ]
+    },
+    {
+      "id": "strangler-orders",
+      "field": "engineering",
+      "practice": "apply-strangler-fig-pattern",
+      "prompt": "We need to move the /orders endpoints out of our Rails monolith into a new Go service without downtime. How should we do it?",
+      "files": {},
+      "source": "Martin Fowler, \"StranglerFigApplication\" (2004, updated 2019); Sam Newman, Monolith to Microservices (2019), ch. 3",
+      "rubric": [
+        "Introduces a routing layer (proxy, gateway or facade) in front of the monolith, so traffic can move per route.",
+        "Moves functionality incrementally, endpoint by endpoint, rather than as one cutover.",
+        "Keeps the monolith serving the endpoints until the new service has been verified.",
+        "Addresses data ownership: how orders data moves or is synchronized, and who owns writes during the transition.",
+        "Gives a rollback path for each step (e.g. route traffic back to the monolith).",
+        "Verifies behavior before switching (e.g. shadow traffic, comparing responses, or contract tests).",
+        "Ends with removing the old code from the monolith."
+      ]
+    },
+    {
+      "id": "fire-number-couple",
+      "field": "finance",
+      "practice": "calculate-fire-number",
+      "prompt": "My partner and I are 35 and 33. We spend $72,000 a year, have $310,000 invested, and save $48,000 a year. We want to retire early. How much do we need, and when could we stop working?",
+      "files": {},
+      "source": "Bengen, \"Determining Withdrawal Rates Using Historical Data\" (1994); Cooley, Hubbard & Walz, \"Retirement Savings: Choosing a Withdrawal Rate That Is Sustainable\" (Trinity study, 1998)",
+      "rubric": [
+        "Computes a target as annual spending divided by a stated safe withdrawal rate. At 4% that is $1.8M; a lower rate gives a higher target.",
+        "Explains that a 40+ year early retirement warrants a withdrawal rate below 4%, or explicitly weighs it.",
+        "Projects when they could stop, from the given figures ($310k invested, $48k a year saved), with an explicit return assumption.",
+        "Uses real (inflation-adjusted) returns, or explicitly accounts for inflation.",
+        "Mentions sequence-of-returns risk or a buffer for a bad early market.",
+        "Mentions costs that change in early retirement, such as healthcare before public coverage.",
+        "The arithmetic shown is internally consistent: the stated rate, target and timeline agree.",
+        "Shows how sensitive the answer is: gives at least two retirement dates or targets under different return or withdrawal-rate assumptions.",
+        "Addresses taxes in retirement: which accounts to draw from first, or that withdrawals may be taxed.",
+        "Explains how to reach the money before traditional retirement-account access ages (e.g. a taxable bridge, Roth ladder, or rule 72(t)), or flags it as a question to answer."
+      ]
+    },
+    {
+      "id": "contract-review-vendor",
+      "field": "law",
+      "practice": "review-saas-contract",
+      "prompt": "Review vendor-agreement.md before I sign it. What should I push back on?",
+      "files": {
+        "vendor-agreement.md": "# Master Subscription Agreement — CloudLedger Inc. (\"Vendor\") and Customer\n\n## 1. Term and renewal\nThe initial term is 12 months. This Agreement renews automatically for successive 12-month terms unless Customer gives written notice of non-renewal at least 90 days before the end of the then-current term. Vendor may increase fees by up to 15% at each renewal.\n\n## 2. Fees\nFees are invoiced annually in advance and are non-refundable.\n\n## 3. Customer Data\nCustomer grants Vendor a perpetual, irrevocable, worldwide license to use, copy, modify and create derivative works from Customer Data for any purpose, including improving Vendor's products and training machine learning models.\n\n## 4. Limitation of liability\nVendor's total liability under this Agreement shall not exceed the fees paid by Customer in the one (1) month preceding the claim. Customer's liability is not limited.\n\n## 5. Security\nVendor will use commercially reasonable efforts to protect Customer Data.\n\n## 6. Governing law\nThis Agreement is governed by the laws of the State of Delaware.\n"
+      },
+      "source": "Common SaaS contract review practice: ABA Business Law Section guidance on technology contracts; IACCM/WorldCC most-negotiated terms reports",
+      "rubric": [
+        "Flags the auto-renewal with a 90-day notice window and the up-to-15% renewal price increase, and suggests a change (shorter notice, a price cap, or renewal reminders).",
+        "Flags the customer-data license (perpetual, any purpose, ML training) as overbroad, and suggests limiting use to providing the service.",
+        "Flags the one-sided liability terms (vendor capped at one month of fees, customer unlimited), and suggests a mutual, reasonable cap with carve-outs.",
+        "Flags the weak security commitment and suggests specific obligations (e.g. a security standard, breach notice).",
+        "Prioritizes the issues, most important first.",
+        "Proposes concrete replacement language or specific terms, not only concerns.",
+        "Does not invent clauses that aren't in the agreement.",
+        "Notes that the fees are annual, in advance and non-refundable, and asks for termination rights with a pro-rata refund.",
+        "Raises important terms that are missing: data export or return on exit, and an uptime SLA with service credits."
+      ]
+    },
+    {
+      "id": "debt-payoff-three-debts",
+      "field": "finance",
+      "practice": "design-debt-payoff-plan",
+      "prompt": "I have three debts: a credit card with $8,200 at 24.9% APR, a car loan with $14,500 at 6.4%, and a student loan with $22,000 at 4.1%. I can put $1,100 a month toward debt in total. How should I pay these off?",
+      "files": {},
+      "source": "Consumer Financial Protection Bureau, debt repayment guidance; Gal & McShane, \"Can Small Victories Help Win the War?\", Journal of Marketing Research (2012) on avalanche vs. snowball",
+      "rubric": [
+        "Keeps every debt at least at its minimum payment while extra money goes to one target.",
+        "Recommends paying the highest-rate debt first (avalanche), or explicitly weighs it against smallest-balance-first (snowball) for motivation.",
+        "Puts the 24.9% credit card first.",
+        "Estimates a payoff timeline or total interest, with stated assumptions.",
+        "Mentions keeping or building a small emergency fund so new debt doesn't pile up.",
+        "Mentions options that lower the card's rate (balance transfer, refinancing, negotiating) and their risks or fees.",
+        "Doesn't claim to know the minimum payments; states the assumption or asks for them."
+      ]
+    },
+    {
+      "id": "employment-contract-review",
+      "field": "law",
+      "practice": "review-employment-contract",
+      "prompt": "I've been offered a job. Review offer-agreement.md before I sign it. What should I negotiate?",
+      "files": {
+        "offer-agreement.md": "# Employment Agreement — Northwind Analytics LLC (\"Company\") and Employee\n\n## 1. Position\nEmployee will serve as Senior Data Engineer, reporting to the VP of Data. Employment is at will.\n\n## 2. Compensation\nBase salary of $165,000 per year. A signing bonus of $25,000 is payable within 30 days of the start date. If Employee leaves for any reason within 24 months of the start date, Employee must repay the full signing bonus within 10 days.\n\n## 3. Inventions\nEmployee assigns to Company all inventions, works and ideas conceived during the term of employment, whether or not made during working hours, with Company resources, or related to Company's business.\n\n## 4. Non-competition\nFor 24 months after employment ends, Employee will not work for or advise any business that competes with Company anywhere in the world.\n\n## 5. Dispute resolution\nAll disputes will be resolved by binding individual arbitration. Employee waives any right to bring or join a class or collective action.\n\n## 6. Confidentiality\nEmployee will keep Company's confidential information secret during and after employment.\n"
+      },
+      "source": "Common employment-agreement review practice; California Labor Code §2870 (employee inventions) as the model carve-out; FTC and state-law guidance on non-compete enforceability",
+      "rubric": [
+        "Flags the 24-month worldwide non-compete as overbroad, and notes that enforceability depends on the jurisdiction (some states void non-competes).",
+        "Flags the inventions clause as covering personal-time work unrelated to the business, and suggests a carve-out (e.g. modeled on California Labor Code §2870) or a prior-inventions list.",
+        "Flags full repayment of the signing bonus for leaving for any reason within 24 months, and suggests pro-rating it or excluding termination without cause.",
+        "Flags the mandatory individual arbitration with a class-action waiver, and explains what it gives up.",
+        "Prioritizes the issues, most important first.",
+        "Proposes concrete replacement terms or language, not only concerns.",
+        "Does not invent clauses that aren't in the agreement, and suggests an employment lawyer for jurisdiction-specific questions."
+      ]
+    }
+  ]
+}

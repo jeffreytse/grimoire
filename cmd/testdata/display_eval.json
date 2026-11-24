@@ -105,6 +105,11 @@
       "routes": true,
       "followup": "Apply the plan, but for the step with choices use option b instead of the recommended one.",
       "swap": true
+    },
+    {
+      "prompt": "my partner and I want to retire early — how much do we need, and how do we get there?",
+      "routes": true,
+      "followup": "yes"
     }
   ]
 }
