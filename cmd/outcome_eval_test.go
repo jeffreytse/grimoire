@@ -379,7 +379,7 @@ func blind(reply string) string {
 // legacyRow matches a row as the first harness version saved it: "⎿"
 // replaced by "-", which left "-  Label  value" (two spaces after the dash,
 // unlike a markdown list item).
-var legacyRow = regexp.MustCompile(`(?m)^(\s*)-  (\S[^\n]*?)\s{2,}(\S[^\n]*)$`)
+var legacyRow = regexp.MustCompile(`(?m)^(\s*)- {2}(\S[^\n]*?)\s{2,}(\S[^\n]*)$`)
 
 // reblind applies the current blinding to a saved output, including rows
 // saved by the first harness version.
@@ -413,7 +413,7 @@ func neutralize(output, model, cache string) (neutral string, cost float64, kept
 	if err != nil {
 		return output, 0, false
 	}
-	defer os.RemoveAll(dir)
+	defer func() { _ = os.RemoveAll(dir) }()
 	r, err := runClaudeEvalResult(dir, "hidden", neutralPrompt+reply, "", "--model", model, "--max-turns", "1",
 		"--setting-sources", "project", "--mcp-config", `{"mcpServers":{}}`, "--strict-mcp-config", "--tools", "")
 	rewritten := strings.TrimSpace(strings.Join(r.texts, "\n"))
@@ -467,7 +467,7 @@ func faithful(original, rewritten string) bool {
 
 // outcomeOutput assembles what the judge sees, blinded the same way for both
 // arms: the final reply, then the changed files and any execution check.
-func outcomeOutput(texts []string, changes, exec string) string {
+func outcomeOutput(texts []string, changes, execResult string) string {
 	reply := blind(strings.Join(texts, "\n\n"))
 	var b strings.Builder
 	b.WriteString(reply)
@@ -475,8 +475,8 @@ func outcomeOutput(texts []string, changes, exec string) string {
 		b.WriteString("\n\n=== files created or changed ===")
 		b.WriteString(changes)
 	}
-	if exec != "" {
-		b.WriteString("\n\n" + exec)
+	if execResult != "" {
+		b.WriteString("\n\n" + execResult)
 	}
 	return b.String()
 }
@@ -552,12 +552,12 @@ func judgePair(task *outcomeTask, a, b, model string) (outcomePair, float64, err
 		}
 		p.Rounds[i] = v
 	}
-	return combineRounds(p.Rounds), cost, nil
+	return combineRounds(&p.Rounds), cost, nil
 }
 
 // combineRounds averages two judgments of the same pair.
-func combineRounds(rounds [2]outcomeVerdict) outcomePair {
-	p := outcomePair{Rounds: rounds}
+func combineRounds(rounds *[2]outcomeVerdict) outcomePair {
+	p := outcomePair{Rounds: *rounds}
 	r1, r2 := rounds[0], rounds[1]
 	p.ARate = (r1.A.rate() + r2.A.rate()) / 2
 	p.BRate = (r1.B.rate() + r2.B.rate()) / 2
@@ -589,7 +589,7 @@ func judgeOutcome(task *outcomeTask, a, b, model string, aFirst bool) (outcomeVe
 	if err != nil {
 		return outcomeVerdict{}, 0, err
 	}
-	defer os.RemoveAll(dir)
+	defer func() { _ = os.RemoveAll(dir) }()
 	r, err := runClaudeEvalResult(dir, "hidden", prompt, "", "--model", model, "--max-turns", "1",
 		"--setting-sources", "project", "--mcp-config", `{"mcpServers":{}}`, "--strict-mcp-config", "--tools", "")
 	if err != nil {
@@ -599,7 +599,7 @@ func judgeOutcome(task *outcomeTask, a, b, model string, aFirst bool) (outcomeVe
 	if err != nil {
 		return outcomeVerdict{}, r.cost, err
 	}
-	v := mapJudge(raw, aFirst, len(task.Rubric))
+	v := mapJudge(&raw, aFirst, len(task.Rubric))
 	v.Rejected = checkEvidence(v.A, a) + checkEvidence(v.B, b)
 	return v, r.cost, nil
 }
@@ -662,7 +662,7 @@ func parseJudge(reply string) (judgeRaw, error) {
 
 // mapJudge maps presentation order back to arms, keeping one verdict per
 // rubric criterion (a missing criterion counts as not met).
-func mapJudge(raw judgeRaw, aFirst bool, n int) outcomeVerdict {
+func mapJudge(raw *judgeRaw, aFirst bool, n int) outcomeVerdict {
 	norm := func(cs outcomeCriteria) outcomeCriteria {
 		out := make(outcomeCriteria, n)
 		for i := range out {
@@ -898,8 +898,9 @@ func averageRuns(runs []outcomeResult) []outcomeResult {
 func loadVerdicts(t *testing.T, dir string) []outcomeResult {
 	t.Helper()
 	fields := map[string]string{}
-	for _, task := range loadOutcomeTasks(t) {
-		fields[task.ID] = task.Field
+	tasks := loadOutcomeTasks(t)
+	for i := range tasks {
+		fields[tasks[i].ID] = tasks[i].Field
 	}
 	files, _ := filepath.Glob(filepath.Join(dir, "*-verdict.json"))
 	sort.Strings(files)
@@ -1028,7 +1029,7 @@ func TestJudgeMapping(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	v := mapJudge(raw, false, 2) // Y was A
+	v := mapJudge(&raw, false, 2) // Y was A
 	if v.Better != "A" || !v.B[0].Met || v.A[0].Met || !v.A[1].Met {
 		t.Fatalf("mapping: %+v", v)
 	}
@@ -1049,7 +1050,7 @@ func TestJudgeMapping(t *testing.T) {
 	if r := checkEvidence(multi, `cases := {"2d4h", 3120}, {"90m", 90}, {"4h", 240} and a real part`); r != 1 || !multi[0].Met || multi[1].Met {
 		t.Errorf("multi-fragment quotes: rejected %d %+v", r, multi)
 	}
-	if v := mapJudge(judgeRaw{Better: "maybe"}, true, 1); v.Better != "tie" || len(v.A) != 1 {
+	if v := mapJudge(&judgeRaw{Better: "maybe"}, true, 1); v.Better != "tie" || len(v.A) != 1 {
 		t.Errorf("unknown better: %+v", v)
 	}
 }
@@ -1110,27 +1111,27 @@ func TestCombineRounds(t *testing.T) {
 		}
 		return cs
 	}
-	p := combineRounds([2]outcomeVerdict{
+	p := combineRounds(&[2]outcomeVerdict{
 		{A: met(true, false), B: met(true, true), Better: "B"},
 		{A: met(false, false), B: met(true, true), Better: "B"},
 	})
 	if p.ARate != 0.25 || p.BRate != 1 || p.Better != "B" || p.Disagree != 1 {
 		t.Errorf("agreeing rounds: %+v", p)
 	}
-	if p := combineRounds([2]outcomeVerdict{{A: met(true), B: met(true), Better: "A"}, {A: met(true), B: met(true), Better: "B"}}); p.Better != "tie" {
+	if p := combineRounds(&[2]outcomeVerdict{{A: met(true), B: met(true), Better: "A"}, {A: met(true), B: met(true), Better: "B"}}); p.Better != "tie" {
 		t.Errorf("order-dependent preference not a tie: %+v", p)
 	}
 }
 
 // The plugin guess maps back through the presentation order.
 func TestJudgeGuess(t *testing.T) {
-	if v := mapJudge(judgeRaw{Guess: "X"}, true, 1); v.Guess != "A" {
+	if v := mapJudge(&judgeRaw{Guess: "X"}, true, 1); v.Guess != "A" {
 		t.Errorf("X with A first: %s", v.Guess)
 	}
-	if v := mapJudge(judgeRaw{Guess: "x"}, false, 1); v.Guess != "B" {
+	if v := mapJudge(&judgeRaw{Guess: "x"}, false, 1); v.Guess != "B" {
 		t.Errorf("X with B first: %s", v.Guess)
 	}
-	if v := mapJudge(judgeRaw{}, true, 1); v.Guess != "unsure" {
+	if v := mapJudge(&judgeRaw{}, true, 1); v.Guess != "unsure" {
 		t.Errorf("missing guess: %s", v.Guess)
 	}
 }

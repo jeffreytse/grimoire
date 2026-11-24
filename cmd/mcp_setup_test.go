@@ -546,8 +546,8 @@ func TestMCPInstall_ClaudeDesktop(t *testing.T) {
 	if err := json.Unmarshal(b, &cfg); err != nil {
 		t.Fatal(err)
 	}
-	cmd, _ := cfg.MCPServers["grimoire"]["command"].(string)
-	if !filepath.IsAbs(cmd) || cfg.Keep != 1 || cfg.MCPServers["other"] == nil {
+	cmd, ok := cfg.MCPServers["grimoire"]["command"].(string)
+	if !ok || !filepath.IsAbs(cmd) || cfg.Keep != 1 || cfg.MCPServers["other"] == nil {
 		t.Errorf("config = %s", b)
 	}
 	before := string(b)

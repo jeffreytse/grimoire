@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/jeffreytse/grimoire/internal/agent"
 	"os"
 	"path/filepath"
 	"sort"
@@ -14,6 +13,7 @@ import (
 	"github.com/mark3labs/mcp-go/server"
 	"github.com/spf13/cobra"
 
+	"github.com/jeffreytse/grimoire/internal/agent"
 	"github.com/jeffreytse/grimoire/internal/compliance"
 	"github.com/jeffreytse/grimoire/internal/config"
 	"github.com/jeffreytse/grimoire/internal/git"
