@@ -30,6 +30,7 @@ var (
 	flagMCPSetupNoAllow     bool
 	flagMCPSetupStatusLine  bool
 	flagMCPSetupNoStatus    bool
+	flagMCPSetupDryRun      bool
 )
 
 // mcpAgent describes how to set up MCP mode for one agent. Registration
@@ -44,6 +45,7 @@ type mcpAgent struct {
 	existsMarker      string // CLI output meaning "already registered" on add
 	fileRegister      func(scope, serve string) (bool, error)
 	fileUnregister    func(scope string) (bool, error)
+	configPath        func(scope string) string // the file fileRegister edits
 	verify            string
 }
 
@@ -83,6 +85,7 @@ var mcpAgents = []mcpAgent{
 		key: "opencode", display: "OpenCode", bin: "opencode", scopes: []string{"user", "project"},
 		fileRegister:   registerOpenCodeMCP,
 		fileUnregister: unregisterOpenCodeMCP,
+		configPath:     func(scope string) string { return openCodeFile.path(scope) },
 		verify:         "opencode mcp list",
 	},
 	// Pi, Kimi, OMP, Antigravity: documented "mcpServers" JSON files. Their
@@ -128,7 +131,7 @@ func fileAgent(key, display, bin string, scopes []string, entry func(string) map
 	f := mcpServersFile(key, entry)
 	return mcpAgent{
 		key: key, display: display, bin: bin, scopes: scopes,
-		fileRegister: f.register, fileUnregister: f.unregister, verify: verify,
+		fileRegister: f.register, fileUnregister: f.unregister, configPath: f.path, verify: verify,
 	}
 }
 
@@ -219,6 +222,7 @@ func init() {
 		c.Flags().StringVar(&flagMCPSetupTarget, "target", "claude",
 			"agents, comma-separated: "+strings.Join(mcpAgentKeys(), ", ")+", or all (those on PATH)")
 		c.Flags().StringVar(&flagMCPSetupScope, "scope", "user", scopeHelp)
+		c.Flags().BoolVar(&flagMCPSetupDryRun, "dry-run", false, "list the commands and files that would change, without changing anything")
 		mcpCmd.AddCommand(c)
 	}
 	mcpInstallCmd.Flags().BoolVar(&flagMCPSetupNoConfigure, "no-configure", false, "do not write the grimoire instruction or hook")
@@ -310,6 +314,10 @@ func runMCPInstall(_ *cobra.Command, _ []string) error {
 		return err
 	}
 	serve := grimoireServeCommand()
+	if flagMCPSetupDryRun {
+		printMCPPlan(targets, serve, true)
+		return nil
+	}
 
 	if len(skills.AllSkillsPackages()) == 0 {
 		fmt.Println("  Fetching grimoire skills…")
@@ -546,6 +554,10 @@ func runMCPUninstall(_ *cobra.Command, _ []string) error {
 		return err
 	}
 	scope := flagMCPSetupScope
+	if flagMCPSetupDryRun {
+		printMCPPlan(targets, grimoireServeCommand(), false)
+		return nil
+	}
 	for _, a := range targets {
 		fmt.Printf("  %s\n", tui.StyleBold.Render(a.display))
 		switch {

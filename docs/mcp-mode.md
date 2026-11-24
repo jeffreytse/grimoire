@@ -12,6 +12,7 @@ grimoire mcp install --target all            # every supported agent found on yo
 grimoire mcp install --target codex,gemini   # specific agents
 grimoire mcp install --target claude-desktop # Claude Desktop (not included in --target all)
 grimoire mcp install --scope project         # only this project (commit the files to share it with your team)
+grimoire mcp install --dry-run               # list what would change, change nothing
 grimoire mcp uninstall --target all          # undo
 ```
 
