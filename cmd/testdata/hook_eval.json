@@ -218,7 +218,8 @@
       "prompt": "help me memorize vocabulary for my exam",
       "want": [
         "apply-memory-palace",
-        "design-language-learning-plan"
+        "design-language-learning-plan",
+        "design-spaced-repetition-deck"
       ]
     },
     {
@@ -384,11 +385,20 @@
     },
     {
       "prompt": "please make sure grimoire functions can be auto run by hook like caveman",
-      "want": []
+      "want": [
+        "install-grimoire",
+        "configure-grimoire"
+      ],
+      "note": "Relabeled: a request about grimoire's own setup is served by its setup skills. Was unlabeled (no skill)."
     },
     {
       "prompt": "with the latest hook, whether claude can auto run workflows well",
-      "want": []
+      "want": [
+        "install-grimoire",
+        "configure-grimoire",
+        "learn-grimoire"
+      ],
+      "note": "Relabeled: a health check of grimoire's own hooks routes to install-grimoire by the router's table. Was unlabeled (no skill)."
     },
     {
       "prompt": "looks good to me",
@@ -442,7 +452,12 @@
     },
     {
       "prompt": "I only have 2 hours left today, what should I do first",
-      "want": []
+      "want": [
+        "apply-eat-the-frog",
+        "apply-eisenhower-matrix",
+        "apply-time-blocking"
+      ],
+      "note": "Relabeled: a prioritization question warrants a prioritization practice. Was unlabeled only to test that '2 hours' adds no keyword noise."
     },
     {
       "prompt": "it's 3am and I've been at this for 12 hours",

@@ -1,0 +1,355 @@
+{
+  "_doc": "Harder selection cases: paraphrases without keyword overlap, vague and multi-problem requests, boundaries, near-misses that should not route, and non-English prompts. Labels list acceptable skills, checked against the library.",
+  "cases": [
+    {
+      "prompt": "every time we ship, something that used to work breaks",
+      "want": [
+        "write-regression-test",
+        "design-ci-pipeline",
+        "bisect-regression"
+      ],
+      "kind": "paraphrase"
+    },
+    {
+      "prompt": "new hires take months before they can contribute anything",
+      "want": [
+        "design-employee-onboarding",
+        "run-direct-report-onboarding"
+      ],
+      "kind": "paraphrase"
+    },
+    {
+      "prompt": "our meetings run long and nothing ever gets decided",
+      "want": [
+        "design-team-meeting-structure"
+      ],
+      "kind": "paraphrase"
+    },
+    {
+      "prompt": "I keep putting off the important stuff and doing busywork instead",
+      "want": [
+        "apply-eat-the-frog",
+        "apply-eisenhower-matrix",
+        "apply-pareto-prioritization"
+      ],
+      "kind": "paraphrase"
+    },
+    {
+      "prompt": "our code reviews take forever and people get defensive about comments",
+      "want": [
+        "design-code-review-process",
+        "give-developmental-feedback",
+        "review-pull-request"
+      ],
+      "kind": "paraphrase"
+    },
+    {
+      "prompt": "I want my savings to grow but I'm scared of losing money",
+      "want": [
+        "apply-index-fund-investing",
+        "apply-behavioral-investing-discipline"
+      ],
+      "kind": "paraphrase",
+      "accepted": [
+        "design-portfolio-allocation"
+      ],
+      "note": "Accepted after the 2026-11-24 run: design-portfolio-allocation — allocation across asset classes is the standard answer to growth with limited downside."
+    },
+    {
+      "prompt": "my dog pulls on the leash every walk",
+      "want": [
+        "design-dog-training-program",
+        "diagnose-dog-behavioral-problem"
+      ],
+      "kind": "paraphrase"
+    },
+    {
+      "prompt": "I freeze up whenever I have to talk in front of a group",
+      "want": [
+        "run-public-speaking-practice-drill",
+        "apply-performance-anxiety-management"
+      ],
+      "kind": "paraphrase"
+    },
+    {
+      "prompt": "we got breached through an old library we forgot to update",
+      "want": [
+        "audit-dependency-vulnerabilities",
+        "design-supply-chain-security",
+        "plan-incident-response"
+      ],
+      "kind": "paraphrase"
+    },
+    {
+      "prompt": "I got a job offer and I think they're lowballing me",
+      "want": [
+        "negotiate-salary",
+        "apply-tactical-empathy-negotiation"
+      ],
+      "kind": "paraphrase"
+    },
+    {
+      "prompt": "my essay rambles and my teacher says it has no clear point",
+      "want": [
+        "design-argument-structure"
+      ],
+      "kind": "paraphrase",
+      "accepted": [
+        "write-thesis-statement"
+      ],
+      "note": "Accepted after the 2026-11-24 run: write-thesis-statement — an essay without a clear point lacks a thesis — a closer fit than the original label."
+    },
+    {
+      "prompt": "two engineers on my team can't stand each other",
+      "want": [
+        "resolve-team-conflict",
+        "run-difficult-conversation"
+      ],
+      "kind": "paraphrase"
+    },
+    {
+      "prompt": "our cloud bill doubled and nobody knows why",
+      "want": [
+        "optimize-cloud-spend",
+        "calculate-cloud-costs"
+      ],
+      "kind": "paraphrase"
+    },
+    {
+      "prompt": "I lie awake for hours before I finally drift off",
+      "want": [
+        "diagnose-sleep-issue",
+        "design-sleep-hygiene-protocol",
+        "apply-sleep-optimization-protocol"
+      ],
+      "kind": "paraphrase",
+      "accepted": [
+        "apply-stimulus-control-therapy"
+      ],
+      "note": "Accepted after the 2026-11-24 run: apply-stimulus-control-therapy — its description targets slow sleep onset in insomnia exactly."
+    },
+    {
+      "prompt": "I need to tell my report their work isn't good enough",
+      "want": [
+        "run-difficult-conversation",
+        "give-developmental-feedback",
+        "run-performance-improvement-plan"
+      ],
+      "kind": "paraphrase",
+      "accepted": [
+        "run-underperformance-conversation"
+      ],
+      "note": "Accepted after the 2026-11-24 run: run-underperformance-conversation — an exact fit: the early conversation that names a performance gap."
+    },
+    {
+      "prompt": "we need goals the whole company can rally around this quarter",
+      "want": [
+        "design-okr-framework",
+        "write-okrs",
+        "design-goal-setting-framework"
+      ],
+      "kind": "paraphrase"
+    },
+    {
+      "prompt": "half our signups never finish setting up their account",
+      "want": [
+        "design-onboarding-flow",
+        "audit-marketing-funnel"
+      ],
+      "kind": "paraphrase"
+    },
+    {
+      "prompt": "people keep quitting right after we promote them",
+      "want": [
+        "apply-high-performer-retention",
+        "prevent-employee-burnout"
+      ],
+      "kind": "paraphrase",
+      "accepted": [
+        "apply-peter-principle-check"
+      ],
+      "note": "Accepted after the 2026-11-24 run: apply-peter-principle-check — partial fit: addresses why promotions fail, one cause of post-promotion attrition."
+    },
+    {
+      "prompt": "how long will this six-month project really take",
+      "want": [
+        "apply-reference-class-forecasting"
+      ],
+      "kind": "paraphrase"
+    },
+    {
+      "prompt": "everything at work feels like it's on fire",
+      "want": [
+        "design-stress-management-plan",
+        "prevent-employee-burnout",
+        "apply-eisenhower-matrix"
+      ],
+      "kind": "vague",
+      "note": "A clarifying question first is also right."
+    },
+    {
+      "prompt": "help me get my life together",
+      "want": [
+        "design-goal-setting-framework",
+        "apply-smart-goals"
+      ],
+      "kind": "vague",
+      "note": "A clarifying question first is also right."
+    },
+    {
+      "prompt": "we need to fix our engineering culture",
+      "want": [
+        "design-team-culture",
+        "apply-talent-density-culture"
+      ],
+      "kind": "vague",
+      "note": "A clarifying question first is also right."
+    },
+    {
+      "prompt": "we're moving to Kubernetes, need monitoring, and the team has never done on-call",
+      "want": [
+        "apply-kubernetes-security",
+        "design-slo",
+        "plan-incident-response",
+        "write-sre-runbook",
+        "design-incident-response"
+      ],
+      "kind": "multi"
+    },
+    {
+      "prompt": "I'm opening a bakery and need prices, a menu, and my first customers",
+      "want": [
+        "design-pricing-strategy",
+        "design-menu-planning"
+      ],
+      "kind": "multi",
+      "accepted": [
+        "design-go-to-market"
+      ],
+      "note": "Accepted after the 2026-11-24 run: design-go-to-market — covers the 'first customers' third of the request."
+    },
+    {
+      "prompt": "I'm giving a conference talk next month and I'm nervous",
+      "want": [
+        "design-presentation-structure",
+        "run-public-speaking-practice-drill",
+        "apply-performance-anxiety-management"
+      ],
+      "kind": "multi"
+    },
+    {
+      "prompt": "review this pull request for security problems",
+      "want": [
+        "review-owasp-checklist",
+        "review-pull-request"
+      ],
+      "kind": "boundary"
+    },
+    {
+      "prompt": "what are the best practices for versioning a public API",
+      "want": [
+        "design-api-versioning-strategy"
+      ],
+      "kind": "discovery"
+    },
+    {
+      "prompt": "set a reliability target for our checkout service",
+      "want": [
+        "design-slo",
+        "design-slo-sla-framework"
+      ],
+      "kind": "boundary"
+    },
+    {
+      "prompt": "what is test-driven development?",
+      "want": [],
+      "kind": "near-miss",
+      "note": "Explanatory: the router passes it through."
+    },
+    {
+      "prompt": "explain how BM25 ranking works",
+      "want": [],
+      "kind": "near-miss",
+      "note": "Explanatory: the router passes it through."
+    },
+    {
+      "prompt": "translate 'good morning' into Spanish",
+      "want": [],
+      "kind": "near-miss"
+    },
+    {
+      "prompt": "what's 15% of 240",
+      "want": [],
+      "kind": "near-miss"
+    },
+    {
+      "prompt": "who wrote Pride and Prejudice",
+      "want": [],
+      "kind": "near-miss"
+    },
+    {
+      "prompt": "just fix the typo in the README, nothing else",
+      "want": [],
+      "kind": "near-miss",
+      "note": "'just [verb]': the router passes it through. Probes the direct-task reminder for false engagement."
+    },
+    {
+      "prompt": "convert this to YAML: {\"a\": 1, \"b\": [2, 3]}",
+      "want": [],
+      "kind": "near-miss"
+    },
+    {
+      "prompt": "show me the last three commits",
+      "want": [],
+      "kind": "near-miss"
+    },
+    {
+      "prompt": "I know TDD well, skip the guidance and just write the test for ParseDate",
+      "want": [],
+      "kind": "near-miss",
+      "note": "'skip guidance': the router passes it through. Probes the direct-task reminder."
+    },
+    {
+      "prompt": "summarize this in one line: grimoire routes requests to best-practice workflows",
+      "want": [],
+      "kind": "near-miss"
+    },
+    {
+      "prompt": "what day of the week was July 4, 1976",
+      "want": [],
+      "kind": "near-miss"
+    },
+    {
+      "prompt": "我们的网站上线后经常宕机，应该怎么办？",
+      "want": [
+        "plan-incident-response",
+        "design-incident-response",
+        "design-deployment-strategy",
+        "design-slo"
+      ],
+      "kind": "non-english",
+      "note": "Chinese: our site keeps going down after launch, what should we do? Accepted after the 2026-11-24 run: apply-five-whys — 'keeps going down' is a recurring failure; five whys targets its root cause.",
+      "accepted": [
+        "apply-five-whys"
+      ]
+    },
+    {
+      "prompt": "¿Cómo puedo dormir mejor por las noches?",
+      "want": [
+        "design-sleep-hygiene-protocol",
+        "diagnose-sleep-issue",
+        "apply-sleep-optimization-protocol"
+      ],
+      "kind": "non-english",
+      "note": "Spanish: how can I sleep better at night?"
+    },
+    {
+      "prompt": "Wie verhandle ich ein höheres Gehalt?",
+      "want": [
+        "negotiate-salary"
+      ],
+      "kind": "non-english",
+      "note": "German: how do I negotiate a higher salary?"
+    }
+  ]
+}

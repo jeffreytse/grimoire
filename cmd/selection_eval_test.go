@@ -25,8 +25,12 @@ import (
 //	GRIMOIRE_DISPLAY_EVAL_MODE=mcp|skills   grimoire mode (default mcp; not both)
 //	GRIMOIRE_DISPLAY_EVAL_MODEL=<m>         pin the model when comparing runs
 //	GRIMOIRE_DISPLAY_EVAL_LIMIT=N           first N cases only
+//	GRIMOIRE_DISPLAY_EVAL_ONLY=2,5,39       only these cases (1-based)
 //	GRIMOIRE_DISPLAY_EVAL_OUT=<dir>         keep transcripts and picks
 //	GRIMOIRE_SOURCE=<package>               evaluate a draft skills package
+//	GRIMOIRE_SELECTION_EVAL_SET=<file>      cases file under testdata (default
+//	                                        hook_eval.json; selection_hard.json
+//	                                        holds the harder cases)
 //
 // A case's picks are, in order: the practice the reply recommends with ★
 // (suggest-best-practice often recommends and waits rather than loading),
@@ -41,18 +45,30 @@ import (
 //   - top-1 accuracy: the first pick is a labeled skill
 //   - hit rate: some pick is a labeled skill
 //   - pick precision: share of all picks that are labeled skills
+//   - clarify rate: routed replies that ask the user one question before
+//     choosing — what the workflows are meant to do when a request is
+//     unclear. They have no pick yet, so they are left out of top-1 and hit
+//     rate and reported on their own; a rising clarify rate is a signal too.
 //
 // Every pick missing from its labels is listed: review each, then either
 // accept it (add it to "want") or count it as a real miss. Labels written
 // for keyword search are often narrower than the set of good practices.
 func TestSelectionEval(t *testing.T) {
+	if dir := os.Getenv("GRIMOIRE_SELECTION_RESCORE"); dir != "" {
+		rescoreSelection(t, dir)
+		return
+	}
 	if os.Getenv("GRIMOIRE_SELECTION_EVAL") == "" {
 		t.Skip("set GRIMOIRE_SELECTION_EVAL=1 to run against Claude Code (uses API credits)")
 	}
 	if _, err := exec.LookPath("claude"); err != nil {
 		t.Skip("claude CLI not on PATH")
 	}
-	raw, err := os.ReadFile(filepath.Join("testdata", "hook_eval.json"))
+	file := "hook_eval.json"
+	if f := os.Getenv("GRIMOIRE_SELECTION_EVAL_SET"); f != "" {
+		file = f
+	}
+	raw, err := os.ReadFile(filepath.Join("testdata", file))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -64,6 +80,15 @@ func TestSelectionEval(t *testing.T) {
 	}
 	if n, err := strconv.Atoi(os.Getenv("GRIMOIRE_DISPLAY_EVAL_LIMIT")); err == nil && n > 0 && n < len(set.Cases) {
 		set.Cases = set.Cases[:n]
+	}
+	if only := os.Getenv("GRIMOIRE_DISPLAY_EVAL_ONLY"); only != "" {
+		var picked []selectionCase
+		for _, f := range strings.Split(only, ",") {
+			if n, err := strconv.Atoi(strings.TrimSpace(f)); err == nil && n >= 1 && n <= len(set.Cases) {
+				picked = append(picked, set.Cases[n-1])
+			}
+		}
+		set.Cases = picked
 	}
 	mode := os.Getenv("GRIMOIRE_DISPLAY_EVAL_MODE")
 	if mode == "" {
@@ -111,22 +136,56 @@ func TestSelectionEval(t *testing.T) {
 type selectionCase struct {
 	Prompt string   `json:"prompt"`
 	Want   []string `json:"want"`
+	// Accepted lists picks judged appropriate after a run, beyond the
+	// original labels (each with its reason in the case's note). Strict
+	// rates use Want only; adjudicated rates count Accepted too.
+	Accepted []string `json:"accepted"`
 }
 
 type selectionResult struct {
-	Case    selectionCase
-	Engaged bool     // loaded or recommended any grimoire skill
-	Picks   []string // ★ recommendation, then loaded non-workflow skills
+	Case      selectionCase
+	Engaged   bool     // loaded or recommended any grimoire skill
+	Picks     []string // ★ recommendation, then loaded non-workflow skills
+	Clarified bool     // routed, no pick yet, and asked the user a question
 }
 
-// workflowSkill reports whether name is one of grimoire's routing and
-// workflow skills (meta), which are not picks.
+// routingSkills are grimoire's routing workflows: they find a practice,
+// they are not one. Other meta skills (install-grimoire, configure-grimoire,
+// explain-best-practice …) are real picks when the request is about them.
+var routingSkills = map[string]bool{
+	"start-best-practice": true, "suggest-best-practice": true,
+	"plan-best-practice-solution": true, "apply-best-practice-tree": true,
+	"analyze-best-practice-problem": true, "review-best-practice-fit": true,
+	"discover-best-practices": true,
+}
+
+// workflowSkill reports whether name is a routing workflow, not a pick.
 func workflowSkill(name string) bool {
-	return strings.Contains(name, "best-practice") || strings.Contains(name, "grimoire")
+	return routingSkills[name]
 }
 
 // starPick matches the practice a reply recommends with ★.
 var starPick = regexp.MustCompile(`★\s*(?:\*\*)?\s*([a-z0-9]+(?:-[a-z0-9]+)+)`)
+
+// stepPick matches a plan step row: ⎿  Step N  skill-name  `domain`.
+var stepPick = regexp.MustCompile("(?m)^⎿\\s+Step\\s+\\d+\\s+\\**([a-z0-9]+(?:-[a-z0-9]+)+)\\**\\s+`[a-z0-9-]+/[a-z0-9-]+`")
+
+// listPick matches a ranked option: "2. **skill-name**" (with or without ★).
+var listPick = regexp.MustCompile(`(?m)^\s*\d+\.\s*(?:★\s*)?\*\*([a-z0-9]+(?:-[a-z0-9]+)+)\*\*`)
+
+// matchPick matches a skill named in a Match/Pick/Recommended row.
+var matchPick = regexp.MustCompile(`(?m)^⎿\s+(?:Match|Pick|Recommended|Recommend)\s+\**([a-z0-9]+(?:-[a-z0-9]+)+)`)
+
+// askedQuestion reports whether a reply ends by asking the user something.
+func askedQuestion(reply string) bool {
+	lines := strings.Split(strings.TrimSpace(reply), "\n")
+	for i := len(lines) - 1; i >= 0 && i >= len(lines)-12; i-- {
+		if strings.Contains(lines[i], "?") {
+			return true
+		}
+	}
+	return false
+}
 
 // blockPick matches a display block header: **skill-name** then its domain.
 var blockPick = regexp.MustCompile("(?m)^\\*\\*([a-z0-9]+(?:-[a-z0-9]+)+)\\*\\*[^\\n]*`[a-z0-9-]+/[a-z0-9-]+`")
@@ -145,12 +204,18 @@ func scoreSelection(c selectionCase, reply string, loaded []string) selectionRes
 		add(m[1])
 		res.Engaged = true
 	}
+	for _, re := range []*regexp.Regexp{matchPick, stepPick, listPick} {
+		for _, m := range re.FindAllStringSubmatch(reply, -1) {
+			add(m[1])
+		}
+	}
 	for _, m := range blockPick.FindAllStringSubmatch(reply, -1) {
 		add(m[1])
 	}
 	for _, n := range loaded {
 		add(n)
 	}
+	res.Clarified = res.Engaged && len(res.Picks) == 0 && askedQuestion(reply)
 	return res
 }
 
@@ -162,6 +227,7 @@ type selectionRates struct {
 	top1K, top1N           int
 	hitK, hitN             int
 	pickK, pickN           int // labeled picks among all picks
+	clarifyK, clarifyN     int // asked a question first, among engaged labeled
 }
 
 func selectionRatesOf(results []selectionResult) selectionRates {
@@ -188,6 +254,11 @@ func selectionRatesOf(results []selectionResult) selectionRates {
 		r.recallN++
 		if res.Engaged {
 			r.recallK++
+			r.clarifyN++
+		}
+		if res.Clarified {
+			r.clarifyK++
+			continue // no pick yet: not a miss, not a hit
 		}
 		r.top1N++
 		r.hitN++
@@ -210,7 +281,41 @@ func selectionRatesOf(results []selectionResult) selectionRates {
 }
 
 func logSelection(t *testing.T, mode string, results []selectionResult) {
-	r := selectionRatesOf(results)
+	strict := selectionRatesOf(results)
+	adjudicated := make([]selectionResult, len(results))
+	for i, res := range results {
+		res.Case.Want = append(append([]string{}, res.Case.Want...), res.Case.Accepted...)
+		adjudicated[i] = res
+	}
+	adj := selectionRatesOf(adjudicated)
+	for _, row := range []struct {
+		name string
+		k, n int
+	}{
+		{"top-1 adjudicated", adj.top1K, adj.top1N},
+		{"hit adjudicated", adj.hitK, adj.hitN},
+		{"pick prec. adjud.", adj.pickK, adj.pickN},
+	} {
+		if row.n > 0 {
+			lo, hi := wilson(row.k, row.n)
+			t.Logf("%-6s %-18s %3d/%-3d %5.1f%%  95%% CI %5.1f–%5.1f%%", mode, row.name, row.k, row.n,
+				100*float64(row.k)/float64(row.n), 100*lo, 100*hi)
+		}
+	}
+	for _, res := range adjudicated {
+		if len(res.Case.Want) == 0 || len(res.Picks) == 0 {
+			continue
+		}
+		first := res.Picks[0]
+		ok := false
+		for _, w := range res.Case.Want {
+			ok = ok || w == first
+		}
+		if !ok {
+			t.Logf("TOP1-MISS %q → %s", res.Case.Prompt, first)
+		}
+	}
+	r := strict
 	for _, row := range []struct {
 		name string
 		k, n int
@@ -221,6 +326,7 @@ func logSelection(t *testing.T, mode string, results []selectionResult) {
 		{"top-1 accuracy", r.top1K, r.top1N},
 		{"hit rate", r.hitK, r.hitN},
 		{"pick precision", r.pickK, r.pickN},
+		{"clarify rate", r.clarifyK, r.clarifyN},
 	} {
 		if row.n == 0 {
 			continue
@@ -336,10 +442,29 @@ func TestScoreSelection(t *testing.T) {
 	})
 	want := selectionRates{
 		recallK: 2, recallN: 3, precisionK: 2, precisionN: 3, accuracyK: 3, accuracyN: 5,
-		top1K: 1, top1N: 3, hitK: 2, hitN: 3, pickK: 2, pickN: 3,
+		top1K: 1, top1N: 3, hitK: 2, hitN: 3, pickK: 2, pickN: 3, clarifyN: 2,
 	}
 	if rates != want {
 		t.Errorf("rates = %+v\nwant    %+v", rates, want)
+	}
+	asked := scoreSelection(launch, "start-best-practice ▸ suggest-best-practice  `meta/routing` — x\n\nWhat is weighing on you most?", nil)
+	if !asked.Clarified || len(asked.Picks) != 0 {
+		t.Errorf("clarifying reply: %+v", asked)
+	}
+	matched := scoreSelection(launch, "**suggest-best-practice**  `meta/discovery`\n⎿  Match  apply-premortem  `business/strategy`", nil)
+	if strings.Join(matched.Picks, ",") != "apply-premortem" {
+		t.Errorf("match row pick: %+v", matched)
+	}
+	if r := selectionRatesOf([]selectionResult{asked}); r.clarifyK != 1 || r.top1N != 0 || r.recallK != 1 {
+		t.Errorf("clarified rates: %+v", r)
+	}
+	plan := "**plan-best-practice-solution**  `meta/planning`\n⎿  Step 1  design-slo  `engineering/reliability`: x\n⎿  Step 2  write-sre-runbook  `engineering/reliability`: y"
+	if r := scoreSelection(launch, plan, nil); strings.Join(r.Picks, ",") != "design-slo,write-sre-runbook" {
+		t.Errorf("plan step picks: %+v", r.Picks)
+	}
+	ranked := "1. ★ **apply-five-whys**: a\n2. **plan-incident-response**: b"
+	if r := scoreSelection(launch, ranked, nil); strings.Join(r.Picks, ",") != "apply-five-whys,plan-incident-response" {
+		t.Errorf("ranked picks: %+v", r.Picks)
 	}
 	if lo, hi := wilson(11, 12); lo < 0.64 || lo > 0.65 || hi < 0.98 || hi > 0.99 {
 		t.Errorf("wilson(11,12) = %.3f–%.3f", lo, hi)
@@ -359,4 +484,65 @@ func TestLoadedSkills(t *testing.T) {
 			t.Errorf("%s %s: %q, want %q", c.tool, c.input, got, c.want)
 		}
 	}
+}
+
+// rescoreSelection re-applies the current scorer and labels to transcripts a
+// run saved (GRIMOIRE_DISPLAY_EVAL_OUT), free of API cost:
+//
+//	GRIMOIRE_SELECTION_RESCORE=<dir> [GRIMOIRE_SELECTION_EVAL_SET=…] go test ./cmd -run TestSelectionEval -v
+//
+// Loaded skills are not in the transcript; the picks the run recorded stand
+// in for them.
+func rescoreSelection(t *testing.T, dir string) {
+	file := "hook_eval.json"
+	if f := os.Getenv("GRIMOIRE_SELECTION_EVAL_SET"); f != "" {
+		file = f
+	}
+	raw, err := os.ReadFile(filepath.Join("testdata", file))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var set struct {
+		Cases []selectionCase `json:"cases"`
+	}
+	if err := json.Unmarshal(raw, &set); err != nil {
+		t.Fatal(err)
+	}
+	labels := map[string]selectionCase{}
+	for _, c := range set.Cases {
+		labels[c.Prompt] = c
+	}
+	files, _ := filepath.Glob(filepath.Join(dir, "selection-*.md"))
+	var results []selectionResult
+	mode := "rescore"
+	for _, f := range files {
+		b, err := os.ReadFile(f)
+		if err != nil {
+			continue
+		}
+		head, body, _ := strings.Cut(string(b), "\n\n")
+		fields := map[string]string{}
+		for _, line := range strings.Split(head, "\n") {
+			if k, v, ok := strings.Cut(line, ": "); ok {
+				fields[k] = v
+			}
+		}
+		c, ok := labels[fields["prompt"]]
+		if !ok {
+			continue
+		}
+		mode = fields["mode"]
+		var loaded []string
+		for _, p := range strings.Split(fields["picks"], ", ") {
+			if p = strings.TrimSpace(p); p != "" {
+				loaded = append(loaded, p)
+			}
+		}
+		if fields["engaged"] == "true" && len(loaded) == 0 {
+			loaded = []string{"start-best-practice"} // engaged without a recorded pick
+		}
+		results = append(results, scoreSelection(c, body, loaded))
+	}
+	logSelection(t, mode, results)
+	t.Logf("%s rescored=%d from %s", mode, len(results), dir)
 }

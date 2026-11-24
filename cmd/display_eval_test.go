@@ -15,6 +15,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/jeffreytse/grimoire/internal/agent"
 	"github.com/jeffreytse/grimoire/internal/skills"
 )
 
@@ -202,7 +203,8 @@ func evalRunner(t *testing.T, dir, bin, mode string) (evalResultRun, error) {
 				"UserPromptSubmit": hook("hook prompt"),
 				"PostToolUse":      skillUsed,
 			},
-			"permissions": map[string]any{"allow": []string{"mcp__grimoire__grimoire_search_skills", "mcp__grimoire__grimoire_get_skill", "mcp__grimoire__grimoire_list_skills", "mcp__grimoire__grimoire_context", "mcp__grimoire__grimoire_info"}},
+			// The same tools `grimoire mcp install` pre-approves.
+			"permissions": map[string]any{"allow": agent.ToolAllowRules("claude")},
 		})
 		writeJSON(t, mcpConfig, map[string]any{"mcpServers": map[string]any{"grimoire": map[string]any{"command": bin, "args": []string{"mcp", "serve"}}}})
 		workBySession := map[string]string{} // a resumed session needs its own cwd
@@ -415,7 +417,9 @@ func saveTranscript(t *testing.T, mode string, n int, level, prompt string, text
 
 // displayMarker matches grimoire's display: a decision line or a block header
 // (bold skill name followed by a domain code span).
-var displayMarker = regexp.MustCompile("(?m)grimoire ▸|^\\*\\*[a-z0-9-]+\\*\\*[^\\n]*`[a-z0-9-]+/[a-z0-9-]+`")
+// The route line is plain text under the Display spec (start-best-practice ▸
+// workflow), so it is matched on its own, not only through bold headers.
+var displayMarker = regexp.MustCompile("(?m)grimoire ▸|^\\s*start-best-practice ▸|^\\*\\*[a-z0-9-]+\\*\\*[^\\n]*`[a-z0-9-]+/[a-z0-9-]+`")
 
 // stepCounter matches a plan step's position, "step 2 of 4".
 var stepCounter = regexp.MustCompile(`(?i)\bstep \d+ of \d+\b`)
@@ -560,6 +564,7 @@ func TestScoreDisplay(t *testing.T) {
 		{"block header", block, "brief", true, map[string]bool{"shown": true, "clean": true, "hierarchy": false}},
 		{"plain row labels", "**apply-premortem**  `business/strategy`\n⎿  Top risk  DB pool", "brief", true, map[string]bool{"shown": true, "clean": true, "hierarchy": true}},
 		{"routed but silent", "Here is a plan.", "brief", true, map[string]bool{"shown": false, "clean": true}},
+		{"plain route line only", "start-best-practice ▸ suggest-best-practice  `meta/routing` — x\n\nWhat matters most?", "brief", true, map[string]bool{"shown": true, "clean": true, "hierarchy": true}},
 		{"no route stays silent", "Canberra.", "brief", false, map[string]bool{"silent": true, "clean": true}},
 		{"off but shown", decision, "off", true, map[string]bool{"silent": false, "clean": true, "hierarchy": true}},
 		{"prefixed prose", prose, "brief", true, map[string]bool{"shown": true, "clean": false, "hierarchy": true}},

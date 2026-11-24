@@ -1,0 +1,51 @@
+{
+  "_doc": "Meta-workflow routing: each prompt names the workflow(s) start-best-practice's table routes it to.",
+  "cases": [
+    {
+      "prompt": "My product is losing users and I don't know why",
+      "workflow": [
+        "apply-best-practice-tree",
+        "suggest-best-practice",
+        "analyze-best-practice-problem"
+      ],
+      "note": "Opaque problem: the router's tree row; suggest/analyze are acceptable entry points."
+    },
+    {
+      "prompt": "what are the best practices for API design?",
+      "workflow": [
+        "discover-best-practices"
+      ],
+      "note": "'best practices for X' routes to discovery."
+    },
+    {
+      "prompt": "I follow Google's engineering practices when there's a conflict",
+      "workflow": [
+        "pin-best-practice-preference",
+        "resolve-best-practice-conflict"
+      ],
+      "note": "A stated preference to save."
+    },
+    {
+      "prompt": "review this plan: we deploy straight to prod from main with no staging, tests run nightly",
+      "workflow": [
+        "review-best-practice-fit"
+      ],
+      "note": "Has a plan, wants gap analysis."
+    },
+    {
+      "prompt": "why does test-driven development actually work?",
+      "workflow": [
+        "explain-best-practice"
+      ],
+      "note": "Wants to understand why a practice works."
+    },
+    {
+      "prompt": "I want to actually learn MECE decomposition, not just use it",
+      "workflow": [
+        "learn-best-practice",
+        "teach-best-practice"
+      ],
+      "note": "Wants to internalize a practice."
+    }
+  ]
+}
