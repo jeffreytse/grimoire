@@ -97,6 +97,7 @@ func registerMCPTools(s *server.MCPServer) {
 			mcp.WithDescription("Browse available skills. Without arguments, returns a compact index of domains and subdomains with skill counts. Pass a domain (and optionally a subdomain) to list those skills with name, description, tags, and package. For keyword lookup use grimoire_search_skills; to read a skill use grimoire_get_skill."),
 			mcp.WithString("domain", mcp.Description("Domain to list (e.g. engineering). Omit for the domain index.")),
 			mcp.WithString("subdomain", mcp.Description("Subdomain filter within the domain (e.g. testing)")),
+			mcp.WithString("scope", mcp.Description(`Default: the whole library, declared practices flagged project_standard (only them when the project sets scope "strict"). "project": declared practices only. "all": no preference`)),
 		),
 		toolGrimoireListSkills,
 	)
@@ -120,6 +121,7 @@ func registerMCPTools(s *server.MCPServer) {
 			mcp.WithArray("tags", mcp.WithStringItems(), mcp.Description("Only skills carrying all of these tags")),
 			mcp.WithNumber("top_n", mcp.Description("Maximum results to return (default: 10, max: 100)")),
 			mcp.WithNumber("offset", mcp.Description("Skip this many results, to page past the first top_n (default: 0)")),
+			mcp.WithString("scope", mcp.Description(`Default: the whole library, with this project's declared practices (grimoire.toml) ranked first and flagged project_standard — or only them when the project sets scope "strict". "project": declared practices only (BPDD, compliance). "all": the whole library, no preference`)),
 		),
 		toolGrimoireSearchSkills,
 	)
@@ -435,6 +437,8 @@ type mcpSkillSummary struct {
 	Description string   `json:"description,omitempty"`
 	Tags        []string `json:"tags,omitempty"`
 	Package     string   `json:"package,omitempty"`
+	// ProjectStandard marks one of the project's declared practices.
+	ProjectStandard bool `json:"project_standard,omitempty"`
 }
 
 type mcpDomainIndex struct {
@@ -465,6 +469,8 @@ func toolGrimoireListSkills(_ context.Context, request mcp.CallToolRequest) (*mc
 	if err != nil {
 		return mcp.NewToolResultError(err.Error()), nil
 	}
+	scope := requestScope(request)
+	all = scope.filter(all)
 
 	if domain == "" {
 		byDomain := map[string]*mcpDomainIndex{}
@@ -487,11 +493,11 @@ func toolGrimoireListSkills(_ context.Context, request mcp.CallToolRequest) (*mc
 		for _, name := range order {
 			index = append(index, *byDomain[name])
 		}
-		return jsonResult(map[string]any{
+		return withScopeNote(jsonResult(map[string]any{
 			"total":   len(all),
 			"domains": index,
 			"hint":    "Pass domain (and optional subdomain) to list skills; grimoire_get_skill loads one.",
-		})
+		}))(scope)
 	}
 
 	var out []mcpSkillSummary
@@ -501,11 +507,12 @@ func toolGrimoireListSkills(_ context.Context, request mcp.CallToolRequest) (*mc
 			continue
 		}
 		sum := mcpSkillSummary{
-			Name:        sk.Name,
-			Subdomain:   sk.Subdomain,
-			Description: sk.Description,
-			Tags:        sk.Tags,
-			Package:     sk.Package,
+			Name:            sk.Name,
+			Subdomain:       sk.Subdomain,
+			Description:     sk.Description,
+			Tags:            sk.Tags,
+			Package:         sk.Package,
+			ProjectStandard: scope.isDeclared(sk.Name),
 		}
 		if subdomain == "" {
 			// A whole domain can hold ~300 skills; keep it within typical MCP
@@ -516,13 +523,13 @@ func toolGrimoireListSkills(_ context.Context, request mcp.CallToolRequest) (*mc
 		out = append(out, sum)
 	}
 	if len(out) == 0 {
-		scope := domain
+		where := domain
 		if subdomain != "" {
-			scope += "/" + subdomain
+			where += "/" + subdomain
 		}
-		return mcp.NewToolResultError(fmt.Sprintf("no skills in %q — call grimoire_list_skills without arguments for the index", scope)), nil
+		return mcp.NewToolResultError(fmt.Sprintf("no skills in %q — call grimoire_list_skills without arguments for the index", where)), nil
 	}
-	return jsonResult(out)
+	return withScopeNote(jsonResult(out))(scope)
 }
 
 func toolGrimoireDoctor(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic

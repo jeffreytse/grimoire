@@ -284,6 +284,7 @@ func runMCPInstall(_ *cobra.Command, _ []string) error {
 			return fmt.Errorf("fetching skills: %w", err)
 		}
 	}
+	fetchProjectPackages()
 	fmt.Printf("  %s  skills package ready\n\n", tui.IconOK)
 
 	var failed []string

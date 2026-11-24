@@ -898,6 +898,7 @@ type mcpGetSkillsEntry struct {
 	Content string   `json:"content,omitempty"`
 	Path    string   `json:"path,omitempty"`
 	Related []string `json:"related,omitempty"`
+	Note    string   `json:"note,omitempty"` // e.g. not in this project's grimoire.toml
 	Error   string   `json:"error,omitempty"`
 }
 
@@ -951,7 +952,7 @@ func toolGrimoireGetSkill(_ context.Context, request mcp.CallToolRequest) (*mcp.
 		Name:    name,
 		Content: string(content),
 		Path:    skillPath,
-		Note:    skillNote(),
+		Note:    joinNonEmpty(skillNote(), outOfScopeNote(name, skillPath)),
 		Related: relatedSkills(string(content)),
 	})
 }
@@ -980,7 +981,7 @@ func getSkillsBatch(names []string) *mcp.CallToolResult {
 			out.Skills = append(out.Skills, mcpGetSkillsEntry{Name: name, Error: fmt.Sprintf("reading SKILL.md: %v", err)})
 			continue
 		}
-		out.Skills = append(out.Skills, mcpGetSkillsEntry{Name: name, Content: string(content), Path: skillPath, Related: relatedSkills(string(content))})
+		out.Skills = append(out.Skills, mcpGetSkillsEntry{Name: name, Content: string(content), Path: skillPath, Related: relatedSkills(string(content)), Note: outOfScopeNote(name, skillPath)})
 	}
 	res, err := jsonResult(out)
 	if err != nil {
@@ -1005,7 +1006,9 @@ type mcpSearchSkillsResult struct {
 	Tags        []string `json:"tags,omitempty"`
 	Related     []string `json:"related,omitempty"`
 	Package     string   `json:"package,omitempty"`
-	Score       float64  `json:"score"`
+	// ProjectStandard marks one of the project's declared practices.
+	ProjectStandard bool    `json:"project_standard,omitempty"`
+	Score           float64 `json:"score"`
 }
 
 func toolGrimoireSearchSkills(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
@@ -1043,8 +1046,20 @@ func toolGrimoireSearchSkills(_ context.Context, request mcp.CallToolRequest) (*
 	if err != nil {
 		return mcp.NewToolResultError(err.Error()), nil
 	}
+	scope := requestScope(request)
+	all = scope.filter(all)
 
-	hits := search.HybridSearch(queries, all, offset+topN, opts)
+	// A project's declared practices lead among comparable matches; rank a
+	// deeper pool first so one just below the page can still surface.
+	depth := offset + topN
+	if scope.hasDeclaration() && depth < 50 {
+		depth = 50
+	}
+	hits := search.HybridSearch(queries, all, depth, opts)
+	scope.prefer(hits)
+	if len(hits) > offset+topN {
+		hits = hits[:offset+topN]
+	}
 	if offset >= len(hits) {
 		hits = nil
 	} else {
@@ -1054,16 +1069,17 @@ func toolGrimoireSearchSkills(_ context.Context, request mcp.CallToolRequest) (*
 	for i := range hits {
 		h := &hits[i]
 		out[i] = mcpSearchSkillsResult{
-			Rank:        offset + i + 1,
-			Name:        h.Skill.Name,
-			Description: h.Skill.Description,
-			Domain:      h.Skill.Domain,
-			Subdomain:   h.Skill.Subdomain,
-			Tags:        h.Skill.Tags,
-			Related:     h.Skill.Related,
-			Package:     h.Skill.Package,
-			Score:       h.Score,
+			Rank:            offset + i + 1,
+			Name:            h.Skill.Name,
+			Description:     h.Skill.Description,
+			Domain:          h.Skill.Domain,
+			Subdomain:       h.Skill.Subdomain,
+			Tags:            h.Skill.Tags,
+			Related:         h.Skill.Related,
+			Package:         h.Skill.Package,
+			Score:           h.Score,
+			ProjectStandard: scope.isDeclared(h.Skill.Name),
 		}
 	}
-	return jsonResult(out)
+	return withScopeNote(jsonResult(out))(scope)
 }

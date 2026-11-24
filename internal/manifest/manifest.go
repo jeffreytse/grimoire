@@ -56,6 +56,9 @@ type StandardsSection struct {
 	ReportPath    string
 	StalenessDays int
 	Extends       []string
+	// Scope is "strict" to limit MCP mode to the declared practices; empty
+	// (the default) prefers them while keeping the whole library available.
+	Scope string
 }
 
 // ManifestFile is one parsed grimoire.toml file.
@@ -513,9 +516,12 @@ func parseStandardsInto(m map[string]any, mf *ManifestFile) {
 	if v, ok := anyToInt(m["staleness-days"]); ok && v > 0 {
 		mf.Standards.StalenessDays = v
 	}
+	if v, ok := m["scope"].(string); ok {
+		mf.Standards.Scope = v
+	}
 	for domainName, val := range m {
 		switch domainName {
-		case "profiles", "extends", "report-path", "staleness-days":
+		case "profiles", "extends", "report-path", "staleness-days", "scope":
 			continue
 		}
 		if sub, ok := val.(map[string]any); ok {
@@ -697,6 +703,9 @@ func toRawMap(mf *ManifestFile) map[string]any {
 	}
 	if mf.Standards.ReportPath != "" {
 		standardsMap["report-path"] = mf.Standards.ReportPath
+	}
+	if mf.Standards.Scope != "" {
+		standardsMap["scope"] = mf.Standards.Scope
 	}
 	if mf.Standards.StalenessDays > 0 {
 		standardsMap["staleness-days"] = mf.Standards.StalenessDays

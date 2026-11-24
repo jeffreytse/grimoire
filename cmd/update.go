@@ -39,6 +39,8 @@ func init() {
 }
 
 func runUpdate(cmd *cobra.Command, args []string) error {
+	// The project's own dependency packages too, so MCP mode can serve them.
+	defer fetchProjectPackages()
 	home := skills.OfficialPackageHome()
 	url := skills.GrimoireRepoURL()
 

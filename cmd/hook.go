@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"sort"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -180,7 +181,7 @@ func runHookSession(in io.Reader, out io.Writer) {
 		return
 	}
 	ctx, msg := sessionTurn(l)
-	writeHookOutput(out, input.HookEventName, "SessionStart", ctx, msg)
+	writeHookOutput(out, input.HookEventName, "SessionStart", ctx, joinLines(msg, scopeStatus(l)))
 }
 
 // writeHookOutput prints ctx as the hook's additional context and msg as the
@@ -483,7 +484,12 @@ func suggestedSkillContext(prompt string) (ctx string, names []string) {
 	if err != nil {
 		return "", nil
 	}
-	picks := hookPicks(prompt, all)
+	scope := projectScope(getProjectDir())
+	picks := hookPicks(prompt, scope.filter(all))
+	// The project's declared practices lead the candidates, tagged.
+	sort.SliceStable(picks, func(a, b int) bool {
+		return scope.isDeclared(picks[a].Skill.Name) && !scope.isDeclared(picks[b].Skill.Name)
+	})
 	if len(picks) == 0 {
 		return "", nil
 	}
@@ -497,10 +503,14 @@ func suggestedSkillContext(prompt string) (ctx string, names []string) {
 		if r := []rune(desc); len(r) > hookMaxDesc {
 			desc = string(r[:hookMaxDesc]) + "…"
 		}
+		label := sk.Name
+		if scope.isDeclared(sk.Name) {
+			label += " (project standard)"
+		}
 		if desc == "" {
-			fmt.Fprintf(&b, "- %s\n", sk.Name)
+			fmt.Fprintf(&b, "- %s\n", label)
 		} else {
-			fmt.Fprintf(&b, "- %s — %s\n", sk.Name, desc)
+			fmt.Fprintf(&b, "- %s — %s\n", label, desc)
 		}
 	}
 	return strings.TrimRight(b.String(), "\n"), names

@@ -689,23 +689,7 @@ func runInstallFromManifest(projectDir string) error {
 		allKeys = append(allKeys, key)
 	}
 
-	for _, key := range allKeys {
-		pkgRef := config.ParsePackageRef(key)
-		if pkgRef.IsLocal() || pkgRef.IsOfficialRepoPath() || pkgRef.PackageURL == "" {
-			continue
-		}
-		dest := skills.PackageHome(pkgRef.PackageName)
-		if dirExists(dest) {
-			continue
-		}
-		fmt.Printf("  Cloning %s…\n", pkgRef.PackageName)
-		buf := &bytes.Buffer{}
-		if cloneErr := updateNamedPackage(pkgRef.PackageName, pkgRef.PackageURL, pkgRef.Tag, buf); cloneErr != nil {
-			fmt.Fprintf(os.Stderr, "%s  dependency %q: %v\n", tui.IconWarn, key, cloneErr)
-		} else {
-			os.Stdout.Write(buf.Bytes())
-		}
-	}
+	cloneMissingPackages(allKeys, os.Stdout, os.Stderr)
 
 	// Build PackageRef list and resolve skills
 	refs := make([]config.PackageRef, 0, len(allKeys))

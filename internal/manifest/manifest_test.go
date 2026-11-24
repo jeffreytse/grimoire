@@ -373,3 +373,21 @@ func TestMerge_InlineProfiles(t *testing.T) {
 		t.Errorf("global-only profile missing: got %q", r.InlineProfiles["relaxed"].Description)
 	}
 }
+
+// [standards] scope is a setting, not a domain section, and survives a rewrite.
+func TestStandardsScope(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "grimoire.toml")
+	if err := os.WriteFile(path, []byte("[standards]\nscope = \"strict\"\n\n[standards.engineering]\npractices = [\"apply-tdd\"]\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	mf, err := ParseFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if mf.Standards.Scope != "strict" {
+		t.Errorf("scope = %q", mf.Standards.Scope)
+	}
+	if _, isDomain := mf.DomainSections["scope"]; isDomain {
+		t.Error("scope parsed as a domain section")
+	}
+}
