@@ -43,33 +43,47 @@ func PackageHome(name string) string {
 	return filepath.Join(PackagesRoot(), name)
 }
 
+// ProjectDir returns the project whose grimoire.toml joins the config
+// layers. The cmd package points it at its --project-dir / GRIMOIRE_PROJECT_DIR
+// resolution; the default is GRIMOIRE_PROJECT_DIR, else the working directory.
+var ProjectDir = func() string {
+	if d := os.Getenv("GRIMOIRE_PROJECT_DIR"); d != "" {
+		return d
+	}
+	d, _ := os.Getwd()
+	return d
+}
+
 // AllPackages returns all configured packages, priority-ordered.
 //
-// Uses [[package]] entries from global settings, sorted by priority descending.
-// When no [[package]] is configured, returns an implicit official package entry
+// Libraries come from the system file (an organization's [[package]]
+// list), the user's file, and the project's [dependencies] — unioned by name,
+// user over system, then sorted by priority descending. A project cannot
+// declare [[package]] itself (config.Load strips it): a cloned repository
+// must not add skill sources to your agent; its dependencies are fetched only
+// when you run grimoire update or install. When neither the system nor the
+// user file lists any package, the official package is included implicitly,
 // so fresh installs (no settings file) still work.
 func AllPackages() []PackageEntry {
-	cfg, _ := config.LoadGlobal()
+	defs := mergedPackageDefs()
 
-	if len(cfg.Packages) == 0 {
-		return []PackageEntry{{
+	var all []PackageEntry
+	officialSeen := false
+	if !userOrSystemPackages() {
+		all = append(all, PackageEntry{
 			Name:     OfficialPackageDerivedName(),
 			Home:     OfficialPackageHome(),
 			Priority: 100,
 			Official: true,
-		}}
+		})
+		officialSeen = true
 	}
 
-	sorted := make([]config.PackageDef, len(cfg.Packages))
-	copy(sorted, cfg.Packages)
-	sort.Slice(sorted, func(i, j int) bool {
-		return effectivePriority(sorted[i]) > effectivePriority(sorted[j])
+	sort.SliceStable(defs, func(i, j int) bool {
+		return effectivePriority(defs[i]) > effectivePriority(defs[j])
 	})
-
-	var all []PackageEntry
-	officialSeen := false
-	for _, rd := range sorted {
-		if !rd.Enabled {
+	for _, rd := range defs {
+		if !rd.Enabled || (officialSeen && rd.Name == OfficialPackageDerivedName()) {
 			continue
 		}
 		isOfficial := rd.Official && !officialSeen
@@ -83,7 +97,29 @@ func AllPackages() []PackageEntry {
 			Official: isOfficial,
 		})
 	}
+	sort.SliceStable(all, func(i, j int) bool { return all[i].Priority > all[j].Priority })
 	return all
+}
+
+// mergedPackageDefs returns the packages of all config layers, unioned by
+// name: user and system [[package]], plus the project's dependency packages.
+func mergedPackageDefs() []config.PackageDef {
+	if r, err := config.Load(ProjectDir()); err == nil {
+		return append([]config.PackageDef(nil), r.Packages...)
+	}
+	cfg, _ := config.LoadGlobal()
+	return append([]config.PackageDef(nil), cfg.Packages...)
+}
+
+// userOrSystemPackages reports whether the user or system config lists any
+// package — in which case the official package is included only if listed.
+func userOrSystemPackages() bool {
+	for _, p := range []string{config.GlobalPath(), config.SystemPath()} {
+		if fs, err := config.ParseFile(p); err == nil && len(fs.Packages) > 0 {
+			return true
+		}
+	}
+	return false
 }
 
 // packageDefHome resolves the local clone directory for a PackageDef.

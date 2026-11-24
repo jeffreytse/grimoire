@@ -66,7 +66,7 @@ func callTool(t *testing.T, h func(context.Context, mcp.CallToolRequest) (*mcp.C
 
 // searchNames runs a search and returns the skill names in rank order, which
 // ones are flagged project_standard, and the scope note.
-func searchNames(t *testing.T, args map[string]any) (names []string, standard map[string]bool, note string) {
+func searchNames(t *testing.T, args map[string]any) (names []string, standard map[string]string, note string) {
 	t.Helper()
 	req := mcp.CallToolRequest{}
 	req.Params.Arguments = args
@@ -78,11 +78,11 @@ func searchNames(t *testing.T, args map[string]any) (names []string, standard ma
 	if err := json.Unmarshal([]byte(res.Content[0].(mcp.TextContent).Text), &hits); err != nil {
 		t.Fatal(err)
 	}
-	standard = map[string]bool{}
+	standard = map[string]string{}
 	for i := range hits {
 		names = append(names, hits[i].Name)
-		if hits[i].ProjectStandard {
-			standard[hits[i].Name] = true
+		if hits[i].Standard != "" {
+			standard[hits[i].Name] = hits[i].Standard
 		}
 	}
 	if len(res.Content) > 1 {
@@ -121,17 +121,17 @@ func TestProjectScope_Prefer(t *testing.T) {
 	if len(names) > 0 && names[0] == "write-unit-test" {
 		t.Errorf("irrelevant declared skill outranked the match: %v", names)
 	}
-	if !strings.Contains(note, "Ranked by this project's grimoire.toml: its 1 declared practices come first") || !strings.Contains(note, `scope "project"`) {
+	if !strings.Contains(note, "Ranked by grimoire.toml: 1 declared practices come first") || !strings.Contains(note, `scope "project"`) {
 		t.Errorf("note = %q", note)
 	}
 
 	names, std, _ := searchNames(t, map[string]any{"query": "writing unit tests"})
-	if len(names) == 0 || names[0] != "write-unit-test" || !std["write-unit-test"] {
+	if len(names) == 0 || names[0] != "write-unit-test" || std["write-unit-test"] != "project" {
 		t.Errorf("declared skill not first and flagged: %v %v", names, std)
 	}
 
 	list, _ := callTool(t, toolGrimoireListSkills, map[string]any{"domain": "engineering", "subdomain": "testing"})
-	if !regexp.MustCompile(`"project_standard":\s*true`).MatchString(list) {
+	if !regexp.MustCompile(`"standard":\s*"project"`).MatchString(list) {
 		t.Errorf("list lacks the flag: %s", list)
 	}
 
@@ -183,7 +183,7 @@ func TestProjectScope_Strict(t *testing.T) {
 // worded for the mode. Meta workflows never do.
 func TestProjectScope_GetSkillByName(t *testing.T) {
 	for _, c := range []struct{ toml, want string }{
-		{depsWriteUnitTest, "not one of this project's declared practices"},
+		{depsWriteUnitTest, "not one of the practices declared in grimoire.toml"},
 		{"[standards]\nscope = \"strict\"\n\n" + depsWriteUnitTest, "not in this project's grimoire.toml"},
 	} {
 		scopedProject(t, c.toml)
@@ -224,7 +224,7 @@ func TestScopeStatus_Levels(t *testing.T) {
 	if st := scopeStatus(displayBrief); st != "" {
 		t.Errorf("brief: %q", st)
 	}
-	if st := scopeStatus(displayFull); !strings.Contains(st, "project standards: 1 declared practices (preferred)") {
+	if st := scopeStatus(displayFull); !strings.Contains(st, "standards: 1 declared practices (preferred)") {
 		t.Errorf("full: %q", st)
 	}
 }
@@ -278,4 +278,42 @@ func lowerHookThresholds(t *testing.T) {
 	score, matched, rel := hookMinScore, hookMinMatched, hookRelScore
 	t.Cleanup(func() { hookMinScore, hookMinMatched, hookRelScore = score, matched, rel })
 	hookMinScore, hookMinMatched, hookRelScore = 0, 1, 0
+}
+
+// A declared practice is labeled with its layer — project, user or org (the
+// system file) — and the nearest layer wins; the status line breaks it down.
+func TestProjectScope_StandardSources(t *testing.T) {
+	dir := scopedProject(t, depsWriteUnitTest)
+	user := filepath.Join(os.Getenv("XDG_CONFIG_HOME"), "grimoire", "grimoire.toml")
+	sys := filepath.Join(t.TempDir(), "system.toml")
+	t.Setenv("GRIMOIRE_SYSTEM_CONFIG", sys)
+	for path, body := range map[string]string{
+		user: "[standards.engineering]\npractices = [\"propose-conventional-commit\", \"write-unit-test\"]\n",
+		sys:  "[standards.writing]\npractices = [\"write-readme\"]\n",
+	} {
+		if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(path, []byte(body), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	touchLater(t, filepath.Join(dir, "grimoire.toml"))
+	s := projectScope(dir)
+	for name, want := range map[string]string{
+		"write-unit-test":             "project", // declared by the project and the user: project wins
+		"propose-conventional-commit": "user",
+		"write-readme":                "org",
+	} {
+		if got := s.standard(name); got != want {
+			t.Errorf("%s: %q, want %q", name, got, want)
+		}
+	}
+	if st := scopeStatus(displayFull); !strings.Contains(st, "standards: 3 (project 1 · user 1 · org 1) declared practices") {
+		t.Errorf("status = %q", st)
+	}
+	lowerHookThresholds(t)
+	if ctx, _ := suggestedSkillContext("write unit tests then commit the change"); !strings.Contains(ctx, "propose-conventional-commit (your standard)") {
+		t.Errorf("hook label: %s", ctx)
+	}
 }

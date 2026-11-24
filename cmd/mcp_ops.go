@@ -1006,9 +1006,10 @@ type mcpSearchSkillsResult struct {
 	Tags        []string `json:"tags,omitempty"`
 	Related     []string `json:"related,omitempty"`
 	Package     string   `json:"package,omitempty"`
-	// ProjectStandard marks one of the project's declared practices.
-	ProjectStandard bool    `json:"project_standard,omitempty"`
-	Score           float64 `json:"score"`
+	// Standard says where a declared practice comes from: "project",
+	// "user" or "org" (grimoire.toml layers); empty for the rest.
+	Standard string  `json:"standard,omitempty"`
+	Score    float64 `json:"score"`
 }
 
 func toolGrimoireSearchSkills(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) { //nolint:gocritic
@@ -1069,16 +1070,16 @@ func toolGrimoireSearchSkills(_ context.Context, request mcp.CallToolRequest) (*
 	for i := range hits {
 		h := &hits[i]
 		out[i] = mcpSearchSkillsResult{
-			Rank:            offset + i + 1,
-			Name:            h.Skill.Name,
-			Description:     h.Skill.Description,
-			Domain:          h.Skill.Domain,
-			Subdomain:       h.Skill.Subdomain,
-			Tags:            h.Skill.Tags,
-			Related:         h.Skill.Related,
-			Package:         h.Skill.Package,
-			Score:           h.Score,
-			ProjectStandard: scope.isDeclared(h.Skill.Name),
+			Rank:        offset + i + 1,
+			Name:        h.Skill.Name,
+			Description: h.Skill.Description,
+			Domain:      h.Skill.Domain,
+			Subdomain:   h.Skill.Subdomain,
+			Tags:        h.Skill.Tags,
+			Related:     h.Skill.Related,
+			Package:     h.Skill.Package,
+			Score:       h.Score,
+			Standard:    scope.standard(h.Skill.Name),
 		}
 	}
 	return withScopeNote(jsonResult(out))(scope)

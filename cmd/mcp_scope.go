@@ -27,9 +27,9 @@ import (
 // stays available; with [standards] scope = "strict" it serves only them.
 // grimoire's meta workflows always load by name, since routing needs them.
 type skillScope struct {
-	declared map[string]bool // skill names; nil = the project declares nothing
-	strict   bool            // [standards] scope = "strict": serve only declared skills
-	missing  []string        // dependency packages the project needs but are not on disk
+	declared map[string]string // skill name → where it was declared: "project", "user" or "org"; nil = nothing declared
+	strict   bool              // [standards] scope = "strict": serve only declared skills
+	missing  []string          // dependency packages the project needs but are not on disk
 }
 
 // hasDeclaration reports whether the project declares any practices.
@@ -38,8 +38,17 @@ func (s *skillScope) hasDeclaration() bool { return s != nil && s.declared != ni
 // restricted reports whether the scope hides undeclared skills (strict).
 func (s *skillScope) restricted() bool { return s.hasDeclaration() && s.strict }
 
-// isDeclared reports whether a skill is one of the project's declared practices.
-func (s *skillScope) isDeclared(name string) bool { return s.hasDeclaration() && s.declared[name] }
+// isDeclared reports whether a skill is one of the declared practices.
+func (s *skillScope) isDeclared(name string) bool { return s.standard(name) != "" }
+
+// standard returns where a skill was declared — "project", "user" or "org"
+// (the system config) — or "" when it was not.
+func (s *skillScope) standard(name string) string {
+	if !s.hasDeclaration() {
+		return ""
+	}
+	return s.declared[name]
+}
 
 // filter returns the skills to search, list and offer: all of them, or in
 // strict mode only the declared ones (meta workflows load by name instead;
@@ -50,7 +59,7 @@ func (s *skillScope) filter(all []skills.Skill) []skills.Skill {
 	}
 	out := make([]skills.Skill, 0, len(s.declared))
 	for i := range all {
-		if s.declared[all[i].Name] {
+		if s.declared[all[i].Name] != "" {
 			out = append(out, all[i])
 		}
 	}
@@ -68,7 +77,7 @@ func (s *skillScope) prefer(hits []search.Result) {
 		return
 	}
 	for i := range hits {
-		if s.declared[hits[i].Skill.Name] {
+		if s.declared[hits[i].Skill.Name] != "" {
 			hits[i].Score *= declaredBoost
 		}
 	}
@@ -129,11 +138,15 @@ func projectScope(dir string) *skillScope {
 // merged config, as in resolveInstallPool and preferencesContext.
 func resolveProjectScope(dir string) *skillScope {
 	s := &skillScope{}
-	add := func(name string) {
+	// add records a declared practice; the nearest layer wins its label
+	// (project over user over org).
+	add := func(name, source string) {
 		if s.declared == nil {
-			s.declared = map[string]bool{}
+			s.declared = map[string]string{}
 		}
-		s.declared[name] = true
+		if cur, ok := s.declared[name]; !ok || layerRank[source] < layerRank[cur] {
+			s.declared[name] = source
+		}
 	}
 	if mf, err := manifest.ParseFile(manifest.ProjectPath(dir)); err == nil {
 		s.strict = strings.EqualFold(strings.TrimSpace(mf.Standards.Scope), "strict")
@@ -145,41 +158,70 @@ func resolveProjectScope(dir string) *skillScope {
 		for _, k := range keys {
 			ref := config.ParsePackageRef(k)
 			refs = append(refs, ref)
-			if ref.IsLocal() || ref.IsOfficialRepoPath() || ref.PackageName == "" || hasPackage(regs, ref.PackageName) {
+			if ref.IsLocal() || ref.IsOfficialRepoPath() || ref.PackageName == "" {
 				continue
 			}
-			// A project-only package: serve it from its clone, or report it missing.
-			home := skills.PackageHome(ref.PackageName)
-			if dirExists(home) {
-				regs = append(regs, skills.PackageEntry{Name: ref.PackageName, Home: home})
-			} else {
+			// A dependency package: serve it from its clone, or report it missing.
+			home := packageHome(regs, ref.PackageName)
+			switch {
+			case !dirExists(home):
 				s.missing = append(s.missing, ref.PackageName)
+			case !hasPackage(regs, ref.PackageName):
+				regs = append(regs, skills.PackageEntry{Name: ref.PackageName, Home: home})
 			}
 		}
 		pool, _, _ := skills.SkillsMatchingAnyMeta(refs, regs)
 		for i := range pool {
-			add(pool[i].Name)
+			add(pool[i].Name, "project")
 		}
 		if s.declared == nil {
-			s.declared = map[string]bool{} // declared, though nothing resolved yet
+			s.declared = map[string]string{} // declared, though nothing resolved yet
 		}
 	}
 
 	if r, err := config.Load(dir); err == nil {
 		if len(r.Core.Profiles) > 0 {
 			if eff, err := profiles.ResolveEffectiveSkills(r.Core.Profiles, dir, nil, nil); err == nil {
+				src := configLayer(dir, r.Sources["standards.profiles"])
 				for _, sk := range eff {
-					add(sk.Name)
+					add(sk.Name, src)
 				}
 			}
 		}
 		for _, key := range r.SectionKeys() {
+			src := configLayer(dir, r.Sources[key+".practices"])
 			for _, p := range r.ResolveSection(key).Practices {
-				add(p)
+				add(p, src)
 			}
 		}
 	}
 	return s
+}
+
+// packageHome is where a package's clone lives: its registered home, or the
+// default location for its name.
+func packageHome(regs []skills.PackageEntry, name string) string {
+	for i := range regs {
+		if regs[i].Name == name {
+			return regs[i].Home
+		}
+	}
+	return skills.PackageHome(name)
+}
+
+// layerRank orders declaration sources, nearest first.
+var layerRank = map[string]int{"project": 0, "user": 1, "org": 2}
+
+// configLayer names the config layer a setting came from: the project's
+// grimoire.toml, the user's, or the system (organization) file.
+func configLayer(dir, path string) string {
+	switch filepath.Clean(path) {
+	case filepath.Clean(config.ProjectPath(dir)):
+		return "project"
+	case filepath.Clean(config.SystemPath()):
+		return "org"
+	}
+	return "user"
 }
 
 func hasPackage(regs []skills.PackageEntry, name string) bool {
@@ -214,7 +256,7 @@ func scopeNote(s *skillScope) string {
 	if s.strict {
 		n = fmt.Sprintf("Limited to this project's %d declared practices (grimoire.toml scope \"strict\"; grimoire's workflows still load by name). Pass scope \"all\" to search the whole library.", s.size())
 	} else {
-		n = fmt.Sprintf("Ranked by this project's grimoire.toml: its %d declared practices come first (project_standard). The rest of the library is available; when you recommend a skill that is not a project standard, say so. Pass scope \"project\" for declared practices only.", s.size())
+		n = fmt.Sprintf("Ranked by grimoire.toml: %d declared practices come first, each with its standard (project, user or org). The rest of the library is available; when you recommend a skill without a standard, say so. Pass scope \"project\" for declared practices only.", s.size())
 	}
 	if len(s.missing) > 0 {
 		n += " Missing packages (run grimoire update): " + strings.Join(s.missing, ", ") + "."
@@ -240,13 +282,13 @@ func withScopeNote(res *mcp.CallToolResult, err error) func(*skillScope) (*mcp.C
 // declare. It still loads — it was asked for by name.
 func outOfScopeNote(name, path string) string {
 	s := projectScope(getProjectDir())
-	if !s.hasDeclaration() || s.declared[name] || strings.Contains(filepath.ToSlash(path), "/meta/") {
+	if !s.hasDeclaration() || s.declared[name] != "" || strings.Contains(filepath.ToSlash(path), "/meta/") {
 		return ""
 	}
 	if s.strict {
 		return name + " is not in this project's grimoire.toml; it was loaded because it was asked for by name."
 	}
-	return name + " is not one of this project's declared practices."
+	return name + " is not one of the practices declared in grimoire.toml (project, user or org)."
 }
 
 // scopeStatus is the session status line about the project's declaration:
@@ -262,7 +304,7 @@ func scopeStatus(l displayLevel) string {
 		if s.strict {
 			mode = "strict"
 		}
-		return statusLine(l, fmt.Sprintf("project standards: %d declared practices (%s)", s.size(), mode))
+		return statusLine(l, fmt.Sprintf("standards: %s declared practices (%s)", s.breakdown(), mode))
 	}
 	return ""
 }
@@ -322,4 +364,23 @@ func projectDepKeys(dir string) []string {
 // and grimoire mcp install call it; the MCP server itself never fetches.
 func fetchProjectPackages() {
 	cloneMissingPackages(projectDepKeys(getProjectDir()), os.Stdout, os.Stderr)
+}
+
+// breakdown summarizes the declared practices by source, e.g.
+// "3 (project 2 · user 1)", or just the count when all share one source.
+func (s *skillScope) breakdown() string {
+	counts := map[string]int{}
+	for _, src := range s.declared {
+		counts[src]++
+	}
+	var parts []string
+	for _, src := range []string{"project", "user", "org"} {
+		if n := counts[src]; n > 0 {
+			parts = append(parts, fmt.Sprintf("%s %d", src, n))
+		}
+	}
+	if len(parts) <= 1 {
+		return fmt.Sprint(s.size())
+	}
+	return fmt.Sprintf("%d (%s)", s.size(), strings.Join(parts, " · "))
 }

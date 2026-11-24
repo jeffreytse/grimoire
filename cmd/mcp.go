@@ -97,7 +97,7 @@ func registerMCPTools(s *server.MCPServer) {
 			mcp.WithDescription("Browse available skills. Without arguments, returns a compact index of domains and subdomains with skill counts. Pass a domain (and optionally a subdomain) to list those skills with name, description, tags, and package. For keyword lookup use grimoire_search_skills; to read a skill use grimoire_get_skill."),
 			mcp.WithString("domain", mcp.Description("Domain to list (e.g. engineering). Omit for the domain index.")),
 			mcp.WithString("subdomain", mcp.Description("Subdomain filter within the domain (e.g. testing)")),
-			mcp.WithString("scope", mcp.Description(`Default: the whole library, declared practices flagged project_standard (only them when the project sets scope "strict"). "project": declared practices only. "all": no preference`)),
+			mcp.WithString("scope", mcp.Description(`Default: the whole library, declared practices ranked first with their standard (project, user, org) (only them when the project sets scope "strict"). "project": declared practices only. "all": no preference`)),
 		),
 		toolGrimoireListSkills,
 	)
@@ -437,8 +437,8 @@ type mcpSkillSummary struct {
 	Description string   `json:"description,omitempty"`
 	Tags        []string `json:"tags,omitempty"`
 	Package     string   `json:"package,omitempty"`
-	// ProjectStandard marks one of the project's declared practices.
-	ProjectStandard bool `json:"project_standard,omitempty"`
+	// Standard says where a declared practice comes from: "project", "user" or "org".
+	Standard string `json:"standard,omitempty"`
 }
 
 type mcpDomainIndex struct {
@@ -507,12 +507,12 @@ func toolGrimoireListSkills(_ context.Context, request mcp.CallToolRequest) (*mc
 			continue
 		}
 		sum := mcpSkillSummary{
-			Name:            sk.Name,
-			Subdomain:       sk.Subdomain,
-			Description:     sk.Description,
-			Tags:            sk.Tags,
-			Package:         sk.Package,
-			ProjectStandard: scope.isDeclared(sk.Name),
+			Name:        sk.Name,
+			Subdomain:   sk.Subdomain,
+			Description: sk.Description,
+			Tags:        sk.Tags,
+			Package:     sk.Package,
+			Standard:    scope.standard(sk.Name),
 		}
 		if subdomain == "" {
 			// A whole domain can hold ~300 skills; keep it within typical MCP

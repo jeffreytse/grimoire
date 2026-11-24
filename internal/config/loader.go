@@ -294,7 +294,7 @@ func parseRaw(raw map[string]any) FileConfig {
 			}
 		case "dependencies":
 			if m, ok := val.(map[string]any); ok {
-				fs.Dependencies.Skills = parseStringSlice(m["skills"])
+				fs.Dependencies.Skills = parseDependencyKeys(m)
 			}
 		case "profiles":
 			if m, ok := val.(map[string]any); ok {
@@ -303,6 +303,22 @@ func parseRaw(raw map[string]any) FileConfig {
 		}
 	}
 	return fs
+}
+
+// parseDependencyKeys reads [dependencies] in either form: the manifest's
+// `"<ref>" = "<version>"` keys (what grimoire.toml documents and the manifest
+// package writes), or the older `skills = ["<ref>", ...]` list. Keys come
+// back sorted, after any list entries.
+func parseDependencyKeys(m map[string]any) []string {
+	out := parseStringSlice(m["skills"])
+	var keys []string
+	for k := range m {
+		if k != "skills" {
+			keys = append(keys, k)
+		}
+	}
+	sort.Strings(keys)
+	return append(out, keys...)
 }
 
 // parsePackageDefs parses a [[package]] TOML table array into PackageDef entries.

@@ -460,3 +460,19 @@ func TestDerivePackageName(t *testing.T) {
 		}
 	}
 }
+
+// [dependencies] reads both the manifest's key form and the older list form.
+func TestParseDependencyKeys(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "grimoire.toml")
+	if err := os.WriteFile(path, []byte("[dependencies]\nskills = [\"old/list\"]\n\"acme/team-skills\" = \"*\"\nwrite-unit-test = \"*\"\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	fs, err := ParseFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := []string{"old/list", "acme/team-skills", "write-unit-test"}
+	if strings.Join(fs.Dependencies.Skills, ",") != strings.Join(want, ",") {
+		t.Errorf("deps = %v, want %v", fs.Dependencies.Skills, want)
+	}
+}

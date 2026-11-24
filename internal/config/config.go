@@ -143,10 +143,15 @@ func GlobalPath() string {
 	return filepath.Join(home, ".config", "grimoire", "grimoire.toml")
 }
 
-// SystemPath returns the system-wide config file path.
+// SystemPath returns the system-wide config file path — where an
+// organization lists its libraries and standards for every user.
 // Linux/macOS: /etc/grimoire/grimoire.toml
 // Windows: %PROGRAMDATA%\grimoire\grimoire.toml.
+// GRIMOIRE_SYSTEM_CONFIG overrides it (containers, managed machines, tests).
 func SystemPath() string {
+	if p := os.Getenv("GRIMOIRE_SYSTEM_CONFIG"); p != "" {
+		return p
+	}
 	if runtime.GOOS == "windows" {
 		pd := os.Getenv("PROGRAMDATA")
 		if pd == "" {

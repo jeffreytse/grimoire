@@ -37,8 +37,8 @@ func getProjectDir() string {
 var rootCmd = &cobra.Command{
 	SilenceUsage: true,
 	Use:          "grimoire",
-	Short:        "Grimoire — best practice enforcement for AI assistants",
-	Long: `Grimoire — skills package manager for AI agents.
+	Short:        "Grimoire — makes AI agents follow best practices",
+	Long: `Grimoire makes AI agents follow best practices — a package manager for best-practice skills.
 
   grimoire init          Initialize grimoire.toml in the current project
   grimoire install       Install skills — from grimoire.toml, or add+install a ref in one step
@@ -73,6 +73,8 @@ func Execute() {
 }
 
 func init() {
+	// Config layers (and the packages they list) follow --project-dir too.
+	skills.ProjectDir = getProjectDir
 	rootCmd.PersistentFlags().StringVar(&flagProjectDir, "project-dir", "", "project directory (default: current working directory)")
 	rootCmd.AddCommand(wizardCmd)
 	rootCmd.AddCommand(initCmd)

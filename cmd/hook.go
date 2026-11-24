@@ -499,8 +499,8 @@ func suggestedSkillContext(prompt string) (ctx string, names []string) {
 			desc = string(r[:hookMaxDesc]) + "…"
 		}
 		label := sk.Name
-		if scope.isDeclared(sk.Name) {
-			label += " (project standard)"
+		if src := scope.standard(sk.Name); src != "" {
+			label += " (" + map[string]string{"project": "project", "user": "your", "org": "org"}[src] + " standard)"
 		}
 		if desc == "" {
 			fmt.Fprintf(&b, "- %s\n", label)

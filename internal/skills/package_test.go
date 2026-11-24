@@ -3,6 +3,8 @@ package skills
 import (
 	"os"
 	"path/filepath"
+	"slices"
+	"strings"
 	"testing"
 )
 
@@ -155,5 +157,69 @@ func TestListAllSkillsFromPackages_FrontmatterNameDiffers_SameDirName(t *testing
 	}
 	if skills[0].Package != "official" {
 		t.Errorf("winner = %q, want official", skills[0].Package)
+	}
+}
+
+// Libraries come from the system file (an organization's), the user's, and
+// the project's [dependencies]; a project's own [[package]] is ignored.
+func TestAllPackages_Layers(t *testing.T) {
+	root := t.TempDir()
+	t.Setenv("XDG_CONFIG_HOME", filepath.Join(root, "xdg"))
+	t.Setenv("HOME", filepath.Join(root, "home"))
+	sys := filepath.Join(root, "etc", "grimoire.toml")
+	t.Setenv("GRIMOIRE_SYSTEM_CONFIG", sys)
+	proj := filepath.Join(root, "proj")
+	t.Setenv("GRIMOIRE_PROJECT_DIR", proj)
+	write := func(path, body string) {
+		t.Helper()
+		if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(path, []byte(body), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	pkg := func(name string) string {
+		return "[[package]]\nname = \"" + name + "\"\nurl = \"https://example.com/" + name + ".git\"\n"
+	}
+	names := func() []string {
+		var out []string
+		for _, p := range AllPackages() {
+			out = append(out, p.Name)
+		}
+		return out
+	}
+
+	if got := names(); len(got) != 1 || got[0] != OfficialPackageDerivedName() {
+		t.Fatalf("fresh: %v", got)
+	}
+
+	// A project's [[package]] is ignored; its [dependencies] bring a library.
+	write(filepath.Join(proj, "grimoire.toml"), pkg("sneaky-skills")+"\n[dependencies]\n\"acme/team-skills\" = \"*\"\n")
+	got := names()
+	if slices.Contains(got, "sneaky-skills") {
+		t.Errorf("project [[package]] honored: %v", got)
+	}
+	if !slices.ContainsFunc(got, func(n string) bool { return strings.Contains(n, "acme/team-skills") }) || !slices.Contains(got, OfficialPackageDerivedName()) {
+		t.Errorf("project dependency library: %v", got)
+	}
+
+	// An organization's library from the system file, a user's from theirs.
+	write(sys, pkg("org-skills"))
+	write(filepath.Join(root, "xdg", "grimoire", "grimoire.toml"), pkg("my-skills"))
+	got = names()
+	for _, want := range []string{"org-skills", "my-skills"} {
+		if !slices.Contains(got, want) {
+			t.Errorf("layers: %v lacks %s", got, want)
+		}
+	}
+	if slices.Contains(got, OfficialPackageDerivedName()) {
+		t.Errorf("official included though user/system list packages: %v", got)
+	}
+
+	// The user wins per name: they can disable a library the organization lists.
+	write(filepath.Join(root, "xdg", "grimoire", "grimoire.toml"), pkg("my-skills")+pkg("org-skills")+"enabled = false\n")
+	if got := names(); slices.Contains(got, "org-skills") {
+		t.Errorf("user could not disable org-skills: %v", got)
 	}
 }
