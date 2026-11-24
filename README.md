@@ -3,14 +3,14 @@
     <img alt="grimoire" src="./assets/banner.svg" width="700">
   </a>
 
-  <p>The world's knowledge is in your AI. The world's practice is not.<br>A modern skills manager for AI agents — install, manage, and enforce best practices the way npm manages packages.</p>
+  <p>The world's knowledge is in your AI. The world's practice is not.<br>Grimoire makes AI agents follow best practices — routed to the right one, applied visibly, enforced in CI.</p>
 
 <br><h1>📖 Grimoire 📖</h1>
 
 </div>
 
 <h4 align="center">
-  The skills package manager for AI agents — with a built-in practices linter.<br>
+  Grimoire makes AI agents follow best practices — a package manager for best-practice skills.<br>
   Declare the practices you require. Install them in one command. Enforce them automatically,<br>
   in CI, on every save, across every domain.
 </h4>
@@ -103,13 +103,91 @@ The model knows SOLID, DDD, Google SRE, and the ABA Model Rules. Without explici
 - 🤖 **Knowing is not enough. Grimoire enforces.** Specific steps, verifiable criteria, repeatable results. Not summaries — verdicts.
 - 🌍 **The world's best practices belong to everyone.** McKinsey charges $1M. Senior lawyers bill $800/hr. The practices they follow are not proprietary. Grimoire makes them free — as executable steps, cited and verified.
 - 🧱 **Every profession. Every AI.** 1000+ skills across 27 domains. Works with Claude Code, Copilot, Codex, Gemini, OpenCode, OpenClaw, Antigravity, Pi, Kimi, OMP, DeepSeek Harness, Grok, Muse, MiniMax, and any agent that reads `~/.agents/skills`.
-- 📦 **Package-managed.** Declare skills in `grimoire.toml`, lock versions in `grimoire.lock`. Reproducible skill sets across machines and teams — like Cargo or npm for best practices.
+- 📦 **Package-managed.** Declare skills in `grimoire.toml` and pin package versions in the ref (`grimoire-core@0.1.0`); `grimoire.lock` records exactly what was installed. Shared skill sets across machines and teams — like Cargo or npm for best practices.
 - 🌐 **Open ecosystem.** Any git repo is a grimoire package. We encourage community packages to follow the [grimoire skill standard](https://github.com/jeffreytse/grimoire-core/blob/main/STANDARD.md) — but it's not required. Pair `grimoire-core` with company-internal skills, community packages, or your own library; all declared in one `grimoire.toml`.
 - 🔬 **Semantic compliance, not syntax checking.** Other tools lint whether your `CLAUDE.md` is valid TOML. Grimoire checks whether your project actually follows the practices it declared — criteria by criteria, domain by domain. `grimoire check` is ESLint for practices. Gate CI with exit codes. Watch for changes with `--live`.
+
+**What grimoire does beyond installing skills:**
+
+| | What it means |
+| --- | --- |
+| **Routes to the right practice** | Every request goes through grimoire's workflows (suggest, plan, tree), which pick the practices that fit and ask when it isn't clear. The model doesn't have to guess which of 1,300+ skills applies. |
+| **Serves the whole library on demand** | MCP mode searches every skill when a task needs it. Agents' own skill listings hold ~8–16k characters, a few percent of the library. |
+| **Shows its decisions** | One `grimoire ▸` line per decision, plans you confirm before they run, choices you can swap. `brief` / `full` / `hidden`. |
+| **Follows your project's standards** | Practices declared in `grimoire.toml` are preferred and labeled, or enforced with `scope = "strict"`. |
+| **Enforces them in CI** | `grimoire check` verifies a project against its declared practices, criterion by criterion (BPDD). |
+| **Quality-gated content** | Official skills follow [STANDARD.md](https://github.com/jeffreytse/grimoire-core/blob/main/STANDARD.md): sourced, adoption evidence, verifiable steps. |
 
 If you've spent 10,000 hours mastering something, your practice belongs here.
 
 → [Read the full philosophy](https://github.com/jeffreytse/grimoire-core/blob/main/PHILOSOPHY.md)
+
+## 🔁 How it works — one task, end to end
+
+The output below is real, from grimoire's display eval (Claude Code, MCP mode, trimmed).
+
+**1. Describe the task.** No skill names, no setup:
+
+```
+❯ plan our move from REST to GraphQL and from Jenkins to GitHub Actions this quarter
+```
+
+**2. grimoire routes it and shows the plan.** One line says what it's doing; the plan names a practice per step, offers a choice where several fit, and waits:
+
+```
+grimoire ▸ planning several skills — two migrations need coordinated practices in order
+
+**Plan** — 5 steps
+⎿  Step 1  write-adr — record why each migration is happening, its scope and the exit criteria
+⎿  Step 2  Jenkins → GitHub Actions — nested plan, 2 skills
+     2a. design-ci-pipeline — move build and test stages over, running both systems side by side
+     2b. design-cicd-pipeline-security — set up secrets, OIDC, least-privilege tokens, pinned actions
+⎿  Step 3  REST → GraphQL — nested plan, 2 skills
+     3a. apply-strangler-fig-pattern — put a GraphQL layer over REST and move clients one at a time
+     3b. design-contract-testing — keep existing consumers working during the cutover
+⎿  Step 4  release safety — choose one
+     4a. apply-feature-toggles — move each client to GraphQL behind a flag ★ recommended
+     4b. design-deployment-strategy — canary or blue-green at the service level
+⎿  Step 5  apply-premortem — find what's likely to sink two migrations in one quarter
+Apply this plan? Reply "yes", or pick another choice (e.g. "4b"). Steps that change files or run commands ask first.
+```
+
+**3. You decide; the agent applies each practice.** Reply "yes", or swap a choice ("4b"). Each step runs as its practice says, and you can see where you are:
+
+```
+**design-ci-pipeline** — step 2a of 5
+⎿  Approach  Run Jenkins and Actions on the same commits, compare results, then cut over job by job
+```
+
+**4. Make it the team's standard, and check it in CI.** Declare the practices your project follows. The assistant then prefers them for everyone on the team, and `grimoire check` verifies the work against them:
+
+```toml
+# grimoire.toml
+[standards.engineering]
+practices = ["apply-strangler-fig-pattern", "design-contract-testing"]
+```
+
+```bash
+grimoire check --ci    # fails the build when declared practices aren't followed
+```
+
+That's the whole loop: **ask → routed and planned → applied visibly → verified.** Everything else (packages, profiles, display levels, skills mode) is detail you can pick up later.
+
+**The same loop in any field.** grimoire-core covers 26 domains, from engineering and law to finance, health and parenting. When one practice clearly fits, grimoire applies it directly, with no plan to confirm:
+
+```
+❯ my partner and I want to retire early — how much do we need, and how do we get there?
+
+grimoire ▸ finding a practice for early-retirement planning — goal stated, no approach yet
+
+**calculate-fire-number**
+⎿  Goal  portfolio size that funds your spending indefinitely, and how long it takes to get there
+⎿  Note  I don't know your country yet, so I haven't looked up current tax, healthcare or pension rules
+
+FIRE number = annual retirement spending ÷ safe withdrawal rate (SWR) …
+```
+
+It works the same way in Claude Desktop: `grimoire mcp install --target claude-desktop`, with no terminal agent needed.
 
 ## 📦 Skills as Packages
 
@@ -249,45 +327,129 @@ go install github.com/jeffreytse/grimoire@latest
 **Then run the interactive wizard (all platforms):**
 
 ```bash
-grimoire wizard    # guided setup: registry, domains, agents — no config editing required
+grimoire wizard    # guided setup: MCP or skills mode, agents, domains — no config editing required
 ```
 
-Or set up manually:
+**Which mode?** Use **MCP mode** for every agent that supports it. grimoire-core has over 1,300 skills, and agents load only a small listing of skill descriptions — about 8,000–16,000 characters in Claude Code and Codex, against ~320,000 for the whole library. In skills mode most skills are therefore invisible to the agent's own skill discovery. MCP mode serves the whole library on demand through search, with no listing limit. Use **skills mode** for agents without MCP support (OpenClaw, DeepSeek Harness, Grok, Muse, MiniMax, generic `agent`), or to link a small curated subset — about 30 skills fit Claude Code's or Codex's listing; even one subdomain such as `engineering/development` (44 skills) does not.
+
+**MCP mode (recommended) — the whole library on demand, nothing copied into your agent:**
 
 ```bash
-grimoire update                              # fetch the official skill library
-grimoire install                             # install to all detected AI agents
-```
-
-Auto-detects every supported agent on your `PATH` (see [Agent Support](#-agent-support)).
-
-**MCP mode — skills on demand, nothing copied into your agent:**
-
-```bash
-grimoire mcp install                      # Claude Code: register the server, add the CLAUDE.md instruction + prompt hook
+grimoire mcp install                      # Claude Code: register the server, add the CLAUDE.md instruction, hooks + status line badge
 grimoire mcp install --target all         # every supported agent on your PATH
 grimoire mcp install --target codex,gemini
 grimoire mcp install --scope project      # this repo only (commit the files to share)
 grimoire mcp uninstall --target all       # undo
 ```
 
-| Agent | Scopes | Server registered via | Instruction written to | Prompt hook |
+**Skills mode — link skills into the agent** (agents without MCP, or a subset):
+
+```bash
+grimoire update                              # fetch the official skill library
+grimoire install --domain engineering --subdomain testing   # link a small subset to all detected AI agents
+grimoire install                             # link everything declared in grimoire.toml
+```
+
+Skills mode auto-detects every supported agent on your `PATH` (see [Agent Support](#-agent-support)). When the skills you link exceed an agent's listing budget, `grimoire install` says how many the agent will actually see and suggests MCP mode or a smaller `--domain`/`--subdomain`; `grimoire doctor` reports the same for existing installs.
+
+MCP mode, per agent:
+
+| Agent | Scopes | Server registered via | Instruction written to | Hooks |
 | --- | --- | --- | --- | --- |
-| Claude Code | user, project | `claude mcp add` | `~/.claude/CLAUDE.md` / `./CLAUDE.md` | `UserPromptSubmit` in `.claude/settings.json` |
-| Codex | user | `codex mcp add` | `~/.codex/AGENTS.md` | `UserPromptSubmit` in `~/.codex/hooks.json` (trust it in `/hooks`) |
-| Gemini CLI | user, project | `gemini mcp add` | `~/.gemini/GEMINI.md` / `./GEMINI.md` | `BeforeAgent` in `.gemini/settings.json` |
+| Claude Code | user, project | `claude mcp add` | `~/.claude/CLAUDE.md` / `./CLAUDE.md` | `SessionStart` + `UserPromptSubmit` in `.claude/settings.json` |
+| Codex | user | `codex mcp add` | `~/.codex/AGENTS.md` | `SessionStart` + `UserPromptSubmit` in `~/.codex/hooks.json` (trust them in `/hooks`) |
+| Gemini CLI | user, project | `gemini mcp add` | `~/.gemini/GEMINI.md` / `./GEMINI.md` | `SessionStart` + `BeforeAgent` in `.gemini/settings.json` |
 | GitHub Copilot CLI | user | `copilot mcp add` | `~/.copilot/copilot-instructions.md` | — (Copilot drops command-hook output for `userPromptSubmitted`) |
 | OpenCode | user, project | `opencode.json` (`mcp.grimoire`) | `~/.config/opencode/AGENTS.md` / `./AGENTS.md` | plugin `plugins/grimoire.js` (`chat.message` + system transform) |
 | Pi | user, project | `~/.pi/agent/mcp.json` / `.pi/mcp.json` | `~/.pi/agent/AGENTS.md` / `./AGENTS.md` | — |
 | Kimi Code | user, project | `~/.kimi-code/mcp.json` / `.kimi-code/mcp.json` | `~/.kimi-code/AGENTS.md` / `./AGENTS.md` | — |
 | OMP | user, project | `~/.omp/agent/mcp.json` / `.omp/mcp.json` | `~/.omp/agent/AGENTS.md` / `.omp/AGENTS.md` | — |
 | Antigravity | user | `~/.gemini/config/mcp_config.json` | injected by the `SessionStart` hook (agy has no user-level instruction file) | `PreInvocation` in `~/.gemini/config/hooks.json`, once per new prompt |
+| Claude Desktop | user | `claude_desktop_config.json` (written with an absolute path; desktop apps don't use your shell's PATH) | none: grimoire's server instructions say when to use it | none; not included in `--target all`, name it: `--target claude-desktop` |
+
+**Project grimoire.toml in MCP mode:** a project's declared practices — its `[dependencies]` skills, its `[standards] profiles` and its pinned `[standards.<domain>] practices` — are *preferred*, not a fence. The whole library stays available for solving problems, while declared practices rank first among comparable matches, are labeled with where they were declared (`standard`: `project`, `user` or `org`; nearest wins), and get the ★ when they fit; a recommended skill outside them is labeled `not a declared standard`. BPDD and compliance workflows (`apply-best-practice-driven-development`, `check-best-practice-compliance`) search with `scope: "project"`, so only declared practices are binding there. Teams that want a hard boundary set `[standards] scope = "strict"`: MCP mode then serves only declared practices (any skill named with `grimoire:<name>` still loads, with a note). The server reads `grimoire.toml` from the project the agent runs in and never fetches; `grimoire update` or `grimoire mcp install` in the project clones dependency packages it lacks, and until then the session shows `grimoire ▸ this project needs <package> — run grimoire update`.
 
 **Run a specific skill:** type `/grimoire:skill <skill-name>` (Claude Code slash command), or write `grimoire:<skill-name> [task]` in any agent, e.g. `grimoire:propose-conventional-commit`. A mistyped name comes back with "did you mean" suggestions.
 
-**Prompt hook (all agents except Copilot CLI):** the instruction line is advisory — the model decides whether a task "needs" a skill and often skips the lookup. `grimoire mcp install` therefore also adds a prompt hook (`grimoire hook prompt`) where the agent supports one — see the table. The hook runs on every prompt (~0.1 s): `grimoire:<name>` inlines that skill; otherwise the best-matching skills are listed for the model to load, and small talk gets nothing. Longer prompts (25+ words) also get a pointer to `start-best-practice`, so multi-step problems reach the plan and tree workflows instead of a single skill. Codex runs new hooks only after you trust them in `/hooks`; agents without a hook rely on the instruction line alone. Other hooks (e.g. caveman) are kept; `--no-hook` skips it, `grimoire mcp uninstall` removes it.
+**Hooks (all agents except Copilot CLI):** the instruction line is advisory — the model decides whether a task "needs" a skill and often skips the lookup. `grimoire mcp install` therefore also adds hooks where the agent supports them (see the table), so MCP mode routes like skills mode:
 
-**Tool approvals (Claude Code, Antigravity):** install also adds grimoire's read-only skill tools (`grimoire_search_skills`, `grimoire_get_skill`, `grimoire_list_skills`) to `permissions.allow`, so a skill lookup never stops on an approval prompt — Antigravity's headless mode refuses unapproved MCP tools outright. Tools that change config or packages still ask. `--no-allow` skips it; uninstall removes exactly those entries. Matching is lexical (BM25) — measure it against your packages with `GRIMOIRE_HOOK_EVAL=1 go test ./cmd -run TestHookEval -v`.
+- **Session hook** (`grimoire hook session`, Claude Code / Codex / Gemini CLI `SessionStart`): injects the `start-best-practice` routing table and rules once per session (and again after `/clear` or compaction where the agent fires it). Every request is then routed to the workflow that fits — `suggest-best-practice`, `plan-best-practice-solution`, `apply-best-practice-tree`, … — which ask clarifying questions when needed and load the specific best practices.
+- **Prompt hook** (`grimoire hook prompt`, ~0.1 s): on every new request, a one-line reminder to apply that routing, plus keyword-matched (BM25) skills offered as unverified candidates. `grimoire:<name>` inlines that skill instead; small talk ("ok", "thanks") and slash commands get nothing.
+
+Codex runs new hooks only after you trust them in `/hooks`; agents without hooks rely on the instruction line alone. Other hooks (e.g. caveman) are kept; `--no-hook` skips them, `grimoire mcp uninstall` removes them.
+
+**Turn grimoire on or off:** active (the default), grimoire routes every request through its workflows; inactive, it stays out of the way — no router, no routing — while a skill you name with `grimoire:<name>` still loads and nothing is uninstalled.
+
+| Scope | Off | On |
+| --- | --- | --- |
+| All sessions | `grimoire disable` | `grimoire enable` |
+| This session | say "grimoire off" (or "disable grimoire", "turn off grimoire") | say "grimoire on" |
+| One run (CI, scripts) | `GRIMOIRE_ACTIVE=0` | `GRIMOIRE_ACTIVE=1` |
+
+The first of these that is set wins: `GRIMOIRE_ACTIVE`, then the session, then `core.active` (written by `grimoire enable`/`disable`). A session toggle is confirmed in the assistant's own one-line reply (and the badge) — not as a hook warning — and does not touch other sessions. While off, the Claude Code badge reads `[GRIMOIRE off]`, and a new session says `grimoire ▸ off … — say "grimoire on" to resume` — at most once a day at the `brief` level, since agents show hook messages as warnings and repeating a deliberate choice would nag. Agents without hooks (Copilot CLI, Pi, Kimi, OMP) follow `grimoire disable` through the MCP server; the in-session phrases need a prompt hook. This is separate from the display level: `core.trace hidden` hides grimoire's notes but it still routes.
+
+**What you see:** grimoire shows its work so you can follow its decisions and redirect it. How much is a level — `grimoire config set core.trace <level>`, or `GRIMOIRE_TRACE=<level>` for one run:
+
+| Level | Shows |
+| --- | --- |
+| `brief` (default) | the decisions: route, plan (confirmed once), each skill as it's applied, outcome |
+| `full` | brief plus the evidence: workflow names, each skill's domain (copied from the package, never guessed), candidate skills and why, 🔴/🟡/⚪ severity, ⚠ risks, the applied skill's _Source_ |
+| `hidden` | no notes — grimoire still routes and applies silently (`off` is accepted as an alias) |
+
+In a session, say any of these (no setup needed):
+
+| Say | Effect |
+| --- | --- |
+| "grimoire help" | lists these controls |
+| "show grimoire details" | `full` level |
+| "quiet grimoire" | `hidden` level — notes hidden, routing continues |
+| "plain grimoire" | words instead of glyphs (screen readers) |
+| "skip grimoire" | skip it for this request |
+| "grimoire off" / "grimoire on" | stop or resume routing in this session |
+
+The first time grimoire acts on a request after install, a one-time tip points to "grimoire help", the one phrase to remember — it lists the rest any time. The format is defined once, in `start-best-practice`'s Display section, as exact templates; grimoire's hooks and MCP server only say which level is on (skill packages without that section get a one-line-per-decision fallback). A question, a choice or "Apply this plan?" ends the assistant's reply — nothing runs until you answer:
+
+```
+❯ We're launching our SaaS in 48 hours. I'm terrified something will break.
+
+⏺ grimoire ▸ planning several skills — launch readiness needs them in order
+
+  **Plan** — 2 steps
+  ⎿  Step 1  apply-premortem — find the likeliest failures first
+  ⎿  Step 2  plan-incident-response — decide who acts when one happens
+  Apply this plan? Steps that change files or run commands ask first.
+```
+
+At `full`, the route line also names the workflow (`· plan-best-practice-solution`). When grimoire offers choices, there are at most 4, numbered, with one `★ recommended` (at `full`, a `⎿  Why ★` row says why), and the question is `Reply 1–N, "all", or "skip".` Skills are always named by id — the name you can type back as `grimoire:<id>`. A plan step where several skills fit shows them as lettered choices (`2a`, `2b`, at most 3, one ★); reply "yes" to take every ★, or name another ("2b").
+
+Three levels keep grimoire's process below the answer: the answer is primary, a skill block's name is the only bold, and route lines, row labels and domains are plain. Structure uses one text-glyph family (`▸ ⎿ → ✓ ★ ⚠`); colored emoji appear only for severity (🔴 high, 🟡 medium, ⚪ low — always with the word). For screen readers, `grimoire config set core.display-style plain` (also on whenever `NO_COLOR` is set; `GRIMOIRE_DISPLAY_STYLE` for one run; say "plain grimoire" for one session) asks for words instead of glyphs — `Step 1:`, `Risk (high):`, `Done:`.
+
+Plan steps show where you are (`**design-slo** — step 2 of 4`), and when no installed skill fits, grimoire says so with the need it searched for and how to add coverage (`⎿  No match  no installed skill covers "…" — add a package: grimoire package add <repo>`).
+
+The plan is confirmed once; grimoire pauses again only before a step with side effects (files, commands, external actions), or after every step if you ask to go step by step.
+
+**Status lines** (hook `systemMessage` in Claude Code, Codex, Gemini CLI; toasts in OpenCode) state only facts grimoire knows — never a guess about what the model will do. Agents render them as warnings, so they are kept for things worth one:
+- **At `brief`, silent on success.** A routine "ready" would dull real warnings; the badge and the first route line show grimoire is on. Toggles are confirmed by the assistant's reply, not a status line.
+- **On a problem, always** — e.g. `grimoire ▸ no skills package with start-best-practice — run \`grimoire update\``.
+- **When you name a skill** with `grimoire:<name>` — `grimoire ▸ loading skill <name>` (or `unknown skill <ref>`).
+- **At `full`, also the details** — `grimoire ▸ ready · full view — …` and the keyword candidates passed to the model, labeled unverified.
+
+grimoire's MCP tools carry titles ("Load grimoire skill") and read-only hints.
+
+| Agent | Status lines | Display level reaches the model via |
+| --- | --- | --- |
+| Claude Code, Codex, Gemini CLI | hook `systemMessage` (Codex: shown as a warning) | hooks |
+| OpenCode | toast from the grimoire plugin | plugin |
+| Antigravity | — (its hooks have no user-visible output) | hooks |
+| Copilot CLI, Pi, Kimi, OMP | — (no hooks) | server instructions and every `grimoire_get_skill` result |
+
+**Display evals:** `GRIMOIRE_DISPLAY_EVAL=1 go test ./cmd -run TestDisplayEval -v -timeout 60m` runs the labeled prompts in `cmd/testdata/display_eval.json` through headless Claude Code with a freshly built grimoire and scores: shown when routed, silent when not (or off), answer free of grimoire formatting, evidence at `full`, and hierarchy (no bold in ⎿ rows, at most one per header). `GRIMOIRE_DISPLAY_EVAL_MODE=mcp|skills|both` picks the grimoire mode (default `mcp`; `skills` runs a project with linked skills, the skills-mode hooks and the instruction line). It uses API credits; `GRIMOIRE_DISPLAY_EVAL_LIMIT=N` runs the first N cases, `GRIMOIRE_DISPLAY_EVAL_ONLY=21,22` runs chosen cases, cases with a `followup` run a second turn in the same session (scored for `progress`: "step i of N"), `GRIMOIRE_DISPLAY_EVAL_OUT=<dir>` keeps transcripts, `GRIMOIRE_DISPLAY_EVAL_MODEL=<model>` pins the model (do this when comparing runs), and `GRIMOIRE_SOURCE=<package>` evaluates draft skills — as a real copy of the package: skill discovery does not follow symlinked domain directories. Change the display one step at a time and compare against the baseline.
+
+**Skills mode too:** `grimoire install` (skills linked into the agent) adds the same display: a session hook (`grimoire hook skills-session`) and prompt hook (`grimoire hook skills-prompt`) for Claude Code, Codex and Gemini CLI, and in Claude Code a `PostToolUse` hook (`grimoire hook skill-used`, shared with MCP mode) that feeds the per-session status bar badge. `--no-hook`, `--statusline` and `--no-statusline` work as for `grimoire mcp install`; uninstalling the last skill removes only the skills-mode hooks and restores a chained status line. The display format itself lives in `start-best-practice`'s Display section; packages without it fall back to grimoire's built-in rules.
+
+**Status line badge (Claude Code):** install shows a ` GRIMOIRE ` chip in the status line: the book's ink (`#1a0d06`) on grimoire's brand gold (`#c9933a`, from `assets/icon-book.svg`) — 7.0:1 contrast on light and dark terminal themes alike (256-color terminals: black on 173, 7.5:1). `NO_COLOR` or `TERM=dumb` shows plain `[GRIMOIRE]` — `[GRIMOIRE:<workflow> › <skill>]` for the current session's last grimoire skill (recorded by a `PostToolUse` hook on the Skill tool and `grimoire_get_skill`, so concurrent sessions never show each other's skills). Claude Code has one status line, so grimoire only takes an empty one. If another tool already owns it, install leaves it alone and says so; `--statusline` chains it (`grimoire statusline --then '<their command>'`, badge appended after their output), and uninstall restores the original. `--no-statusline` skips the badge.
+
+**Search and retrieve freely (Claude Code, Antigravity):** install pre-approves every grimoire tool that only reads — skill search, retrieval and browsing, plus context, info, status, config and profile reads — so an assistant can look up as much as a task needs without approval prompts; Antigravity's headless mode refuses unapproved MCP tools outright. Tools that change config or packages still ask. `--no-allow` skips it; uninstall removes exactly those entries. `grimoire_search_skills` matches names, tags and descriptions plus each skill's full text (hybrid BM25 with reciprocal rank fusion — on the labeled prompts, hit@10 49→52 of 54 and top-1 39→40 against field-only search), takes several phrasings at once (`queries`), filters by `domain`/`subdomain`/`tags`, and pages with `offset`; results and `grimoire_get_skill` (up to 20 names per call) carry each skill's `related` skills. Matching is lexical — measure it against your packages with `GRIMOIRE_HOOK_EVAL=1 go test ./cmd -run TestHookEval -v`, and the practice the assistant ends up applying with `GRIMOIRE_SELECTION_EVAL=1 go test ./cmd -run TestSelectionEval -v` (API credits).
 
 Re-running is safe: existing registrations and instructions are detected, nothing is duplicated, and an older `start-best-practice` trigger is replaced. Start a new agent session afterwards (in Claude Code, `/mcp` lists grimoire as connected). Gemini keeps MCP servers disabled in folders you haven't trusted. The agent then finds and loads skills through `grimoire_search_skills` and `grimoire_get_skill` instead of preloading every skill into context. Run `grimoire update` to refresh skills. For other MCP clients, `grimoire mcp config --target cursor|windsurf|cline` prints the config snippet.
 
@@ -317,7 +479,7 @@ grimoire version                   # version info with commit and date
 
 ## 🤖 Agent Support
 
-Two ways to install skills into an agent: its **native plugin** command, or the **grimoire CLI**, which links skills into the agent's skills folder and works for every agent below. A third way installs nothing into the agent: **MCP mode** (`grimoire mcp install`) serves skills on demand — see [Install](#️-install) for the agents and files it configures.
+**Recommended: MCP mode** (`grimoire mcp install`) installs nothing into the agent and serves the whole library on demand — see [Install](#️-install) for the agents it supports and why. The two ways below link skills into the agent (skills mode): its **native plugin** command, or the **grimoire CLI**, which works for every agent below. Agents load only a small listing of linked skills, so use them for agents without MCP support or for a small subset.
 
 | Agent | Native plugin install | grimoire CLI |
 | --- | --- | --- |
@@ -407,7 +569,7 @@ language-servers = ["gopls", "grimoire"]
 grimoire wizard
 ```
 
-The wizard walks you through registry selection, domain choice, and agent linking — no manual config editing. It detects your installed AI agents and installs the right skills automatically.
+The wizard asks how agents should get skills (MCP mode first, recommended), then the scope and agents — no manual config editing. It detects your installed AI agents, sets up MCP mode for those that support it, and links skills into the rest.
 
 ---
 
@@ -421,7 +583,7 @@ Claude: Situation matches: write-value-proposition + design-go-to-market + apply
         → Start with your value prop. /write-value-proposition
 ```
 
-Or invoke a skill directly:
+Or invoke a skill directly. In MCP mode, write `grimoire:<skill-name> [task]` in any agent, or `/grimoire:skill <skill-name>` in Claude Code, e.g. `grimoire:suggest-best-practice I need to raise a Series A`. In skills mode, each skill is a slash command:
 
 ```
 /suggest-best-practice     # describe any problem — auto-routes to the right skill
@@ -430,8 +592,6 @@ Or invoke a skill directly:
 /review-saas-contract      # flag dangerous clauses before signing
 /design-training-program   # build a training program
 ```
-
-In MCP mode (`grimoire mcp install`), skills are not agent slash commands — write `grimoire:<skill-name> [task]` in any agent, or `/grimoire:skill <skill-name>` in Claude Code, e.g. `grimoire:suggest-best-practice I need to raise a Series A`.
 
 For CI enforcement, initialize once per project and gate PRs with the `grimoire` CLI:
 
@@ -444,7 +604,7 @@ grimoire check   # exits 0 (pass) or 1 (fail)
 
 ## 🎯 Workflows
 
-> **MCP mode:** skills are not installed as agent slash commands, so run any workflow below as `/grimoire:skill <name>` or `grimoire:<name> [task]` (e.g. `grimoire:suggest-best-practice my team is losing confidence`). When a workflow invokes another skill or scores installed skills, grimoire tells the agent to use `grimoire_get_skill` / `grimoire_search_skills` for that. The instruction line and server instructions route multi-step or unclear problems through `start-best-practice`, and `grimoire_get_skill` takes a `names` list so a plan can load all its skills in one call.
+> **MCP mode:** skills are not installed as agent slash commands, so run any workflow below as `/grimoire:skill <name>` or `grimoire:<name> [task]` (e.g. `grimoire:suggest-best-practice my team is losing confidence`). When a workflow invokes another skill or scores installed skills, grimoire tells the agent to use `grimoire_get_skill` / `grimoire_search_skills` for that. The instruction line, server instructions and session hook route every request through `start-best-practice`, and `grimoire_get_skill` takes a `names` list so a plan can load all its skills in one call.
 
 | Your situation                                                                                                | Start here                                |
 | ------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
@@ -514,7 +674,7 @@ Claude: Situation spans 4 domains. Solution plan:
 
 **Catching gaps before you start → `start-best-practice`**
 
-Before any task begins, `start-best-practice` intercepts, surfaces the relevant practices you should apply, and applies them — so you enter the work already aligned instead of discovering gaps mid-execution. In skills mode the instruction written by `grimoire install` runs it automatically; in MCP mode the prompt hook suggests matching skills instead, and you can route explicitly with `grimoire:start-best-practice`.
+Before any task begins, `start-best-practice` intercepts, surfaces the relevant practices you should apply, and applies them — so you enter the work already aligned instead of discovering gaps mid-execution. In skills mode the instruction written by `grimoire install` runs it automatically; in MCP mode the session hook injects it and the prompt hook re-applies it on every request. You can also route explicitly with `grimoire:start-best-practice`.
 
 ```
 User: I'm about to write performance reviews for my team.
@@ -581,6 +741,19 @@ Claude: Saved to ~/.config/grimoire/grimoire.toml.
 | 3rd      | Global  | `~/.config/grimoire/grimoire.toml` | All projects on this machine                    |
 | 4th      | System  | `/etc/grimoire/grimoire.toml`      | All users on this machine                       |
 
+**What each layer can declare.** Libraries, then the people and teams that use them: an organization lists its libraries and standards in the system file, each user adds their own, and each project adds its standards on top:
+
+| | System (org) | Global (user) | Project |
+| --- | --- | --- | --- |
+| Libraries (`[[package]]`) | ✓ | ✓ (wins per name, e.g. to disable an org library) | — via `[dependencies]` only |
+| `[dependencies]` | ✓ | ✓ | ✓ |
+| Pinned practices `[standards.<domain>] practices` | ✓ | ✓ | ✓ (nearest wins per domain) |
+| `[standards] profiles`, `extends` | ✓ | ✓ | ✓ |
+| `[standards] scope = "strict"` | — | — | ✓ |
+| `[core]` settings | ✓ | ✓ | ✓ except `home` |
+
+A project can't add a skill source with `[[package]]`: a cloned repository must not decide what your agent loads. It names the libraries it needs in `[dependencies]`, which `grimoire update` or `grimoire install` fetch when you run them. Declared practices show which layer they came from: `standard: "project"`, `"user"` or `"org"`. `GRIMOIRE_SYSTEM_CONFIG` moves the system file, for containers and managed machines.
+
 **Configure manually** — edit the settings files directly without going through the AI:
 
 ```toml
@@ -630,6 +803,7 @@ Activate a named set of skills in one line — no list to maintain, no file to c
 
 ```toml
 # grimoire.toml
+[standards]
 profiles = ["oop"]   # activates every installed skill tagged "oop"
 ```
 
@@ -642,11 +816,12 @@ Grimoire resolves the name in this order, first match wins:
 5. `[profiles.<name>]` in `grimoire.toml` — inline definition (no separate file needed)
 6. Tag query — all installed skills where `tags` contains the name
 
-If no file or inline definition exists, the tag query fires automatically. `profiles = ["oop"]` works without creating any file.
+If no file or inline definition exists, the tag query fires automatically. `profiles = ["oop"]` works without creating any file. Profiles go under `[standards]`; a top-level `profiles = [...]` is not read.
 
 **Multiple profiles** — combine paradigms; first entry wins conflicts, duplicates are deduplicated:
 
 ```toml
+[standards]
 profiles = ["clean-architecture", "tdd"]  # clean-architecture wins if both include the same skill
 ```
 
@@ -670,6 +845,7 @@ Commit `.grimoire/profiles/` to share standards across the team. Publish as a gi
 
 ```toml
 # grimoire.toml
+[standards]
 profiles = ["my-team"]
 
 [profiles.my-team]
@@ -844,6 +1020,14 @@ Domains below are from **grimoire-core**, the official package. Community packag
 | [automotive](https://github.com/jeffreytse/grimoire-core/tree/main/skills/automotive/)     | [maintenance](https://github.com/jeffreytse/grimoire-core/tree/main/skills/automotive/maintenance/skills/), [troubleshooting](https://github.com/jeffreytse/grimoire-core/tree/main/skills/automotive/troubleshooting/skills/), [buying](https://github.com/jeffreytse/grimoire-core/tree/main/skills/automotive/buying/skills/), [modifications](https://github.com/jeffreytse/grimoire-core/tree/main/skills/automotive/modifications/skills/), [ev](https://github.com/jeffreytse/grimoire-core/tree/main/skills/automotive/ev/skills/)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 
 ## ❓ FAQ
+
+**How is grimoire different from other skill package managers or agents' plugin marketplaces?**
+
+They distribute skills: find, install, version and share them, and some evaluate them. That's a solved and useful layer, and grimoire does it too. Grimoire's focus is the next step: getting the agent to *apply* the right practice. It routes each request to the practices that fit, serves a 1,300+ skill library on demand without filling the agent's context, shows its decisions so you can redirect them, respects your project's declared standards, and checks compliance in CI. Grimoire's skills also work as plain `SKILL.md` folders, so they install through agents' native plugin commands as well.
+
+**MCP mode or skills mode?**
+
+MCP mode, wherever the agent supports it (Claude Code, Codex, Gemini CLI, Copilot CLI, OpenCode, Pi, Kimi Code, OMP, Antigravity). Agents put every installed skill's name and description into a fixed listing — about 8,000–16,000 characters in Claude Code and Codex — and silently truncate or drop what doesn't fit. grimoire-core's descriptions total ~320,000 characters, so a full skills-mode install leaves the agent able to discover only a few percent of it. MCP mode keeps the listing empty and finds skills by search when a task needs them, and adds grimoire's hooks and display. Skills mode is for agents without MCP support, or a deliberately small subset that fits the listing — about 30 skills.
 
 **Isn't this already in the model's training data?**
 
