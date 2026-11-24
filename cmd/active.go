@@ -155,7 +155,7 @@ func handleToggle(prompt, session string) (ctx, msg string, ok bool) {
 		if on {
 			cmd = "grimoire enable"
 		}
-		return fmt.Sprintf("The user asked to turn grimoire %s for this session, but it could not be saved (%v). Tell them, and that `%s` changes it for all sessions.", onOff(on), err, cmd),
+		return fmt.Sprintf("The user asked to turn grimoire %s for this session, but it could not be saved (%v). Tell them, and that %#q changes it for all sessions.", onOff(on), err, cmd),
 			statusPrefix + "could not change grimoire for this session — " + err.Error(), true
 	}
 	// Confirmed by the model's own one-line acknowledgement (and the badge),
