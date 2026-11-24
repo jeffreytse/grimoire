@@ -51,7 +51,7 @@ var hookMinScore = 9.0
 // "simple" and answering from its own knowledge. In skills mode the
 // instruction runs start-best-practice on every task; this is MCP mode's
 // equivalent.
-const hookRouteReminder = "grimoire: before responding, apply the start-best-practice routing (injected at session start; if it is not in your context, load it with grimoire_get_skill). If it routes to a workflow, follow that skill: it asks clarifying questions when needed and loads the specific best practices. If nothing routes, proceed normally."
+const hookRouteReminder = "grimoire: before responding, apply the start-best-practice routing (injected at session start; if it is not in your context, load it with grimoire_get_skill). Direct tasks route too — write, fix, refactor, test, commit, review — so route first, then do the task with the practice it finds. If it routes to a workflow, follow that skill: it asks clarifying questions when needed and loads the specific best practices. If nothing routes, proceed normally."
 
 // routerSkill is grimoire's entry-point workflow router.
 const routerSkill = "start-best-practice"
@@ -212,7 +212,7 @@ func writeHookOutput(out io.Writer, event, fallback, ctx, msg string) {
 // The status line states facts: the router and display level in effect, or
 // what is wrong when the skills package is missing.
 func sessionTurn(l displayLevel) (ctx, msg string) {
-	head := "grimoire is active for this session. Before responding to each new user request, apply the start-best-practice routing below and follow the workflow it routes to; load routed skills with grimoire_get_skill.\n\n" + mcpChainRule + "\n\n" + displayContext(l)
+	head := "grimoire is active for this session. Before responding to each new user request, apply the start-best-practice routing below and follow the workflow it routes to; load routed skills with grimoire_get_skill.\n\n" + mcpChainRule + "\n\n" + displayContext(l) + "\n\n" + preferencesContext()
 	fallback := head + "\n\nThe router is not inlined here: call grimoire_get_skill with name \"" + routerSkill + "\" once, at the first request of the session, and follow it."
 	// Not a problem — the model loads the router itself — so full only.
 	fallbackMsg := ""
@@ -227,20 +227,83 @@ func sessionTurn(l displayLevel) (ctx, msg string) {
 	if err != nil {
 		return fallback, fallbackMsg
 	}
-	body := markdownSections(string(raw), routerSections...)
+	body := fitRouter(string(raw), len(head)+len(routerHeading))
 	if body == "" {
 		return fallback, fallbackMsg
 	}
-	ctx = head + "\n\n# start-best-practice (router)\n\n" + body
-	if len(ctx) > hookInlineBudget {
-		return fallback, fallbackMsg
-	}
+	ctx = head + routerHeading + body
 	n := countRoutes(body)
 	unit := "routes"
 	if n == 1 {
 		unit = "route"
 	}
 	return ctx, readyStatus(l, "", fmt.Sprintf("router: %s, %d %s", routerSkill, n, unit))
+}
+
+const routerHeading = "\n\n# start-best-practice (router)\n\n"
+
+// fitRouter returns the largest form of the router that fits the inline
+// budget after used characters, degrading in steps so the routing table is
+// never what gets dropped:
+//
+//  1. Steps, Rules and Display
+//  2. the same without fenced example blocks in Display
+//  3. Steps and Rules only (the display level still names the Display
+//     section, which the model reads when it loads the skill)
+//
+// It returns "" when even the routing table does not fit.
+func fitRouter(md string, used int) string {
+	steps := markdownSections(md, "Steps", "Rules")
+	display := markdownSections(md, "Display")
+	for _, body := range []string{
+		joinNonEmpty(steps, display),
+		joinNonEmpty(steps, stripFences(display)),
+		steps,
+	} {
+		if body != "" && used+len(body) <= hookInlineBudget {
+			return body
+		}
+	}
+	return ""
+}
+
+func joinNonEmpty(a, b string) string {
+	switch {
+	case a == "":
+		return b
+	case b == "":
+		return a
+	}
+	return a + "\n\n" + b
+}
+
+// stripFences removes fenced code blocks, and the line introducing one
+// ("**Example** (brief):"), from md.
+func stripFences(md string) string {
+	var out []string
+	lines := strings.Split(md, "\n")
+	inFence := false
+	for i, line := range lines {
+		if strings.HasPrefix(strings.TrimSpace(line), "```") {
+			inFence = !inFence
+			continue
+		}
+		if inFence {
+			continue
+		}
+		next := ""
+		for j := i + 1; j < len(lines); j++ {
+			if t := strings.TrimSpace(lines[j]); t != "" {
+				next = t
+				break
+			}
+		}
+		if strings.HasPrefix(next, "```") && strings.HasSuffix(strings.TrimSpace(line), ":") {
+			continue // the lead-in to an example that is being dropped
+		}
+		out = append(out, line)
+	}
+	return strings.TrimSpace(strings.Join(out, "\n"))
 }
 
 // countRoutes counts the routing table rows that invoke a workflow.

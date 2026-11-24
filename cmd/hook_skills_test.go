@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 )
@@ -45,5 +47,30 @@ func TestSkillUsed_RecordsSkillPerSession(t *testing.T) {
 		if !strings.Contains(out.String(), want) {
 			t.Errorf("session %s: badge %q, want %q", sid, out.String(), want)
 		}
+	}
+}
+
+// Session context carries the resolved preferences, so workflows need no
+// shell command (skills mode) or tool call (MCP mode) to read them.
+func TestSessionContext_Preferences(t *testing.T) {
+	setupListSkillsHome(t)
+	ctx, _ := skillsSessionTurn(displayBrief)
+	if !strings.Contains(ctx, "no practices pinned") {
+		t.Errorf("no pins: %q", ctx)
+	}
+	cfg := filepath.Join(os.Getenv("XDG_CONFIG_HOME"), "grimoire")
+	if err := os.MkdirAll(cfg, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	toml := "[standards.engineering]\npractices = [\"Google Engineering Practices\"]\n"
+	if err := os.WriteFile(filepath.Join(cfg, "grimoire.toml"), []byte(toml), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	ctx, _ = skillsSessionTurn(displayBrief)
+	if !strings.Contains(ctx, "engineering: Google Engineering Practices") {
+		t.Errorf("pinned: %q", ctx)
+	}
+	if mcp, _ := sessionTurn(displayBrief); !strings.Contains(mcp, "engineering: Google Engineering Practices") {
+		t.Errorf("mcp session lacks preferences")
 	}
 }

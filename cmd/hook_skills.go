@@ -19,7 +19,7 @@ import (
 const skillsSessionHead = "grimoire skills are installed in this agent. Before responding to each new user request, invoke the start-best-practice skill and follow the workflow it routes to; invoke the skills it names the way this agent loads skills."
 
 // skillsRouteReminder is skills mode's per-prompt nudge onto the router.
-const skillsRouteReminder = "grimoire: before responding, invoke the start-best-practice skill and follow the workflow it routes to: it asks clarifying questions when needed and loads the specific best practices. If nothing routes, proceed normally."
+const skillsRouteReminder = "grimoire: before responding, invoke the start-best-practice skill and follow the workflow it routes to. Direct tasks route too — write, fix, refactor, test, commit, review — so route first, then do the task with the practice it finds. The workflow asks clarifying questions when needed and loads the specific best practices. If nothing routes, proceed normally."
 
 var hookSkillsSessionCmd = &cobra.Command{
 	Use:           "skills-session",
@@ -79,7 +79,7 @@ func runSkillsSession(in io.Reader, out io.Writer) {
 
 // skillsSessionTurn returns the session context and status line in skills mode.
 func skillsSessionTurn(l displayLevel) (ctx, msg string) {
-	return skillsSessionHead + "\n\n" + displayContext(l),
+	return skillsSessionHead + "\n\n" + displayContext(l) + "\n\n" + preferencesContext(),
 		readyStatus(l, "skills mode", "")
 }
 

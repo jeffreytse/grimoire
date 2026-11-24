@@ -189,3 +189,25 @@ func withOnboardingTip(l displayLevel, ctx, msg string) string {
 	}
 	return msg + " · " + strings.TrimPrefix(tip, statusPrefix)
 }
+
+// preferencesContext summarizes the pinned practice preferences from the
+// merged grimoire.toml layers, so workflows that check preferences first
+// (suggest-best-practice, review-best-practice-fit …) need no tool call.
+// In skills mode that call would be a shell command needing the user's
+// permission; in MCP mode it saves a grimoire_context round trip.
+func preferencesContext() string {
+	r, err := config.Load(getProjectDir())
+	if err != nil {
+		return ""
+	}
+	var pinned []string
+	for _, key := range r.SectionKeys() {
+		if ps := r.ResolveSection(key).Practices; len(ps) > 0 {
+			pinned = append(pinned, key+": "+strings.Join(ps, ", "))
+		}
+	}
+	if len(pinned) == 0 {
+		return "grimoire preferences (already resolved from grimoire.toml): no practices pinned — skip the pinned-preference check; do not read config files for it."
+	}
+	return "grimoire preferences (already resolved from grimoire.toml; use these, do not read config files): " + strings.Join(pinned, "; ") + "."
+}

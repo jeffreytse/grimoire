@@ -436,3 +436,29 @@ func TestOnboardingTip_Once(t *testing.T) {
 		t.Errorf("tip repeated: %q", msg)
 	}
 }
+
+// The router degrades in steps under the inline budget: examples go first,
+// then the Display section — never the routing table.
+func TestFitRouter_Degrades(t *testing.T) {
+	md := "## Steps\n\n| Intent | invoke `suggest-best-practice` |\n\n## Rules\n\n- rule\n\n## Display\n\nDISPLAY-RULES\n\n**Example** (brief):\n\n```markdown\nEXAMPLE-BLOCK\n```\n\nAFTER-EXAMPLE\n"
+	full := fitRouter(md, 0)
+	if !strings.Contains(full, "EXAMPLE-BLOCK") || !strings.Contains(full, "invoke `suggest-best-practice`") {
+		t.Fatalf("full = %q", full)
+	}
+	orig := hookInlineBudget
+	t.Cleanup(func() { hookInlineBudget = orig })
+
+	hookInlineBudget = len(full) - 1
+	noEx := fitRouter(md, 0)
+	if strings.Contains(noEx, "EXAMPLE-BLOCK") || strings.Contains(noEx, "**Example**") || !strings.Contains(noEx, "DISPLAY-RULES") || !strings.Contains(noEx, "AFTER-EXAMPLE") {
+		t.Errorf("without examples = %q", noEx)
+	}
+	hookInlineBudget = len(noEx) - 1
+	if steps := fitRouter(md, 0); strings.Contains(steps, "DISPLAY-RULES") || !strings.Contains(steps, "invoke `suggest-best-practice`") {
+		t.Errorf("steps only = %q", steps)
+	}
+	hookInlineBudget = 5
+	if got := fitRouter(md, 0); got != "" {
+		t.Errorf("nothing fits, got %q", got)
+	}
+}
