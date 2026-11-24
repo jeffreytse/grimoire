@@ -63,12 +63,12 @@
     {
       "prompt": "We're launching our SaaS in 48 hours. I'm terrified something will break. What do we do?",
       "routes": true,
-      "level": "off"
+      "level": "hidden"
     },
     {
       "prompt": "write unit tests for a function that parses ISO 8601 dates",
       "routes": true,
-      "level": "off"
+      "level": "hidden"
     },
     {
       "prompt": "We're launching our SaaS in 48 hours. I'm terrified something will break. What do we do?",
@@ -94,6 +94,17 @@
       "prompt": "help me plan a migration from a monolith to services over the next year",
       "routes": true,
       "followup": "Yes, apply the plan. Run all the steps without stopping."
+    },
+    {
+      "prompt": "plan our move from REST to GraphQL and from Jenkins to GitHub Actions this quarter",
+      "routes": true,
+      "followup": "yes"
+    },
+    {
+      "prompt": "plan our move from REST to GraphQL and from Jenkins to GitHub Actions this quarter",
+      "routes": true,
+      "followup": "Apply the plan, but for the step with choices use option b instead of the recommended one.",
+      "swap": true
     }
   ]
 }

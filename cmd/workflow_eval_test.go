@@ -97,6 +97,10 @@ func TestWorkflowEval(t *testing.T) {
 // routeLine matches the route line's target: start-best-practice ▸ <workflow>.
 var routeLine = regexp.MustCompile(`start-best-practice\**\s*(?:▸|→)\s*\**([a-z0-9]+(?:-[a-z0-9]+)+)`)
 
+// routeWorkflow matches a workflow the current route line names at the full
+// level: "· <workflow>" or a hand-off "→ <workflow>".
+var routeWorkflow = regexp.MustCompile(`(?:·|→)\s*([a-z0-9]+(?:-[a-z0-9]+)+)`)
+
 // reachedWorkflows is the set of skills a run loaded or routed to.
 func reachedWorkflows(reply string, loaded []string) map[string]bool {
 	got := map[string]bool{}
@@ -105,6 +109,11 @@ func reachedWorkflows(reply string, loaded []string) map[string]bool {
 	}
 	for _, m := range routeLine.FindAllStringSubmatch(reply, -1) {
 		got[m[1]] = true
+	}
+	for _, line := range routeLineStart.FindAllString(reply, -1) {
+		for _, m := range routeWorkflow.FindAllStringSubmatch(line, -1) {
+			got[m[1]] = true
+		}
 	}
 	return got
 }
@@ -116,5 +125,9 @@ func TestReachedWorkflows(t *testing.T) {
 	}
 	if got := reachedWorkflows("**start-best-practice** → **review-best-practice-fit**  `meta/routing`", nil); !got["review-best-practice-fit"] {
 		t.Errorf("old-style route line: %v", got)
+	}
+	got = reachedWorkflows("grimoire ▸ comparing practices — a problem · suggest-best-practice → analyze-best-practice-problem\n\nanswer · not-a-route", nil)
+	if !got["suggest-best-practice"] || !got["analyze-best-practice-problem"] || got["not-a-route"] {
+		t.Errorf("full-level route line: %v", got)
 	}
 }
